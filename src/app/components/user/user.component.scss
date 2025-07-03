@@ -219,12 +219,10 @@ body {
       }
 
       &.action-column {
-        display: flex;
+        // display: flex;
         justify-content: center;
         align-items: center;
         gap: 0.5rem;
-        /* Padding bottom might be for specific alignment if action buttons are larger.
-           Adjust or remove if causing extra spacing. */
         padding-bottom: 32px;
       }
     }

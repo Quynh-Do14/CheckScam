@@ -11,14 +11,6 @@
                 </div>
 
                 <h1 class="news-title">{{ post.name }}</h1>
-                <div class="news-meta">
-                    <span class="news-date">
-                        <i class="far fa-clock"></i> {{ post.publishedDate | date:'M/d/yyyy, h:mm a' }}
-                    </span> 
-                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ currentUrl }}" target="_blank" class="social-share-icon facebook">
-                        <i class="fab fa-facebook-f"></i>
-                    </a>
-                </div>
                 <hr class="news-divider">
 
                 <div *ngIf="attachmentDto && attachmentDto.length > 0" class="main-image-container">

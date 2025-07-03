@@ -1,4 +1,13 @@
 <div class="full-screen-background">
+  <div *ngIf="showNotification" 
+       class="app-notification" 
+       [ngClass]="{'success': notificationType === 'success', 'error': notificationType === 'error', 'info': notificationType === 'info'}">
+    <div class="notification-content">
+      {{ notificationMessage }}
+    </div>
+    <button class="close-btn" (click)="closeNotification()">×</button>
+  </div>
+
   <div class="container d-flex justify-content-center align-items-center vh-100">
     <div class="card p-5 shadow-lg rounded-4 custom-card-style">
       <div class="text-center mb-5">

@@ -1,3 +1,79 @@
+/* Notification Styles */
+.app-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #f44336; /* Red for error, adjust as needed */
+  color: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  // Điều chỉnh max-width thành giá trị lớn hơn hoặc không giới hạn
+  max-width: 500px; // Ví dụ: đặt một giá trị cố định lớn hơn
+  // Hoặc bạn có thể bỏ max-width để nó tự động mở rộng theo nội dung
+  // max-width: fit-content; // Tùy chọn nếu trình duyệt hỗ trợ tốt
+  opacity: 0;
+  transform: translateY(-20px);
+  animation: fadeInDown 0.5s forwards;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  
+  // Đảm bảo nội dung luôn trên một dòng
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+}
+
+.app-notification.success {
+  background-color: #4CAF50; /* Green for success */
+}
+
+.app-notification.error {
+  background-color: #f44336; /* Red for error */
+}
+
+.app-notification.info {
+  background-color: #2196F3; /* Blue for info */
+}
+
+.notification-content {
+  flex-grow: 1;
+  margin-right: 15px;
+  font-size: 1rem;
+  line-height: 1.4;
+  // Các thuộc tính này đã được chuyển lên .app-notification để đảm bảo toàn bộ thẻ xử lý nội dung trên 1 dòng
+  // white-space: nowrap; 
+  // overflow: hidden; 
+  // text-overflow: ellipsis; 
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0 5px;
+  transition: color 0.3s ease;
+  &:hover {
+    color: #ddd;
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .full-screen-background {
   min-height: 100vh;
   background: linear-gradient(135deg, 
@@ -74,7 +150,6 @@
   justify-content: center;
   margin-bottom: 0.5rem;
 
-  // Styles cho thẻ img.logo
   .logo {
     width: 120px;
     height: 120px;
@@ -297,7 +372,7 @@
   }
   
   .logo-container {
-    .logo { // Điều chỉnh kích thước logo cho màn hình nhỏ hơn
+    .logo { /* Điều chỉnh kích thước logo cho màn hình nhỏ hơn */
       width: 100px;
       height: 100px;
     }

@@ -1,5 +1,14 @@
 <app-header></app-header>
 
+<div *ngIf="showNotification" 
+     class="app-notification" 
+     [ngClass]="{'success': notificationType === 'success', 'error': notificationType === 'error', 'info': notificationType === 'info'}">
+  <div class="notification-content">
+    {{ notificationMessage }}
+  </div>
+  <button class="close-btn" (click)="closeNotification()">×</button>
+</div>
+
 <div class="report-page-container">
   <div class="two-column-layout">
     <div class="left-column">

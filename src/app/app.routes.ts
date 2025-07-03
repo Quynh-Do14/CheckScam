@@ -73,7 +73,7 @@ export const routes: Routes = [
           { path: 'profile', component: ProfileComponent }, 
         ],
     },
-    { path: 'register', component: RegisterComponent }, // Add this route for registration
+    { path: 'register', component: RegisterComponent },
     { path: 'login', component: LoginComponent }, 
     { path: 'list-news', component: ListNewsComponent }, 
     { path: 'view-news/:id', component: ViewNewsComponent }, 

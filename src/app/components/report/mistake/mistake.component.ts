@@ -71,6 +71,14 @@ export class MistakeComponent implements OnInit {
     { id: 3, name: 'URL' },
   ];
 
+  // --- Biến và phương thức mới cho thông báo tùy chỉnh ---
+  showNotification: boolean = false;
+  notificationMessage: string = '';
+  notificationType: 'success' | 'error' | 'info' = 'info'; // 'success', 'error', 'info'
+  notificationTimeout: any;
+  // --- Kết thúc phần thông báo tùy chỉnh ---
+
+
   constructor(
     private mistakeReportService: MistakeReportService,
     private router: Router,
@@ -84,6 +92,33 @@ export class MistakeComponent implements OnInit {
       this.selectedTypeToComplainName = defaultOption.name;
     }
   }
+
+  // --- Phương thức hiển thị và đóng thông báo (sao chép từ create.component.ts) ---
+  showAppNotification(message: string, type: 'success' | 'error' | 'info' = 'info', duration: number = 5000): void {
+    // Xóa bất kỳ timeout nào đang chạy để thông báo cũ không tự đóng giữa chừng
+    if (this.notificationTimeout) {
+      clearTimeout(this.notificationTimeout);
+    }
+
+    this.notificationMessage = message;
+    this.notificationType = type;
+    this.showNotification = true;
+
+    // Tự động đóng thông báo sau một khoảng thời gian
+    this.notificationTimeout = setTimeout(() => {
+      this.closeNotification();
+    }, duration);
+  }
+
+  closeNotification(): void {
+    this.showNotification = false;
+    this.notificationMessage = '';
+    // Clear the timeout in case user closes manually
+    if (this.notificationTimeout) {
+      clearTimeout(this.notificationTimeout);
+    }
+  }
+  // --- Kết thúc phần thông báo tùy chỉnh ---
 
   // --- Logic cho Custom Dropdown "Loại thông tin bị tố cáo sai" ---
   toggleTypeToComplainDropdown() {
@@ -124,7 +159,8 @@ export class MistakeComponent implements OnInit {
       if (selectedFiles.length > 0) {
         this.mistakeReportData.selectedFiles = selectedFiles;
       } else {
-        alert("Chỉ chấp nhận các tệp hình ảnh (PNG, JPG, GIF).");
+        // Thay thế alert bằng thông báo tùy chỉnh
+        this.showAppNotification("Chỉ chấp nhận các tệp hình ảnh (PNG, JPG, GIF).", 'error');
       }
     }
     input.value = '';
@@ -154,7 +190,8 @@ export class MistakeComponent implements OnInit {
       if (imageFiles.length > 0) {
         this.mistakeReportData.selectedFiles = imageFiles;
       } else {
-        alert("Chỉ chấp nhận các tệp hình ảnh (PNG, JPG, GIF).");
+        // Thay thế alert bằng thông báo tùy chỉnh
+        this.showAppNotification("Chỉ chấp nhận các tệp hình ảnh (PNG, JPG, GIF).", 'error');
       }
     }
   }
@@ -169,14 +206,16 @@ export class MistakeComponent implements OnInit {
   }
 
   openTermsAndConditions(event: Event): void {
-    alert('Đây là nơi hiển thị các điều khoản và điều kiện. Bạn có thể mở một modal hoặc điều hướng đến một trang riêng.');
+    // Thay thế alert bằng thông báo tùy chỉnh
+    this.showAppNotification('Đây là nơi hiển thị các điều khoản và điều kiện. Bạn có thể mở một modal hoặc điều hướng đến một trang riêng.', 'info');
   }
 
   submitMistakeReport(): void {
     this.mistakeForm.form.markAllAsTouched();
 
     if (this.mistakeForm.invalid || !this.captchaToken) {
-      alert('Vui lòng điền đầy đủ các trường bắt buộc và xác nhận Captcha.');
+      // Thay thế alert bằng thông báo tùy chỉnh
+      this.showAppNotification('Vui lòng điền đầy đủ các trường bắt buộc và xác nhận Captcha.', 'error');
       return;
     }
 
@@ -200,17 +239,25 @@ export class MistakeComponent implements OnInit {
   private sendMistakeReport(payload: MistakeFrontendRequest, files: File[]): void {
     this.mistakeReportService.createMistakeReport(payload).subscribe({
       next: (res: any) => {
-        alert('Gửi khiếu nại thành công! Chúng tôi sẽ xem xét và liên hệ lại với bạn.');
+        // Thay thế alert bằng thông báo tùy chỉnh
+        this.showAppNotification('Gửi khiếu nại thành công! Chúng tôi sẽ xem xét với trường hợp của bạn', 'success', 5000); // 3 giây để đọc
+        
         const complaintId = res.data?.id ?? res.id;
         if (!complaintId) {
           console.warn('Không nhận được ID khiếu nại từ server. Không thể tải tệp đính kèm.');
-          this.router.navigate(['/khieu-nai-thanh-cong']);
+          // Thay thế alert bằng thông báo tùy chỉnh
+          this.showAppNotification('Không nhận được ID khiếu nại từ server. Không thể tải tệp đính kèm.', 'info');
+          setTimeout(() => { // Đảm bảo người dùng đọc được thông báo trước khi chuyển hướng
+            this.router.navigate(['/khieu-nai-thanh-cong']);
+          }, 3000);
           return;
         }
         if (files.length > 0) {
           this.uploadFiles(complaintId, files);
         } else {
-          this.router.navigate(['/khieu-nai-thanh-cong']);
+          setTimeout(() => { // Đảm bảo người dùng đọc được thông báo trước khi chuyển hướng
+            this.router.navigate(['/khieu-nai-thanh-cong']);
+          }, 3000);
         }
       },
       error: (err: HttpErrorResponse) => {
@@ -221,7 +268,8 @@ export class MistakeComponent implements OnInit {
           fieldErrors = err.error.errors.map((e: any) => e.defaultMessage || e.message || 'Lỗi trường không xác định.').join('\n');
         }
 
-        alert(`Gửi khiếu nại thất bại: ${errorMessage}\n${fieldErrors || ''}`);
+        // Thay thế alert lỗi bằng thông báo tùy chỉnh
+        this.showAppNotification(`Gửi khiếu nại thất bại: ${errorMessage}\n${fieldErrors || ''}`, 'error');
       }
     });
   }
@@ -234,13 +282,19 @@ export class MistakeComponent implements OnInit {
 
     this.mistakeReportService.uploadFiles(complaintId, formData).subscribe({
       next: () => {
-        alert('Tải lên tệp đính kèm thành công!');
-        this.router.navigate(['/khieu-nai-thanh-cong']);
+        // Thay thế alert bằng thông báo tùy chỉnh
+        this.showAppNotification('Tải lên tệp đính kèm thành công! Chúng tôi sẽ xem xét với trường hợp của bạn', 'success', 5000); // 3 giây để đọc
+        setTimeout(() => { // Đảm bảo người dùng đọc được thông báo trước khi chuyển hướng
+          this.router.navigate(['/khieu-nai-thanh-cong']);
+        }, 3000);
       },
       error: (err: HttpErrorResponse) => {
         console.error('Lỗi khi tải lên tệp đính kèm:', err);
-        alert('Lỗi khi tải lên tệp đính kèm. Vui lòng thử lại hoặc liên hệ hỗ trợ.');
-        this.router.navigate(['/khieu-nai-thanh-cong']);
+        // Thay thế alert lỗi bằng thông báo tùy chỉnh
+        this.showAppNotification('Lỗi khi tải lên tệp đính kèm. Vui lòng thử lại hoặc liên hệ hỗ trợ.', 'error');
+        setTimeout(() => { // Đảm bảo người dùng đọc được thông báo trước khi chuyển hướng
+          this.router.navigate(['/khieu-nai-thanh-cong']);
+        }, 3000);
       }
     });
   }

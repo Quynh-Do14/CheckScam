@@ -5,19 +5,14 @@ import { UserService } from '../../services/user.service';
 import { LoginDTO } from '../../dtos/login.dto';
 import { TokenService } from '../../services/token.service';
 import { HttpErrorResponse } from '@angular/common/http';
-
-// Thêm import cho Bootstrap JavaScript nếu bạn dùng Angular CLI 11+
-// Nếu bạn dùng Angular CLI < 11, có thể bạn đã import nó trong angular.json
-// import 'bootstrap/dist/js/bootstrap.bundle.min'; // Bỏ comment nếu cần thiết
+import { CommonModule } from '@angular/common'; // Thêm import này
 
 declare var google: any;
-// Khai báo Bootstrap nếu bạn cần tương tác trực tiếp với Modal qua JS
-// declare var bootstrap: any;
 
 @Component({
     selector: 'app-login',
     standalone: true,
-    imports: [FormsModule, RouterModule],
+    imports: [FormsModule, RouterModule, CommonModule], // Thêm CommonModule vào đây
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.scss']
 })
@@ -25,6 +20,11 @@ export class LoginComponent implements OnInit, AfterViewInit {
     @ViewChild('loginForm') loginForm!: NgForm;
     username = '';
     password = '';
+
+    showNotification: boolean = false;
+    notificationMessage: string = '';
+    notificationType: 'success' | 'error' | 'info' = 'info';
+    notificationTimeout: any;
 
     constructor(
         private router: Router,
@@ -46,6 +46,28 @@ export class LoginComponent implements OnInit, AfterViewInit {
                 console.warn('Google GSI script not loaded yet or "google.accounts.id" is not available.');
             }
         }, 500);
+    }
+
+    showAppNotification(message: string, type: 'success' | 'error' | 'info' = 'info', duration: number = 5000): void {
+        if (this.notificationTimeout) {
+            clearTimeout(this.notificationTimeout);
+        }
+
+        this.notificationMessage = message;
+        this.notificationType = type;
+        this.showNotification = true;
+
+        this.notificationTimeout = setTimeout(() => {
+            this.closeNotification();
+        }, duration);
+    }
+
+    closeNotification(): void {
+        this.showNotification = false;
+        this.notificationMessage = '';
+        if (this.notificationTimeout) {
+            clearTimeout(this.notificationTimeout);
+        }
     }
 
     private initializeGoogleSignIn() {
@@ -70,12 +92,12 @@ export class LoginComponent implements OnInit, AfterViewInit {
     private clearExistingUserData() {
         localStorage.removeItem('user');
         localStorage.removeItem('jwt_token');
-        console.log('🧹 Cleared existing user data on login page');
+        console.log('Cleared existing user data on login page');
     }
 
     login() {
         if (!this.username.trim() || !this.password.trim()) {
-            alert('Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu');
+            this.showAppNotification('Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu', 'error');
             return;
         }
 
@@ -87,15 +109,15 @@ export class LoginComponent implements OnInit, AfterViewInit {
 
         this.userService.login(loginDTO).subscribe({
             next: (response) => {
-                console.log('🔐 === FULL LOGIN RESPONSE ===');
+                console.log('FULL LOGIN RESPONSE');
                 console.log(JSON.stringify(response, null, 2));
-                console.log('🔐 === END LOGIN RESPONSE ===');
+                console.log('END LOGIN RESPONSE');
 
                 this.processLoginSuccess(response);
             },
             error: (error: HttpErrorResponse) => {
-                console.error('❌ Login error:', error);
-                alert(error?.error?.message || 'Đăng nhập thất bại');
+                console.error('Login error:', error);
+                this.showAppNotification(error?.error?.message || 'Đăng nhập thất bại', 'error');
             }
         });
     }
@@ -113,21 +135,21 @@ export class LoginComponent implements OnInit, AfterViewInit {
                     this.processLoginSuccess(backendResponse);
                 },
                 error: (error: HttpErrorResponse) => {
-                    console.error('❌ Error sending ID token to backend:', error);
-                    alert('Đăng nhập với Google thất bại: ' + (error?.error?.message || 'Lỗi server.'));
+                    console.error('Error sending ID token to backend:', error);
+                    this.showAppNotification('Đăng nhập với Google thất bại: ' + (error?.error?.message || 'Lỗi server.'), 'error');
                 }
             });
         } else {
             console.error('No credential found in Google Sign-In response.');
-            alert('Đăng nhập với Google thất bại: Không nhận được thông tin từ Google.');
+            this.showAppNotification('Đăng nhập với Google thất bại: Không nhận được thông tin từ Google.', 'error');
         }
     }
 
     private processLoginSuccess(response: any) {
-        console.log('🔍 Processing login success response...');
+        console.log('Processing login success response...');
 
         this.userService.saveUserData(response);
-        console.log('💾 User data and token saved via UserService.saveUserData');
+        console.log('User data and token saved via UserService.saveUserData');
 
         const userData = this.userService.getUserData();
         let redirectToUrl: string;
@@ -141,6 +163,6 @@ export class LoginComponent implements OnInit, AfterViewInit {
         }
 
         this.router.navigate([redirectToUrl]);
-        console.log(`➡️ Navigating to ${redirectToUrl}`);
+        console.log(`Navigating to ${redirectToUrl}`);
     }
 }

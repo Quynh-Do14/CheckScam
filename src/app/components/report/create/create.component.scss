@@ -1,3 +1,91 @@
+/* create.component.scss */
+
+/* Notification Styles */
+.app-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: #333; // Default background
+  color: white;
+  padding: 15px 25px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 400px;
+  opacity: 0;
+  transform: translateY(-20px);
+  animation: fadeInDown 0.5s forwards;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; // Font hiện đại
+}
+
+.app-notification.success {
+  background-color: #4CAF50; /* Green for success */
+}
+
+.app-notification.error {
+  background-color: #f44336; /* Red for error */
+}
+
+.app-notification.info {
+  background-color: #2196F3; /* Blue for info */
+}
+
+.notification-content {
+  flex-grow: 1;
+  margin-right: 15px;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0 5px;
+  transition: color 0.3s ease;
+  &:hover {
+    color: #ddd;
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOutUp {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+/* Angular's *ngIf handles removing the element, so we can use a class on the element itself
+   or manage it with host binding for more complex cases. For simplicity with *ngIf,
+   the element is removed from DOM after animation. If you want a more controlled leave animation,
+   you'd use Angular animations module. For this simple case, the element just disappears.
+   However, if showNotification is set to false, it will fade out if you add ng-leave animation
+   via a state or an explicit animation trigger. For now, the element just gets removed by *ngIf.
+   To make it fade out, you would need to use Angular's Animation Module or
+   delay the *ngIf removal. For now, the element simply fades in.
+*/
+
+/* General layout adjustments */
 .report-page-container {
   padding-top: 70px;
   background-color: #f8f9fa;
@@ -591,4 +679,3 @@
     max-height: 300px;
   }
 }
-

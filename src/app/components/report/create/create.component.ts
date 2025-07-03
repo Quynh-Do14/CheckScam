@@ -6,7 +6,6 @@ import { RecaptchaModule } from 'ng-recaptcha';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ReportService } from '../../../services/report.service';
 
-// IMPORT CÁC DTO TỪ FILE CỦA BẠN
 import { CreateReportRequestDTO, ReportDetailItemDTO, ReportTypeOption } from '../../../dtos/create-report-request.dto';
 
 import { HeaderComponent } from '../../header/header.component';
@@ -14,7 +13,6 @@ import { FooterComponent } from "../../footer/footer.component";
 import { ChatBoxComponent } from "../../chat-box/chat-box.component";
 import { Observable } from 'rxjs';
 
-// Interface cho Category (vẫn giữ nguyên ở đây hoặc có thể chuyển vào DTO nếu bạn muốn tập trung)
 export interface Category {
   id: number;
   name: string;
@@ -75,6 +73,11 @@ export class CreateReportComponent implements OnInit {
     { id: 3, name: 'URL' },
   ];
 
+  showNotification: boolean = false;
+  notificationMessage: string = '';
+  notificationType: 'success' | 'error' | 'info' = 'info'; // 'success', 'error', 'info'
+  notificationTimeout: any;
+
 
   constructor(private reportService: ReportService, private router: Router, private el: ElementRef) { }
 
@@ -90,7 +93,28 @@ export class CreateReportComponent implements OnInit {
     }
   }
 
-  // --- Logic cho Category Dropdown ---
+  showAppNotification(message: string, type: 'success' | 'error' | 'info' = 'info', duration: number = 5000): void {
+    if (this.notificationTimeout) {
+      clearTimeout(this.notificationTimeout);
+    }
+
+    this.notificationMessage = message;
+    this.notificationType = type;
+    this.showNotification = true;
+
+    this.notificationTimeout = setTimeout(() => {
+      this.closeNotification();
+    }, duration);
+  }
+
+  closeNotification(): void {
+    this.showNotification = false;
+    this.notificationMessage = '';
+    if (this.notificationTimeout) {
+      clearTimeout(this.notificationTimeout);
+    }
+  }
+
   toggleCategoryDropdown() {
     this.isCategoryDropdownOpen = !this.isCategoryDropdownOpen;
   }
@@ -98,14 +122,13 @@ export class CreateReportComponent implements OnInit {
   selectCategory(category: Category) {
     this.requestPayload.categoryId = category.id;
     this.selectedCategoryName = category.name;
-    this.isCategoryDropdownOpen = false; // <<< THÊM DÒNG NÀY ĐỂ ĐÓNG DROPDOWN SAU KHI CHỌN
+    this.isCategoryDropdownOpen = false; 
     if (this.reportForm && this.reportForm.controls['categoryId']) {
       this.reportForm.controls['categoryId'].setValue(category.id);
       this.reportForm.controls['categoryId'].markAsTouched();
     }
   }
 
-  // --- Logic cho Report Type Dropdown (Tố cáo về) ---
   toggleReportTypeDropdown(item: ReportDetailItemDTO) {
     this.requestPayload.reportDetails.forEach(detail => {
       if (detail !== item) {
@@ -118,7 +141,7 @@ export class CreateReportComponent implements OnInit {
   selectReportType(item: ReportDetailItemDTO, option: ReportTypeOption) {
     item.type = option.id;
     item.selectedTypeName = option.name;
-    item.isTypeDropdownOpen = false; // <<< THÊM DÒNG NÀY ĐỂ ĐÓNG DROPDOWN SAU KHI CHỌN
+    item.isTypeDropdownOpen = false; 
     this.resetInfoFields(this.requestPayload.reportDetails.indexOf(item));
   }
 
@@ -224,7 +247,7 @@ export class CreateReportComponent implements OnInit {
       if (imageFiles.length > 0) {
         this.selectedFiles = [...this.selectedFiles, ...imageFiles];
       } else {
-        alert("Chỉ chấp nhận các tệp hình ảnh (PNG, JPG, GIF).");
+        this.showAppNotification("Chỉ chấp nhận các tệp hình ảnh (PNG, JPG, GIF).", 'error');
       }
     }
   }
@@ -248,11 +271,11 @@ export class CreateReportComponent implements OnInit {
 
   removeReportDetailItem(index: number): void {
     if (this.reportType === 'single' && this.requestPayload.reportDetails.length === 1) {
-      alert("Báo cáo đơn phải có ít nhất một mục thông tin tố cáo.");
+      this.showAppNotification("Báo cáo đơn phải có ít nhất một mục thông tin tố cáo.", 'info');
       return;
     }
     if (this.reportType === 'group' && this.requestPayload.reportDetails.length === 1) {
-      alert("Báo cáo gộp phải có ít nhất một mục thông tin tố cáo.");
+      this.showAppNotification("Báo cáo gộp phải có ít nhất một mục thông tin tố cáo.", 'info');
       return;
     }
     this.requestPayload.reportDetails.splice(index, 1);
@@ -299,7 +322,7 @@ export class CreateReportComponent implements OnInit {
     }
 
     if (this.isFormInvalid()) {
-      alert('Vui lòng điền đầy đủ các trường bắt buộc và xác nhận Captcha. Đảm bảo số tiền chiếm đoạt lớn hơn hoặc bằng 10,000 VND.');
+      this.showAppNotification('Vui lòng điền đầy đủ các trường bắt buộc và xác nhận Captcha. Đảm bảo số tiền chiếm đoạt lớn hơn hoặc bằng 10,000 VND.', 'error');
       return;
     }
 
@@ -322,17 +345,22 @@ export class CreateReportComponent implements OnInit {
 
     this.reportService.createReportUnified(finalPayload).subscribe({
       next: (res: any) => {
-        alert('Gửi thông tin báo cáo thành công!');
+        this.showAppNotification('Gửi thông tin báo cáo thành công! Bạn sẽ được chuyển hướng về trang chủ trong giây lát.', 'success', 5000); // 5 giây để đọc
+
         const reportId = res.data?.id ?? res.id;
         if (!reportId) {
-          alert('Không nhận được ID báo cáo từ server. Không thể tải tệp đính kèm.');
-          this.router.navigate(['/bao-cao-thanh-cong']);
+          this.showAppNotification('Không nhận được ID báo cáo từ server. Không thể tải tệp đính kèm.', 'info');
+          setTimeout(() => { 
+            this.router.navigate(['/bao-cao-thanh-cong']);
+          }, 3000); 
           return;
         }
         if (this.selectedFiles.length) {
           this.uploadFiles(reportId, this.selectedFiles);
         } else {
-          this.router.navigate(['/bao-cao-thanh-cong']);
+          setTimeout(() => { 
+            this.router.navigate(['/bao-cao-thanh-cong']);
+          }, 3000);
         }
       },
       error: (err: HttpErrorResponse) => {
@@ -343,7 +371,7 @@ export class CreateReportComponent implements OnInit {
         } else if (err.status === 400 && err.error?.errors && Array.isArray(err.error.errors)) {
           errorMessage = 'Dữ liệu không hợp lệ: ' + err.error.errors.map((e: any) => e.defaultMessage || e.field || e).join(', ');
         }
-        alert(errorMessage);
+        this.showAppNotification(errorMessage, 'error');
       }
     });
   }
@@ -352,12 +380,19 @@ export class CreateReportComponent implements OnInit {
     this.reportService.uploadFiles(reportId, files).subscribe({
       next: () => {
         console.log('Tải tệp đính kèm thành công!');
-        this.router.navigate(['/bao-cao-thanh-cong']);
+        // Thay thế alert bằng thông báo tùy chỉnh
+        this.showAppNotification('Tệp đính kèm đã được tải lên thành công! Bạn sẽ được chuyển hướng về trang chủ trong giây lát.', 'success', 5000); 
+        setTimeout(() => { 
+          this.router.navigate(['/bao-cao-thanh-cong']);
+        }, 3000);
       },
       error: (uploadErr: HttpErrorResponse) => {
         console.error('Lỗi khi tải tệp đính kèm:', uploadErr);
-        alert('Đã tạo báo cáo thành công, nhưng không thể tải tệp đính kèm. Vui lòng liên hệ hỗ trợ nếu cần.');
-        this.router.navigate(['/bao-cao-thanh-cong']);
+        // Thay thế alert lỗi bằng thông báo tùy chỉnh
+        this.showAppNotification('Đã tạo báo cáo thành công, nhưng không thể tải tệp đính kèm. Vui lòng liên hệ hỗ trợ nếu cần.', 'error');
+        setTimeout(() => { 
+          this.router.navigate(['/bao-cao-thanh-cong']);
+        }, 3000);
       }
     });
   }

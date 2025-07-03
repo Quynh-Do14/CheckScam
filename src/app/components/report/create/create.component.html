@@ -1,5 +1,14 @@
 <app-header (aiTuVanClicked)="onAiTuVanClicked()"></app-header>
 
+<div *ngIf="showNotification" 
+     class="app-notification" 
+     [ngClass]="{'success': notificationType === 'success', 'error': notificationType === 'error', 'info': notificationType === 'info'}">
+  <div class="notification-content">
+    {{ notificationMessage }}
+  </div>
+  <button class="close-btn" (click)="closeNotification()">×</button>
+</div>
+
 <div class="report-page-container">
   <div class="two-column-layout">
 
@@ -8,9 +17,13 @@
         <h3 class="info-box-title">BÁO CÁO LỪA ĐẢO</h3>
 
         <div class="form-group report-type-selection">
-          <label class="section-label">Chọn loại báo cáo:</label> <div class="radio-group-modern"> <input type="radio" id="singleReport" name="reportType" [value]="'single'" [(ngModel)]="reportType" required (change)="onReportTypeChange()">
-            <label for="singleReport" class="radio-button-label">Báo cáo đơn</label> <input type="radio" id="groupReport" name="reportType" [value]="'group'" [(ngModel)]="reportType" required (change)="onReportTypeChange()">
-            <label for="groupReport" class="radio-button-label">Báo cáo gộp</label> </div>
+          <label class="section-label">Chọn loại báo cáo:</label> 
+          <div class="radio-group-modern"> 
+            <input type="radio" id="singleReport" name="reportType" [value]="'single'" [(ngModel)]="reportType" required (change)="onReportTypeChange()">
+            <label for="singleReport" class="radio-button-label">Báo cáo đơn</label> 
+            <input type="radio" id="groupReport" name="reportType" [value]="'group'" [(ngModel)]="reportType" required (change)="onReportTypeChange()">
+            <label for="groupReport" class="radio-button-label">Báo cáo gộp</label> 
+          </div>
         </div>
 
         <div class="form-group">

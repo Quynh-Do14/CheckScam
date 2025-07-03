@@ -6,7 +6,13 @@ import { LoginDTO } from '../../dtos/login.dto';
 import { TokenService } from '../../services/token.service';
 import { HttpErrorResponse } from '@angular/common/http';
 
+// Thêm import cho Bootstrap JavaScript nếu bạn dùng Angular CLI 11+
+// Nếu bạn dùng Angular CLI < 11, có thể bạn đã import nó trong angular.json
+// import 'bootstrap/dist/js/bootstrap.bundle.min'; // Bỏ comment nếu cần thiết
+
 declare var google: any;
+// Khai báo Bootstrap nếu bạn cần tương tác trực tiếp với Modal qua JS
+// declare var bootstrap: any;
 
 @Component({
     selector: 'app-login',
@@ -19,7 +25,6 @@ export class LoginComponent implements OnInit, AfterViewInit {
     @ViewChild('loginForm') loginForm!: NgForm;
     username = '';
     password = '';
-    // returnUrl: string = '/admin/dashboard'; // KHÔNG CẦN ĐẶT MẶC ĐỊNH Ở ĐÂY NỮA
 
     constructor(
         private router: Router,
@@ -30,8 +35,6 @@ export class LoginComponent implements OnInit, AfterViewInit {
     ) { }
 
     ngOnInit() {
-        // returnUrl sẽ được lấy từ queryParams hoặc xác định sau khi đăng nhập
-        // this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/admin/dashboard';
         this.clearExistingUserData();
     }
 
@@ -108,7 +111,6 @@ export class LoginComponent implements OnInit, AfterViewInit {
                 next: (backendResponse) => {
                     console.log('Backend response from Google login:', backendResponse);
                     this.processLoginSuccess(backendResponse);
-                    alert('Đăng nhập với Google thành công!');
                 },
                 error: (error: HttpErrorResponse) => {
                     console.error('❌ Error sending ID token to backend:', error);
@@ -121,25 +123,20 @@ export class LoginComponent implements OnInit, AfterViewInit {
         }
     }
 
-    forgotPassword(event: any) {
-        event.preventDefault();
-        alert('Vui lòng liên hệ quản trị viên để được cấp lại mật khẩu.');
-    }
-
     private processLoginSuccess(response: any) {
         console.log('🔍 Processing login success response...');
 
         this.userService.saveUserData(response);
         console.log('💾 User data and token saved via UserService.saveUserData');
 
-        const userData = this.userService.getUserData(); 
+        const userData = this.userService.getUserData();
         let redirectToUrl: string;
 
         if (userData && userData.role && userData.role.includes('ADMIN')) {
             redirectToUrl = this.route.snapshot.queryParams['returnUrl'] || '/admin/dashboard';
             console.log('User is ADMIN, redirecting to:', redirectToUrl);
         } else {
-            redirectToUrl = this.route.snapshot.queryParams['returnUrl'] || '/'; 
+            redirectToUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
             console.log('User is regular USER, redirecting to:', redirectToUrl);
         }
 

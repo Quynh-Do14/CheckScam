@@ -7,6 +7,8 @@ import { FormsModule } from '@angular/forms';
 
 import { CheckScamService } from '../../services/check-scam.service';
 import { CheckScamRequestDTO } from '../../dtos/check-scam-request.dto';
+import { ChatBoxComponent } from "../chat-box/chat-box.component";
+
 
 interface AnalysisResult {
   info: string;
@@ -45,7 +47,7 @@ interface ExternalCheckResponse {
     FooterComponent,
     RouterModule,
     FormsModule
-  ],
+],
   templateUrl: './analyze.component.html',
   styleUrls: ['./analyze.component.scss']
 })
@@ -71,6 +73,9 @@ export class AnalyzeComponent implements OnInit, OnDestroy {
   riskLevelDescription: string = 'Vui lòng nhập thông tin để phân tích.';
   detailedAnalysis: string = 'Chưa có thông tin để hiển thị phân tích chi tiết.';
   recommendations: string = 'Chưa có khuyến nghị.';
+
+    showChatbox = false;
+
 
   constructor(
     private router: Router,
@@ -320,7 +325,7 @@ export class AnalyzeComponent implements OnInit, OnDestroy {
         detailedContent += this.parseBulletPointsToHtml(content);
       }
 
-      const signsMatch = analysisSection.match(/(- \*\*Các dấu hiệu nhận biết:\*\*[\s\S]*?)(?=- \*\*Các dấu hiệu nhận biết:\*\*|3\.|4\.|5\.|$)/i); // Sửa regex để tránh lặp chính nó nếu có nhiều
+      const signsMatch = analysisSection.match(/(- \*\*Các dấu hiệu nhận biết:\*\*[\s\S]*?)(?=- \*\*Các dấu hiệu nhận biết:\*\*|3\.|4\.|5\.|$)/i); 
       if (signsMatch && signsMatch[1]) {
         let content = signsMatch[1].replace(/- \*\*Các dấu hiệu nhận biết:\*\*/i, '').trim();
         if (detailedContent) detailedContent += '<br>';
@@ -492,7 +497,7 @@ export class AnalyzeComponent implements OnInit, OnDestroy {
     const suspiciousSignsSection = {
       header: '3. Phát hiện dấu hiệu nghi vấn:',
       pattern: /(\*\*3\. Phát hiện dấu hiệu nghi vấn:[\s\S]*?)(?=\*\*4\.|$)/i,
-      icon: 'fas fa-eye' // Biểu tượng con mắt cho dấu hiệu nghi vấn
+      icon: 'fas fa-eye'
     };
     const suspiciousMatch = text.match(suspiciousSignsSection.pattern);
     if (suspiciousMatch && suspiciousMatch[1]) {
@@ -506,13 +511,12 @@ export class AnalyzeComponent implements OnInit, OnDestroy {
       }
     }
 
-    // 3. Trích xuất "Rủi ro:" từ phần "4. Đánh giá rủi ro và khuyến nghị:"
     const riskAssessmentSection = {
       header: '4. Đánh giá rủi ro và khuyến nghị:',
       subHeader: '**Rủi ro:**',
       pattern: /(\*\*4\. Đánh giá rủi ro và khuyến nghị:[\s\S]*?)(?=\*\*5\.|$)/i,
-      riskPattern: /(\*\*Rủi ro:\*\*[\s\S]*?)(?=\*\*Khuyến nghị:|$)/i, // Chỉ lấy phần Rủi ro
-      icon: 'fas fa-shield-alt' // Biểu tượng khiên cho rủi ro
+      riskPattern: /(\*\*Rủi ro:\*\*[\s\S]*?)(?=\*\*Khuyến nghị:|$)/i,
+      icon: 'fas fa-shield-alt' 
     };
     const assessmentMatch = text.match(riskAssessmentSection.pattern);
     if (assessmentMatch && assessmentMatch[1]) {
@@ -530,7 +534,6 @@ export class AnalyzeComponent implements OnInit, OnDestroy {
       }
     }
 
-    // Cập nhật detailedAnalysis dựa trên các phần đã trích xuất
     if (detailedContentHtml.trim() === '') {
       this.detailedAnalysis = "Phân tích chi tiết: Không có thông tin để hiển thị.";
     } else {
@@ -551,11 +554,11 @@ export class AnalyzeComponent implements OnInit, OnDestroy {
           html += '</ul>';
           inList = false;
         }
-        html += '<p></p>'; // Thêm đoạn trống cho dòng trống
+        html += '<p></p>'; 
         continue;
       }
 
-      if (trimmedLine.startsWith('*')) { // Thay đổi từ '-' thành '*'
+      if (trimmedLine.startsWith('*')) { 
         if (!inList) {
           html += '<ul>';
           inList = true;
@@ -586,14 +589,10 @@ export class AnalyzeComponent implements OnInit, OnDestroy {
   }
 
   private extractUrlRecommendations(text: string): void {
-    // Tìm các pattern của URL recommendations trong section 4
     const urlRecommendationPatterns = [
-      // Pattern chính cho "Khuyến nghị:" trong section 4
       /\*\s*\*\*Khuyến nghị:\*\*\s*([\s\S]*?)(?=\n\n|$)/i,
       /\*\*Khuyến nghị:\*\*\s*([\s\S]*?)(?=\n\n|$)/i,
-      // Pattern cho toàn bộ section 4
       /(\*\*4\. Đánh giá rủi ro và khuyến nghị:\*\*[\s\S]*)/i,
-      // Pattern cho bất kỳ "khuyến nghị" nào
       /(khuyến nghị[:\s]*[\s\S]*?)(?=\n\n|$)/i
     ];
 
@@ -602,7 +601,6 @@ export class AnalyzeComponent implements OnInit, OnDestroy {
       if (match && match[1] && match[1].trim().length > 20) {
         let extractedText = match[1].trim();
 
-        // Nếu là toàn bộ section 4, chỉ lấy phần khuyến nghị
         if (extractedText.includes('**Đánh giá rủi ro:**')) {
           const recommendationMatch = extractedText.match(/\*\s*\*\*Khuyến nghị:\*\*\s*([\s\S]*)/i);
           if (recommendationMatch && recommendationMatch[1]) {
@@ -610,7 +608,6 @@ export class AnalyzeComponent implements OnInit, OnDestroy {
           }
         }
 
-        // Làm sạch text
         const cleanedText = this.extractCompleteSentences(extractedText);
         if (cleanedText.length > 20) {
           this.recommendations = `5. Khuyến nghị:\n${cleanedText}`;
@@ -623,20 +620,17 @@ export class AnalyzeComponent implements OnInit, OnDestroy {
   private extractCompleteSentences(text: string): string {
     if (!text || text.trim().length === 0) return text;
 
-    // Tách text thành các dòng và xử lý từng dòng
     const lines = text.split('\n');
     const processedLines: string[] = [];
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i].trim();
 
-      // Bỏ qua dòng trống
       if (!line) {
         processedLines.push('');
         continue;
       }
 
-      // Nếu là bullet point, xử lý riêng
       if (line.startsWith('-')) {
         const cleanedBullet = this.cleanBulletPoint(line);
         if (cleanedBullet.length > 10) { // Chỉ giữ bullet có nghĩa
@@ -645,20 +639,16 @@ export class AnalyzeComponent implements OnInit, OnDestroy {
         continue;
       }
 
-      // Nếu là header (có dấu :), giữ nguyên
       if (line.includes(':') && !line.endsWith('.') && !line.endsWith('!') && !line.endsWith('?')) {
         processedLines.push(line);
         continue;
       }
 
-      // Xử lý các câu thông thường
       const sentences = this.splitIntoCompleteSentences(line);
       if (sentences.length > 0) {
         processedLines.push(sentences.join(' '));
       } else {
-        // Nếu không tìm được câu hoàn chỉnh nhưng line có nội dung hợp lệ
         if (line.length > 20 && line.split(' ').length >= 4) {
-          // Thêm dấu chấm nếu cần
           let processedLine = line;
           if (!line.endsWith('.') && !line.endsWith('!') && !line.endsWith('?')) {
             processedLine += '.';
@@ -675,18 +665,15 @@ export class AnalyzeComponent implements OnInit, OnDestroy {
   private splitIntoCompleteSentences(text: string): string[] {
     if (!text || text.trim().length === 0) return [];
 
-    // Regex để tách câu (kết thúc bằng ., !, ? theo sau bởi space hoặc end)
     const sentencePattern = /[^.!?]*[.!?](?=\s|$)/g;
     const sentences = text.match(sentencePattern) || [];
 
-    // Làm sạch và filter các câu hợp lệ
     return sentences
       .map(sentence => sentence.trim())
       .filter(sentence => {
-        // Chỉ giữ các câu có ít nhất 10 ký tự và có nghĩa
         return sentence.length >= 10 &&
-               !sentence.match(/^[\s\d\.\-]+$/) && // Không chỉ toàn số và ký tự đặc biệt
-               sentence.split(' ').length >= 3; // Ít nhất 3 từ
+               !sentence.match(/^[\s\d\.\-]+$/) && 
+               sentence.split(' ').length >= 3; 
       });
   }
 
@@ -695,21 +682,16 @@ export class AnalyzeComponent implements OnInit, OnDestroy {
 
     let cleaned = bulletLine.trim();
 
-    // Loại bỏ markdown formatting
-    cleaned = cleaned.replace(/\*\*(.*?)\*\*/g, '$1'); // **text** -> text
-    cleaned = cleaned.replace(/\*(.*?)\*/g, '$1');     // *text* -> text
+    cleaned = cleaned.replace(/\*\*(.*?)\*\*/g, '$1'); 
+    cleaned = cleaned.replace(/\*(.*?)\*/g, '$1');    
 
-    // Kiểm tra xem có phải là câu hoàn chỉnh không
     const hasValidContent = cleaned.length > 15 && cleaned.split(' ').length >= 4;
     const hasValidEnding = cleaned.endsWith('.') || cleaned.endsWith('!') || cleaned.endsWith('?') || cleaned.endsWith(':');
 
-    // Đảm bảo kết thúc bằng dấu chấm nếu cần
     if (hasValidContent && !hasValidEnding) {
-      // Kiểm tra xem câu có bị cắt giữa chừng không
       const lastWords = cleaned.split(' ').slice(-3).join(' ').toLowerCase();
       const incompletePhrases = ['các', 'những', 'và', 'hoặc', 'của', 'trên', 'dưới', 'trong', 'ngoài'];
 
-      // Nếu không kết thúc bằng từ không hoàn chỉnh thì thêm dấu chấm
       if (!incompletePhrases.some(phrase => lastWords.endsWith(phrase))) {
         cleaned += '.';
       }
@@ -721,25 +703,21 @@ export class AnalyzeComponent implements OnInit, OnDestroy {
   getSafetyStatus(): string {
     if (this.riskLevelDescription) {
       const lowerCaseDescription = this.riskLevelDescription.toLowerCase();
-      // An toàn patterns
       if (lowerCaseDescription.includes('an toàn') ||
           lowerCaseDescription.includes('0/10') ||
           lowerCaseDescription.includes('không nguy hiểm')) {
         return 'An toàn';
       }
-      // Nguy cơ thấp patterns
       else if (lowerCaseDescription.includes('nguy hiểm: thấp') ||
                lowerCaseDescription.includes('nguy cơ thấp') ||
                lowerCaseDescription.includes('thấp')) {
         return 'Nguy cơ thấp';
       }
-      // Nguy cơ trung bình patterns
       else if (lowerCaseDescription.includes('nguy hiểm: trung bình') ||
                lowerCaseDescription.includes('nguy cơ trung bình') ||
                lowerCaseDescription.includes('trung bình')) {
         return 'Nguy cơ trung bình';
       }
-      // Nguy cơ cao patterns
       else if (lowerCaseDescription.includes('nguy hiểm: cao') ||
                lowerCaseDescription.includes('nguy cơ cao') ||
                lowerCaseDescription.includes('cao')) {
@@ -752,25 +730,21 @@ export class AnalyzeComponent implements OnInit, OnDestroy {
   getRiskColor(): string {
     if (this.riskLevelDescription) {
       const lowerCaseDescription = this.riskLevelDescription.toLowerCase();
-      // An toàn patterns
       if (lowerCaseDescription.includes('an toàn') ||
           lowerCaseDescription.includes('0/10') ||
           lowerCaseDescription.includes('không nguy hiểm')) {
         return 'green';
       }
-      // Nguy cơ thấp patterns
       else if (lowerCaseDescription.includes('nguy hiểm: thấp') ||
                lowerCaseDescription.includes('nguy cơ thấp') ||
                lowerCaseDescription.includes('thấp')) {
         return 'yellowgreen';
       }
-      // Nguy cơ trung bình patterns
       else if (lowerCaseDescription.includes('nguy hiểm: trung bình') ||
                lowerCaseDescription.includes('nguy cơ trung bình') ||
                lowerCaseDescription.includes('trung bình')) {
         return 'orange';
       }
-      // Nguy cơ cao patterns
       else if (lowerCaseDescription.includes('nguy hiểm: cao') ||
                lowerCaseDescription.includes('nguy cơ cao') ||
                lowerCaseDescription.includes('cao')) {
@@ -783,25 +757,21 @@ export class AnalyzeComponent implements OnInit, OnDestroy {
   getRiskIcon(): string {
     if (this.riskLevelDescription) {
       const lowerCaseDescription = this.riskLevelDescription.toLowerCase();
-      // An toàn patterns
       if (lowerCaseDescription.includes('an toàn') ||
           lowerCaseDescription.includes('0/10') ||
           lowerCaseDescription.includes('không nguy hiểm')) {
         return 'fas fa-check';
       }
-      // Nguy cơ thấp patterns
       else if (lowerCaseDescription.includes('nguy hiểm: thấp') ||
                lowerCaseDescription.includes('nguy cơ thấp') ||
                lowerCaseDescription.includes('thấp')) {
         return 'fas fa-info-circle';
       }
-      // Nguy cơ trung bình patterns
       else if (lowerCaseDescription.includes('nguy hiểm: trung bình') ||
                lowerCaseDescription.includes('nguy cơ trung bình') ||
                lowerCaseDescription.includes('trung bình')) {
         return 'fas fa-exclamation-triangle';
       }
-      // Nguy cơ cao patterns
       else if (lowerCaseDescription.includes('nguy hiểm: cao') ||
                lowerCaseDescription.includes('nguy cơ cao') ||
                lowerCaseDescription.includes('cao')) {
@@ -815,25 +785,21 @@ export class AnalyzeComponent implements OnInit, OnDestroy {
     if (this.riskLevelDescription) {
       const lowerCaseDescription = this.riskLevelDescription.toLowerCase();
 
-      // An toàn patterns
       if (lowerCaseDescription.includes('an toàn') ||
           lowerCaseDescription.includes('0/10') ||
           lowerCaseDescription.includes('không nguy hiểm')) {
         return 'Có vẻ an toàn';
       }
-      // Nguy cơ thấp patterns
       else if (lowerCaseDescription.includes('nguy hiểm: thấp') ||
                lowerCaseDescription.includes('nguy cơ thấp') ||
                lowerCaseDescription.includes('thấp')) {
         return 'Nguy cơ thấp';
       }
-      // Nguy cơ trung bình patterns
       else if (lowerCaseDescription.includes('nguy hiểm: trung bình') ||
                lowerCaseDescription.includes('nguy cơ trung bình') ||
                lowerCaseDescription.includes('trung bình')) {
         return 'Nguy cơ trung bình';
       }
-      // Nguy cơ cao patterns
       else if (lowerCaseDescription.includes('nguy hiểm: cao') ||
                lowerCaseDescription.includes('nguy cơ cao') ||
                lowerCaseDescription.includes('cao')) {
@@ -874,7 +840,6 @@ export class AnalyzeComponent implements OnInit, OnDestroy {
     }
   }
 
-  // AI Recommendations Methods
   hasAIRecommendations(): boolean {
     const hasRecommendations = !!(this.recommendations &&
            this.recommendations.trim() !== '' &&
@@ -938,18 +903,15 @@ parseAIRecommendations(text: string): string {
         continue;
       }
 
-      // Xử lý bullet points
       if (line.startsWith('-') && currentSection) {
         let content = line.substring(1).trim();
 
-        // Loại bỏ headers nếu chúng xuất hiện trong bullet points
         if (content.includes('**Lời khuyến cho người dùng:**') ||
             content.includes('**Các nguồn thông tin') ||
             content.includes('**Các biện pháp phòng ngừa')) {
           continue;
         }
 
-        // Loại bỏ markdown
         content = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
         content = content.replace(/\*(.*?)\*/g, '<em>$1</em>');
 
@@ -964,7 +926,6 @@ parseAIRecommendations(text: string): string {
       }
     }
 
-    // Đóng section cuối
     if (currentSection) {
       html += '</div></div>';
     }
@@ -1019,7 +980,6 @@ parseAIRecommendations(text: string): string {
     return html;
   }
 
-  // External Reports Methods
   getExternalReports(): ExternalCheckResponse[] {
     return this.analysisResult?.externalUrlCheckResponses || [];
   }
@@ -1108,10 +1068,10 @@ parseAIRecommendations(text: string): string {
 
   getMaliciousProgressBarClass(): string {
     const percentage = this.getMaliciousPercentage();
-    if (percentage === 0) return 'progress-safe';      // 0% nguy hiểm = an toàn
-    if (percentage <= 25) return 'progress-warning';   // 1-25% nguy hiểm = cảnh báo
-    if (percentage <= 50) return 'progress-danger';    // 26-50% nguy hiểm = nguy hiểm
-    return 'progress-critical';                        // >50% nguy hiểm = rất nguy hiểm
+    if (percentage === 0) return 'progress-safe';     
+    if (percentage <= 25) return 'progress-warning';  
+    if (percentage <= 50) return 'progress-danger';    
+    return 'progress-critical';                        
   }
 
   getFormattedDate(dateString: string | null | undefined): string {
@@ -1164,12 +1124,10 @@ parseAIRecommendations(text: string): string {
     if (container) {
       container.classList.remove('loading');
 
-      // Thêm class cho URL images để styling đặc biệt
       if (this.isUrlScreenshot()) {
         container.classList.add('url-screenshot');
         img.classList.add('url-image');
 
-        // Log dimensions cho debugging
         console.log(`URL Screenshot loaded: ${img.naturalWidth}x${img.naturalHeight}px`);
       }
     }
@@ -1191,13 +1149,11 @@ parseAIRecommendations(text: string): string {
     }
   }
 
-  // Thêm method để check xem có phải ảnh URL không
   isUrlScreenshot(imageUrl?: string): boolean {
     if (!imageUrl) return false;
     return this.analysisResult?.type === 3;
   }
 
-  // Thêm method để get image dimensions info
   getImageDisplayInfo(imageUrl: string): string {
     if (this.isUrlScreenshot(imageUrl)) {
       return 'Screenshot Website • Hiển thị full size';
@@ -1243,14 +1199,12 @@ parseAIRecommendations(text: string): string {
   }
 
   onImageClick(imageUrl: string): void {
-    // Vô hiệu hóa click cho ảnh URL
     if (this.analysisResult?.type === 3) {
-      return; // Không làm gì nếu là ảnh URL
+      return; 
     }
 
     const fullUrl = this.getFullImageUrl(imageUrl);
 
-    // Tạo modal container với enhanced styling
     const modal = document.createElement('div');
     modal.className = 'image-modal-enhanced';
     modal.style.cssText = `
@@ -1272,7 +1226,6 @@ parseAIRecommendations(text: string): string {
       padding: 20px;
     `;
 
-    // Container cho ảnh với loading state
     const imageContainer = document.createElement('div');
     const isUrlImage = fullUrl.includes('/api/v1/check-scam');
 
@@ -1287,7 +1240,6 @@ parseAIRecommendations(text: string): string {
       padding: 40px 0;
     `;
 
-    // Loading spinner
     const loadingSpinner = document.createElement('div');
     loadingSpinner.innerHTML = `
       <div style="
@@ -1307,7 +1259,6 @@ parseAIRecommendations(text: string): string {
     `;
     imageContainer.appendChild(loadingSpinner);
 
-    // Main image với scroll functionality - Đặc biệt cho URL
     const img = document.createElement('img');
 
     img.style.cssText = `
@@ -1325,7 +1276,6 @@ parseAIRecommendations(text: string): string {
       border: 2px solid rgba(255, 255, 255, 0.1);
     `;
 
-    // Close button với enhanced styling
     const closeButton = document.createElement('div');
     closeButton.innerHTML = '×';
     closeButton.style.cssText = `
@@ -1431,17 +1381,14 @@ parseAIRecommendations(text: string): string {
 
     infoPanel.innerHTML = infoContent;
 
-    // Enhanced functionality cho URL
     let isDragging = false;
     let startY = 0;
     let scrollTop = 0;
 
-    // Image load events
     img.onload = () => {
       loadingSpinner.style.display = 'none';
       img.style.opacity = '1';
 
-      // Hiển thị kích thước thực của ảnh
       const imageInfo = document.createElement('div');
       imageInfo.style.cssText = `
         position: fixed;
@@ -1484,11 +1431,9 @@ parseAIRecommendations(text: string): string {
 
     img.src = fullUrl;
 
-    // Enhanced drag to scroll functionality cho URL
     if (isUrlImage) {
       img.style.cursor = 'grab';
 
-      // Mouse drag to scroll
       img.addEventListener('mousedown', (e) => {
         e.preventDefault();
         isDragging = true;
@@ -1512,7 +1457,6 @@ parseAIRecommendations(text: string): string {
         }
       });
 
-      // Touch drag to scroll
       img.addEventListener('touchstart', (e) => {
         const touch = e.touches[0];
         startY = touch.pageY - modal.offsetTop;
@@ -1526,7 +1470,6 @@ parseAIRecommendations(text: string): string {
         modal.scrollTop = scrollTop - walk;
       });
 
-      // Fullscreen toggle
       if (fullscreenButton) {
         fullscreenButton.addEventListener('click', (e) => {
           e.stopPropagation();
@@ -1544,7 +1487,6 @@ parseAIRecommendations(text: string): string {
         });
       }
     } else {
-      // Simple click to zoom cho ảnh thường
       img.addEventListener('click', (e) => {
         e.stopPropagation();
         if (img.style.transform === 'scale(1.5)') {
@@ -1557,7 +1499,6 @@ parseAIRecommendations(text: string): string {
       });
     }
 
-    // Scroll wheel zoom cho URL
     if (isUrlImage) {
       modal.addEventListener('wheel', (e) => {
         if (e.ctrlKey) {
@@ -1582,7 +1523,6 @@ parseAIRecommendations(text: string): string {
       });
     }
 
-    // Button hover effects
     closeButton.addEventListener('mouseenter', () => {
       closeButton.style.backgroundColor = 'rgba(220, 53, 69, 1)';
       closeButton.style.transform = 'scale(1.1)';
@@ -1603,7 +1543,6 @@ parseAIRecommendations(text: string): string {
       downloadButton.style.transform = 'scale(1)';
     });
 
-    // Assemble modal
     imageContainer.appendChild(img);
     modal.appendChild(imageContainer);
     modal.appendChild(closeButton);
@@ -1614,10 +1553,8 @@ parseAIRecommendations(text: string): string {
     modal.appendChild(infoPanel);
     document.body.appendChild(modal);
 
-    // Prevent body scroll
     document.body.style.overflow = 'hidden';
 
-    // Close modal function
     const closeModal = () => {
       modal.style.opacity = '0';
       document.body.style.overflow = 'auto'; // Restore body scroll
@@ -1631,14 +1568,12 @@ parseAIRecommendations(text: string): string {
       }, 300);
     };
 
-    // ESC key handler
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         closeModal();
       }
     };
 
-    // Event listeners
     modal.addEventListener('click', (e) => {
       if (e.target === modal) {
         closeModal();
@@ -1652,29 +1587,23 @@ parseAIRecommendations(text: string): string {
 
     document.addEventListener('keydown', handleEscape);
 
-    // Show modal with animation
     setTimeout(() => {
       modal.style.opacity = '1';
     }, 10);
   }
 
-  // Method chuyển đổi markdown thành HTML
   formatText(text: string): string {
     if (!text) return '';
 
-    // Chuyển **text** thành <strong>text</strong>
     let formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
-    // Chuyển *text* thành <em>text</em>
     formatted = formatted.replace(/\*(.*?)\*/g, '<em>$1</em>');
 
-    // Chuyển \n thành <br>
     formatted = formatted.replace(/\n/g, '<br>');
 
     return formatted;
   }
 
-  // Method lấy danh sách ảnh được hiển thị (tối đa 4 ảnh)
   getDisplayedImages(): string[] {
     const allImages = this.getEvidenceImages();
     if (this.showAllImagesFlag || allImages.length <= this.maxDisplayImages) {
@@ -1683,7 +1612,6 @@ parseAIRecommendations(text: string): string {
     return allImages.slice(0, this.maxDisplayImages);
   }
 
-  // Method lấy số ảnh còn lại
   getRemainingImagesCount(): number {
     const allImages = this.getEvidenceImages();
     if (this.showAllImagesFlag || allImages.length <= this.maxDisplayImages) {
@@ -1692,17 +1620,14 @@ parseAIRecommendations(text: string): string {
     return allImages.length - this.maxDisplayImages;
   }
 
-  // Method hiển thị tất cả ảnh khi click vào "+X ảnh"
   showAllImages(): void {
     this.showAllImagesFlag = true;
   }
 
-  // CAROUSEL NAVIGATION METHODS
   getCurrentImage(): string {
     const images = this.getEvidenceImages();
     if (images.length === 0) return '';
 
-    // Đảm bảo index hợp lệ
     if (this.currentImageIndex >= images.length) {
       this.currentImageIndex = 0;
     }
@@ -1736,7 +1661,6 @@ parseAIRecommendations(text: string): string {
     }
   }
 
-  // KEYBOARD NAVIGATION
   onKeyDown(event: KeyboardEvent): void {
     if (!this.getEvidenceImages().length) return;
 
@@ -1757,22 +1681,21 @@ parseAIRecommendations(text: string): string {
         event.preventDefault();
         this.currentImageIndex = this.getEvidenceImages().length - 1;
         break;
-      case ' ': // Spacebar to toggle auto-play
+      case ' ': 
         event.preventDefault();
         this.toggleAutoPlay();
         break;
     }
   }
 
-  // AUTO-PLAY FUNCTIONALITY
   startAutoPlay(): void {
     if (this.getEvidenceImages().length <= 1) return;
 
-    this.stopAutoPlay(); // Dừng auto-play hiện tại nếu có
+    this.stopAutoPlay(); 
     this.isAutoPlayEnabled = true;
     this.autoPlayInterval = setInterval(() => {
       this.nextImage();
-    }, 4000); // Chuyển ảnh mỗi 4 giây
+    }, 4000); 
   }
 
   stopAutoPlay(): void {
@@ -1791,17 +1714,25 @@ parseAIRecommendations(text: string): string {
     }
   }
 
-  // Pause auto-play khi hover vào carousel
   onCarouselMouseEnter(): void {
     if (this.isAutoPlayEnabled) {
       this.stopAutoPlay();
     }
   }
 
-  // Resume auto-play khi rời khỏi carousel
   onCarouselMouseLeave(): void {
     if (this.getEvidenceImages().length > 1 && !this.isAutoPlayEnabled) {
       this.startAutoPlay();
     }
+  }
+
+  onAiTuVanClicked(): void {
+    debugger
+    this.showChatbox = true;
+  }
+
+  closeChatbox(): void {
+    debugger
+    this.showChatbox = false;
   }
 }

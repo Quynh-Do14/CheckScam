@@ -1,12 +1,10 @@
-/* news-detail.component.css */
 
-/* --- Tổng quan định dạng container --- */
 .news-page-container {
     display: flex;
-    gap: 25px; /* Tăng khoảng cách giữa cột chính và sidebar */
-    padding: 30px 20px; /* Tăng đệm trên dưới và thêm đệm ngang */
-    max-width: 1200px; /* Giới hạn chiều rộng tối đa của container */
-    margin: 0 auto; /* Căn giữa container */
+    gap: 25px; 
+    padding: 30px 20px;
+    max-width: 1200px; 
+    margin: 0 auto;
 }
 
 .news-main-column {
@@ -16,23 +14,22 @@
 
 .news-sidebar-column {
     flex: 1;
-    min-width: 280px; /* Tăng chiều rộng tối thiểu cho sidebar */
+    min-width: 280px; 
     max-width: 350px;
 }
 
-/* --- Định dạng chung cho Card --- */
 .card {
     background-color: #fff;
-    border-radius: 10px; /* Bo tròn hơn */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); /* Đổ bóng rõ hơn */
-    padding: 30px; /* Tăng đệm bên trong card */
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); 
+    padding: 20px; 
     margin-bottom: 20px;
+    margin-top: 50px;
 }
 
-/* --- Phần nút quay lại --- */
 .back-button-container {
-    margin-bottom: 25px; /* Tăng khoảng cách dưới */
-    margin-top: 15px; /* Giảm khoảng cách trên nếu cần */
+    margin-bottom: 25px;
+    margin-top: 15px;
 }
 
 .btn-back {
@@ -59,20 +56,17 @@
     }
 }
 
-/* --- Tiêu đề bài viết --- */
 .news-title {
-    font-size: 2.5em; /* Kích thước chữ lớn hơn */
+    font-size: 2.5em; 
     color: #222;
-    margin-bottom: 18px;
     line-height: 1.2;
-    font-weight: 700; /* Đậm hơn */
+    font-weight: 700; 
 }
 
-/* --- Thông tin meta (ngày, chia sẻ) --- */
 .news-meta {
     display: flex;
     align-items: center;
-    gap: 20px; /* Tăng khoảng cách */
+    gap: 20px; 
     color: #777;
     font-size: 0.95em;
     margin-bottom: 20px;

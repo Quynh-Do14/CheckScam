@@ -1,0 +1,295 @@
+<app-header></app-header>
+
+<div class="main-search-container-analyze">
+  <div class="search-type-buttons">
+    <button class="type-btn"
+            [class.active]="currentSearchType === 1"
+            (click)="selectSearchType(1)"
+            [disabled]="isSearching">
+      <i class="fas fa-mobile-alt"></i>
+      <span>Số điện thoại</span>
+    </button>
+
+    <button class="type-btn"
+            [class.active]="currentSearchType === 2"
+            (click)="selectSearchType(2)"
+            [disabled]="isSearching">
+      <i class="fas fa-university"></i>
+      <span>Số tài khoản</span>
+    </button>
+
+    <button class="type-btn"
+            [class.active]="currentSearchType === 3"
+            (click)="selectSearchType(3)"
+            [disabled]="isSearching">
+      <i class="fas fa-globe"></i>
+      <span>URL/Website</span>
+    </button>
+  </div>
+
+  <div class="search-input-group-analyze" [class.loading]="isSearching">
+    <input type="text" class="search-input-analyze"
+           [placeholder]="getSearchPlaceholder()"
+           [(ngModel)]="currentSearchInfo"
+           [disabled]="isSearching"
+           (keydown.enter)="analyzeNewInput()">
+    <button class="search-button-analyze" (click)="analyzeNewInput()" [disabled]="!currentSearchInfo.trim() || isSearching">
+      <i *ngIf="!isSearching" [class]="getSearchInputTypeIcon()"></i>
+      <i *ngIf="isSearching" class="fas fa-spinner fa-spin"></i>
+    </button>
+  </div>
+
+  <div *ngIf="errorMessage" class="error-message-analyze">
+    {{ errorMessage }}
+  </div>
+</div>
+
+<main class="analyze-container" *ngIf="hasValidAnalysisData()">
+
+  <div *ngIf="isInitialLoading" class="loading-overlay">
+    <div class="loading-content">
+      <div class="loading-spinner-large">
+        <i class="fas fa-shield-alt fa-spin"></i>
+      </div>
+      <h3>Phân tích an toàn</h3>
+      <p>Đang kiểm tra thông tin và phân tích mức độ rủi ro...</p>
+      <div class="loading-progress">
+        <div class="progress-bar animated"></div>
+      </div>
+    </div>
+  </div>
+
+  <div [class.content-loading]="isInitialLoading">
+    <div class="analyze-header">
+      <h2><i [class]="getInputTypeIcon()"></i> {{ inputInfo }}</h2>
+      <div class="status-box" [ngClass]="getRiskColor()">
+        <p class="status-text">{{ getSafetyStatus() }}</p>
+      </div>
+    </div>
+
+  <div class="analysis-content">
+    <div class="analysis-column left-column">
+      <div class="section external-reports">
+        <h3><i class="fas fa-file-alt"></i> Báo cáo từ các nguồn</h3>
+
+        <div class="reports-summary" *ngIf="getExternalReports().length > 0">
+          <div class="summary-stats">
+            <span class="safe-count">{{ getMaliciousReportsCount() }}</span>
+            <span class="total-count">/{{ getDisplayTotalReportsCount() }}</span>
+            <span class="summary-text">nguồn phát hiện nguy hiểm</span>
+          </div>
+          <div class="summary-progress">
+            <div class="progress-bar" [style.width]="getMaliciousPercentage() + '%'" [ngClass]="getMaliciousProgressBarClass()"></div>
+          </div>
+        </div>
+
+        <div class="reports-grid-cards" *ngIf="getExternalReports().length > 0">
+          <div class="report-card"
+               *ngFor="let report of getExternalReports()"
+               [ngClass]="getReportCardClass(report)">
+            <div class="card-icon">
+              <i [ngClass]="getProviderIcon(report.provider)"></i>
+            </div>
+            <div class="card-content">
+              <h4 class="provider-name">{{ getProviderDisplayName(report.provider) }}</h4>
+              <div class="status-badge" [ngClass]="getStatusBadgeClass(report)">
+                <i [ngClass]="getStatusIcon(report)"></i>
+                <span>{{ getStatusText(report) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="no-external-reports" *ngIf="getExternalReports().length === 0">
+          <div class="no-reports-icon">
+            <i class="fas fa-search"></i>
+          </div>
+          <p class="no-reports-text">Không tìm thấy báo cáo</p>
+          <small class="no-reports-desc">Chưa có dữ liệu từ các nguồn bảo mật</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="analysis-column center-column">
+      <div class="section ai-analysis-summary">
+        <h3><i class="fas fa-robot"></i> Phân tích AI</h3>
+        <div class="ai-analysis-container">
+          <div class="risk-circle" [ngClass]="getRiskColor()">
+            <i class="risk-icon" [ngClass]="getRiskIcon()"></i>
+          </div>
+          <div class="risk-status">
+            <span class="risk-text">{{ getRiskStatusText() }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section discovery-details">
+        <h3><i class="fas fa-search"></i> Phát hiện chi tiết</h3>
+        <div class="timeline-container">
+          <div class="timeline-item">
+            <div class="timeline-marker"></div>
+            <div class="timeline-line"></div>
+            <div class="timeline-content">
+              <h4>Dữ liệu phân tích</h4>
+              <div class="timeline-stats">
+                <span class="stat-item">{{ analysisResult?.verifiedCount || 0 }} báo cáo</span>
+                <span class="stat-divider">|</span>
+                <span class="stat-item">{{ analysisResult?.moneyScam || 'N/A' }} lừa đảo</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="timeline-item">
+            <div class="timeline-marker"></div>
+            <div class="timeline-line"></div>
+            <div class="timeline-content">
+              <div [innerHTML]="detailedAnalysis"></div>
+            </div>
+          </div>
+          <!-- <div class="timeline-item">
+            <div class="timeline-marker"></div>
+            <div class="timeline-content">
+              <h4>Mức độ rủi ro</h4>
+              <div class="risk-level-display">
+                <span class="risk-icon" [ngClass]="getRiskIcon()" [style.color]="getRiskIconColor()"></span>
+                <span class="risk-text">{{ getRiskStatusText() }} - {{ getRiskAdvice() }}</span>
+              </div>
+            </div>
+          </div> -->
+        </div>
+      </div>
+
+      <div class="section recommendations-details">
+        <h3><i class="fas fa-lightbulb"></i> Khuyến nghị an toàn</h3>
+        <div class="recommendations-container">
+          <div class="recommendation-divider"></div>
+
+          <div *ngIf="hasAIRecommendations()" class="ai-recommendations-wrapper">
+            <div class="parsed-ai-recommendations" [innerHTML]="parseAIRecommendations(recommendations)"></div>
+          </div>
+
+          <div *ngIf="!hasAIRecommendations()" class="no-recommendations">
+            <div class="no-recommendations-icon">
+              <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <p class="no-recommendations-text">Chưa có khuyến nghị từ hệ thống</p>
+            <small class="no-recommendations-desc">Khuyến nghị sẽ được cập nhật khi có dữ liệu phân tích</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="analysis-column right-column">
+      <div class="section screenshot-capture compact">
+        <h3><i class="fas fa-camera"></i> Ghi hình trực tiếp <span class="evidence-count">({{ getEvidenceImages().length }})</span></h3>
+        <div class="screenshot-gallery" *ngIf="getEvidenceImages().length > 0; else noImages">
+          <div class="gallery-header">
+            <h4><i class="fas fa-images"></i> Bằng chứng hình ảnh</h4>
+            <span class="image-count">{{ getEvidenceImages().length }} ảnh</span>
+          </div>
+
+          <div class="images-carousel-container"
+               [class.url-container]="isUrlScreenshot()"
+               (mouseenter)="onCarouselMouseEnter()"
+               (mouseleave)="onCarouselMouseLeave()">
+            <button class="carousel-nav-btn prev-btn"
+                    *ngIf="getEvidenceImages().length > 1"
+                    (click)="previousImage()"
+                    [disabled]="currentImageIndex === 0"
+                    title="Ảnh trước (←)">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+
+            <div class="images-container carousel-mode">
+              <div class="screenshot-item main-image"
+                   [class.url-main-image]="isUrlScreenshot()"
+                   *ngIf="getEvidenceImages().length > 0">
+                <div class="image-container loading"
+                     [class.url-screenshot]="isUrlScreenshot()">
+
+                  <div *ngIf="isUrlScreenshot()" class="url-scroll-container">
+                    <img [src]="getFullImageUrl(getCurrentImage())"
+                         [alt]="'Bằng chứng ' + (currentImageIndex + 1)"
+                         class="screenshot-img main url-image"
+                         (error)="onImageError($event)"
+                         (load)="onImageLoad($event)"
+                         (click)="onImageClick(getCurrentImage())"
+                         loading="lazy"
+                         style="cursor: pointer;">
+                  </div>
+
+                  <img *ngIf="!isUrlScreenshot()"
+                       [src]="getFullImageUrl(getCurrentImage())"
+                       [alt]="'Bằng chứng ' + (currentImageIndex + 1)"
+                       class="screenshot-img main"
+                       (error)="onImageError($event)"
+                       (load)="onImageLoad($event)"
+                       (click)="onImageClick(getCurrentImage())"
+                       loading="lazy"
+                       style="cursor: pointer;">
+
+                  <div class="loading-spinner" *ngIf="!imageLoaded">
+                    <i class="fas fa-spinner fa-spin"></i>
+                  </div>
+                </div>
+              </div>
+
+              <div class="thumbnails-container" *ngIf="getEvidenceImages().length > 1">
+                <div class="thumbnail-item"
+                     *ngFor="let imageUrl of getEvidenceImages(); let i = index"
+                     [class.active]="i === currentImageIndex"
+                     (click)="goToImage(i)"
+                     [title]="'Ảnh ' + (i + 1)">
+                  <img [src]="getFullImageUrl(imageUrl)"
+                       [alt]="'Thumbnail ' + (i + 1)"
+                       class="thumbnail-img"
+                       loading="lazy">
+                </div>
+              </div>
+            </div>
+
+            <button class="carousel-nav-btn next-btn"
+                    *ngIf="getEvidenceImages().length > 1"
+                    (click)="nextImage()"
+                    [disabled]="currentImageIndex === getEvidenceImages().length - 1"
+                    title="Ảnh tiếp theo (→)">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+          </div>
+
+          <div class="carousel-controls" *ngIf="getEvidenceImages().length > 1">
+            <div class="image-counter">
+              <span class="current">{{ currentImageIndex + 1 }}</span> /
+              <span class="total">{{ getEvidenceImages().length }}</span>
+            </div>
+
+            <button class="auto-play-btn"
+                    (click)="toggleAutoPlay()"
+                    [class.active]="isAutoPlayEnabled"
+                    title="Bật/tắt tự động chuyển ảnh (Space)">
+              <i class="fas" [ngClass]="isAutoPlayEnabled ? 'fa-pause' : 'fa-play'"></i>
+            </button>
+          </div>
+        </div>
+        <ng-template #noImages>
+          <div class="screenshot-placeholder compact">
+            <i class="fas fa-exclamation-triangle fa-2x" style="color: #ffa500;"></i>
+            <p>Không thể ghi hình website</p>
+            <small>Website không thể truy cập hoặc không tồn tại</small>
+          </div>
+        </ng-template>
+
+      </div>
+    </div>
+  </div>
+  </div>  </main>
+
+<div class="no-result-placeholder" *ngIf="!hasValidAnalysisData()">
+  <div class="placeholder-content">
+    <i class="fas fa-search fa-3x"></i>
+    <h3>Nhập thông tin để bắt đầu phân tích</h3>
+    <p>Sử dụng thanh tìm kiếm ở trên để kiểm tra số điện thoại, URL hoặc số tài khoản</p>
+  </div>
+</div>
+
+<app-footer></app-footer>

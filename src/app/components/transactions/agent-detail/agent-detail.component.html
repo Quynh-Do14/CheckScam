@@ -1,0 +1,153 @@
+<app-header></app-header>
+
+<div class="agent-detail-page">
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="isLoading">
+    <div class="loading-content">
+      <div class="loading-spinner">
+        <div class="spinner"></div>
+      </div>
+      <p>Đang tải thông tin giao dịch viên...</p>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div class="error-container" *ngIf="error && !isLoading">
+    <div class="error-content">
+      <div class="error-icon">
+        <i class="fas fa-exclamation-triangle"></i>
+      </div>
+      <h2>Có lỗi xảy ra</h2>
+      <p>{{ error }}</p>
+      <div class="error-actions">
+        <button class="retry-button" (click)="retryLoad()">
+          <i class="fas fa-redo"></i>
+          Thử lại
+        </button>
+        <button class="back-button" (click)="goBack()">
+          <i class="fas fa-arrow-left"></i>
+          Quay lại
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Agent Detail Content -->
+  <div class="detail-content" *ngIf="agent && !isLoading && !error">
+    <div class="container">
+      <!-- Back Button -->
+      <div class="back-navigation">
+        <button class="back-btn" (click)="goBack()">
+          <i class="fas fa-arrow-left"></i>
+          Quay lại danh sách
+        </button>
+      </div>
+
+      <!-- Agent Header -->
+      <div class="agent-header">
+        <div class="agent-avatar-section">
+          <div class="avatar-container">
+            <img 
+              [src]="agent.avatar" 
+              [alt]="agent.name" 
+              class="agent-avatar"
+              (error)="onImageError($event, agent.name)">
+          </div>
+        </div>
+        
+        <div class="agent-info-section">
+          <h1 class="agent-name">{{ agent.name }}</h1>
+          <p class="agent-email">
+            <i class="fas fa-envelope"></i>
+            {{ agent.email }}
+          </p>
+          
+          <div class="agent-roles">
+            <span 
+              class="role-badge" 
+              [class]="getRoleBadgeClass(role.name)"
+              *ngFor="let role of agent.roles">
+              {{ getRoleDisplayName(role.name) }}
+            </span>
+          </div>
+          
+          <div class="agent-meta">
+            <div class="meta-item">
+              <i class="fas fa-calendar-alt"></i>
+              <span>Tham gia: {{ formatDate(agent.createdAt) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Agent Description -->
+      <div class="agent-description" *ngIf="agent.description">
+        <h2 class="section-title">
+          <i class="fas fa-info-circle"></i>
+          Mô tả
+        </h2>
+        <div class="description-content">
+          <p>{{ agent.description }}</p>
+        </div>
+      </div>
+
+      <!-- Contact Profiles -->
+      <div class="contact-profiles" *ngIf="agent.profiles && agent.profiles.length > 0">
+        <h2 class="section-title">
+          <i class="fas fa-address-book"></i>
+          Thông tin liên hệ
+        </h2>
+        <div class="profiles-grid">
+          <div 
+            class="profile-card" 
+            *ngFor="let profile of agent.profiles"
+            (click)="onContactClick(profile)">
+            <div class="profile-icon">
+              <i [class]="getProfileIcon(profile.nameInfo)"></i>
+            </div>
+            <div class="profile-info">
+              <h3 class="profile-name">{{ profile.nameInfo }}</h3>
+              <p class="profile-link">{{ profile.info }}</p>
+            </div>
+            <div class="profile-action">
+              <i class="fas fa-external-link-alt"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- No Contact Info -->
+      <div class="no-contact" *ngIf="!agent.profiles || agent.profiles.length === 0">
+        <div class="no-contact-content">
+          <i class="fas fa-phone-slash"></i>
+          <h3>Chưa có thông tin liên hệ</h3>
+          <p>Giao dịch viên này chưa cung cấp thông tin liên hệ.</p>
+        </div>
+      </div>
+
+      <!-- Contact Actions -->
+      <div class="contact-actions">
+        <h2 class="section-title">
+          <i class="fas fa-handshake"></i>
+          Liên hệ giao dịch
+        </h2>
+        <div class="action-buttons">
+          <button class="action-btn primary">
+            <i class="fas fa-comments"></i>
+            Nhắn tin
+          </button>
+          <button class="action-btn secondary">
+            <i class="fas fa-phone"></i>
+            Gọi điện
+          </button>
+          <button class="action-btn tertiary">
+            <i class="fas fa-calendar-plus"></i>
+            Đặt lịch hẹn
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

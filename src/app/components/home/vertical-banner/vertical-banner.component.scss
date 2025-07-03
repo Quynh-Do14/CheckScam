@@ -1,0 +1,223 @@
+.vertical-banner {
+  position: sticky;
+  top: 100px;
+  width: 200px;
+  min-height: 600px;
+  z-index: 50;
+  
+  &.left-banner {
+    margin-right: 20px;
+  }
+  
+  &.right-banner {
+    margin-left: 20px;
+  }
+  
+  @media (max-width: 1200px) {
+    display: none; // Ẩn banner trên màn hình nhỏ hơn
+  }
+}
+
+.banner-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(251, 146, 60, 0.15);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(251, 146, 60, 0.25);
+  }
+}
+
+.banner-header {
+  text-align: center;
+  position: relative;
+  
+  .banner-icon {
+    background: #ffffff;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    
+    i {
+      font-size: 20px;
+      color: #ea580c;
+    }
+  }
+  
+  .banner-title-small {
+    color: #8b4513;
+    margin: 0 0 8px 0;
+    font-size: 12px;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-family: "Inter", sans-serif;
+    letter-spacing: 1px;
+  }
+  
+  .banner-title-main {
+    color: #8b4513;
+    margin: 0;
+    font-size: 14px;
+    font-weight: 800;
+    font-family: "Inter", sans-serif;
+    letter-spacing: 0.8px;
+  }
+}
+
+.banner-content {
+  text-align: center;
+  gap: 20px;
+  
+  .content-text {
+    margin-bottom: 20px;
+    
+    .main-message {
+      color: #8b4513;
+      margin: 0 0 8px 0;
+      font-size: 16px;
+      font-weight: 800;
+      font-family: "Inter", sans-serif;
+      letter-spacing: 0.5px;
+      line-height: 1.2;
+    }
+    
+    .divider {
+      width: 48px;
+      height: 3px;
+      background: linear-gradient(90deg, #fb923c, #fbbf24, #fb923c);
+      margin: 12px auto;
+      border-radius: 2px;
+    }
+  }
+  
+  .button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 0 24px;
+    margin-bottom: 20px;
+    
+    .contact-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      outline: none;
+      
+      &:focus {
+        outline: 2px solid rgba(251, 146, 60, 0.4);
+        outline-offset: 2px;
+      }
+      
+      &:active {
+        transform: translateY(0) !important;
+      }
+    }
+  }
+}
+
+.contact-card {
+  .contact-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+    
+    i {
+      color: #ea580c;
+      font-size: 10px;
+      min-width: 12px;
+    }
+    
+    span {
+      font-size: 9px;
+      font-weight: 600;
+      color: #525252;
+      font-family: "Inter", sans-serif;
+    }
+  }
+}
+
+// Animations
+@keyframes bannerFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.banner-card {
+  animation: bannerFloat 4s ease-in-out infinite;
+  
+  &:hover {
+    animation-play-state: paused;
+  }
+}
+
+// Responsive design cho tablet
+@media (max-width: 1400px) {
+  .vertical-banner {
+    width: 180px;
+    
+    .banner-content .content-text .main-message {
+      font-size: 14px;
+    }
+    
+    .banner-header {
+      .banner-icon {
+        width: 40px;
+        height: 40px;
+        
+        i {
+          font-size: 18px;
+        }
+      }
+      
+      .banner-title-small {
+        font-size: 11px;
+      }
+      
+      .banner-title-main {
+        font-size: 13px;
+      }
+    }
+  }
+}
+
+@media (max-width: 1300px) {
+  .vertical-banner {
+    width: 160px;
+    min-height: 500px;
+    
+    .banner-card {
+      min-height: 500px;
+    }
+    
+    .banner-content .content-text .main-message {
+      font-size: 13px;
+    }
+    
+    .banner-content .button-container .contact-button {
+      font-size: 10px !important;
+      min-width: 120px !important;
+      height: 40px !important;
+      padding: 0 16px !important;
+    }
+  }
+}

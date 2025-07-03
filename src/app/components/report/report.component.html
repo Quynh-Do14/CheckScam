@@ -1,0 +1,56 @@
+<app-header (aiTuVanClicked)="onAiTuVanClicked()"></app-header>
+<div class="report-page">
+  <div class="container">
+    <header class="page-header">
+      <h1>Báo Cáo Lừa Đảo</h1>
+      <!-- <p class="subtitle">Hãy chung tay xây dựng cộng đồng mạng an toàn!</p> -->
+    </header>
+
+    <section class="info-block">
+      <p>
+        Chung tay vì một cộng đồng mạng lành mạnh! Khi bạn phát hiện hoạt động đáng ngờ 
+        hay muốn làm rõ những thông tin không chính xác ảnh hưởng đến uy tín, 
+        hãy gửi báo cáo cho chúng tôi. Sự chủ động của bạn chính là nền tảng giúp 
+        AI6 duy trì môi trường tin cậy, bảo vệ tất cả người dùng khỏi các rủi ro tiềm ẩn. Cảm ơn bạn rất nhiều vì đã cùng chúng tôi tạo nên giá trị này!
+      </p>
+    </section>
+
+    <div class="button-group">
+      <button class="btn-report" (click)="goToReportCreate()">
+        <span class="icon">!</span> Báo cáo lừa đảo
+      </button>
+      <button class="btn-complaint" (click)="goToReportMistake()">
+        <span class="icon">X</span> Khiếu nại báo cáo sai
+      </button>
+    </div>
+
+    <section class="faq-section">
+      <h2 class="section-title">Câu hỏi thường gặp</h2>
+      <div class="faq-item">
+        <h3>1. Làm thế nào để biết đó là lừa đảo?</h3>
+        <p>
+          Bạn nên cảnh giác với các yêu cầu thông tin cá nhân nhạy cảm, các ưu đãi quá hấp dẫn,
+          tin nhắn hoặc email đáng ngờ, và các trang web có URL lạ hoặc chất lượng kém.
+          Hãy luôn kiểm tra thông tin kỹ lưỡng trước khi hành động.
+        </p>
+      </div>
+      <div class="faq-item">
+        <h3>2. Thông tin nào cần cung cấp khi báo cáo?</h3>
+        <p>
+          Để báo cáo hiệu quả, vui lòng cung cấp càng nhiều thông tin càng tốt như:
+          URL trang web lừa đảo, số điện thoại liên hệ, tên tài khoản mạng xã hội,
+          ảnh chụp màn hình, mô tả chi tiết về sự việc, v.v.
+        </p>
+      </div>
+      <div class="faq-item">
+        <h3>3. Khi nào tôi nên gửi khiếu nại?</h3>
+        <p>
+          Nếu bạn tin rằng một báo cáo hoặc đánh giá trên AI6 là không chính xác hoặc
+          không có căn cứ, bạn có thể gửi khiếu nại kèm theo bằng chứng để chúng tôi xem xét lại.
+        </p>
+      </div>
+    </section>
+  </div>
+</div>
+<app-chat-box *ngIf="showChatbox" (close)="closeChatbox()"></app-chat-box>
+<app-footer></app-footer>

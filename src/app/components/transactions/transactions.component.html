@@ -1,0 +1,125 @@
+<app-header></app-header>
+
+<div class="transactions-page">
+  <div class="page-header">
+    <div class="container">
+      <h1 class="page-title">
+        <i class="fas fa-exchange-alt"></i>
+        Giao Dịch Viên
+      </h1>
+      <p class="page-subtitle">Kết nối với các chuyên gia giao dịch uy tín và chuyên nghiệp</p>
+    </div>
+  </div>
+
+  <div class="search-section">
+    <div class="container">
+      <div class="search-container">
+        <div class="search-box">
+          <i class="fas fa-search search-icon"></i>
+          <input 
+            type="text" 
+            class="search-input" 
+            placeholder="Tìm kiếm giao dịch viên theo tên hoặc email..."
+            [(ngModel)]="searchQuery"
+            (input)="onSearch()"
+            (keydown.enter)="onSearch()"
+            [disabled]="isLoading">
+          <button 
+            *ngIf="searchQuery" 
+            class="clear-search-btn" 
+            (click)="clearSearch()"
+            title="Xóa tìm kiếm">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <button class="search-button" (click)="onSearch()" [disabled]="isLoading">
+          <i class="fas fa-search"></i>
+          Tìm kiếm
+        </button>
+      </div>
+      
+      <div class="search-results-info" *ngIf="searchQuery && !isLoading">
+        <p>Tìm thấy <strong>{{ filteredAgents.length }}</strong> giao dịch viên cho "{{ searchQuery }}"</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="agents-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Danh Sách Giao Dịch Viên</h2>
+        <p class="section-subtitle" *ngIf="!isLoading">{{ filteredAgents.length }} giao dịch viên có sẵn</p>
+      </div>
+
+      <!-- Loading State -->
+      <div class="loading-state" *ngIf="isLoading">
+        <div class="loading-spinner">
+          <div class="spinner"></div>
+        </div>
+        <p>Đang tải danh sách giao dịch viên...</p>
+      </div>
+
+      <!-- Error State -->
+      <div class="error-state" *ngIf="error && !isLoading">
+        <div class="error-icon">
+          <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h3>Có lỗi xảy ra</h3>
+        <p>{{ error }}</p>
+        <button class="retry-button" (click)="retryLoad()">
+          <i class="fas fa-redo"></i>
+          Thử lại
+        </button>
+      </div>
+
+      <!-- Agents Grid -->
+      <div class="agents-grid" *ngIf="!isLoading && !error && filteredAgents.length > 0">
+        <div 
+          class="agent-card" 
+          *ngFor="let agent of filteredAgents; trackBy: trackByAgentId"
+          (click)="onAgentClick(agent)">
+          
+          <div class="agent-avatar-container">
+            <img 
+              [src]="agent.avatar" 
+              [alt]="agent.name" 
+              class="agent-avatar"
+              (error)="onImageError($event, agent.name)">
+          </div>
+
+          <div class="agent-name">{{ agent.name }}</div>
+          
+          <!-- Optional: Show email on hover or as subtitle -->
+          <div class="agent-email" *ngIf="agent.email">{{ agent.email }}</div>
+        </div>
+      </div>
+
+      <!-- No Results -->
+      <div class="no-results" *ngIf="!isLoading && !error && filteredAgents.length === 0 && searchQuery">
+        <div class="no-results-icon">
+          <i class="fas fa-search"></i>
+        </div>
+        <h3>Không tìm thấy giao dịch viên</h3>
+        <p>Không có giao dịch viên nào phù hợp với từ khóa "{{ searchQuery }}"</p>
+        <button class="clear-search-btn-large" (click)="clearSearch()">
+          Xem tất cả giao dịch viên
+        </button>
+      </div>
+
+      <!-- Empty State (no agents at all) -->
+      <div class="no-results" *ngIf="!isLoading && !error && allAgents.length === 0">
+        <div class="no-results-icon">
+          <i class="fas fa-users"></i>
+        </div>
+        <h3>Chưa có giao dịch viên</h3>
+        <p>Hiện tại chưa có giao dịch viên nào trong hệ thống</p>
+        <button class="retry-button" (click)="retryLoad()">
+          <i class="fas fa-redo"></i>
+          Tải lại
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

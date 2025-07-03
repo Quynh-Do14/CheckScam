@@ -1,0 +1,111 @@
+<div class="main-content-container">
+  <div class="card modern-card">
+    <div class="card-header modern-card-header">
+      <h6 class="card-title">Danh sách tài khoản</h6>
+      <div class="action-buttons-in-header">
+        <button class="btn btn-primary-gradient create-user-btn" (click)="openDialogCreateUser()">
+          <i class="fas fa-plus icon-margin-right"></i>
+          Thêm tài khoản
+        </button>
+      </div>
+    </div>
+    <div class="card-body modern-card-body">
+      <div class="table-container">
+        <div class="table-responsive">
+          <table class="table modern-table" width="100%" cellspacing="0" role="grid">
+            <thead>
+              <tr role="row">
+                <th>ID</th>
+                <th>Tên người dùng</th>
+                <th>Vai trò</th>
+                <th>Ngày tạo</th>
+                <th class="action-column-header">Hành động</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let account of pagedAccounts"> <td>{{ account.id }}</td>
+                <td>
+                  <div class="user-name">{{ account.name }}</div>
+                  <div class="user-email">{{ account.email }}</div>
+                </td>
+                <td>{{ account.roles && account.roles.length > 0 ? account.roles[0].name : 'N/A' }}</td>
+                <td>{{ account.createdAt | date:'HH:mm dd/MM/yyyy' }}</td>
+                <td class="action-column">
+                  <button class="btn action-btn edit-btn" (click)="openDialogUpdateUser(account)">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                  </button>
+                  <button class="btn action-btn delete-btn" (click)="openDeleteConfirmModal(account.id)">
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="pagedAccounts.length === 0"> <td colspan="5" class="text-center py-4">Không có tài khoản nào để hiển thị.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="pagination-controls" *ngIf="totalPages > 1">
+        <button class="btn btn-pagination" [disabled]="currentPage === 1" (click)="goToPage(1)">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+        <button class="btn btn-pagination" [disabled]="currentPage === 1" (click)="prevPage()">
+          <i class="fas fa-angle-left"></i>
+        </button>
+        <ng-container *ngFor="let page of getPaginationPages()">
+          <button
+            class="btn btn-pagination page-number"
+            [class.active]="page === currentPage"
+            (click)="goToPage(page)">
+            {{ page }}
+          </button>
+        </ng-container>
+        <button class="btn btn-pagination" [disabled]="currentPage === totalPages" (click)="nextPage()">
+          <i class="fas fa-angle-right"></i>
+        </button>
+        <button class="btn btn-pagination" [disabled]="currentPage === totalPages" (click)="goToPage(totalPages)">
+          <i class="fas fa-angle-double-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="confirmation-modal-overlay" *ngIf="isDeleteConfirmModalOpen" (click)="closeDeleteConfirmModal()">
+  <div class="confirmation-modal" (click)="$event.stopPropagation()">
+    <div class="modal-icon delete-icon">
+      <i class="fa-solid fa-trash-alt"></i>
+    </div>
+    <div class="modal-content">
+      <h3 class="modal-title">Xác nhận xóa tài khoản</h3>
+      <p class="modal-message">Bạn có chắc chắn muốn <strong>xóa</strong> tài khoản này không? Hành động này không thể hoàn tác.</p>
+      <div class="modal-actions">
+        <button class="btn btn-delete" (click)="deleteUserConfirmed(selectedUserIdForModal!)">
+          <i class="fa-solid fa-trash"></i>
+          Xóa
+        </button>
+        <button class="btn btn-cancel" (click)="closeDeleteConfirmModal()">
+          <i class="fa-solid fa-times"></i>
+          Hủy
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="success-message-overlay" *ngIf="isSuccessMessageVisible" (click)="closeSuccessMessage()">
+    <div class="success-message-modal" (click)="$event.stopPropagation()">
+        <div class="modal-icon success-icon-pair"> <i class="fas fa-check check-1"></i>
+            <i class="fas fa-check check-2"></i>
+        </div>
+        <div class="modal-content">
+            <h3 class="modal-title">{{ successMessageTitle }}</h3>
+            <p class="modal-message" [innerHTML]="successMessageContent"></p>
+            <div class="modal-actions">
+                <button class="btn btn-ok" (click)="closeSuccessMessage()">
+                    Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

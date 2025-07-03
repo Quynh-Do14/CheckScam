@@ -1,0 +1,79 @@
+<div class="activity-widget">
+  <div class="widget-header">
+    <div class="widget-title">
+      <span class="icon">🔄</span>
+      <h3>Hoạt động gần đây</h3>
+      <div class="connection-status" [class.connected]="isConnected"></div>
+    </div>
+    <a routerLink="/activity-feed" class="view-all-link">
+      Xem tất cả <i class="fas fa-arrow-right"></i>
+    </a>
+  </div>
+
+  <div class="widget-content">
+    <div *ngIf="isLoading" class="loading">
+      <div class="spinner"></div>
+      <span>Đang tải...</span>
+    </div>
+
+    <div *ngIf="!isLoading && !isConnected" class="error-state">
+      <span class="error-icon">⚠️</span>
+      <p>Không thể kết nối đến hệ thống theo dõi</p>
+    </div>
+
+    <div *ngIf="!isLoading && isConnected && recentActivities.length === 0" class="empty-state">
+      <span class="empty-icon">📭</span>
+      <p>Chưa có hoạt động nào</p>
+    </div>
+
+    <div *ngIf="!isLoading && recentActivities.length > 0" class="activity-list">
+      <div *ngFor="let activity of recentActivities" 
+           class="activity-item" 
+           [ngClass]="getRiskClass(activity)"
+           (click)="onActivityClick(activity)"
+           [style.cursor]="canNavigate(activity) ? 'pointer' : 'default'">
+        
+        <div class="activity-avatar">
+          <img [src]="activity.user.avatar" [alt]="activity.user.name">
+        </div>
+        
+        <div class="activity-content">
+          <div class="activity-header">
+            <span class="user-name">{{ activity.user.name }}</span>
+            <span class="activity-time">{{ getTimeAgo(activity.createdAt) }}</span>
+          </div>
+          
+          <div class="activity-action">
+            <span class="action-icon">{{ getActionIcon(activity.actionType) }}</span>
+            <span class="action-text">{{ getActionText(activity.actionType) }}</span>
+          </div>
+          
+          <div class="activity-target">
+          {{ activity.targetName }}
+          </div>
+          
+          <!-- Risk indicators -->
+          <div *ngIf="activity.metadata?.risk_level === 'high'" class="risk-indicator high">
+            ⚠️ Mức độ cao
+          </div>
+          <div *ngIf="activity.metadata?.result === 'scam'" class="risk-indicator scam">
+            🚨 Lừa đảo
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="widget-footer">
+    <div class="quick-stats">
+      <span class="stat">
+        <span class="stat-icon">🔍</span>
+        <span class="stat-label">Quét hôm nay</span>
+      </span>
+      <span class="stat">
+        <span class="stat-icon">📞</span>
+        <span class="stat-label">Tra cứu hôm nay</span>
+      </span>
+    </div>
+  </div>
+</div>

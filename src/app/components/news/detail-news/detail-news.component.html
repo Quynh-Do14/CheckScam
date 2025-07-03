@@ -1,0 +1,123 @@
+<!-- Updated detail-news.component.html -->
+<div class="container mt-4">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Đang tải...</span>
+    </div>
+    <p class="mt-2">Đang tải bài viết...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !isLoading" class="alert alert-danger" role="alert">
+    <h5 class="alert-heading">Có lỗi xảy ra</h5>
+    <p>{{ error }}</p>
+    <button class="btn btn-outline-danger" (click)="goBack()">
+      <i class="fas fa-arrow-left me-2"></i>Quay lại danh sách
+    </button>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="!isLoading && !error" class="news-detail-card">
+    <!-- Header -->
+    <div class="news-header mb-4">
+      <button class="btn btn-outline-secondary mb-3" (click)="goBack()">
+        <i class="fas fa-arrow-left me-2"></i>Quay lại
+      </button>
+      
+      <div class="field-group">
+        <label class="field-label">Tiêu đề</label>
+        <h1 class="news-title">{{ post.name || 'Chưa có tiêu đề' }}</h1>
+      </div>
+    </div>
+
+    <!-- Description -->
+    <div class="field-group mb-4" *ngIf="post.shortDescription">
+      <label class="field-label">Mô tả ngắn</label>
+      <div class="news-description">{{ post.shortDescription }}</div>
+    </div>
+
+    <!-- Content - Display HTML safely -->
+    <div class="field-group mb-4" *ngIf="safeHtmlContent">
+      <label class="field-label">Nội dung</label>
+      <div class="content-wrapper">
+        <div class="news-content" 
+             [innerHTML]="safeHtmlContent"
+             (click)="onContentImageError($event)">
+        </div>
+      </div>
+    </div>
+
+    <!-- Metadata -->
+    <div class="news-meta mb-4">
+      <div class="row">
+        <div class="col-md-6" *ngIf="post.createdAt">
+          <small class="text-muted">
+            <i class="fas fa-calendar me-1"></i>
+            Ngày đăng: {{ formatDate(post.createdAt) }}
+          </small>
+        </div>
+        <div class="col-md-6" *ngIf="post.updatedAt && post.updatedAt !== post.createdAt">
+          <small class="text-muted">
+            <i class="fas fa-edit me-1"></i>
+            Cập nhật: {{ formatDate(post.updatedAt) }}
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Attachments -->
+    <div class="attachments-section">
+      <label class="field-label">
+        <i class="fas fa-paperclip me-2"></i>Tệp đính kèm
+        <span class="badge bg-secondary ms-2" *ngIf="attachmentDto?.length">
+          {{ attachmentDto.length }}
+        </span>
+      </label>
+
+      <div class="attachments-grid" *ngIf="attachmentDto?.length; else noAttachments">
+        <div *ngFor="let attachment of attachmentDto; trackBy: trackById"
+             class="attachment-item">
+          
+          <div class="image-container">
+            <img [src]="getImageUrl(attachment)"
+                 [alt]="getFileName(attachment)"
+                 class="attachment-image"
+                 (click)="openImage(getImageUrl(attachment))"
+                 (error)="onImageError($event)"
+                 loading="lazy">
+            
+            <div class="image-overlay">
+              <i class="fas fa-search-plus"></i>
+            </div>
+          </div>
+          
+          <div class="attachment-info">
+            <p class="attachment-name">{{ getFileName(attachment) }}</p>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noAttachments>
+        <div class="no-attachments">
+          <i class="fas fa-image text-muted"></i>
+          <p class="text-muted mb-0">Không có tệp đính kèm</p>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+
+  <!-- Lightbox -->
+  <div class="lightbox" 
+       *ngIf="selectedImageUrl" 
+       (click)="onLightboxClick($event)">
+    <div class="lightbox-content">
+      <button class="lightbox-close" (click)="closeImage()">
+        <i class="fas fa-times"></i>
+      </button>
+      <img [src]="selectedImageUrl" 
+           alt="Xem ảnh" 
+           class="lightbox-image">
+    </div>
+  </div>
+</div>

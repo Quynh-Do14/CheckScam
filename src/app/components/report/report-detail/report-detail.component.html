@@ -1,0 +1,73 @@
+<div class="main-content-container">
+  <div *ngIf="loading" class="loading-message">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Đang tải...</span>
+    </div>
+    <p>Đang tải chi tiết báo cáo...</p>
+  </div>
+  <div *ngIf="error" class="error-message">{{ error }}</div>
+
+  <div *ngIf="report" class="modern-card report-detail-card">
+    <div class="modern-card-header">
+      <h2 class="card-title">Chi tiết báo cáo #{{ report.id }}</h2>
+      <button class="btn btn-secondary-outline back-button" (click)="goBack()">
+        <i class="fas fa-arrow-left icon-margin-right"></i> Quay lại
+      </button>
+    </div>
+
+    <div class="modern-card-body">
+      <div class="detail-section" *ngIf="report.reportDetails && report.reportDetails.length > 0">
+        <h3>Thông tin chi tiết đối tượng bị báo cáo</h3>
+        <div class="detail-grid">
+          <div class="detail-item modern-card" *ngFor="let detail of report.reportDetails; let i = index">
+            <div class="detail-item-header">
+              <h4>Thông tin tố cáo #{{ i + 1 }}</h4>
+            </div>
+            <div class="detail-item-body">
+              <p><strong>Loại:</strong>
+                {{ detail.type === 1 ? 'Số điện thoại' : (detail.type === 2 ? 'Số tài khoản ngân hàng' : 'URL') }}
+              </p>
+              <p><strong>Thông tin: </strong> <span class="detail-info">{{ detail.info }}</span></p>
+              <p><strong>Mô tả chi tiết:</strong> {{ detail.description || 'Không có mô tả chi tiết.' }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="detail-section" *ngIf="!report.reportDetails || report.reportDetails.length === 0">
+        <h3>Thông tin chi tiết đối tượng bị báo cáo</h3>
+        <p class="no-data-message">Không có thông tin chi tiết nào được cung cấp.</p>
+      </div>
+
+      <div class="attachments-section" *ngIf="report.attachments && report.attachments.length > 0">
+        <h3>Ảnh đính kèm</h3>
+        <div class="attachments-grid">
+          <div *ngFor="let attachment of report.attachments; let i = index" class="attachment-item modern-card">
+            <a (click)="openImageModal(i)" style="cursor: pointer; display: block; height: 100%;" tabindex="0">
+              <img [src]="getFullImageUrl(attachment.url)" alt="Ảnh đính kèm" class="attachment-image">
+            </a>
+            </div>
+        </div>
+      </div>
+      <div class="attachments-section" *ngIf="!report.attachments || report.attachments.length === 0">
+        <h3>Ảnh đính kèm</h3>
+        <p class="no-data-message">Không có ảnh đính kèm nào.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="image-modal-overlay" *ngIf="isImageModalOpen" (click)="closeImageModal()" (keydown)="onImageModalKeydown($event)" tabindex="0">
+  <div class="image-modal-content" (click)="$event.stopPropagation()">
+    <button class="close-modal-btn" (click)="closeImageModal()">✕</button>
+
+    <img [src]="getCurrentImageSrc()" alt="Ảnh đính kèm lớn" class="modal-image">
+
+    <button class="nav-button prev-button" (click)="prevImage($event)"
+            *ngIf="(report?.attachments?.length ?? 0) > 1">‹</button>
+    <button class="nav-button next-button" (click)="nextImage($event)"
+            *ngIf="(report?.attachments?.length ?? 0) > 1">›</button>
+    <div class="image-counter" *ngIf="(report?.attachments?.length ?? 0) > 0">
+        {{ currentImageIndex + 1 }} / {{ report?.attachments?.length || 0 }}
+    </div>
+  </div>
+</div>

@@ -1,0 +1,165 @@
+<div class="full-screen-background">
+  <div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="card p-5 shadow-lg rounded-4 custom-card-style">
+      <div class="text-center mb-5">
+        <div class="logo-container mb-1"> <img src="../../../assets/img/logo2.png" alt="Website Logo" class="logo"> </div>
+        <h2 class="fw-bold text-gradient mb-2">Đăng ký tài khoản</h2>
+        <p class="text-muted">Tạo tài khoản mới để bắt đầu!</p>
+      </div>
+
+      <form #registerForm="ngForm" (ngSubmit)="register()">
+        <div class="mb-4">
+          <label for="name" class="form-label fw-semibold">Tên người dùng</label>
+          <div class="input-group input-group-custom">
+            <span class="input-group-text">
+              <i class="bi bi-person-fill text-primary"></i>
+            </span>
+            <input
+              type="text"
+              class="form-control form-control-lg custom-input"
+              id="name"
+              placeholder="Nhập tên của bạn"
+              name="name"
+              [(ngModel)]="name"
+              required
+              minlength="5"                  maxlength="20"                  pattern="^[a-zA-Z0-9]+$"      #nameInput="ngModel"
+            />
+          </div>
+          <div *ngIf="nameInput.invalid && (nameInput.dirty || nameInput.touched)" class="error-message">
+            <div *ngIf="nameInput.errors?.['required']">
+              <i class="bi bi-exclamation-circle me-1"></i>
+              Tên người dùng không được để trống.
+            </div>
+            <div *ngIf="nameInput.errors?.['minlength']">
+              <i class="bi bi-exclamation-circle me-1"></i>
+              Tên phải có ít nhất 5 ký tự.
+            </div>
+            <div *ngIf="nameInput.errors?.['maxlength']">
+              <i class="bi bi-exclamation-circle me-1"></i>
+              Tên không được vượt quá 20 ký tự.
+            </div>
+            <div *ngIf="nameInput.errors?.['pattern']">
+              <i class="bi bi-exclamation-circle me-1"></i>
+              Tên không được chứa dấu cách hoặc ký tự đặc biệt (chỉ chấp nhận chữ cái và số).
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label for="email" class="form-label fw-semibold">Email</label>
+          <div class="input-group input-group-custom">
+            <span class="input-group-text">
+              <i class="bi bi-envelope-fill text-primary"></i>
+            </span>
+            <input
+              type="email"
+              class="form-control form-control-lg custom-input"
+              id="email"
+              placeholder="Nhập địa chỉ email"
+              name="email"
+              [(ngModel)]="email"
+              required
+              email
+              #emailInput="ngModel"
+            />
+          </div>
+          <div *ngIf="emailInput.invalid && (emailInput.dirty || emailInput.touched)" class="error-message">
+            <div *ngIf="emailInput.errors?.['required']">
+              <i class="bi bi-exclamation-circle me-1"></i>
+              Email không được để trống.
+            </div>
+            <div *ngIf="emailInput.errors?.['email']">
+              <i class="bi bi-exclamation-circle me-1"></i>
+              Email không hợp lệ.
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label for="password" class="form-label fw-semibold">Mật khẩu</label>
+          <div class="input-group input-group-custom">
+            <span class="input-group-text">
+              <i class="bi bi-lock-fill text-primary"></i>
+            </span>
+            <input
+              type="password"
+              class="form-control form-control-lg custom-input"
+              id="password"
+              placeholder="Nhập mật khẩu"
+              name="password"
+              [(ngModel)]="password"
+              required
+              minlength="6"
+              #passwordInput="ngModel"
+            />
+          </div>
+          <div *ngIf="passwordInput.invalid && (passwordInput.dirty || passwordInput.touched)" class="error-message">
+            <div *ngIf="passwordInput.errors?.['required']">
+              <i class="bi bi-exclamation-circle me-1"></i>
+              Mật khẩu không được để trống.
+            </div>
+            <div *ngIf="passwordInput.errors?.['minlength']">
+              <i class="bi bi-exclamation-circle me-1"></i>
+              Mật khẩu phải có ít nhất 6 ký tự.
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label for="confirmPassword" class="form-label fw-semibold">Xác nhận mật khẩu</label>
+          <div class="input-group input-group-custom">
+            <span class="input-group-text">
+              <i class="bi bi-shield-lock-fill text-primary"></i>
+            </span>
+            <input
+              type="password"
+              class="form-control form-control-lg custom-input"
+              id="confirmPassword"
+              placeholder="Xác nhận mật khẩu"
+              name="confirmPassword"
+              [(ngModel)]="confirmPassword"
+              required
+              #confirmPasswordInput="ngModel"
+            />
+          </div>
+          <div *ngIf="confirmPasswordInput.invalid && (confirmPasswordInput.dirty || confirmPasswordInput.touched)" class="error-message">
+            <div *ngIf="confirmPasswordInput.errors?.['required']">
+              <i class="bi bi-exclamation-circle me-1"></i>
+              Vui lòng xác nhận mật khẩu.
+            </div>
+          </div>
+          <div *ngIf="password !== confirmPassword && confirmPasswordInput.dirty" class="error-message">
+            <i class="bi bi-exclamation-circle me-1"></i>
+            Mật khẩu và xác nhận mật khẩu không khớp.
+          </div>
+        </div>
+
+        <div *ngIf="errorMessage" class="alert alert-danger custom-alert">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>
+          {{ errorMessage }}
+        </div>
+
+        <div *ngIf="successMessage" class="alert alert-success custom-alert">
+          <i class="bi bi-check-circle-fill me-2"></i>
+          {{ successMessage }}
+        </div>
+
+        <button
+          type="submit"
+          class="btn btn-primary btn-lg w-100 custom-btn mb-4"
+          [disabled]="registerForm.invalid || password !== confirmPassword"
+        >
+          <span class="btn-text">Đăng ký</span>
+          <i class="bi bi-arrow-right-circle ms-2"></i>
+        </button>
+      </form>
+
+      <div class="text-center">
+        <p class="text-muted mb-0">
+          Đã có tài khoản?
+          <a routerLink="/login" class="login-link fw-semibold">Đăng nhập ngay</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,227 @@
+<app-header (aiTuVanClicked)="onAiTuVanClicked()"></app-header>
+
+<div class="report-page-container">
+  <div class="two-column-layout">
+
+    <div class="left-column">
+      <form class="report-form" #reportForm="ngForm" (ngSubmit)="createReport()" novalidate>
+        <h3 class="info-box-title">BÁO CÁO LỪA ĐẢO</h3>
+
+        <div class="form-group report-type-selection">
+          <label class="section-label">Chọn loại báo cáo:</label> <div class="radio-group-modern"> <input type="radio" id="singleReport" name="reportType" [value]="'single'" [(ngModel)]="reportType" required (change)="onReportTypeChange()">
+            <label for="singleReport" class="radio-button-label">Báo cáo đơn</label> <input type="radio" id="groupReport" name="reportType" [value]="'group'" [(ngModel)]="reportType" required (change)="onReportTypeChange()">
+            <label for="groupReport" class="radio-button-label">Báo cáo gộp</label> </div>
+        </div>
+
+        <div class="form-group">
+          <label for="categoryIdCustom">Danh mục báo cáo:</label>
+          <div class="custom-select-wrapper">
+            <div class="custom-select"
+                 [class.open]="isCategoryDropdownOpen"
+                 (click)="toggleCategoryDropdown()"
+                 tabindex="0"
+                 id="categoryIdCustom"
+                 (keydown.enter)="toggleCategoryDropdown()">
+              <div class="custom-select-trigger">{{ selectedCategoryName }}</div>
+              <div class="custom-options" [class.show]="isCategoryDropdownOpen">
+                <div class="custom-option"
+                     *ngFor="let category of categories"
+                     [class.selected]="requestPayload.categoryId === category.id"
+                     (click)="selectCategory(category)"
+                     tabindex="0"
+                     (keydown.enter)="selectCategory(category)">
+                  {{ category.name }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <input type="hidden" name="categoryId" [(ngModel)]="requestPayload.categoryId" required #categoryIdNgModel="ngModel">
+          <div *ngIf="categoryIdNgModel.invalid && categoryIdNgModel.touched" class="text-danger">
+            Vui lòng chọn danh mục báo cáo.
+          </div>
+        </div>
+        <div *ngFor="let item of requestPayload.reportDetails; let i = index" class="group-report-item">
+          <div class="item-header">
+            <h4>Thông tin tố cáo #{{ i + 1 }}</h4>
+            <button *ngIf="reportType === 'group' && requestPayload.reportDetails.length > 1" type="button" class="btn btn-sm btn-danger remove-item-btn" (click)="removeReportDetailItem(i)">
+              Xóa
+            </button>
+          </div>
+
+          <div class="form-group">
+            <label [for]="'type_' + i + 'Custom'">Tố cáo về:</label>
+            <div class="custom-select-wrapper" [id]="'type_' + i + '_wrapper'">
+              <div class="custom-select"
+                   [class.open]="item.isTypeDropdownOpen"
+                   (click)="toggleReportTypeDropdown(item)"
+                   tabindex="0"
+                   [id]="'type_' + i + 'Custom'"
+                   (keydown.enter)="toggleReportTypeDropdown(item)">
+                <div class="custom-select-trigger">{{ item.selectedTypeName }}</div>
+                <div class="custom-options" [class.show]="item.isTypeDropdownOpen">
+                  <div class="custom-option"
+                       *ngFor="let option of reportTypeOptions"
+                       [class.selected]="item.type === option.id"
+                       (click)="selectReportType(item, option)"
+                       tabindex="0"
+                       (keydown.enter)="selectReportType(item, option)">
+                    {{ option.name }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <input type="hidden" [name]="'itemType_' + i" [(ngModel)]="item.type" required #itemTypeNgModel="ngModel">
+            <div *ngIf="itemTypeNgModel.invalid && itemTypeNgModel.touched" class="text-danger">
+              Vui lòng chọn loại tố cáo.
+            </div>
+          </div>
+          <div class="form-group">
+            <label [for]="'info_' + i">
+              <ng-container *ngIf="item.type === 1">Số điện thoại muốn tố cáo:</ng-container>
+              <ng-container *ngIf="item.type === 2">Số tài khoản muốn tố cáo:</ng-container>
+              <ng-container *ngIf="item.type === 3">URL muốn tố cáo:</ng-container>
+            </label>
+            <input
+              [id]="'info_' + i"
+              type="text"
+              [name]="'info_' + i"
+              placeholder="Nhập thông tin nghi ngờ"
+              required
+              [(ngModel)]="item.info"
+              [ngModelOptions]="{standalone: true}"
+            />
+          </div>
+
+          <div class="form-group" *ngIf="item.type === 2">
+            <label [for]="'accountHolderName_' + i">Tên chủ tài khoản:</label>
+            <input [id]="'accountHolderName_' + i" [name]="'accountHolderName_' + i" type="text" [(ngModel)]="item.info2"
+            placeholder="Nhập tên chủ tài khoản" [ngModelOptions]="{standalone: true}" />
+
+            <label [for]="'bankName_' + i">Ngân hàng:</label>
+            <input [id]="'bankName_' + i" [name]="'bankName_' + i" type="text" [(ngModel)]="item.info3"
+            placeholder="Nhập tên ngân hàng" [ngModelOptions]="{standalone: true}" />
+          </div>
+
+          <div class="form-group">
+            <label [for]="'item_description_' + i">Mô tả chi tiết cho mục này:</label>
+            <textarea
+              [id]="'item_description_' + i"
+              [name]="'item_description_' + i" rows="3"
+              required
+              placeholder="Mô tả chi tiết về mục tố cáo này"
+              [(ngModel)]="item.description" [ngModelOptions]="{standalone: true}"
+            ></textarea>
+          </div>
+        </div>
+
+        <button *ngIf="reportType === 'group'" type="button" class="btn btn-primary add-item-btn" (click)="addReportDetailItem()">
+          <i class="fas fa-plus"></i> Thêm thông tin tố cáo khác
+        </button>
+
+        <div class="form-group">
+            <label for="scamAmount">Số tiền chiếm đoạt (VND) <span class="required-asterisk">*</span></label>
+            <input id="scamAmount" type="number" name="scamAmount"
+                   placeholder="Ví dụ: 1000000"
+                   [(ngModel)]="requestPayload.moneyScam"
+                   required
+                   min="10000"
+                   class="form-control-custom">
+            <div *ngIf="reportForm.controls['scamAmount']?.invalid && reportForm.controls['scamAmount']?.touched" class="text-danger">
+                <ng-container *ngIf="reportForm.controls['scamAmount']?.errors?.['required']">
+                  Vui lòng nhập số tiền chiếm đoạt.
+                </ng-container>
+                <ng-container *ngIf="reportForm.controls['scamAmount']?.errors?.['min']">
+                  Số tiền chiếm đoạt phải lớn hơn hoặc bằng 10,000 VND.
+                </ng-container>
+            </div>
+        </div>
+
+        <div class="form-group">  
+            <label for="common_description">Mô tả chi tiết:</label>
+            <textarea
+              id="common_description"
+              name="common_description" rows="5"
+              required
+              placeholder="Mô tả chi tiết về vụ việc"
+              [(ngModel)]="requestPayload.description" ></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email người báo cáo</label>
+            <input
+              id="email"
+              type="email"
+              name="emailAuthorReport"
+              placeholder="Nhập email"
+              required
+              [(ngModel)]="requestPayload.emailAuthorReport"
+            />
+        </div>
+
+        <div class="form-group">
+          <label for="common_files">Tài liệu đính kèm (PNG, JPG, GIF):</label>
+          <div class="drop-zone"
+              (click)="commonFileInput.click()"
+              (dragover)="onDragOverCommon($event)"
+              (dragleave)="onDragLeaveCommon($event)"
+              (drop)="onDropCommon($event)">
+            <div class="drop-zone-content">
+              <div class="file-icons">
+                <i class="fas fa-file-image text-danger file-icon-fa"></i>
+                <i class="fas fa-file-image text-primary file-icon-fa"></i>
+                <i class="far fa-file-image text-success file-icon-fa"></i>
+              </div>
+              <p>Kéo hoặc click vào đây để upload</p>
+              <input #commonFileInput type="file" id="common_files" accept="image/*" multiple (change)="onFileSelectCommon($event)" style="display: none;" />
+            </div>
+          </div>
+          <div class="uploaded-bill-note">
+            <i class="fas fa-upload"></i> Upload bằng chứng & ảnh đoạn tin nhắn lừa đảo.
+          </div>
+        </div>
+
+        <div class="form-group" *ngIf="selectedFiles.length">
+          <label>Các tệp đã chọn:</label>
+          <ul>
+            <li *ngFor="let f of selectedFiles">{{ f.name }} ({{ f.size | number }} bytes) <i class="fas fa-times-circle remove-file-icon" (click)="removeFile(f)"></i></li>
+          </ul>
+        </div>
+
+        <div class="info-section-bottom">
+          <p class="highlight-text">
+            CHÚ Ý: Điều 156 Bộ luật Hình sự 2015: Tội vu khống là bịa đặt hoặc lan truyền thông tin sai sự thật xúc phạm danh dự, hoặc tố cáo sai người khác phạm tội. Hình phạt gồm phạt tiền từ 10-50 triệu đồng và/hoặc phạt tù từ 3 tháng đến 7 năm, tùy mức độ vi phạm.
+          </p>
+        </div>
+
+        <div class="form-group">
+          <re-captcha siteKey="6LfG6TArAAAAAD3M_YLwgUHuC6QPL7I7ATnWE4Xl" (resolved)="handleCaptchaResponse($event)"></re-captcha>
+        </div>
+
+        <button class="submit-button" type="submit" [disabled]="isFormInvalid()">
+          Gửi Báo Cáo
+        </button>
+      </form>
+    </div>
+
+    <div class="right-column">
+      <div class="info-box">
+        <div class="info-section">
+          <h4 class="section-title"><i class="info-icon warning">!</i> Lưu ý quan trọng</h4>
+          <p>Về việc báo cáo các website có nội dung đặc biệt như cá độ, cờ bạc, hoặc nội dung 18+:</p>
+          <p>Căn cứ theo quy định pháp luật Việt Nam và dữ liệu thu thập từ hệ thống, các trang web có dấu hiệu vi phạm rõ ràng về nội dung cá độ, cờ bạc trực tuyến, hoặc nội dung 18+ đều được xác định là bất hợp pháp.</p>
+          <p class="highlight-text"><i class="info-icon warning">!</i> Do đó, quý người dùng <strong>không cần thiết</strong> gửi báo cáo về những trường hợp website này đến hệ thống của AI6.</p>
+          <p>Chúng tôi đánh giá cao mọi sự đóng góp từ cộng đồng. Việc này giúp chúng tôi tối ưu hóa nguồn lực, tập trung xử lý các mối đe dọa lừa đảo phức tạp và có tác động tiêu cực trực tiếp đến người dùng, thay vì các trường hợp vi phạm đã rõ ràng.</p>
+        </div>
+
+        <div class="info-section">
+          <h4 class="section-title"><i class="info-icon info">i</i> Hướng dẫn báo cáo</h4>
+          <p>Trước khi gửi báo cáo, bạn nên tra cứu thông tin trên hệ thống của AI6 để kiểm tra xem trường hợp đó đã được ghi nhận hay chưa. Nếu đây là trường hợp mới, vui lòng làm theo các hướng dẫn báo cáo chi tiết của chúng tôi. Đội ngũ AI6 sẽ tiến hành xem xét và đưa ra quyết định cuối cùng một cách công bằng và minh bạch.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<app-chat-box *ngIf="showChatbox" (close)="closeChatbox()"></app-chat-box>
+<app-footer></app-footer>

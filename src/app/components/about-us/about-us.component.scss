@@ -1,0 +1,361 @@
+
+$primary-orange: #FF7B00; 
+$primary-green: #4CAF50; 
+$text-dark: #343A40; 
+$text-light-grey: #6C757D; 
+$background-page: #F0F2F5; 
+$border-light: #E0E6ED; 
+$white: #FFFFFF;
+
+.about-us-page {
+  padding-top: 40px;
+  padding-bottom: 40px;
+background: linear-gradient(135deg, 
+    rgba(255, 248, 240, 0.4) 0%, 
+    rgba(255, 243, 224, 0.3) 25%,
+    rgba(254, 240, 138, 0.2) 50%,
+    rgba(252, 211, 77, 0.15) 75%,
+    rgba(245, 158, 11, 0.1) 100%
+  );  font-family: 'Arial', sans-serif;
+  line-height: 1.7;
+  color: $text-dark;
+  animation: fadeIn 0.8s ease-out;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.container {
+  max-width: 1000px; 
+  margin: 0 auto; 
+  padding: 0 20px; 
+
+  @media (max-width: 768px) {
+    padding: 0 15px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 0 10px;
+  }
+}
+
+.back-button {
+  background: none;
+  border: none;
+  color: $primary-orange;
+  cursor: pointer;
+  font-size: 1.1em;
+  font-weight: 600;
+  margin-bottom: 25px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  transition: color 0.3s ease, transform 0.3s ease;
+  width: fit-content;
+  margin-left: 0; // Căn về bên trái
+  margin-right: auto; // Đảm bảo căn trái trong container
+  padding-top: 20px;
+
+  .back-arrow {
+    margin-right: 8px;
+    font-size: 1.2em;
+    transition: transform 0.3s ease;
+  }
+
+  &:hover {
+    color: darken($primary-orange, 10%);
+    transform: translateX(-5px);
+
+    .back-arrow {
+      transform: translateX(-3px);
+    }
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1em;
+    margin-bottom: 20px;
+  }
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding: 40px 0 20px; // Không có padding ngang, sẽ dựa vào container
+  /* Loại bỏ background-color và box-shadow để không còn "ô" riêng biệt */
+  border-bottom: 1px solid $border-light; // Giữ đường kẻ dưới để phân tách
+  margin-top: 40px; // Khoảng cách với nút back
+
+  h1 {
+    font-size: 3em;
+    color: $text-dark;
+    margin-bottom: 10px;
+    line-height: 1.2;
+    font-weight: 800;
+
+    .highlight-brand {
+      color: $primary-orange;
+    }
+
+    @media (max-width: 768px) {
+      font-size: 2.5em;
+    }
+
+    @media (max-width: 480px) {
+      font-size: 2em;
+    }
+  }
+
+  .author-date {
+    font-size: 0.95em;
+    color: $text-light-grey;
+    font-style: italic;
+    padding-bottom: 20px;
+  }
+}
+
+.section-block {
+  // margin-bottom: 10px;
+  padding: 30px 0; 
+  border-bottom: 1px solid $border-light; 
+  // margin-top: 10px;
+
+  &:last-of-type {
+    margin-bottom: 0;
+    border-bottom: none; // Loại bỏ đường kẻ dưới ở section cuối cùng
+  }
+
+  @media (max-width: 768px) {
+    padding: 25px 0;
+    margin-bottom: 30px;
+    margin-top: 30px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 20px 0;
+    margin-bottom: 25px;
+    margin-top: 25px;
+  }
+}
+
+.section-icon {
+  font-size: 2.8em;
+  color: $primary-green;
+  margin-bottom: 15px;
+  display: block;
+  text-align: center;
+  filter: drop-shadow(0 3px 3px rgba(0, 0, 0, 0.15));
+}
+
+.section-title {
+  font-size: 2.2em;
+  color: $text-dark;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 20px;
+  text-align: center;
+  position: relative;
+
+  &::after {
+    content: '';
+    display: block;
+    width: 70px;
+    height: 4px;
+    background-color: $primary-orange;
+    margin: 10px auto 0;
+    border-radius: 2px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 2em;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1.7em;
+  }
+}
+
+p {
+  font-size: 1.05em;
+  color: $text-dark;
+  margin-bottom: 15px;
+  text-align: justify;
+
+  strong {
+    color: $primary-orange;
+  }
+
+  .highlight-date, .highlight-tech {
+    font-weight: 600;
+    color: $primary-orange;
+  }
+}
+
+.team-circles-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  margin-top: 40px;
+  margin-bottom: 40px;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.team-circle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 180px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  padding: 15px;
+  border-radius: 10px;
+  background-color: $white; // Vẫn giữ nền trắng và bóng đổ cho từng thành viên để nổi bật, giống như các trang chính sách của bạn cũng có các card nhỏ nổi lên
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.circle-image {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-bottom: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  border: 5px solid $primary-green;
+}
+
+.circle-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.member-name {
+  font-size: 1.2em;
+  font-weight: 700;
+  color: $text-dark;
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+.member-title {
+  font-size: 0.95em;
+  color: $text-light-grey;
+}
+
+@media (max-width: 768px) {
+  .team-circles-container {
+    gap: 30px;
+  }
+
+  .team-circle {
+    width: 150px;
+  }
+
+  .circle-image {
+    width: 120px;
+    height: 120px;
+  }
+}
+
+@media (max-width: 576px) {
+  .team-circles-container {
+    flex-direction: column;
+    gap: 25px;
+  }
+
+  .team-circle {
+    width: 80%;
+    max-width: 250px;
+    margin: 0 auto;
+  }
+
+  .circle-image {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 10px;
+  }
+
+  .member-name {
+    font-size: 1.1em;
+  }
+
+  .member-title {
+    font-size: 0.9em;
+  }
+}
+
+.btn-primary {
+  display: block;
+  width: fit-content;
+  margin: 20px auto 0;
+  background: linear-gradient(45deg, $primary-orange, darken($primary-orange, 10%));
+  color: white;
+  padding: 14px 30px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1em;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 18px rgba(255, 123, 0, 0.4);
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 9px 25px rgba(255, 123, 0, 0.5);
+    background: linear-gradient(45deg, darken($primary-orange, 5%), $primary-orange);
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1em;
+    padding: 12px 25px;
+  }
+}
+
+.contact-info {
+  margin-top: 25px;
+  p {
+    margin-bottom: 12px;
+    font-size: 1.0em;
+    strong {
+      color: $text-dark;
+    }
+    a {
+      color: $primary-orange;
+      text-decoration: none;
+      font-weight: 500;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+.page-footer {
+  text-align: center;
+  margin-top: 60px;
+  padding-top: 25px;
+  padding-bottom: 40px;
+  border-top: 1px solid $border-light; // Đường kẻ trên footer
+  color: $text-light-grey;
+  font-size: 0.9em;
+  /* Loại bỏ background-color và box-shadow để không còn "ô" riêng biệt */
+
+  p {
+    margin-bottom: 8px;
+    font-size: 0.9em;
+  }
+
+  @media (max-width: 480px) {
+    margin-top: 40px;
+    font-size: 0.8em;
+  }
+}

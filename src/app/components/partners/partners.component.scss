@@ -1,0 +1,442 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;600&display=swap');
+
+/* Định nghĩa màu sắc cho trang đối tác (có thể điều chỉnh nếu muốn) */
+:root {
+  --partners-main-heading-color: #2c3e50; /* Màu tiêu đề chính */
+  --partners-section-title-color: #e65c00; /* Màu tiêu đề phần */
+  --partners-accent-gradient-start: #ff8c00; /* Màu cam sáng */
+  --partners-accent-gradient-end: #ff4500; /* Màu cam đậm */
+  --partners-text-color: #333333;
+  --partners-text-secondary-color: #444444;
+  --partners-section-bg: #fdfdfd; /* Màu nền cho các phần chính sách */
+  --partners-link-color: #007bff;
+  --partners-link-hover-color: #0056b3;
+}
+
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #f0f2f5; /* Màu nền cơ bản, sẽ bị override bởi container */
+}
+
+.partners-policy-container { /* Đổi tên class để phù hợp với HTML mới */
+  width: 100%;
+  min-height: 100vh;
+  padding: 80px 0;
+  background: linear-gradient(135deg, 
+    rgba(255, 248, 240, 0.4) 0%, 
+    rgba(255, 243, 224, 0.3) 25%,
+    rgba(254, 240, 138, 0.2) 50%,
+    rgba(252, 211, 77, 0.15) 75%,
+    rgba(245, 158, 11, 0.1) 100%
+  );  
+  box-shadow: none; 
+
+  font-family: 'Open Sans', sans-serif;
+  line-height: 1.8;
+  color: var(--partners-text-color);
+
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInSlideIn 1s ease-out forwards;
+
+  @media (max-width: 768px) {
+    padding: 40px 0;
+  }
+}
+
+.header-section {
+  text-align: center;
+  margin-bottom: 60px;
+  padding: 0 40px;
+
+  @media (max-width: 768px) {
+    padding: 0 20px;
+    margin-bottom: 40px;
+  }
+
+  h1.main-heading {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 2.5em;
+    color: var(--partners-main-heading-color);
+    font-weight: 700;
+    margin-bottom: 20px;
+    position: relative;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.05);
+    padding-top: 30px; /* Duy trì padding-top */
+
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      bottom: -12px;
+      transform: translateX(-50%) scaleX(0);
+      width: 100px;
+      height: 4px;
+      background: linear-gradient(to right, var(--partners-accent-gradient-start), var(--partners-accent-gradient-end));
+      border-radius: 2px;
+      transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+      animation: expandLine 1.2s ease-out 0.5s forwards;
+    }
+
+    &:hover::after {
+      transform: translateX(-50%) scaleX(1);
+      width: 140px;
+    }
+
+    @media (max-width: 768px) {
+      font-size: 2.0em;
+      &::after {
+        width: 60px;
+        bottom: -8px;
+        height: 3px;
+      }
+      &:hover::after {
+          width: 90px;
+      }
+    }
+    @media (max-width: 480px) {
+      font-size: 1.6em;
+      &::after {
+        width: 40px;
+      }
+    }
+  }
+}
+
+.policy-section {
+  max-width: 800px;
+  margin: 0 auto 50px auto;
+  padding: 30px;
+  background-color: var(--partners-section-bg);
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  }
+
+  @media (max-width: 768px) {
+    padding: 20px;
+    margin-bottom: 30px;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .section-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.8em;
+    color: var(--partners-section-title-color);
+    font-weight: 700;
+    margin-bottom: 20px;
+    position: relative;
+    padding-left: 0;
+    text-indent: 0;
+    border-bottom: none;
+    padding-bottom: 0;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -8px;
+      width: 60px;
+      height: 5px;
+      background: linear-gradient(to right, var(--partners-accent-gradient-start), var(--partners-accent-gradient-end));
+      border-radius: 3px;
+      box-shadow: 0 0 10px rgba(255, 140, 0, 0.6);
+      transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                  box-shadow 0.4s ease-out;
+      animation: glowLine 1.5s infinite alternate ease-in-out;
+    }
+    &:hover::before {
+      width: 100px;
+      box-shadow: 0 0 15px rgba(255, 140, 0, 0.9), 0 0 20px rgba(255, 69, 0, 0.7);
+      animation-play-state: paused;
+    }
+
+    @media (max-width: 768px) {
+      font-size: 1.4em;
+      &::before {
+        width: 40px;
+        height: 3px;
+        bottom: -5px;
+      }
+      &:hover::before {
+        width: 70px;
+      }
+    }
+  }
+
+  p {
+    margin-bottom: 15px;
+    font-size: 1.05em;
+    text-align: justify;
+    padding-left: 30px;
+    line-height: 1.7;
+    color: var(--partners-text-secondary-color);
+
+    @media (max-width: 768px) {
+      padding-left: 15px;
+    }
+  }
+
+  ul.item-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      margin-bottom: 10px;
+      font-size: 1em;
+      line-height: 1.6;
+      position: relative;
+      padding-left: 30px;
+
+      &::before {
+        content: '\2022';
+        color: #ff7a00; /* Sử dụng màu cam cho bullet points */
+        font-weight: bold;
+        font-size: 1.2em;
+        display: inline-block;
+        width: 1em;
+        position: absolute;
+        left: 0;
+        top: 0.15em;
+        transition: transform 0.3s ease-out, color 0.3s ease-out;
+      }
+
+      &:hover::before {
+        transform: scale(1.3) rotate(5deg);
+        color: #e65c00;
+      }
+
+      @media (max-width: 768px) {
+        padding-left: 15px;
+      }
+    }
+  }
+
+  a {
+    color: var(--partners-link-color);
+    text-decoration: none;
+    transition: color 0.3s ease, text-decoration 0.3s ease, transform 0.2s ease;
+
+    &:hover {
+      color: var(--partners-link-hover-color);
+      text-decoration: underline;
+      transform: translateX(3px);
+    }
+  }
+
+  .note-text {
+    font-size: 0.95em;
+    color: #666666;
+    margin-top: 30px;
+    border-top: 1px solid #eeeeee;
+    padding-top: 20px;
+    font-style: italic;
+    text-align: left;
+  }
+}
+
+/* Specific styles for the contact form within a policy-section */
+.policy-section .contact-form-container {
+  max-width: 600px; /* Adjust max-width for the form */
+  margin: 30px auto 0 auto; /* Center the form within its section */
+  padding: 40px; /* Slightly more padding for form */
+  background-color: var(--partners-section-bg); /* Same background as sections */
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08); /* Same shadow as sections */
+  text-align: left; /* Align form elements to the left */
+
+  .form-group {
+    margin-bottom: 20px;
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--partners-text-secondary-color);
+      font-size: 1em;
+      .required {
+        color: #dc3545;
+        margin-left: 5px;
+      }
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 1em;
+      color: var(--partners-text-color);
+      box-sizing: border-box; /* Ensure padding doesn't affect width */
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+
+      &:focus {
+        border-color: #ff7a00; /* Highlight on focus */
+        box-shadow: 0 0 5px rgba(255, 122, 0, 0.5);
+        outline: none;
+      }
+    }
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    select {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-image: url('data:image/svg+xml;utf8,<svg fill="%23495057" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16"><path d="M7 10l5 5 5-5z"/></svg>');
+        background-repeat: no-repeat;
+        background-position: right 15px center;
+        background-size: 16px 16px;
+    }
+  }
+
+  .submit-button { /* Use this class for the submit button */
+    display: inline-block;
+    padding: 12px 25px;
+    background: linear-gradient(to right, var(--partners-accent-gradient-start), var(--partners-accent-gradient-end));
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease-out;
+    margin-top: 15px;
+    box-shadow: 0 4px 10px rgba(255, 140, 0, 0.3);
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(255, 140, 0, 0.4);
+    }
+    &:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 5px rgba(255, 140, 0, 0.2);
+    }
+    &[disabled] {
+      opacity: 0.6;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+    .icon-margin-left { /* Font Awesome icon style */
+        margin-left: 8px;
+    }
+  }
+}
+
+
+/* Keyframes for animations (copied directly) */
+@keyframes fadeInSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes expandLine {
+  from {
+    transform: translateX(-50%) scaleX(0);
+  }
+  to {
+    transform: translateX(-50%) scaleX(1);
+  }
+}
+
+@keyframes glowLine {
+  0% {
+    box-shadow: 0 0 8px rgba(255, 140, 0, 0.4), 0 0 12px rgba(255, 69, 0, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(255, 140, 0, 0.8), 0 0 25px rgba(255, 69, 0, 0.6);
+  }
+  100% {
+    box-shadow: 0 0 8px rgba(255, 140, 0, 0.4), 0 0 12px rgba(255, 69, 0, 0.3);
+  }
+}
+
+
+/* Responsive Adjustments (copied and adapted) */
+@media (max-width: 768px) {
+  .header-section {
+    padding: 0 20px;
+    margin-bottom: 40px;
+  }
+
+  h1.main-heading {
+    font-size: 2.0em;
+    &::after {
+      width: 60px;
+      bottom: -8px;
+      height: 3px;
+    }
+    &:hover::after {
+        width: 90px;
+    }
+  }
+
+  .policy-section {
+    padding: 20px;
+    margin-bottom: 30px;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .policy-section .section-title {
+    font-size: 1.4em;
+    &::before {
+      width: 40px;
+      height: 3px;
+      bottom: -5px;
+    }
+    &:hover::before {
+      width: 70px;
+    }
+  }
+
+  .policy-section p {
+    padding-left: 15px;
+  }
+
+  .policy-section ul.item-list li {
+    padding-left: 15px;
+  }
+
+  .policy-section .contact-form-container {
+    padding: 20px;
+  }
+
+  .policy-section .contact-form-container .submit-button {
+    padding: 10px 20px;
+    font-size: 1em;
+  }
+}
+
+@media (max-width: 480px) {
+  h1.main-heading {
+    font-size: 1.6em;
+    &::after {
+      width: 40px;
+    }
+  }
+  .policy-section .section-title {
+    font-size: 1.2em;
+  }
+}

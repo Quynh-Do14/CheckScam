@@ -1,0 +1,249 @@
+<div class="main-content-container">
+  <div class="modern-card">
+    <div class="modern-card-header">
+      <h6 class="card-title">Cập nhật tin tức</h6>
+    </div>
+    <div class="modern-card-body">
+      <div class="news-form">
+        <div class="form-group">
+          <label class="form-label" for="newsName">Tên tin tức</label>
+          <input type="text"
+                 id="newsName"
+                 class="form-control"
+                 placeholder="Nhập tên tin tức"
+                 [(ngModel)]="name" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="shortDescription">Mô tả ngắn</label>
+          <textarea id="shortDescription"
+                    class="form-control"
+                    placeholder="Nhập mô tả ngắn"
+                    [(ngModel)]="shortDescription"
+                    rows="3"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="content">Nội dung chi tiết</label>
+          
+          <!-- Enhanced Rich Text Editor -->
+          <div class="rich-text-editor">
+            <!-- Enhanced Toolbar -->
+            <div class="editor-toolbar">
+              <!-- Text Formatting -->
+              <div class="toolbar-group">
+                <button type="button" (mousedown)="execCommand('bold', $event)" class="toolbar-btn" title="Đậm">
+                  <i class="fas fa-bold"></i>
+                </button>
+                <button type="button" (mousedown)="execCommand('italic', $event)" class="toolbar-btn" title="Nghiêng">
+                  <i class="fas fa-italic"></i>
+                </button>
+                <button type="button" (mousedown)="execCommand('underline', $event)" class="toolbar-btn" title="Gạch chân">
+                  <i class="fas fa-underline"></i>
+                </button>
+                <button type="button" (mousedown)="execCommand('strikeThrough', $event)" class="toolbar-btn" title="Gạch ngang">
+                  <i class="fas fa-strikethrough"></i>
+                </button>
+              </div>
+
+              <div class="toolbar-divider"></div>
+
+              <!-- Font Size -->
+              <div class="toolbar-group">
+                <select class="toolbar-select" (change)="changeFontSize($event)" title="Cỡ chữ">
+                  <option value="">Cỡ chữ</option>
+                  <option value="1">Rất nhỏ</option>
+                  <option value="2">Nhỏ</option>
+                  <option value="3">Bình thường</option>
+                  <option value="4">Lớn</option>
+                  <option value="5">Rất lớn</option>
+                  <option value="6">Khổng lồ</option>
+                  <option value="7">Cực lớn</option>
+                </select>
+              </div>
+
+              <div class="toolbar-divider"></div>
+
+              <!-- Text Color -->
+              <div class="toolbar-group">
+                <input type="color" class="color-picker" (change)="changeTextColor($event)" title="Màu chữ">
+                <input type="color" class="color-picker" (change)="changeBackgroundColor($event)" title="Màu nền">
+              </div>
+
+              <div class="toolbar-divider"></div>
+
+              <!-- Headings -->
+              <div class="toolbar-group">
+                <select class="toolbar-select" (change)="changeHeading($event)" title="Tiêu đề">
+                  <option value="">Định dạng</option>
+                  <option value="h1">Tiêu đề 1</option>
+                  <option value="h2">Tiêu đề 2</option>
+                  <option value="h3">Tiêu đề 3</option>
+                  <option value="h4">Tiêu đề 4</option>
+                  <option value="h5">Tiêu đề 5</option>
+                  <option value="h6">Tiêu đề 6</option>
+                  <option value="p">Đoạn văn</option>
+                </select>
+              </div>
+
+              <div class="toolbar-divider"></div>
+
+              <!-- Alignment -->
+              <div class="toolbar-group">
+                <button type="button" (mousedown)="execCommand('justifyLeft', $event)" class="toolbar-btn" title="Căn trái">
+                  <i class="fas fa-align-left"></i>
+                </button>
+                <button type="button" (mousedown)="execCommand('justifyCenter', $event)" class="toolbar-btn" title="Căn giữa">
+                  <i class="fas fa-align-center"></i>
+                </button>
+                <button type="button" (mousedown)="execCommand('justifyRight', $event)" class="toolbar-btn" title="Căn phải">
+                  <i class="fas fa-align-right"></i>
+                </button>
+                <button type="button" (mousedown)="execCommand('justifyFull', $event)" class="toolbar-btn" title="Căn đều">
+                  <i class="fas fa-align-justify"></i>
+                </button>
+              </div>
+
+              <div class="toolbar-divider"></div>
+
+              <!-- Lists -->
+              <div class="toolbar-group">
+                <button type="button" (mousedown)="execCommand('insertUnorderedList', $event)" class="toolbar-btn" title="Danh sách có dấu đầu dòng">
+                  <i class="fas fa-list-ul"></i>
+                </button>
+                <button type="button" (mousedown)="execCommand('insertOrderedList', $event)" class="toolbar-btn" title="Danh sách có số">
+                  <i class="fas fa-list-ol"></i>
+                </button>
+                <button type="button" (mousedown)="execCommand('outdent', $event)" class="toolbar-btn" title="Giảm thụt lề">
+                  <i class="fas fa-outdent"></i>
+                </button>
+                <button type="button" (mousedown)="execCommand('indent', $event)" class="toolbar-btn" title="Tăng thụt lề">
+                  <i class="fas fa-indent"></i>
+                </button>
+              </div>
+
+              <div class="toolbar-divider"></div>
+
+              <!-- Insert Options -->
+              <div class="toolbar-group">
+                <button type="button" (click)="insertLink($event)" class="toolbar-btn" title="Chèn liên kết">
+                  <i class="fas fa-link"></i>
+                </button>
+                <button type="button" (click)="insertTable($event)" class="toolbar-btn" title="Chèn bảng">
+                  <i class="fas fa-table"></i>
+                </button>
+                <button type="button" (click)="insertHorizontalRule($event)" class="toolbar-btn" title="Chèn đường kẻ ngang">
+                  <i class="fas fa-minus"></i>
+                </button>
+              </div>
+
+              <div class="toolbar-divider"></div>
+
+              <!-- Image Insert -->
+              <div class="toolbar-group">
+                <button type="button" (click)="triggerImageUpload()" class="toolbar-btn toolbar-btn-primary" title="Chèn ảnh">
+                  <i class="fas fa-image"></i>
+                  <span>Chèn ảnh</span>
+                </button>
+                <input #imageInput type="file" accept="image/*" multiple style="display: none" (change)="insertImages($event)">
+              </div>
+
+              <div class="toolbar-divider"></div>
+
+              <!-- Actions -->
+              <div class="toolbar-group">
+                <button type="button" (mousedown)="execCommand('undo', $event)" class="toolbar-btn" title="Hoàn tác">
+                  <i class="fas fa-undo"></i>
+                </button>
+                <button type="button" (mousedown)="execCommand('redo', $event)" class="toolbar-btn" title="Làm lại">
+                  <i class="fas fa-redo"></i>
+                </button>
+                <button type="button" (click)="clearFormatting($event)" class="toolbar-btn" title="Xóa định dạng">
+                  <i class="fas fa-remove-format"></i>
+                </button>
+              </div>
+            </div>
+            
+            <!-- Content Area with drag & drop -->
+            <div 
+              #contentEditor
+              class="editor-content"
+              contenteditable="true"
+              dir="ltr"
+              (input)="onContentChange($event)"
+              (paste)="onPaste($event)"
+              (keydown)="onKeyDown($event)"
+              (drop)="onDrop($event)"
+              (dragover)="onDragOver($event)"
+              (dragenter)="onDragEnter($event)"
+              (dragleave)="onDragLeave($event)"
+              data-placeholder="Nhập nội dung chi tiết... Bạn có thể kéo thả ảnh vào đây hoặc sử dụng nút 'Chèn ảnh' ở thanh công cụ.">
+            </div>
+
+            <!-- Upload Progress -->
+            <div *ngIf="uploadProgress > 0 && uploadProgress < 100" class="upload-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" [style.width.%]="uploadProgress"></div>
+              </div>
+              <span class="progress-text">Đang tải lên... {{uploadProgress}}%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Checkbox tin chính -->
+        <div class="form-group checkbox-group">
+          <label for="isMain">
+            <input type="checkbox" id="isMain" [(ngModel)]="isMain" />
+            <span>Đánh dấu là tin chính</span>
+          </label>
+          <p class="file-hint text-warning">Bạn có thể có tối đa 4 tin chính cùng lúc. Tin chính sẽ được hiển thị ở vị trí nổi bật trên trang chủ.</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="files">Ảnh đính kèm bổ sung (PNG, JPG, GIF)</label>
+          <input id="files"
+                 type="file"
+                 class="form-control"
+                 accept="image/*"
+                 multiple
+                 (change)="onFileSelect($event)" />
+          <p class="file-hint">Chọn một hoặc nhiều ảnh để đính kèm riêng biệt (không chèn trực tiếp vào nội dung).</p>
+        </div>
+
+        <div *ngIf="selectedFiles.length" class="file-preview-area mb-3">
+          <p class="file-label">Các tệp đã chọn:</p>
+          <div class="file-grid">
+            <div *ngFor="let f of selectedFiles; let i = index" class="file-item">
+              <div class="file-preview" *ngIf="f.preview">
+                <img [src]="f.preview" [alt]="f.name" class="preview-image">
+              </div>
+              <div class="file-info">
+                <span class="file-name">{{ f.name }}</span>
+                <span class="file-size">({{ formatFileSize(f.size) }})</span>
+                <button type="button" class="btn-remove" (click)="removeFile(i)" title="Xóa">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button"
+                  class="btn btn-primary-gradient"
+                  (click)="updateNews()"
+                  [disabled]="!name || !shortDescription || !content || uploadProgress > 0">
+            <i class="fas fa-save icon-margin-right"></i>
+            Cập nhật
+          </button>
+          <button type="button"
+                  class="btn btn-secondary"
+                  (click)="goBack()">
+            <i class="fas fa-arrow-left icon-margin-right"></i>
+            Quay lại
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

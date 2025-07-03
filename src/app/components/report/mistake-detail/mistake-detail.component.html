@@ -1,0 +1,78 @@
+<div class="main-content-container">
+  <div *ngIf="loading" class="loading-message">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Đang tải...</span>
+    </div>
+    <p>Đang tải chi tiết khiếu nại...</p>
+  </div>
+  <div *ngIf="error" class="error-message">{{ error }}</div>
+
+  <div *ngIf="mistake" class="modern-card mistake-detail-card">
+    <div class="modern-card-header">
+      <h2 class="card-title">Chi tiết khiếu nại #{{ mistake.id }}</h2>
+      <button class="btn btn-secondary-outline back-button" (click)="goBack()">
+        <i class="fas fa-arrow-left icon-margin-right"></i> Quay lại
+      </button>
+    </div>
+
+    <div class="modern-card-body">
+      <div class="detail-section">
+        <h3>Mô tả khiếu nại</h3>
+        <p class="mistake-reason-display">{{ mistake.complaintReason || 'Không có mô tả chi tiết.' }}</p>
+      </div>
+
+      <div class="detail-section" *ngIf="mistake.mistakeDetails && mistake.mistakeDetails.length > 0">
+        <h3>Thông tin chi tiết khiếu nại</h3>
+        <div class="detail-grid">
+          <div class="detail-item modern-card" *ngFor="let detail of mistake.mistakeDetails; let i = index">
+            <div class="detail-item-header">
+              <h4>Chi tiết #{{ i + 1 }}</h4>
+            </div>
+            <div class="detail-item-body">
+              <p>
+                <strong>Loại:</strong>
+                {{ getMistakeDetailType(+detail.type) }}
+              </p>
+              <p><strong>Thông tin:</strong> <span class="detail-info">{{ detail.info }}</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="detail-section" *ngIf="!mistake.mistakeDetails || mistake.mistakeDetails.length === 0">
+        <h3>Thông tin chi tiết khiếu nại</h3>
+        <p class="no-data-message">Không có thông tin chi tiết nào được cung cấp.</p>
+      </div>
+
+      <div class="attachments-section" *ngIf="mistake.attachmentUrls && mistake.attachmentUrls.length > 0">
+        <h3>Ảnh đính kèm</h3>
+        <div class="attachments-grid">
+          <div *ngFor="let attachmentUrl of mistake.attachmentUrls; let i = index" class="attachment-item modern-card">
+            <a (click)="openImageModal(i)" style="cursor: pointer; display: block; height: 100%;" tabindex="0">
+              <img [src]="getFullImageUrl(attachmentUrl)" alt="Ảnh đính kèm" class="attachment-image">
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="attachments-section" *ngIf="!mistake.attachmentUrls || mistake.attachmentUrls.length === 0">
+        <h3>Ảnh đính kèm</h3>
+        <p class="no-data-message">Không có ảnh đính kèm nào.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="image-modal-overlay" *ngIf="isImageModalOpen" (click)="closeImageModal()" (keydown)="onImageModalKeydown($event)" tabindex="0">
+  <div class="image-modal-content" (click)="$event.stopPropagation()">
+    <button class="close-modal-btn" (click)="closeImageModal()">✕</button>
+
+    <img [src]="getCurrentImageSrc()" alt="Ảnh đính kèm lớn" class="modal-image">
+
+    <button class="nav-button prev-button" (click)="prevImage($event)"
+            *ngIf="(mistake?.attachmentUrls?.length ?? 0) > 1">‹</button>
+    <button class="nav-button next-button" (click)="nextImage($event)"
+            *ngIf="(mistake?.attachmentUrls?.length ?? 0) > 1">›</button>
+    <div class="image-counter" *ngIf="(mistake?.attachmentUrls?.length ?? 0) > 0">
+        {{ currentImageIndex + 1 }} / {{ mistake?.attachmentUrls?.length || 0 }}
+    </div>
+  </div>
+</div>

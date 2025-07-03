@@ -1,0 +1,49 @@
+<footer class="app-footer">
+  <div class="container">
+    <div class="footer-section footer-brand-info">
+      <div class="footer-logo">
+        <img src="assets/img/chatai1.png" alt="Company Logo" class="logo">
+      </div>
+      <p class="brand-slogan">Nơi công nghệ gặp gỡ sự đổi mới để tạo ra tương lai.</p>
+    </div>
+
+    <div class="footer-section footer-social">
+      <h3>Mạng xã hội</h3>
+      <div class="social-icons">
+        <a href="https://www.facebook.com/idai.vn/" target="_blank" aria-label="Facebook"><i class="fab fa-facebook-f"></i> Facebook</a>
+        <a href="https://www.tiktok.com/@idai.vn?_t=8qyMFYoJZQm&_r=1" target="_blank" aria-label="Facebook"><i class="fab fa-tiktok"></i> Tiktok</a>
+        <a href="https://www.youtube.com/channel/UCW3HksNISmDo6w1Ft3fxAIw" target="_blank" aria-label="Youtube"><i class="fab fa-youtube"></i> Youtube</a>
+      </div>
+    </div>
+
+    <div class="footer-section footer-policies">
+      <h3>Chính sách</h3>
+      <ul>
+        <li><a routerLink="/policy/privacy" class="policy-link"><i class="fas fa-caret-right"></i> Chính sách Quyền Riêng Tư</a></li>
+        <li><a routerLink="/policy/termsofservice" class="policy-link"><i class="fas fa-caret-right"></i> Thỏa Thuận Sử Dụng Dịch Vụ</a></li>
+        <li><a routerLink="/policy/refund" class="policy-link"><i class="fas fa-caret-right"></i> Chính Sách Hoàn Trả</a></li>
+        <li><a routerLink="/policy/standard" class="policy-link"><i class="fas fa-caret-right"></i> Tiêu Chuẩn Dịch Vụ</a></li>
+        <li><a routerLink="/policy/payment" class="policy-link"><i class="fas fa-caret-right"></i> Chính Sách Thanh Toán</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-section footer-contact-detailed">
+      <h3>Liên hệ</h3>
+      <p><strong><span>CÔNG TY TNHH ĐẦU TƯ CÔNG NGHỆ TECHBYTE</span></strong></p>
+      <p><i class="fas fa-file-invoice"></i> <span>Mã số thuế: 0110801570</span></p>
+      <p><i class="fas fa-phone"></i> <span>Điện thoại: <a href="tel:+84973454140">0973.454.140</a></span></p>
+      <p><i class="fas fa-envelope"></i> <span>Email: <a href="mailto:ai&#64;idai.vn">ai&#64;idai.vn</a></span></p>
+      <p><i class="fas fa-map-marker-alt"></i> <span>Trụ sở chính: Số nhà 10, dãy H, Khu tập thể Công an Đa Sỹ, Phường Kiến Hưng, Quận Hà Đông, Thành phố Hà Nội, Việt Nam</span></p>
+      <p><i class="fas fa-map-marker-alt"></i> <span>Văn phòng giao dịch: Nhà 2B, 110 Đường Nguyễn Hoàng Tôn, Xuân La, Tây Hồ, Hà Nội</span></p>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>&copy; Bản quyền {{ getCurrentYear() }} <a routerLink="/about-us" class="company-name">AI6 Solutions</a>. Mọi quyền được bảo lưu.</p>
+    <p>Thiết kế & Lập trình bởi <a routerLink="/about-us" class="designer-link">AI6 Team</a></p>
+  </div>
+
+  <button class="scroll-to-top-btn" (click)="scrollToTop()" aria-label="Cuộn lên đầu trang" [class.show]="showScrollToTopButton">
+    <i class="fas fa-arrow-up"></i>
+  </button>
+</footer>

@@ -1,0 +1,477 @@
+<app-header (aiTuVanClicked)="onAiTuVanClicked()"></app-header>
+
+<div class="main-section">
+  <div class="background-elements">
+    <div class="square green-square top-left"></div>
+    <div class="square yellow-square bottom-right"></div>
+    <div class="square green-square mid-left"></div>
+    <div class="square yellow-square mid-right"></div>
+    <div class="square green-square bottom-left-small"></div>
+    <div class="square yellow-square top-right-small"></div>
+  </div>
+
+  <div class="content-wrapper">
+    <!-- Layout 3 cột: Robot trái - Main content giữa - Activity phải -->
+    <div class="three-column-layout">
+      <!-- Robot bên trái -->
+      <div class="left-column">
+        <div class="robot-container">
+          <img src="assets/img/chatai1.png" alt="AI Robot Vietnam" class="hero-robot-image">
+          <div class="robot-glow"></div>
+          <div class="floating-elements">
+            <div class="security-badge">
+              <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 5 L30 10 L30 25 Q30 30 20 32 Q10 30 10 25 L10 10 Z" fill="#FF6B35" opacity="0.8"/>
+                <path d="M15 20 L18 23 L25 16" stroke="white" stroke-width="2" fill="none"/>
+              </svg>
+            </div>
+            <div class="ai-chip">
+              <span>AI</span>
+            </div>
+            <div class="vietnam-star">
+              <svg width="30" height="30" viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15 2 L18 11 L27 11 L20 17 L23 26 L15 20 L7 26 L10 17 L3 11 L12 11 Z" fill="#FFD700"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main content ở giữa -->
+      <div class="center-column">
+        <div class="main-content">
+          <h1 class="main-title">
+          INTERNET AN TOÀN
+          <br>
+          CHO NGƯỜI VIỆT
+        </h1>
+          <p class="subtitle">Phát hiện lừa đảo qua số điện thoại, tài khoản ngân hàng và website độc hại</p>
+
+          <div class="search-box-container" [class.loading]="isLoading">
+            <!-- Robot chạy quanh search box -->
+            <div class="search-robot" (click)="onRobotClick()" title="Click vào tôi! 🤖">
+              <!-- Mắt robot -->
+              <div class="robot-eyes"></div>
+              <!-- Chân robot -->
+              <div class="robot-legs"></div>
+            </div>
+            <div class="search-robot-trail"></div>
+            <div class="search-robot-trail"></div>
+            <div class="search-robot-trail"></div>
+            
+            <!-- Type Selection Buttons -->
+            <div class="search-type-buttons">
+              <button class="type-btn" 
+                      [class.active]="selectedType === 1"
+                      (click)="selectSearchType(1)"
+                      [disabled]="isLoading">
+                <i class="fas fa-mobile-alt"></i>
+                <span>Số điện thoại</span>
+              </button>
+              
+              <button class="type-btn" 
+                      [class.active]="selectedType === 2"
+                      (click)="selectSearchType(2)"
+                      [disabled]="isLoading">
+                <i class="fas fa-university"></i>
+                <span>Số tài khoản</span>
+              </button>
+              
+              <button class="type-btn" 
+                      [class.active]="selectedType === 3"
+                      (click)="selectSearchType(3)"
+                      [disabled]="isLoading">
+                <i class="fas fa-globe"></i>
+                <span>URL/Website</span>
+              </button>
+            </div>
+            
+            <!-- Search Input Group -->
+            <div class="search-input-group">
+              <input class="search-input" type="text" [placeholder]="getSearchPlaceholder()"
+                [(ngModel)]="info" (keydown.enter)="sendMessage()" [disabled]="isLoading">
+              <button class="search-button" type="submit" (click)="sendMessage()" [disabled]="!info.trim() || isLoading">
+                <i [class]="currentSearchIcon"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="status-messages">
+            <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
+            <!-- Original loading spinner for inline display -->
+            <div class="loading-spinner" *ngIf="isLoading">
+              <div class="spinner"></div>
+              <p>Đang tra cứu...</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Activity Log Widget bên phải -->
+      <div class="right-column">
+        <div class="activity-log-widget">
+          <app-activity-widget></app-activity-widget>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="result-section" *ngIf="searchResult && !isLoading">
+    <div class="result-header">
+      <h2>Kết Quả Tra Cứu cho: <span class="highlight-info">{{ searchResult.info }}</span></h2>
+      <span class="status-tag" [class.status-safe]="searchResult.reportDescription !== 'Thông tin báo cáo liên quan đã được tìm thấy.'" [class.status-scam]="searchResult.reportDescription === 'Thông tin báo cáo liên quan đã được tìm thấy.'">
+        {{ searchResult.reportDescription }}
+      </span>
+    </div>
+
+    <div class="result-details">
+      <p><strong>Loại:</strong> {{ selectedType === 1 ? 'Số điện thoại' : selectedType === 2 ? 'Số tài khoản' : 'URL' }}</p>
+      <p *ngIf="searchResult.description"><strong>Mô tả:</strong> {{ searchResult.description }}</p>
+      <p *ngIf="searchResult.moneyScam && searchResult.moneyScam !== '0'"><strong>Số tiền bị lừa:</strong> {{ searchResult.moneyScam | currency:'VND':'symbol':'1.0-0':'vi' }}</p>
+      <p *ngIf="searchResult.verifiedCount"><strong>Số lượt báo cáo:</strong> {{ searchResult.verifiedCount }}</p>
+      <p *ngIf="searchResult.lastReportAt && searchResult.lastReportAt !== '0001-01-01T00:00:00'"><strong>Báo cáo gần nhất:</strong> {{ searchResult.lastReportAt | date:'dd/MM/yyyy HH:mm' }}</p>
+
+      <div class="analysis-section" *ngIf="searchResult.analysis">
+        <h3>Phân tích chi tiết:</h3>
+        <div class="analysis-content" [innerHTML]="searchResult.analysis"></div>
+      </div>
+
+      <div class="evidence-section" *ngIf="searchResult.evidenceUrls && searchResult.evidenceUrls.length > 0">
+        <h3>Bằng chứng:</h3>
+        <div class="evidence-gallery">
+          <img *ngFor="let url of searchResult.evidenceUrls" [src]="'https://your-domain.com' + url" alt="Bằng chứng" class="evidence-thumbnail">
+          </div>
+      </div>
+    </div>
+    <button class="clear-result-button" (click)="searchResult = null; errorMessage = null;">Xóa kết quả</button>
+  </div>
+
+  <!-- Top 10 Most Searched Section với Vertical Banners - BẢNG MỚI -->
+  <div class="top-searched-with-banners">
+    <!-- Left Banner -->
+    <app-vertical-banner position="left"></app-vertical-banner>
+    
+    <!-- Main Content -->
+    <div class="top-searched-section-new">
+      <div class="section-header">
+        <h2 class="section-title">🔍 TOP 10 ĐỐI TƯỢNG BỊ TRA CỨU NHIỀU NHẤT</h2>
+        <p class="section-subtitle">Những đối tượng được cộng đồng kiểm tra thường xuyên nhất</p>
+      </div>
+
+      <!-- Tab Navigation -->
+      <div class="tab-navigation">
+        <button class="tab-button" [class.active]="activeTab === 'phone'" (click)="setActiveTab('phone')">
+          <i class="fas fa-mobile-alt"></i>
+          Số điện thoại
+        </button>
+        <button class="tab-button" [class.active]="activeTab === 'bank'" (click)="setActiveTab('bank')">
+          <i class="fas fa-university"></i>
+          Tài khoản ngân hàng
+        </button>
+        <button class="tab-button" [class.active]="activeTab === 'url'" (click)="setActiveTab('url')">
+          <i class="fas fa-globe"></i>
+          Website
+        </button>
+      </div>
+
+      <!-- Content for each tab -->
+      <div class="tab-content-container">
+        
+        <!-- Phone Numbers Tab -->
+        <div class="tab-content" *ngIf="activeTab === 'phone'">
+          <h3 class="tab-title"><i class="fas fa-mobile-alt"></i> Top 10 Số điện thoại</h3>
+          
+          <!-- Loading state -->
+          <div class="loading-state" *ngIf="isLoadingTopData">
+            <div class="spinner"></div>
+            <p>Đang tải dữ liệu...</p>
+          </div>
+          
+          <!-- Error state -->
+          <div class="error-state" *ngIf="topDataError && !isLoadingTopData">
+            <p class="error-message">{{ topDataError }}</p>
+            <button class="retry-button" (click)="loadTopScamData()">Đồng bộ lại</button>
+          </div>
+          
+          <!-- Data content -->
+          <div class="ranking-list" *ngIf="!isLoadingTopData && !topDataError">
+            <div class="ranking-item" *ngFor="let item of getPhoneNumbers(); let i = index" 
+                 [class.danger]="item.status === 'danger'"
+                 [class.warning]="item.status === 'warning'"
+                 [class.safe]="item.status === 'safe'"
+                 (click)="onItemClick(item)"
+                 [style.cursor]="'pointer'">
+              <div class="rank-number">
+                <span class="rank">{{ i + 1 }}</span>
+              </div>
+              <div class="item-info">
+                <div class="item-value">{{ item.info }}</div>
+              </div>
+              <div class="item-description">
+                <span class="description-text">{{ item.description }}</span>
+              </div>
+              <div class="search-stats">
+                <div class="search-count">{{ item.viewCount | number }}</div>
+                <div class="search-label">lượt tra cứu</div>
+              </div>
+            </div>
+            
+            <!-- Empty state -->
+            <div class="empty-state" *ngIf="getPhoneNumbers().length === 0">
+              <p>Không có dữ liệu số điện thoại</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bank Accounts Tab -->
+        <div class="tab-content" *ngIf="activeTab === 'bank'">
+          <h3 class="tab-title"><i class="fas fa-university"></i> Top 10 Tài khoản ngân hàng</h3>
+          
+          <!-- Loading state -->
+          <div class="loading-state" *ngIf="isLoadingTopData">
+            <div class="spinner"></div>
+            <p>Đang tải dữ liệu...</p>
+          </div>
+          
+          <!-- Error state -->
+          <div class="error-state" *ngIf="topDataError && !isLoadingTopData">
+            <p class="error-message">{{ topDataError }}</p>
+            <button class="retry-button" (click)="loadTopScamData()">Đồng bộ lại</button>
+          </div>
+          
+          <!-- Data content -->
+          <div class="ranking-list" *ngIf="!isLoadingTopData && !topDataError">
+            <div class="ranking-item" *ngFor="let item of getBankAccounts(); let i = index" 
+                 [class.danger]="item.status === 'danger'"
+                 [class.warning]="item.status === 'warning'"
+                 [class.safe]="item.status === 'safe'"
+                 (click)="onItemClick(item)"
+                 [style.cursor]="'pointer'">
+              <div class="rank-number">
+                <span class="rank">{{ i + 1 }}</span>
+              </div>
+              <div class="item-info">
+                <div class="item-value">{{ item.info }}</div>
+              </div>
+              <div class="item-description">
+                <span class="description-text">{{ item.description }}</span>
+              </div>
+              <div class="search-stats">
+                <div class="search-count">{{ item.viewCount | number }}</div>
+                <div class="search-label">lượt tra cứu</div>
+              </div>
+            </div>
+            
+            <!-- Empty state -->
+            <div class="empty-state" *ngIf="getBankAccounts().length === 0">
+              <p>Không có dữ liệu tài khoản ngân hàng</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- URLs Tab -->
+        <div class="tab-content" *ngIf="activeTab === 'url'">
+          <h3 class="tab-title"><i class="fas fa-globe"></i> Top 10 Website</h3>
+          
+          <!-- Loading state -->
+          <div class="loading-state" *ngIf="isLoadingTopData">
+            <div class="spinner"></div>
+            <p>Đang tải dữ liệu...</p>
+          </div>
+          
+          <!-- Error state -->
+          <div class="error-state" *ngIf="topDataError && !isLoadingTopData">
+            <p class="error-message">{{ topDataError }}</p>
+            <button class="retry-button" (click)="loadTopScamData()">Đồng bộ lại</button>
+          </div>
+          
+          <!-- Data content -->
+          <div class="ranking-list" *ngIf="!isLoadingTopData && !topDataError">
+            <div class="ranking-item" *ngFor="let item of getWebsites(); let i = index" 
+                 [class.danger]="item.status === 'danger'"
+                 [class.warning]="item.status === 'warning'"
+                 [class.safe]="item.status === 'safe'"
+                 (click)="onItemClick(item)"
+                 [style.cursor]="'pointer'">
+              <div class="rank-number">
+                <span class="rank">{{ i + 1 }}</span>
+              </div>
+              <div class="item-info">
+                <div class="item-value">{{ item.info }}</div>
+              </div>
+              <div class="item-description">
+                <span class="description-text">{{ item.description }}</span>
+              </div>
+              <div class="search-stats">
+                <div class="search-count">{{ item.viewCount | number }}</div>
+                <div class="search-label">lượt tra cứu</div>
+              </div>
+            </div>
+            
+            <!-- Empty state -->
+            <div class="empty-state" *ngIf="getWebsites().length === 0">
+              <p>Không có dữ liệu website</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-footer">
+        <p class="update-note">📊 Dữ liệu được cập nhật mỗi 24 giờ | ⚠️ Thông tin chỉ mang tính chất tham khảo</p>
+      </div>
+    </div>
+
+    <!-- Right Banner -->
+    <app-vertical-banner position="right"></app-vertical-banner>
+  </div>
+</div>
+
+<div class="features-section">
+  <div class="container">
+    <div class="section-header">
+      <p class="section-label">TÍNH NĂNG</p>
+      <h2 class="section-main-title">Bảo vệ toàn diện khỏi lừa đảo</h2>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <img src="../../../assets/img/aisdt.jpg" alt="Hình ảnh AI kiểm tra số điện thoại" width="50" height="50">
+        </div>
+        <h3 class="feature-title">Kiểm tra số điện thoại</h3>
+        <p class="feature-description">Xác minh danh tính người gọi, phát hiện các số điện thoại lừa đảo đã được báo cáo bởi cộng đồng.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <img src="../../../assets/img/aisdt.jpg" alt="Hình ảnh AI kiểm tra số điện thoại" width="50" height="50">
+        </div>
+        <h3 class="feature-title">Xác thực tài khoản ngân hàng</h3>
+        <p class="feature-description">Kiểm tra tính hợp lệ của số tài khoản ngân hàng trước khi thực hiện giao dịch chuyển tiền.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <img src="../../../assets/img/aisdt.jpg" alt="Hình ảnh AI kiểm tra số điện thoại" width="50" height="50">
+        </div>
+        <h3 class="feature-title">Quét website an toàn</h3>
+        <p class="feature-description">Phân tích website để phát hiện các trang web giả mạo, lừa đảo hoặc chứa mã độc.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <img src="../../../assets/img/aisdt.jpg" alt="Hình ảnh AI kiểm tra số điện thoại" width="50" height="50">
+        </div>
+        <h3 class="feature-title">AI Tư vấn thông minh</h3>
+        <p class="feature-description">Chatbot AI hỗ trợ 24/7, tư vấn và giải đáp các thắc mắc về an toàn thông tin.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <img src="../../../assets/img/aisdt.jpg" alt="Hình ảnh AI kiểm tra số điện thoại" width="50" height="50">
+        </div>
+        <h3 class="feature-title">Cơ sở dữ liệu cập nhật</h3>
+        <p class="feature-description">Dữ liệu lừa đảo được cập nhật liên tục từ các nguồn uy tín và báo cáo từ cộng đồng.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <img src="../../../assets/img/aisdt.jpg" alt="Hình ảnh AI kiểm tra số điện thoại" width="50" height="50">
+        </div>
+        <h3 class="feature-title">Cảnh báo thời gian thực</h3>
+        <p class="feature-description">Nhận thông báo ngay lập tức khi phát hiện các mối đe dọa mới hoặc chiêu trò lừa đảo.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="about-us-section">
+  <div class="container">
+    <div class="about-us-content">
+      <div class="text-column">
+        <!-- <p class="section-label">VỀ CHÚNG TÔI</p> -->
+        <h2 class="section-main-title">INTERNET AN TOÀN<br> CHO NGƯỜI VIỆT</h2>
+        <p class="section-description">
+          Tại AI6, chúng tôi tự hào là giải pháp hàng đầu, tiên phong trong sứ mệnh bảo vệ cộng đồng trực tuyến tại Việt Nam. Bằng việc ứng dụng công nghệ AI vượt trội cùng kho dữ liệu được cập nhật không ngừng, chúng tôi mang đến sự an toàn toàn diện, giúp người dùng an tâm khám phá không gian mạng.
+        </p>
+        <a routerLink="/about-us" class="btn-about-us">
+          Xem thêm về chúng tôi
+          <span class="arrow-icon">→</span>
+        </a>
+      </div>
+      <div class="graphic-column">
+        <svg width="500" height="400" viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="aboutBg" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#FF6B35;stop-opacity:0.1" />
+              <stop offset="100%" style="stop-color:#FFD23F;stop-opacity:0.1" />
+            </linearGradient>
+            <radialGradient id="internetGrad" cx="50%" cy="50%" r="60%">
+              <stop offset="0%" style="stop-color:#FFD54F;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#FF6B35;stop-opacity:1" />
+            </radialGradient>
+          </defs>
+          
+          <!-- Background -->
+          <rect width="500" height="400" fill="url(#aboutBg)" rx="20"/>
+          
+          <!-- Internet Globe -->
+          <circle cx="250" cy="180" r="80" fill="url(#internetGrad)" opacity="0.8"/>
+          
+          <!-- Network Lines -->
+          <g stroke="#FF6B35" stroke-width="2" opacity="0.6">
+            <path d="M170 180 Q180 160 190 180 Q200 200 210 180 Q220 160 230 180">
+              <animate attributeName="d" values="M170 180 Q180 160 190 180 Q200 200 210 180 Q220 160 230 180;M170 180 Q180 200 190 180 Q200 160 210 180 Q220 200 230 180;M170 180 Q180 160 190 180 Q200 200 210 180 Q220 160 230 180" dur="4s" repeatCount="indefinite"/>
+            </path>
+            <path d="M270 180 Q280 200 290 180 Q300 160 310 180 Q320 200 330 180">
+              <animate attributeName="d" values="M270 180 Q280 200 290 180 Q300 160 310 180 Q320 200 330 180;M270 180 Q280 160 290 180 Q300 200 310 180 Q320 160 330 180;M270 180 Q280 200 290 180 Q300 160 310 180 Q320 200 330 180" dur="4s" repeatCount="indefinite"/>
+            </path>
+            <circle cx="250" cy="100" r="40" fill="none">
+              <animate attributeName="r" values="40;50;40" dur="3s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="250" cy="260" r="30" fill="none">
+              <animate attributeName="r" values="30;40;30" dur="3s" begin="1s" repeatCount="indefinite"/>
+            </circle>
+          </g>
+          
+          <!-- Security Shields -->
+          <g>
+            <path d="M180 120 L190 130 L190 160 Q190 170 180 175 Q170 170 170 160 L170 130 Z" fill="#FF5722" opacity="0.8"/>
+            <path d="M175 140 L178 143 L185 136" stroke="white" stroke-width="2" fill="none"/>
+            
+            <path d="M320 120 L330 130 L330 160 Q330 170 320 175 Q310 170 310 160 L310 130 Z" fill="#FF5722" opacity="0.8"/>
+            <path d="M315 140 L318 143 L325 136" stroke="white" stroke-width="2" fill="none"/>
+            
+            <path d="M180 240 L190 250 L190 280 Q190 290 180 295 Q170 290 170 280 L170 250 Z" fill="#FF5722" opacity="0.8"/>
+            <path d="M175 260 L178 263 L185 256" stroke="white" stroke-width="2" fill="none"/>
+            
+            <path d="M320 240 L330 250 L330 280 Q330 290 320 295 Q310 290 310 280 L310 250 Z" fill="#FF5722" opacity="0.8"/>
+            <path d="M315 260 L318 263 L325 256" stroke="white" stroke-width="2" fill="none"/>
+          </g>
+          
+          <!-- Vietnam Elements -->
+          <rect x="220" y="50" width="60" height="36" fill="#D32F2F" rx="4"/>
+          <path d="M250 58 L255 68 L265 68 L258 74 L260 84 L250 79 L240 84 L242 74 L235 68 L245 68 Z" fill="#FFD700"/>
+          
+          <!-- Floating Security Icons -->
+          <g opacity="0.7">
+            <circle cx="100" cy="80" r="4" fill="#FFD700">
+              <animate attributeName="cy" values="80;70;80" dur="3s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="400" cy="120" r="3" fill="#FF6B35">
+              <animate attributeName="cy" values="120;110;120" dur="4s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="80" cy="300" r="5" fill="#FF5722">
+              <animate attributeName="cy" values="300;290;300" dur="2.5s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="420" cy="280" r="4" fill="#FFD23F">
+              <animate attributeName="cy" values="280;270;280" dur="3.5s" repeatCount="indefinite"/>
+            </circle>
+          </g>
+          
+          <!-- Text Decoration -->
+          <text x="250" y="350" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#D32F2F" opacity="0.8">INTERNET AN TOÀN</text>
+        </svg>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+<app-chat-box *ngIf="showChatbox" (close)="closeChatbox()"></app-chat-box>
+<app-footer></app-footer>

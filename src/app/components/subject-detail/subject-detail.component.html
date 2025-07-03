@@ -1,0 +1,236 @@
+<app-header></app-header>
+
+<div class="subject-detail-page">
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="isLoading">
+    <div class="loading-content">
+      <div class="spinner"></div>
+      <p>Đang tải thông tin chi tiết...</p>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div class="error-container" *ngIf="error && !isLoading">
+    <div class="error-content">
+      <i class="fas fa-exclamation-triangle"></i>
+      <h3>Có lỗi xảy ra</h3>
+      <p>{{ error }}</p>
+      <button class="retry-btn" (click)="loadSubjectDetail(route.snapshot.params['id'], route.snapshot.queryParams['type'])">
+        <i class="fas fa-redo"></i>
+        Thử lại
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content" *ngIf="subjectDetail && !isLoading && !error">
+    
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+      <button class="back-btn" (click)="goBack()">
+        <i class="fas fa-arrow-left"></i>
+        Quay lại
+      </button>
+      <span class="separator">/</span>
+      <span class="current">Chi tiết đối tượng</span>
+    </div>
+
+    <!-- Header Section -->
+    <div class="detail-header">
+      <div class="header-left">
+        <div class="subject-type-badge" [style.background]="getRiskColor(subjectDetail.riskLevel)">
+          <i [class]="getTypeIcon(subjectDetail.type)"></i>
+          {{ getTypeText(subjectDetail.type) }}
+        </div>
+        
+        <h1 class="subject-value">{{ subjectDetail.info }}</h1>
+        <h2 class="subject-name">{{ subjectDetail.name }}</h2>
+        
+        <div class="risk-indicator" 
+             [style.background]="getRiskColor(subjectDetail.riskLevel)"
+             *ngIf="subjectDetail.riskLevel !== 'low'">
+          <i class="fas fa-shield-alt"></i>
+          <span>{{ getRiskText(subjectDetail.riskLevel) }}</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <button class="action-btn report-btn" (click)="reportFalseInfo()">
+          <i class="fas fa-flag"></i>
+          Báo cáo sai
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-hand-holding-usd"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ formatCurrency(subjectDetail.totalScamAmount) }}</div>
+          <div class="stat-label">Tổng số tiền chiếm đoạt</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-users"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ subjectDetail.reportCount }}</div>
+          <div class="stat-label">Số lượt báo cáo</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-clock"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-value">{{ formatDate(subjectDetail.lastReportDate) }}</div>
+          <div class="stat-label">Báo cáo gần nhất</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Description Section -->
+    <div class="content-section">
+      <div class="section-header">
+        <h3 class="section-title">
+          <i class="fas fa-info-circle"></i>
+          Mô tả chi tiết
+        </h3>
+      </div>
+      <div class="section-content">
+        <p class="description-text">{{ subjectDetail.description }}</p>
+      </div>
+    </div>
+
+    <!-- Evidence Section -->
+    <div class="content-section" *ngIf="subjectDetail.evidenceImages.length > 0">
+      <div class="section-header">
+        <h3 class="section-title">
+          <i class="fas fa-images"></i>
+          Bằng chứng ({{ subjectDetail.evidenceImages.length }} ảnh)
+        </h3>
+      </div>
+      <div class="section-content">
+        <div class="evidence-grid">
+          <div class="evidence-item" *ngFor="let image of subjectDetail.evidenceImages; trackBy: trackByImageUrl"
+               (click)="openLightbox(image)">
+            <img [src]="image" 
+                 [alt]="'Bằng chứng ' + subjectDetail.info" 
+                 class="evidence-image"
+                 (error)="onImageError(image, $event)"
+                 (load)="onImageLoad(image)">
+          </div>
+        </div>
+        
+        <!-- Lightbox Modal -->
+        <div class="lightbox-overlay" *ngIf="selectedImage" 
+             (click)="closeLightbox()" 
+             (keydown)="onLightboxKeydown($event)"
+             tabindex="0">
+          <div class="lightbox-content" (click)="$event.stopPropagation()">
+            <!-- Close button -->
+            <button class="lightbox-close" (click)="closeLightbox()">
+              <i class="fas fa-times"></i>
+            </button>
+            
+            <!-- Previous button -->
+            <button class="lightbox-nav lightbox-prev" 
+                    *ngIf="subjectDetail.evidenceImages.length > 1"
+                    (click)="goToPreviousImage()">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            
+            <!-- Next button -->
+            <button class="lightbox-nav lightbox-next" 
+                    *ngIf="subjectDetail.evidenceImages.length > 1"
+                    (click)="goToNextImage()">
+              <i class="fas fa-chevron-right"></i>
+            </button>
+            
+            <!-- Main image -->
+            <img [src]="selectedImage" 
+                 [alt]="'Bằng chứng ' + subjectDetail.info"
+                 class="lightbox-image">
+                 
+            <!-- Image info with thumbnails -->
+            <div class="lightbox-info">
+              <div class="image-counter">
+                Bằng chứng {{ getCurrentImageIndex() + 1 }} / {{ subjectDetail.evidenceImages.length }}
+              </div>
+              
+              <!-- Thumbnail navigation -->
+              <div class="thumbnail-nav" *ngIf="subjectDetail.evidenceImages.length > 1">
+                <div class="thumbnail-item" 
+                     *ngFor="let image of subjectDetail.evidenceImages; let i = index"
+                     [class.active]="image === selectedImage"
+                     (click)="selectedImage = image">
+                  <img [src]="image" [alt]="'Thumbnail ' + (i + 1)">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reports Timeline -->
+    <div class="content-section">
+      <div class="section-header">
+        <h3 class="section-title">
+          <i class="fas fa-history"></i>
+          Lịch sử báo cáo ({{ subjectDetail.reports.length }})
+        </h3>
+      </div>
+      <div class="section-content">
+        <div class="timeline">
+          <div class="timeline-item" *ngFor="let report of subjectDetail.reports">
+            <div class="timeline-header">
+              <div class="timeline-date">
+                <i class="fas fa-calendar"></i>
+                {{ formatDate(report.date) }}
+              </div>
+              <div class="report-status" 
+                   [class]="report.status === 'Đã xác minh' ? 'verified' : 'processing'"
+                   *ngIf="report.status !== 'Đã từ chối'">
+                <i class="fas" [class.fa-check-circle]="report.status === 'Đã xác minh'" 
+                   [class.fa-clock]="report.status === 'Đang xử lý'"></i>
+                {{ report.status }}
+              </div>
+            </div>
+            <div class="timeline-content">
+              <p class="report-description">{{ report.description }}</p>
+              <div class="report-details">
+                <span class="amount">Số tiền: {{ formatCurrency(report.amount) }}</span>
+                <span class="location">
+                  <i class="fas fa-map-marker-alt"></i>
+                  {{ report.reporterLocation }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Warning Banner -->
+    <div class="warning-banner">
+      <div class="warning-content">
+        <i class="fas fa-exclamation-triangle"></i>
+        <div class="warning-text">
+          <h4>Lưu ý quan trọng</h4>
+          <p>Thông tin này chỉ mang tính chất tham khảo. Nếu bạn nhận được liên lạc từ đối tượng này, hãy cảnh giác và không cung cấp thông tin cá nhân hoặc chuyển tiền.</p>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<app-footer></app-footer>

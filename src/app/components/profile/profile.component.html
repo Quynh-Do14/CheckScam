@@ -1,0 +1,285 @@
+<div class="container-fluid">
+  <div class="alert alert-warning alert-dismissible fade show" *ngIf="error" role="alert">
+    <i class="fas fa-exclamation-triangle mr-2"></i>
+    {{error}}
+    <button type="button" class="close" (click)="error = ''" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="loading-overlay" *ngIf="loading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>
+
+  <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">
+      <i class="fas fa-user-circle mr-2"></i>
+      Thông tin tài khoản
+    </h1>
+    <button class="btn btn-secondary btn-sm" (click)="goBack()">
+      <i class="fas fa-arrow-left mr-1"></i>
+      Quay lại
+    </button>
+  </div>
+
+  <div class="row">
+    <div class="col-xl-4 col-lg-5">
+      <div class="card shadow mb-4">
+        <div class="card-header py-3">
+          <h6 class="m-0 font-weight-bold text-primary">Ảnh đại diện</h6>
+        </div>
+        <div class="card-body text-center">
+          <div class="mb-3">
+            <img [src]="avatarUrl" 
+                 class="rounded-circle" 
+                 width="150" 
+                 height="150" 
+                 alt="Avatar"
+                 (error)="onImageError($event)"
+                 [style.object-fit]="'cover'">
+          </div>
+          <div class="mb-3" *ngIf="isEditing">
+            <input type="file" class="form-control-file" accept="image/*" (change)="onFileSelected($event)">
+            <small class="text-muted">Chọn ảnh định dạng JPG, PNG (tối đa 2MB)</small>
+            <div class="mt-2" *ngIf="uploading">
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%"></div>
+              </div>
+              <small class="text-info">Đang tải lên ảnh...</small>
+            </div>
+          </div>
+          <h5 class="card-title">{{currentUser.name}}</h5>
+          <p class="card-text text-muted">{{currentUser.email}}</p>
+          <span class="badge badge-primary">{{getRoleName(currentUser.role)}}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xl-8 col-lg-7">
+      <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+          <h6 class="m-0 font-weight-bold text-primary">Chi tiết thông tin</h6>
+          <div>
+            <button 
+              *ngIf="!isEditing" 
+              class="btn btn-primary btn-sm" 
+              (click)="toggleEdit()">
+              <i class="fas fa-edit mr-1"></i>
+              Chỉnh sửa
+            </button>
+            <div *ngIf="isEditing" class="btn-group">
+              <button 
+                class="btn btn-success btn-sm" 
+                (click)="onSubmit()" 
+                [disabled]="loading || uploading || !profileForm.valid">
+                <i class="fas fa-save mr-1" *ngIf="!loading && !uploading"></i>
+                <i class="fas fa-spinner fa-spin mr-1" *ngIf="loading || uploading"></i>
+                <span *ngIf="!loading && !uploading">Lưu</span>
+                <span *ngIf="loading">Lưu thông tin...</span>
+                <span *ngIf="uploading">Tải ảnh...</span>
+              </button>
+              <button 
+                class="btn btn-secondary btn-sm" 
+                (click)="toggleEdit()" 
+                [disabled]="loading || uploading">
+                <i class="fas fa-times mr-1"></i>
+                Hủy
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="name" class="form-label">
+                  <i class="fas fa-user mr-1"></i>
+                  Tên đăng nhập <span class="text-danger" *ngIf="isEditing">*</span>
+                </label>
+                <input 
+                  type="text" 
+                  id="name"
+                  class="form-control" 
+                  formControlName="name"
+                  [class.is-invalid]="profileForm.get('name')?.invalid && profileForm.get('name')?.touched"
+                  placeholder="Nhập tên đăng nhập">
+                <div class="invalid-feedback" *ngIf="profileForm.get('name')?.invalid && profileForm.get('name')?.touched">
+                  <div *ngIf="profileForm.get('name')?.errors?.['required']">Tên đăng nhập là bắt buộc</div>
+                  <div *ngIf="profileForm.get('name')?.errors?.['minlength']">Tên đăng nhập phải có ít nhất 3 ký tự</div>
+                  <div *ngIf="profileForm.get('name')?.errors?.['maxlength']">Tên đăng nhập không được quá 50 ký tự</div>
+                </div>
+                <small class="text-muted" *ngIf="!isEditing">Click "Chỉnh sửa" để thay đổi tên</small>
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label for="email" class="form-label">
+                  <i class="fas fa-envelope mr-1"></i>
+                  Email
+                </label>
+                <input 
+                  type="email" 
+                  id="email"
+                  class="form-control" 
+                  formControlName="email"
+                  readonly>
+                <small class="text-muted">Email không thể thay đổi</small>
+              </div>
+
+              <div class="col-md-12 mb-3">
+                <label for="description" class="form-label">
+                  <i class="fas fa-info-circle mr-1"></i>
+                  Mô tả
+                </label>
+                <textarea 
+                  id="description"
+                  class="form-control" 
+                  formControlName="description"
+                  rows="3"
+                  placeholder="Nhập mô tả về bản thân"></textarea>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-12">
+                <hr>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h6 class="text-primary mb-0">
+                    <i class="fas fa-address-book mr-1"></i>
+                    Thông tin liên lạc
+                  </h6>
+                  <button 
+                    *ngIf="isEditing" 
+                    type="button" 
+                    class="btn btn-outline-primary btn-sm"
+                    (click)="addNewProfile()">
+                    <i class="fas fa-plus mr-1"></i>
+                    Thêm liên lạc
+                  </button>
+                </div>
+                
+                <div *ngIf="currentUser.profiles && currentUser.profiles.length > 0" class="mb-3">
+                  <div 
+                    *ngFor="let profile of currentUser.profiles; let i = index" 
+                    class="card mb-2 profile-card">
+                    <div class="card-body py-2">
+                      <div class="row align-items-center">
+                        <div class="col-md-3">
+                          <div class="d-flex align-items-center">
+                            <i [class]="getProfileIcon(profile.nameInfo)" class="mr-2 text-primary"></i>
+                            <strong>{{ profile.nameInfo }}</strong>
+                          </div>
+                        </div>
+                        <div class="col-md-7">
+                          <span *ngIf="!isEditing" class="text-muted">{{ profile.info }}</span>
+                          <input 
+                            *ngIf="isEditing" 
+                            type="text" 
+                            class="form-control form-control-sm"
+                            [(ngModel)]="profile.info"
+                            [ngModelOptions]="{standalone: true}"
+                            [placeholder]="'Nhập ' + profile.nameInfo.toLowerCase()">
+                        </div>
+                        <div class="col-md-2 text-right">
+                          <button 
+                            *ngIf="!isEditing && profile.info" 
+                            type="button" 
+                            class="btn btn-outline-primary btn-sm mr-1"
+                            (click)="openProfileLink(profile)"
+                            title="Mở liên kết">
+                            <i class="fas fa-external-link-alt"></i>
+                          </button>
+                          <button 
+                            *ngIf="isEditing" 
+                            type="button" 
+                            class="btn btn-outline-danger btn-sm"
+                            (click)="removeProfile(i)"
+                            title="Xóa">
+                            <i class="fas fa-trash"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div *ngIf="isEditing && showAddProfileForm" class="card mb-3 border-dashed">
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-md-4 mb-2">
+                        <label class="form-label">Loại liên lạc</label>
+                        <select class="form-control form-control-sm" [(ngModel)]="newProfile.nameInfo" [ngModelOptions]="{standalone: true}">
+                          <option value="">Chọn loại</option>
+                          <option value="Facebook">Facebook</option>
+                          <option value="Zalo">Zalo</option>
+                          <option value="Telegram">Telegram</option>
+                          <option value="WhatsApp">WhatsApp</option>
+                          <option value="Phone">Số điện thoại</option>
+                          <option value="Email">Email</option>
+                          <option value="Website">Website</option>
+                          <option value="Other">Khác</option>
+                        </select>
+                      </div>
+                      <div class="col-md-6 mb-2">
+                        <label class="form-label">Thông tin liên lạc</label>
+                        <input 
+                          type="text" 
+                          class="form-control form-control-sm"
+                          [(ngModel)]="newProfile.info"
+                          [ngModelOptions]="{standalone: true}"
+                          [placeholder]="getPlaceholderForProfileType(newProfile.nameInfo)">
+                      </div>
+                      <div class="col-md-2 mb-2">
+                        <label class="form-label">&nbsp;</label>
+                        <div class="d-flex">
+                          <button 
+                            type="button" 
+                            class="btn btn-success btn-sm mr-1"
+                            (click)="saveNewProfile()"
+                            [disabled]="!newProfile.nameInfo || !newProfile.info">
+                            <i class="fas fa-check"></i>
+                          </button>
+                          <button 
+                            type="button" 
+                            class="btn btn-secondary btn-sm"
+                            (click)="cancelAddProfile()">
+                            <i class="fas fa-times"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div *ngIf="!currentUser.profiles || currentUser.profiles.length === 0" class="text-center py-3">
+                  <i class="fas fa-address-book fa-2x text-muted mb-2"></i>
+                  <p class="text-muted mb-0">Chưa có thông tin liên lạc</p>
+                  <small class="text-muted">Click "Chỉnh sửa" để thêm thông tin liên lạc</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="row" *ngIf="!isEditing">
+              <div class="col-12">
+                <hr>
+                <h6 class="text-primary mb-3">
+                  <i class="fas fa-info-circle mr-1"></i>
+                  Thông tin tài khoản
+                </h6>
+                <div class="row">
+                  <div class="col-md-6">
+                    <p><strong>Vai trò:</strong> <span class="badge badge-info">{{getRoleName(currentUser.role)}}</span></p>
+                  </div>
+                  <div class="col-md-6">
+                    <p><strong>Trạng thái:</strong> <span class="badge badge-success">Hoạt động</span></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

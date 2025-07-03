@@ -1,0 +1,499 @@
+$primary-orange: #FF7B00;
+$primary-green: #4CAF50;
+$text-dark: #343A40;
+$text-light-grey: #6C757D;
+$background-page: #F0F2F5;
+$border-light: #E0E6ED;
+$white: #FFFFFF;
+$soft-yellow: #FFD23F;
+
+/* Keyframe Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.report-page-container {
+  padding-top: 70px;
+  background-color: $background-page;
+  min-height: calc(100vh - 70px - 50px); 
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-bottom: 30px;
+}
+
+.two-column-layout {
+  display: flex;
+  max-width: 1100px;
+  margin: 0 auto;
+  gap: 30px;
+  padding: 0 15px;
+  flex-wrap: wrap;
+  align-items: stretch;
+  width: 100%;
+}
+
+.left-column {
+  flex-basis: 60%;
+  flex-grow: 1;
+  min-width: 300px;
+}
+
+.right-column {
+  flex-basis: 35%;
+  flex-grow: 1;
+  min-width: 250px;
+}
+
+@media (max-width: 992px) {
+  .two-column-layout {
+    flex-direction: column;
+    align-items: center;
+  }
+  .left-column, .right-column {
+    flex-basis: 100%;
+    max-width: 600px;
+    margin-bottom: 20px;
+  }
+}
+
+.report-form {
+  background-color: $white;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+.report-form h3.info-box-title {
+  text-align: center;
+  color: #d9534f; /* Thay đổi màu tiêu đề cho phù hợp với trang khiếu nại */
+  margin-top: 0;
+  margin-bottom: 30px;
+  font-size: 1.8em;
+  font-weight: bold;
+  position: relative;
+  &::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 3px;
+    background-color: #d9534f; /* Thay đổi màu đường kẻ dưới */
+    margin: 10px auto 0;
+    border-radius: 2px;
+  }
+}
+
+.form-group {
+  margin-bottom: 20px;
+
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: $text-dark;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  textarea { /* Bỏ 'select' ở đây vì đã có custom select */
+    width: 100%;
+    padding: 6px 15px;
+    border: 1px solid $border-light;
+    border-radius: 6px;
+    font-size: 1em;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+
+    &:focus {
+      border-color: #007bff; /* Màu focus */
+      box-shadow: 0 0 0 3px rgba(#007bff, 0.25);
+      outline: none;
+    }
+  }
+
+  input[type="number"] {
+    -moz-appearance: textfield;
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+}
+
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  input[type="number"] {
+    padding-right: 50px;
+  }
+
+  .currency-unit {
+    position: absolute;
+    right: 15px;
+    color: $text-light-grey;
+    font-weight: bold;
+    font-size: 0.9em;
+  }
+}
+
+
+.report-type-selection {
+  margin-bottom: 25px;
+  .radio-group {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+
+    input[type="radio"] {
+      margin-right: 5px;
+      transform: scale(1.2);
+    }
+    label {
+      font-size: 1.1em;
+      font-weight: bold;
+      color: $text-dark;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+  }
+}
+
+.submit-button {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  background-color: $primary-orange; /* Màu cam cho nút submit */
+  color: $white;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.1em;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 25px;
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    background-color: darken($primary-orange, 10%); /* Hiệu ứng hover */
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  &:active {
+    background-color: darken($primary-orange, 15%);
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  }
+
+  &[disabled] {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.7;
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+.drop-zone {
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+  min-height: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  &:hover, &.drag-over {
+    border-color: $primary-orange;
+    background-color: lighten($primary-orange, 40%); /* Màu nhẹ hơn khi hover/drag */
+  }
+}
+
+.drop-zone-content {
+  color: #888;
+  font-size: 1.1em;
+
+  p {
+    margin: 0;
+    font-weight: bold;
+  }
+}
+
+.file-icons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  justify-content: center;
+}
+
+.file-icon-fa {
+  font-size: 30px;
+  vertical-align: middle;
+}
+
+.uploaded-bill-note {
+  margin-top: 10px;
+  color: #555;
+  font-size: 0.9em;
+  text-align: center;
+
+  .fas.fa-upload {
+    margin-right: 5px;
+    color: $text-light-grey;
+  }
+}
+
+.info-box {
+  background-color: $white;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  margin-bottom: 20px;
+}
+
+.info-box .info-section {
+  margin-bottom: 25px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .section-title {
+    color: #007bff; /* Màu tiêu đề info box */
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.3em;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid $border-light;
+    padding-bottom: 10px;
+
+    .info-icon {
+      margin-right: 10px;
+      font-size: 1.2em;
+    }
+
+    .info-icon.warning {
+      color: $soft-yellow;
+    }
+
+    .info-icon.info {
+      color: #007bff; 
+    }
+  }
+
+  p {
+    margin-top: 0;
+    margin-bottom: 10px;
+    line-height: 1.7;
+    color: $text-dark;
+
+    a {
+      color: $primary-orange; /* Màu link */
+      text-decoration: none;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  p.highlight-text {
+    color: #d9534f; 
+    font-weight: bold;
+  }
+
+  .reference-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+
+      a {
+        color: $primary-orange;
+        text-decoration: none;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+
+      .link-icon {
+        margin-left: 8px;
+        font-size: 0.9em;
+        color: $text-light-grey;
+      }
+    }
+  }
+}
+
+.info-section-bottom {
+  margin-top: 30px;
+  padding: 18px;
+  background-color: #fff3cd;
+  border: 1px solid #ffeeba;
+  border-radius: 8px;
+  color: #856404;
+  font-size: 0.95em;
+
+  p {
+    margin-bottom: 10px;
+    line-height: 1.6;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .highlight-text {
+    color: #d9534f;
+    font-weight: bold;
+  }
+}
+
+
+.remove-file-icon {
+  color: #dc3545;
+  margin-left: 10px;
+  cursor: pointer;
+  &:hover {
+    color: #c82333;
+  }
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+  input[type="checkbox"] {
+    margin-right: 10px;
+    transform: scale(1.1);
+  }
+  label {
+    display: inline-block;
+    font-weight: normal;
+    color: $text-dark;
+    a {
+      color :#007bff;
+      text-decoration: none;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+.text-danger {
+  color: #dc3545;
+}
+
+.custom-select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.custom-select {
+  position: relative;
+  width: 100%;
+  padding: 8px 15px;
+  border: 1px solid $border-light;
+  border-radius: 6px;
+  background-color: $white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  font-size: 1em;
+
+  &:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+    outline: none;
+  }
+
+  &::after {
+    // content: '\f0d7'; /* FontAwesome angle-down icon */
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #555;
+    transition: transform 0.3s ease;
+  }
+
+  &.open::after {
+    transform: translateY(-50%) rotate(180deg);
+  }
+}
+
+.custom-select-trigger {
+  flex-grow: 1;
+  color: $text-dark;
+}
+
+.custom-options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  border: 1px solid $border-light;
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+  background-color: $white;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 10;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+  margin-top: 1px;
+
+  &.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+}
+
+.custom-option {
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-size: 1em; 
+
+  &:hover {
+    background-color: #f0f0f0;
+  }
+
+  &.selected {
+    background-color: #e0e0e0;
+    font-weight: bold;
+    color: #007bff; /* Highlight màu xanh cho lựa chọn đã chọn */
+  }
+}

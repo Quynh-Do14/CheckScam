@@ -1,0 +1,156 @@
+<div class="main-content-container">
+  <div class="modern-card">
+    <div class="modern-card-header">
+      <h6 class="card-title">Danh sách khiếu nại tố cáo</h6>
+      <div class="filters">
+        <label for="statusFilter" class="form-label">Lọc theo trạng thái:</label>
+        <select
+          id="statusFilter"
+          class="form-control"
+          [(ngModel)]="selectedStatusFilter"
+          (change)="onStatusFilterChange($event)"
+        >
+          <option value="">Tất cả</option>
+          <option [value]="MistakeStatus.PENDING">Đang chờ xử lý</option>
+          <option [value]="MistakeStatus.APPROVED">Đã duyệt</option>
+          <option [value]="MistakeStatus.REJECTED">Đã từ chối</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="modern-card-body">
+      <div class="table-container">
+        <div class="table-responsive">
+          <table class="table modern-table" width="100%" cellspacing="0" role="grid">
+            <thead>
+              <tr role="row">
+                <th style="width: 5%;">ID</th>
+                <th style="width: 25%;">EMAIL NGƯỜI KHIẾU NẠI</th>
+                <th style="width: 35%;">MÔ TẢ</th>
+                <th style="width: 15%;">NGÀY KHIẾU NẠI</th>
+                <th class="status-column-header" style="width: 10%;">TRẠNG THÁI</th>
+                <th class="action-column-header" style="width: 10%;">HÀNH ĐỘNG</th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngIf="mistakes.length > 0; else noMistakes">
+                <tr *ngFor="let mistake of mistakes">
+                  <td>{{ mistake.id }}</td>
+                  <td>{{ mistake.emailAuthorMistake }}</td>
+                  <td>
+                    <div class="mistake-description-truncated" [title]="mistake.complaintReason">
+                      <a [routerLink]="['/admin/mistake-detail', mistake.id]" class="link-description">{{ mistake.complaintReason }}</a>
+                    </div>
+                  </td>
+                  <td>{{ mistake.dateMistake | date:'HH:mm dd/MM/yyyy' }}</td>
+                  <td class="status-column">
+                    <span class="report-status-badge"
+                            [ngClass]="{
+                              'status-pending': mistake.status === MistakeStatus.PENDING,
+                              'status-approved': mistake.status === MistakeStatus.APPROVED,
+                              'status-rejected': mistake.status === MistakeStatus.REJECTED
+                            }">
+                        {{ getMistakeStatusString(mistake.status) }}
+                      </span>
+                  </td>
+                  <td class="action-column">
+                    <div class="action-buttons-container">
+                      <ng-container *ngIf="mistake.status === MistakeStatus.PENDING">
+                        <button class="action-icon-button check-icon" (click)="openApproveConfirmModal(mistake.id)" title="Duyệt khiếu nại">
+                          <i class="fa-solid fa-check"></i>
+                        </button>
+                        <button class="action-icon-button times-icon" (click)="openRejectConfirmModal(mistake.id)" title="Từ chối khiếu nại">
+                          <i class="fa-solid fa-xmark"></i>
+                        </button>
+                      </ng-container>
+                      <ng-container *ngIf="mistake.status !== MistakeStatus.PENDING">
+                          <span class="no-action-placeholder" title="Không có hành động khả dụng">--</span>
+                      </ng-container>
+                    </div>
+                  </td>
+                </tr>
+              </ng-container>
+              <ng-template #noMistakes>
+                <tr>
+                  <td colspan="6" class="no-data-message">
+                    <span *ngIf="isLoading">Đang tải dữ liệu...</span>
+                    <span *ngIf="!isLoading && mistakes.length === 0">Không có khiếu nại nào để hiển thị.</span>
+                  </td>
+                </tr>
+              </ng-template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <nav class="pagination-container" *ngIf="totalPages > 1">
+        <ul class="pagination-list">
+          <li class="pagination-item" [class.disabled]="currentPage === 0">
+            <button class="pagination-link" (click)="goToFirst()" [disabled]="currentPage === 0">«</button>
+          </li>
+          <li class="pagination-item" [class.disabled]="currentPage === 0">
+            <button class="pagination-link" (click)="goToPrev()" [disabled]="currentPage === 0">‹</button>
+          </li>
+          <li *ngFor="let page of paginationPages" class="pagination-item"
+              [class.active]="page === currentPage + 1" [class.disabled]="page === '...'">
+            <button class="pagination-link" *ngIf="page !== '...'"
+                    (click)="typeof page === 'number' && goToPage(page)">{{ page }}</button>
+            <span class="pagination-link" *ngIf="page === '...'">…</span>
+          </li>
+          <li class="pagination-item" [class.disabled]="currentPage + 1 === totalPages">
+            <button class="pagination-link" (click)="goToNext()" [disabled]="currentPage + 1 === totalPages">›</button>
+          </li>
+          <li class="pagination-item" [class.disabled]="currentPage + 1 === totalPages">
+            <button class="pagination-link" (click)="goToLast()" [disabled]="currentPage + 1 === totalPages">»</button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Xác nhận Duyệt -->
+<div class="confirmation-modal-overlay" *ngIf="isProcessConfirmModalOpen" (click)="closeProcessConfirmModal()">
+  <div class="confirmation-modal" (click)="$event.stopPropagation()">
+    <div class="modal-icon approve-icon">
+      <i class="fa-solid fa-check-circle"></i>
+    </div>
+    <div class="modal-content">
+      <h3 class="modal-title">Xác nhận duyệt khiếu nại</h3>
+      <p class="modal-message">Bạn có chắc chắn muốn <strong>duyệt</strong> khiếu nại này không?</p>
+      <div class="modal-actions">
+        <button class="btn btn-approve" (click)="approveMistake(selectedMistakeIdForModal!)">
+          <i class="fa-solid fa-check"></i>
+          Duyệt
+        </button>
+        <button class="btn btn-cancel" (click)="closeProcessConfirmModal()">
+          <i class="fa-solid fa-times"></i>
+          Hủy
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Xác nhận Từ chối -->
+<div class="confirmation-modal-overlay" *ngIf="isRejectConfirmModalOpen" (click)="closeRejectConfirmModal()">
+  <div class="confirmation-modal" (click)="$event.stopPropagation()">
+    <div class="modal-icon reject-icon">
+      <i class="fa-solid fa-times-circle"></i>
+    </div>
+    <div class="modal-content">
+      <h3 class="modal-title">Xác nhận từ chối khiếu nại</h3>
+      <p class="modal-message">Bạn có chắc chắn muốn <strong>từ chối</strong> khiếu nại này không?</p>
+      <div class="modal-actions">
+        <button class="btn btn-reject" (click)="rejectMistake(selectedMistakeIdForModal!)">
+          <i class="fa-solid fa-ban"></i>
+          Từ chối
+        </button>
+        <button class="btn btn-cancel" (click)="closeRejectConfirmModal()">
+          <i class="fa-solid fa-times"></i>
+          Hủy
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

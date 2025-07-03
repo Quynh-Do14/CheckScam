@@ -1,0 +1,157 @@
+<app-header></app-header>
+
+<div class="report-page-container">
+  <div class="two-column-layout">
+    <div class="left-column">
+      <form class="report-form" #mistakeForm="ngForm" (ngSubmit)="submitMistakeReport()" novalidate>
+        <h3 class="info-box-title">KHIẾU NẠI BÁO CÁO SAI</h3>
+
+        <div class="form-group">
+          <label for="typeToComplainCustom">Loại thông tin bị tố cáo sai:</label>
+          <div class="custom-select-wrapper">
+            <div class="custom-select"
+                 [class.open]="isTypeToComplainDropdownOpen"
+                 (click)="toggleTypeToComplainDropdown()"
+                 tabindex="0"
+                 id="typeToComplainCustom"
+                 (keydown.enter)="toggleTypeToComplainDropdown()">
+              <div class="custom-select-trigger">{{ selectedTypeToComplainName }}</div>
+              <div class="custom-options" [class.show]="isTypeToComplainDropdownOpen">
+                <div class="custom-option"
+                     *ngFor="let option of typeToComplainOptions"
+                     [class.selected]="mistakeReportData.typeToComplain === option.id"
+                     (click)="selectTypeToComplain(option)"
+                     tabindex="0"
+                     (keydown.enter)="selectTypeToComplain(option)">
+                  {{ option.name }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <input type="hidden" name="typeToComplain" [(ngModel)]="mistakeReportData.typeToComplain" required #typeToComplainNgModel="ngModel">
+          <div *ngIf="typeToComplainNgModel.invalid && typeToComplainNgModel.touched" class="text-danger validation-message">
+            Vui lòng chọn loại thông tin cần khiếu nại.
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="mistake_info">
+            <ng-container *ngIf="mistakeReportData.typeToComplain === 1">Số điện thoại bị tố cáo sai:</ng-container>
+            <ng-container *ngIf="mistakeReportData.typeToComplain === 2">Số tài khoản bị tố cáo sai:</ng-container>
+            <ng-container *ngIf="mistakeReportData.typeToComplain === 3">URL bị tố cáo sai:</ng-container>
+          </label>
+          <input
+            id="mistake_info"
+            type="text"
+            name="mistake_info"
+            placeholder="Nhập thông tin bị tố cáo sai"
+            required
+            [(ngModel)]="mistakeReportData.info"
+            #mistakeInfoCtrl="ngModel"
+          />
+          <div *ngIf="mistakeInfoCtrl.invalid && (mistakeInfoCtrl.dirty || mistakeInfoCtrl.touched)" class="text-danger validation-message">
+            Vui lòng nhập thông tin bị tố cáo sai.
+          </div>
+        </div>
+
+        <div class="form-group" *ngIf="mistakeReportData.typeToComplain === 2">
+          <label for="mistake_accountHolderName">Tên chủ tài khoản bị tố cáo sai (nếu có):</label>
+          <input id="mistake_accountHolderName" name="mistake_accountHolderName" type="text" [(ngModel)]="mistakeReportData.info2"
+          placeholder="Nhập tên chủ tài khoản" /> <label for="mistake_bankName">Ngân hàng của tài khoản bị tố cáo sai (nếu có):</label>
+          <input id="mistake_bankName" name="mistake_bankName" type="text" [(ngModel)]="mistakeReportData.info3"
+          placeholder="Nhập tên ngân hàng" /> </div>
+
+        <div class="form-group">
+          <label for="mistake_email">Email của bạn (để chúng tôi liên hệ):</label>
+          <input
+            id="mistake_email"
+            type="email"
+            name="mistake_emailAuthorReport"
+            placeholder="Nhập email của bạn"
+            required
+            email
+            [(ngModel)]="mistakeReportData.emailAuthorReport"
+            #emailCtrl="ngModel"
+          />
+          <div *ngIf="emailCtrl.invalid && (emailCtrl.dirty || emailCtrl.touched)" class="text-danger validation-message">
+            <div *ngIf="emailCtrl.errors?.['required']">Vui lòng nhập email của bạn.</div>
+            <div *ngIf="emailCtrl.errors?.['email']">Email không hợp lệ.</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="mistake_description">Mô tả lý do khiếu nại:</label>
+          <textarea
+            id="mistake_description"
+            name="mistake_description" rows="5"
+            required
+            placeholder="Giải thích lý do bạn cho rằng báo cáo này là sai sự thật hoặc không chính xác"
+            [(ngModel)]="mistakeReportData.description"
+            #descriptionCtrl="ngModel"
+          ></textarea>
+          <div *ngIf="descriptionCtrl.invalid && (descriptionCtrl.dirty || descriptionCtrl.touched)" class="text-danger validation-message">
+            Vui lòng mô tả chi tiết lý do khiếu nại.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="mistake_files">Tài liệu đính kèm (bằng chứng hợp lệ):</label>
+          <div class="drop-zone"
+              (click)="fileInputMistake.click()"
+              (dragover)="onDragOverMistake($event)"
+              (dragleave)="onDragLeaveMistake($event)"
+              (drop)="onDropMistake($event)">
+            <div class="drop-zone-content">
+              <div class="file-icons">
+                <i class="fas fa-file-image text-danger file-icon-fa"></i>
+                <i class="fas fa-file-image text-primary file-icon-fa"></i>
+                <i class="far fa-file-image text-success file-icon-fa"></i>
+              </div>
+              <p>Kéo hoặc click vào đây để upload bằng chứng</p>
+              <input #fileInputMistake type="file" id="mistake_files" accept="image/*" multiple (change)="onFileSelectMistake($event)" style="display: none;" />
+            </div>
+          </div>
+          <div class="uploaded-bill-note">
+            <i class="fas fa-upload"></i> Upload bằng chứng chứng minh thông tin bị báo cáo là sai (ví dụ: hóa đơn, sao kê, ảnh chụp màn hình giao dịch thành công).
+          </div>
+        </div>
+
+        <div class="form-group" *ngIf="mistakeReportData.selectedFiles.length > 0">
+          <label>Các tệp đã chọn:</label>
+          <ul>
+            <li *ngFor="let f of mistakeReportData.selectedFiles">{{ f.name }} ({{ f.size | number }} bytes) <i class="fas fa-times-circle remove-file-icon" (click)="removeFile(f)"></i></li>
+          </ul>
+        </div>
+
+        <div class="form-group">
+          <re-captcha siteKey="6LfG6TArAAAAAD3M_YLwgUHuC6QPL7I7ATnWE4Xl" (resolved)="handleCaptchaResponse($event)"></re-captcha>
+          <div *ngIf="!captchaToken && mistakeForm.submitted" class="text-danger validation-message">
+            Vui lòng xác nhận Captcha.
+          </div>
+        </div>
+
+        <button class="submit-button" type="submit" [disabled]="mistakeForm.invalid || !captchaToken">
+          Gửi Khiếu Nại
+        </button>
+      </form>
+    </div>
+
+    <div class="right-column">
+      <div class="info-box">
+        <div class="info-section">
+          <h4 class="section-title"><i class="info-icon warning">!</i> Lưu ý quan trọng khi khiếu nại</h4>
+          <p>Để khiếu nại của bạn được xem xét nhanh chóng và công bằng, vui lòng đảm bảo rằng các thông tin bạn cung cấp là chính xác và có đầy đủ bằng chứng hỗ trợ.</p>
+          <p>Mọi khiếu nại sẽ được đội ngũ của chúng tôi kiểm tra kỹ lưỡng. Chúng tôi sẽ liên hệ lại với bạn qua email đã cung cấp nếu cần thêm thông tin hoặc để thông báo kết quả xử lý.</p>
+          <p class="highlight-text"><i class="info-icon warning">!</i> Việc cung cấp thông tin sai lệch có thể dẫn đến việc khiếu nại bị từ chối hoặc các hậu quả pháp lý theo Điều 156 Bộ luật Hình sự 2015.</p>
+        </div>
+
+        <div class="info-section">
+          <h4 class="section-title"><i class="info-icon info">i</i> Hướng dẫn khiếu nại</h4>
+          <p>Vui lòng mô tả chi tiết lý do bạn cho rằng báo cáo gốc là sai sự thật hoặc không chính xác. Kèm theo các bằng chứng rõ ràng như hóa đơn, sao kê ngân hàng, ảnh chụp màn hình giao dịch, hoặc bất kỳ tài liệu nào chứng minh sự thật thông tin bạn cung cấp.</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<app-footer></app-footer>

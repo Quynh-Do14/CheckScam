@@ -5,9 +5,6 @@
       <h3>Hoạt động gần đây</h3>
       <div class="connection-status" [class.connected]="isConnected"></div>
     </div>
-    <a routerLink="/activity-feed" class="view-all-link">
-      Xem tất cả <i class="fas fa-arrow-right"></i>
-    </a>
   </div>
 
   <div class="widget-content">
@@ -16,17 +13,15 @@
       <span>Đang tải...</span>
     </div>
 
-    <div *ngIf="!isLoading && !isConnected" class="error-state">
-      <span class="error-icon">⚠️</span>
-      <p>Không thể kết nối đến hệ thống theo dõi</p>
+    <!-- Bỏ thông báo lỗi kết nối -->
+
+    <!-- Luôn hiển thị danh sách hoạt động -->
+    <div *ngIf="recentActivities.length === 0" class="empty-state">
+      <span class="empty-icon">🚀</span>
+      <p>Hệ thống đang chuẩn bị...</p>
     </div>
 
-    <div *ngIf="!isLoading && isConnected && recentActivities.length === 0" class="empty-state">
-      <span class="empty-icon">📭</span>
-      <p>Chưa có hoạt động nào</p>
-    </div>
-
-    <div *ngIf="!isLoading && recentActivities.length > 0" class="activity-list">
+    <div *ngIf="recentActivities.length > 0" class="activity-list">
       <div *ngFor="let activity of recentActivities" 
            class="activity-item" 
            [ngClass]="getRiskClass(activity)"

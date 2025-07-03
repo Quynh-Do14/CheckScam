@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 $primary-orange: #FF7B00; 
 $primary-green: #4CAF50;
 $text-dark: #343A40;
@@ -72,7 +74,7 @@ $soft-yellow: #FFD23F;
   }
 
   &:hover {
-    color: darken($primary-orange, 10%);
+    color: color.adjust($primary-orange, $lightness: -10%);
     transform: translateX(-5px);
 
     .back-arrow {
@@ -225,7 +227,7 @@ $soft-yellow: #FFD23F;
   .btn-report {
     background-color: $primary-green;
     &:hover {
-      background-color: darken($primary-green, 10%);
+      background-color: color.adjust($primary-green, $lightness: -10%);
     }
   }
 
@@ -233,7 +235,7 @@ $soft-yellow: #FFD23F;
     background-color: $soft-yellow;
     color: $text-dark;
     &:hover {
-      background-color: darken($soft-yellow, 10%);
+      background-color: color.adjust($soft-yellow, $lightness: -10%);
       color: $text-dark;
     }
   }

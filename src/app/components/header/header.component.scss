@@ -125,7 +125,12 @@
     position: static;
     transform: none;
     left: auto;
-    
+
+    // Khoảng cách sau nút "Đối tác" cho desktop
+    li:not(.mobile-auth-section):last-of-type {
+      margin-right: 30px;
+    }
+
     .mobile-auth-section {
       display: none;
     }
@@ -133,16 +138,16 @@
 
   .nav-links.auth-nav {
     flex: 0 0 auto;
-    margin-left: auto;
     gap: 10px;
     z-index: 102;
 
     .login-button a {
-      background-color: #4CAF50;
+      background-color: #f80404;
       padding: 10px 20px;
       border-radius: 20px;
+      margin-left: 20px;
       &:hover {
-        background-color: #66BB6A;
+        background-color: #ff4b15;
       }
     }
 
@@ -160,7 +165,7 @@
       &:hover {
         background-color: rgba(255, 255, 255, 0.1);
       }
-      
+
       .user-avatar {
         display: flex;
         align-items: center;
@@ -185,6 +190,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
         max-width: 120px;
+
       }
 
       .dropdown-arrow {
@@ -235,6 +241,7 @@
   }
 
   .desktop-only-auth {
+    margin-left: 20px;
     display: flex;
   }
 
@@ -305,6 +312,9 @@ body.no-scroll {
         padding: 8px 14px;
         font-size: 15px;
       }
+      li:not(.mobile-auth-section):last-of-type {
+        margin-right: 25px;
+      }
     }
     .nav-links.auth-nav {
       .login-button a {
@@ -332,6 +342,9 @@ body.no-scroll {
       li a {
         padding: 8px 12px;
         font-size: 14px;
+      }
+      li:not(.mobile-auth-section):last-of-type {
+        margin-right: 20px;
       }
     }
     .nav-links.auth-nav {
@@ -397,7 +410,7 @@ body.no-scroll {
 
       li {
         width: 100%;
-        // border-bottom: 1px solid rgba(255,255,255,0.15);
+        margin-right: 0 !important;
         &:last-child {
           border-bottom: none;
         }
@@ -458,20 +471,21 @@ body.no-scroll {
           font-weight: 600;
           margin: 8px 0;
           width: 80%;
-          max-width: 180px;
-          
+          max-width: 165px;
+
           &:hover {
             transform: none;
             box-shadow: 0 2px 8px rgba(0,0,0,0.2);
           }
         }
         .mobile-login-btn, .mobile-register-btn {
-            background-color: #4CAF50;
-            border-color: #4CAF50;
-            color: #fff;
+            background-color: #FF5722; // Màu chủ đạo, hoặc #FF6B35
+            border-color: #FF5722;   // Đồng bộ border color
+            color: #fff; // Giữ màu chữ trắng cho dễ nhìn
+
             &:hover {
-                background-color: #66BB6A;
-                border-color: #66BB6A;
+                background-color: #FF8C68; // Một màu sáng hơn của chủ đạo cho hover
+                border-color: #FF8C68;
                 color: #fff;
             }
         }
@@ -490,6 +504,9 @@ body.no-scroll {
     position: static !important;
     transform: none !important;
     right: auto !important;
+  }
+  .nav-links.main-nav li:not(.mobile-auth-section):last-of-type {
+    margin-right: 30px;
   }
   .nav-links.main-nav .mobile-auth-section {
     display: none !important;

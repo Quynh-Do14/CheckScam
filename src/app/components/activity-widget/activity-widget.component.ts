@@ -13,8 +13,8 @@ import { Subscription } from 'rxjs';
 })
 export class ActivityWidgetComponent implements OnInit, OnDestroy {
   recentActivities: Activity[] = [];
-  isConnected: boolean = false;
-  isLoading: boolean = true;
+  isConnected: boolean = true; // Luôn hiển thị như đã kết nối
+  isLoading: boolean = false; // Bỏ trạng thái loading
 
   private subscriptions: Subscription[] = [];
 
@@ -27,6 +27,7 @@ export class ActivityWidgetComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
+
 
   private initializeWidget() {
     // Connect to activity service
@@ -82,8 +83,8 @@ export class ActivityWidgetComponent implements OnInit, OnDestroy {
   getActionText(actionType: string): string {
     const actions: { [key: string]: string } = {
       POST: 'tra cứu/kiểm tra',
-      UPLOAD: 'đăng tin tức',    // UPLOAD = đăng tin tức
-      REPORT: 'gửi báo cáo',     // REPORT = gửi báo cáo
+      UPLOAD: 'đăng tin tức',
+      REPORT: 'gửi báo cáo',
       JOIN: 'tham gia'
     };
     return actions[actionType] || 'thực hiện';

@@ -15,7 +15,6 @@ import { ChatBoxComponent } from './components/chat-box/chat-box.component';
 import { ListNewsComponent } from './components/news/list-news/list-news.component';
 import { UpdateNewsComponent } from './components/news/update-news/update-news.component';
 import { SubjectDetailComponent } from './components/subject-detail/subject-detail.component';
-import { ActivityFeedComponent } from './components/activity-feed/activity-feed.component';
 
 import { AnalyzeComponent } from './components/analyze/analyze.component';
 import { RankingComponent } from './components/ranking/ranking.component';
@@ -92,7 +91,6 @@ export const routes: Routes = [
     { path: 'report/create', component: CreateReportComponent },
     { path: 'report/mistake', component: MistakeComponent },
     { path: 'subject-detail/:id', component: SubjectDetailComponent },
-    { path: 'activity-feed', component: ActivityFeedComponent },
     { path: 'partners', component: PartnersComponent },
     { path: 'transactions', component: TransactionsComponent },
     { path: 'transactions/agent/:id', component: AgentDetailComponent },

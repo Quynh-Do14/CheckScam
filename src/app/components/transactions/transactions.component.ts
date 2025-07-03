@@ -34,6 +34,7 @@ export class TransactionsComponent implements OnInit {
   allAgents: TransactionAgent[] = [];
   isLoading: boolean = false;
   error: string | null = null;
+  showChatbox = false;
 
   // Base URL for your backend
   private readonly BASE_URL = 'http://localhost:8080';
@@ -116,5 +117,16 @@ export class TransactionsComponent implements OnInit {
 
   retryLoad(): void {
     this.loadAgents();
+  }
+
+   /* ===== Chat ===== */
+  onAiTuVanClicked(): void {
+    debugger
+    this.showChatbox = true;
+  }
+
+  closeChatbox(): void {
+    debugger
+    this.showChatbox = false;
   }
 }

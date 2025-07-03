@@ -3,9 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 
-// Import HeaderComponent and FooterComponent
-import { HeaderComponent } from '../header/header.component'; // Điều chỉnh đường dẫn nếu cần
-import { FooterComponent } from '../footer/footer.component'; // Điều chỉnh đường dẫn nếu cần
+import { HeaderComponent } from '../header/header.component'; 
+import { FooterComponent } from '../footer/footer.component'; 
+import { ChatBoxComponent } from '../chat-box/chat-box.component';
 
 // Define an interface for your form data
 interface PartnershipFormData {
@@ -18,19 +18,18 @@ interface PartnershipFormData {
 
 @Component({
   selector: 'app-partners',
-  standalone: true, // This component is standalone
+  standalone: true, 
   imports: [
     CommonModule,
-    FormsModule, // Required for ngModel
-    HeaderComponent, // Import HeaderComponent
-    FooterComponent  // Import FooterComponent
-  ],
+    FormsModule,
+    HeaderComponent,
+    FooterComponent
+],
   templateUrl: './partners.component.html',
   styleUrls: ['./partners.component.scss']
 })
 export class PartnersComponent implements OnInit {
-
-  // Initialize form data with default empty values
+showChatbox = false;
   partnershipData: PartnershipFormData = {
     name: '',
     email: '',
@@ -44,23 +43,17 @@ export class PartnersComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  // Function to scroll to the contact section (still useful)
   scrollToContact(): void {
     document.getElementById('contactSection')?.scrollIntoView({ behavior: 'smooth' });
   }
 
-  // Function to handle form submission
   submitPartnershipForm(): void {
     if (this.isFormValid()) {
-      // In a real application, you would send this data to a backend service.
-      // Example: this.partnershipService.sendProposal(this.partnershipData).subscribe(...)
 
       console.log('Partnership Proposal Submitted:', this.partnershipData);
 
-      // Show success toast
       this.toastr.success('Đề xuất hợp tác của bạn đã được gửi thành công!', 'Thành công!');
 
-      // Reset the form after submission
       this.partnershipData = {
         name: '',
         email: '',
@@ -69,12 +62,10 @@ export class PartnersComponent implements OnInit {
         message: ''
       };
     } else {
-      // Show error toast if form is invalid (though button is disabled if invalid)
       this.toastr.error('Vui lòng điền đầy đủ và chính xác thông tin!', 'Lỗi');
     }
   }
 
-  // Basic form validation (can be enhanced with Angular's Validators if using Reactive Forms)
   isFormValid(): boolean {
     return !!this.partnershipData.name &&
            !!this.partnershipData.email &&
@@ -82,9 +73,19 @@ export class PartnersComponent implements OnInit {
            !!this.partnershipData.message;
   }
 
-  // Simple email validation regex
   private isValidEmail(email: string): boolean {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
+  }
+
+   /* ===== Chat ===== */
+  onAiTuVanClicked(): void {
+    debugger
+    this.showChatbox = true;
+  }
+
+  closeChatbox(): void {
+    debugger
+    this.showChatbox = false;
   }
 }

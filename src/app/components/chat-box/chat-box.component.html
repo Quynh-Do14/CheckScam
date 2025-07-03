@@ -9,13 +9,16 @@
     <div *ngFor="let message of messages"
         class="message-wrapper"
         [ngClass]="{'user-message-wrapper': message.isUser, 'bot-message-wrapper': !message.isUser}">
-      <img *ngIf="!message.isUser" src="assets/img/aituvan3.jpg" alt="AI Logo" class="message-ai-logo"> <div class="message-content">
-        <div class="message-text" [innerHTML]="formatMessageContent(message.text)"></div>
+      <img *ngIf="!message.isUser" src="assets/img/aituvan3.jpg" alt="AI Logo" class="message-ai-logo"> 
+      <div class="message-content">
+        <span *ngIf="message.isUser">{{ message.text }}</span>
+        <div *ngIf="!message.isUser" class="message-text" [innerHTML]="formatMessageContent(message.text)"></div>
       </div>
     </div>
 
     <div *ngIf="isLoading" class="message-wrapper bot-message-wrapper typing-indicator">
-      <img src="assets/img/aituvan3.jpg" alt="AI Logo" class="message-ai-logo"> <div class="message-content">
+      <img src="assets/img/aituvan3.jpg" alt="AI Logo" class="message-ai-logo"> 
+      <div class="message-content">
         <div class="typing-dot"></div>
         <div class="typing-dot"></div>
         <div class="typing-dot"></div>

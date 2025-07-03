@@ -1,5 +1,8 @@
+@use "sass:color"; // Add this line at the top
+
 $primary-green: #A8E6CF;
-$primary-green-dark: darken($primary-green, 8%);
+// Sử dụng hàm color.adjust để làm tối màu
+$primary-green-dark: color.adjust($primary-green, $lightness: -8%); // Changed from darken
 
 $header-bg-color: #A8E6CF;
 $header-text-color: #333333;
@@ -202,6 +205,78 @@ $suggestion-btn-hover: #BBDEFB;
     color: $text-dark;
     border-radius: 20px 20px 20px 5px;
   }
+
+  /* START: CSS cho nội dung được format (chỉ áp dụng cho bot) */
+  .message-text {
+    // Đảm bảo không có padding/margin thừa từ class này
+    padding: 0;
+    margin: 0;
+  }
+
+  .message-text p {
+    margin: 0;
+    padding: 0;
+    line-height: inherit;
+    &:first-child {
+      margin-top: 0;
+    }
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .message-text p.newline-block {
+    height: 0.8em; /* Tạo khoảng cách cho \n\n */
+    margin: 0;
+    padding: 0;
+  }
+
+  .message-text p + p {
+    margin-top: 0.8em; /* Khoảng cách giữa các đoạn văn */
+  }
+
+  .message-text ul {
+    margin-top: 0.8em;
+    margin-bottom: 0.8em;
+    padding-left: 25px; /* Thụt lề cho danh sách */
+    list-style-type: disc; /* Kiểu dấu đầu dòng */
+  }
+
+  .message-text li {
+    margin-bottom: 0.3em; /* Khoảng cách giữa các mục danh sách */
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .message-text strong {
+    font-weight: bold;
+    display: block; /* Ép in đậm xuống dòng */
+    margin-top: 0.5em; /* Khoảng cách trên cho in đậm */
+    margin-bottom: 0.2em; /* Khoảng cách dưới cho in đậm */
+  }
+
+  .message-text em {
+    font-style: italic;
+  }
+
+  .message-text h1,
+  .message-text h2 {
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+    font-weight: bold;
+  }
+  .message-text h1 { font-size: 1.5em; }
+  .message-text h2 { font-size: 1.3em; }
+
+  /* Xử lý các <br> thừa nếu cần */
+  .message-text strong + br,
+  .message-text ul + br,
+  .message-text li + br,
+  .message-text p + br {
+    display: none; /* Ẩn <br> nếu nó đứng ngay sau một block element */
+  }
+  /* END: CSS cho nội dung được format */
 }
 
 .typing-indicator .message-content {

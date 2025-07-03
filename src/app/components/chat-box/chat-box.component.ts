@@ -134,43 +134,11 @@ export class ChatBoxComponent implements AfterViewInit {
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;');
-
-    formattedText = formattedText.replace(/\\n/g, '<br>');
-    formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    formattedText = formattedText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'); 
     formattedText = formattedText.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    formattedText = formattedText.replace(/\r?\n/g, '<br>'); 
     formattedText = formattedText.replace(/^##\s(.*?)$/gm, '<h2>$1</h2>');
     formattedText = formattedText.replace(/^#\s(.*?)$/gm, '<h1>$1</h1>');
-
-    const lines = formattedText.split('<br>');
-    let inList = false;
-    let newLines = [];
-    for (let i = 0; i < lines.length; i++) {
-        let line = lines[i].trim();
-        if (line.match(/^[\*-]\s/)) {
-            const listItemText = line.replace(/^[\*-]\s/, '').trim();
-            if (!inList) {
-                newLines.push('<ul>');
-                inList = true;
-            }
-            newLines.push(`<li>${listItemText}</li>`);
-        } else {
-            if (inList) {
-                newLines.push('</ul>');
-                inList = false;
-            }
-
-            if (line.length > 0 && !line.startsWith('<h') && !line.startsWith('<ul') && !line.startsWith('<li>') && !line.startsWith('</ul') && !line.startsWith('<p>')) {
-                 newLines.push(`<p>${line}</p>`);
-            } else {
-                 newLines.push(line);
-            }
-        }
-    }
-    if (inList) {
-        newLines.push('</ul>');
-    }
-    formattedText = newLines.join('');
-
     return formattedText;
   }
 }

@@ -89,9 +89,6 @@ export class ListNewsComponent implements OnInit {
     });
   }
 
-  /**
-   * Load tin nhanh và tin khác
-   */
   loadRegularNews(): void {
     console.log('Loading regular news...');
     this.newsService.getRegularNews().subscribe({
@@ -171,15 +168,6 @@ export class ListNewsComponent implements OnInit {
     this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
   }
 
-  /* ===== Chat ===== */
-  onAiTuVanClicked(): void {
-    this.showChatbox = true;
-  }
-
-  closeChatbox(): void {
-    this.showChatbox = false;
-  }
-
   /* ===== trackBy ===== */
   trackById(_: number, item: any): number {
     return item?.id || Math.random();
@@ -196,5 +184,14 @@ export class ListNewsComponent implements OnInit {
 
   get quickNews(): any[] {
     return this.regularNews.slice(0, 3);
+  }
+
+  /* ===== Chat ===== */
+  onAiTuVanClicked(): void {
+    this.showChatbox = true;
+  }
+
+  closeChatbox(): void {
+    this.showChatbox = false;
   }
 }

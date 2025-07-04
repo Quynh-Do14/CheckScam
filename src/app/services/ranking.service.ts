@@ -5,6 +5,7 @@ import { catchError, tap } from 'rxjs/operators';
 
 export interface ReporterRanking {
   rank: number;
+  name: string;
   email: string;
   approvedReports: number;
   totalReports: number;

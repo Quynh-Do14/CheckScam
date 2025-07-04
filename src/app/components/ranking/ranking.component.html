@@ -188,7 +188,7 @@
         <div class="table-row" *ngFor="let reporter of getCurrentPageData(); let i = index" 
              [style.display]="isLoading || error ? 'none' : 'grid'">
           <div class="rank-col">{{ reporter.rank }}.</div>
-          <div class="name-col">{{ getMaskedEmail(reporter.email) }}</div>
+          <div class="name-col">{{ reporter.name }}</div>
           <div class="score-col">{{ reporter.approvedReports }}</div>
         </div>
         

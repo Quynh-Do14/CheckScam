@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
 import { HttpClient } from '@angular/common/http';
+import { ChatBoxComponent } from '../chat-box/chat-box.component';
 
 interface TransactionAgent {
   id: number;
@@ -24,7 +25,7 @@ interface Profile {
 @Component({
   selector: 'app-transactions',
   standalone: true,
-  imports: [CommonModule, FormsModule, HeaderComponent, FooterComponent],
+  imports: [CommonModule, FormsModule, HeaderComponent, FooterComponent, ChatBoxComponent],
   templateUrl: './transactions.component.html',
   styleUrls: ['./transactions.component.scss']
 })

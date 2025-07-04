@@ -7,7 +7,6 @@ import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component'; 
 import { ChatBoxComponent } from '../chat-box/chat-box.component';
 
-// Define an interface for your form data
 interface PartnershipFormData {
   name: string;
   email: string;
@@ -23,7 +22,8 @@ interface PartnershipFormData {
     CommonModule,
     FormsModule,
     HeaderComponent,
-    FooterComponent
+    FooterComponent,
+    ChatBoxComponent
 ],
   templateUrl: './partners.component.html',
   styleUrls: ['./partners.component.scss']

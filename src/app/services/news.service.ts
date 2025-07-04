@@ -40,16 +40,13 @@ export class NewsService {
     console.log('Sending news data:', newsDTO);
     console.log('API URL:', this.apiNews);
     
-    // Check if JWT token exists
     const token = localStorage.getItem('jwt_token');
     console.log('JWT Token exists:', !!token);
     console.log('Token value:', token ? token.substring(0, 50) + '...' : 'null');
     
-    // Try with original HTTP util service that includes auth
     return this.http.post(this.apiNews, newsDTO, this.getApiConfig());
   }
 
-  // Test endpoint without auth
   createNewsTest(newsDTO: NewsDTO): Observable<any> {
     console.log('Testing news creation without auth...');
     return this.http.post(`${this.apiNews}/test`, newsDTO);

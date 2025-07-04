@@ -1,41 +1,30 @@
-
 # Stage 1: Build environment
+# Using a Node.js Alpine-based image for a smaller footprint
 FROM node:18-alpine AS build
 
-# Đặt thư mục làm việc
+# Set the working directory inside the container
 WORKDIR /app
 
-# Sao chép package.json và package-lock.json
+# Copy package.json and package-lock.json first to leverage Docker cache
+# This step ensures that npm dependencies are reinstalled only if package*.json changes
 COPY package*.json ./
 
-# Cài đặt dependencies với legacy peer deps để tránh xung đột
+# Install project dependencies
+# --legacy-peer-deps is included as it was in your original Dockerfile,
+# which can help resolve peer dependency conflicts in some npm versions/projects.
 RUN npm install --legacy-peer-deps
 
-# Sao chép toàn bộ source code
+# Copy the entire source code into the working directory
+# This includes all your Angular project files
 COPY . .
 
-# Build ứng dụng cho production
+# Build the Angular application for production
+# This command typically compiles your Angular code into static assets
+# and places them in a 'dist' directory (e.g., /app/dist/CheckScam-admin/browser)
 RUN npm run build
 
-# Stage 2: Production environment với Nginx
-FROM nginx:1.25-alpine AS production
-
-# Sao chép file build từ stage trước và kiểm tra cấu trúc
-COPY --from=build /app/dist/CheckScam-admin/browser /usr/share/nginx/html/
-
-# Cấu hình nginx cho Angular SPA
-RUN echo 'server { \
-    listen 80; \
-    server_name localhost; \
-    root /usr/share/nginx/html; \
-    index index.html; \
-    location / { \
-        try_files $uri $uri/ /index.html; \
-    } \
-}' > /etc/nginx/conf.d/default.conf
-
-# Expose port 80
-EXPOSE 80
-
-# Khởi động nginx
-CMD ["nginx", "-g", "daemon off;"]
+# This Dockerfile now only contains the build stage.
+# The resulting image will have the built Angular application located at
+# /app/dist/CheckScam-admin/browser within the image.
+# You can then use this image as a base for a different serving mechanism
+# or extract the build artifacts from it.

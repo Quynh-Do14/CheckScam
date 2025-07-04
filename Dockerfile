@@ -1,30 +1,33 @@
-# Stage 1: Build environment
-# Using a Node.js Alpine-based image for a smaller footprint
-FROM node:18-alpine AS build
+# Giai đoạn build
+FROM node:18-alpine as build
 
-# Set the working directory inside the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json first to leverage Docker cache
-# This step ensures that npm dependencies are reinstalled only if package*.json changes
+# Copy package.json và package-lock.json trước
 COPY package*.json ./
 
-# Install project dependencies
-# --legacy-peer-deps is included as it was in your original Dockerfile,
-# which can help resolve peer dependency conflicts in some npm versions/projects.
-RUN npm install --legacy-peer-deps
+# Cài đặt dependencies
+RUN npm install
 
-# Copy the entire source code into the working directory
-# This includes all your Angular project files
+# Copy toàn bộ source code
 COPY . .
 
-# Build the Angular application for production
-# This command typically compiles your Angular code into static assets
-# and places them in a 'dist' directory (e.g., /app/dist/CheckScam-admin/browser)
-RUN npm run build
+# Build ứng dụng Angular
+RUN npm run build -- --configuration=production
 
-# This Dockerfile now only contains the build stage.
-# The resulting image will have the built Angular application located at
-# /app/dist/CheckScam-admin/browser within the image.
-# You can then use this image as a base for a different serving mechanism
-# or extract the build artifacts from it.
+# Giai đoạn chạy
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Copy các file đã build từ giai đoạn trước
+COPY --from=build /app/dist ./dist
+
+# Cài đặt http-server để phục vụ ứng dụng
+RUN npm install -g http-server
+
+# Mở cổng 8080
+EXPOSE 8080
+
+# Khởi động http-server
+CMD ["http-server", "dist", "-p", "8080"]

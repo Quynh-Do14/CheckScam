@@ -27,26 +27,23 @@
            [ngClass]="getRiskClass(activity)"
            (click)="onActivityClick(activity)"
            [style.cursor]="canNavigate(activity) ? 'pointer' : 'default'">
-        
-        <div class="activity-avatar">
-          <img [src]="activity.user.avatar" [alt]="activity.user.name">
-        </div>
-        
-        <div class="activity-content">
-          <div class="activity-header">
-            <span class="user-name">{{ activity.user.name }}</span>
+        <div class="activity-item-top" style="display: flex; align-items: center; gap: 8px;">
+          <div class="activity-avatar">
+            <img [src]="activity.user.avatar" [alt]="activity.user.name">
+          </div>
+          <span class="user-name">{{ activity.user.name }}</span>
+          <div class="activity-time-wrapper">
             <span class="activity-time">{{ getTimeAgo(activity.createdAt) }}</span>
           </div>
-          
+        </div>
+        <div class="activity-item-bottom">
           <div class="activity-action">
             <span class="action-icon">{{ getActionIcon(activity.actionType) }}</span>
             <span class="action-text">{{ getActionText(activity.actionType) }}</span>
           </div>
-          
           <div class="activity-target">
-          {{ activity.targetName }}
+            {{ activity.targetName }}
           </div>
-          
           <!-- Risk indicators -->
           <div *ngIf="activity.metadata?.risk_level === 'high'" class="risk-indicator high">
             ⚠️ Mức độ cao

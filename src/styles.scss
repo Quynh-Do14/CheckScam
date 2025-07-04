@@ -133,11 +133,9 @@ html, body {
 .news-content img,
 .content-wrapper img,
 [class*="news-content"] img {
- // max-width: 100% !important;
   width: auto !important;
   height: auto !important;
   display: block !important;
-  margin: 1rem auto !important;
   box-sizing: border-box !important;
   object-fit: contain !important;
 }

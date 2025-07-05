@@ -1,6 +1,6 @@
 {
   "/ws/*": {
-    "target": "api-v1.ai6.vn",
+    "target": "https://api-v1.ai6.vn",
     "secure": false,
     "ws": true,
     "changeOrigin": true,
@@ -11,7 +11,7 @@
     }
   },
   "/api/*": {
-    "target": "api-v1.ai6.vn",
+    "target": "https://api-v1.ai6.vn",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug",

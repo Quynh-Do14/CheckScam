@@ -11,7 +11,7 @@ declare var Stomp: any;
 })
 export class WebSocketService {
   private stompClient: any = null;
-  private readonly WS_URL = 'http://localhost:8080/ws';
+  private readonly WS_URL = 'http://api-v1.ai6.vn/ws';
   
   // Reactive streams
   private connectionSubject = new BehaviorSubject<boolean>(false);

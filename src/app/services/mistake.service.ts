@@ -47,7 +47,7 @@ export interface ApiResponse<T> {
   providedIn: 'root'
 })
 export class MistakeService {
-  private apiUrl = environment.apiUrl + '/mistakes';
+  private apiUrl = environment.apiBaseUrl + '/mistakes';
 
   constructor(private http: HttpClient) { }
 

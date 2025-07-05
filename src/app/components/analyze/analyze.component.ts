@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { CheckScamService } from '../../services/check-scam.service';
 import { CheckScamRequestDTO } from '../../dtos/check-scam-request.dto';
 import { ChatBoxComponent } from "../chat-box/chat-box.component";
+import { environment } from '../../environments/environment';
 
 
 interface AnalysisResult {
@@ -1140,11 +1141,11 @@ parseAIRecommendations(text: string): string {
 
   getFullImageUrl(imageUrl: string): string {
     if (this.analysisResult?.type === 3) {
-      const fullUrl = `http://localhost:8080/api/v1/check-scam${imageUrl}`;
+      const fullUrl = `${environment.apiBaseUrl}/check-scam${imageUrl}`;
       return fullUrl;
     } else {
       const fileName = this.getImageName(imageUrl);
-      const fullUrl = `http://localhost:8080/api/v1/report/image/${fileName}`;
+      const fullUrl = `${environment.apiBaseUrl}/report/image/${fileName}`;
       return fullUrl;
     }
   }

@@ -33,7 +33,7 @@ export interface ActivityStats {
   providedIn: 'root'
 })
 export class ActivityService {
-  private readonly API_URL = environment.apiUrl || 'http://localhost:8080/api/v1';
+  private readonly API_URL = environment.apiBaseUrl;
   private stompClient: any = null;
   
   // Subjects for reactive data streams

@@ -8,6 +8,7 @@ import { ToastrService } from 'ngx-toastr';
 // Import các DTO
 import { ReportDetailDto } from '../../../dtos/report-detail.dto';
 import { AttachmentDto } from '../../../dtos/attachment.dto'; // Đảm bảo có AttachmentDto
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-report-detail',
@@ -27,7 +28,7 @@ export class ReportDetailComponent implements OnInit {
 
   ReportProcessingStatus = ReportProcessingStatus;
 
-  backendBaseUrl: string = 'http://localhost:8080'; // URL cơ sở của backend nơi ảnh được lưu trữ
+  backendBaseUrl: string = `${environment.apiUrl}`; // URL cơ sở của backend nơi ảnh được lưu trữ
 
   // === BIẾN MỚI CHO MODAL XEM ẢNH ===
   isImageModalOpen: boolean = false; // Trạng thái hiển thị/ẩn modal

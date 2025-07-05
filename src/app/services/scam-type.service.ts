@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { environment } from '../environments/environment';
 
 export interface ScamTypeDto {
     id: number;
@@ -11,7 +12,7 @@ export interface ScamTypeDto {
 
 @Injectable({ providedIn: 'root' })
 export class ScamTypeService {
-    private readonly BASE = 'http://localhost:8080/api/v1/scam-types';
+    private readonly BASE = `${environment.apiBaseUrl}/scam-types`;
 
     constructor(private http: HttpClient) { }
 

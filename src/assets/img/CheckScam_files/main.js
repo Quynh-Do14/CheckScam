@@ -44,7 +44,7 @@ import { Injectable as Injectable2 } from "/@fs/Users/Pham13a07/Downloads/fe-Che
 
 // src/app/environments/environment.ts
 var environment = {
-  apiBaseUrl: "http://localhost:8080/api/v1"
+  apiBaseUrl: "http://api-v1.ai6.vn/api/v1"
 };
 
 // src/app/services/user.service.ts
@@ -1503,7 +1503,7 @@ import * as i012 from "/@fs/Users/Pham13a07/Downloads/fe-CheckScam/.angular/cach
 import * as i14 from "/@fs/Users/Pham13a07/Downloads/fe-CheckScam/.angular/cache/19.2.15/CheckScam-admin/vite/deps/@angular_common_http.js?v=e44b7f9a";
 var ScamTypeService = class _ScamTypeService {
   http;
-  BASE = "http://localhost:8080/api/v1/scam-types";
+  BASE = "http://api-v1.ai6.vn/api/v1/scam-types";
   constructor(http) {
     this.http = http;
   }
@@ -5882,7 +5882,7 @@ var ViewNewsComponent = class _ViewNewsComponent {
   currentUrl = "";
   relatedNews = [];
   // Mảng để lưu trữ tin tức liên quan
-  imageBaseUrl = "http://localhost:8080/api/v1/report/image/";
+  imageBaseUrl = "http://api-v1.ai6.vn/api/v1/report/image/";
   constructor(newsService, route, location, router, library) {
     this.newsService = newsService;
     this.route = route;
@@ -6272,7 +6272,7 @@ var DetailNewsComponent = class _DetailNewsComponent {
   post = {};
   attachmentDto = [];
   selectedImageUrl = null;
-  imageBaseUrl = "http://localhost:8080/api/v1/report/image/";
+  imageBaseUrl = "http://api-v1.ai6.vn/api/v1/report/image/";
   constructor(newsService, route) {
     this.newsService = newsService;
     this.route = route;
@@ -6583,7 +6583,7 @@ var DetailReportComponent = class _DetailReportComponent {
   errorMessage = null;
   selectedImageUrl = null;
   /** URL gốc lấy ảnh (thay bằng domain thực tế của bạn) */
-  imageBaseUrl = "http://localhost:8080/api/v1/report/image/";
+  imageBaseUrl = "http://api-v1.ai6.vn/api/v1/report/image/";
   constructor(reportService, route) {
     this.reportService = reportService;
     this.route = route;
@@ -7212,7 +7212,7 @@ var ListNewsComponent = class _ListNewsComponent {
   /* Chat */
   showChatbox = false;
   /* URL ảnh */
-  imageBaseUrl = "http://localhost:8080/api/v1/report/image/";
+  imageBaseUrl = "http://api-v1.ai6.vn/api/v1/report/image/";
   constructor(newsService, router) {
     this.newsService = newsService;
     this.router = router;

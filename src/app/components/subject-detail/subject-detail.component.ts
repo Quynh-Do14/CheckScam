@@ -5,6 +5,7 @@ import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
 import { SubjectDetailService, SubjectDetail } from '../../services/subject-detail.service';
 import { HttpClientModule } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-subject-detail',
@@ -164,13 +165,13 @@ export class SubjectDetailComponent implements OnInit {
       // If it's a relative path, convert to absolute
       if (url.startsWith('/uploads/')) {
         // Đường dẫn từ DB dạng /uploads/filename.jpg
-        url = `http://localhost:8080${url}`;
+        url = `${environment.apiUrl}${url}`;
       } else if (url.startsWith('uploads/')) {
         // Đường dẫn từ DB dạng uploads/filename.jpg
-        url = `http://localhost:8080/${url}`;
+        url = `${environment.apiUrl}/${url}`;
       } else if (!url.startsWith('http://') && !url.startsWith('https://')) {
         // Nếu chỉ là tên file
-        url = `http://localhost:8080/uploads/${url}`;
+        url = `${environment.apiUrl}/uploads/${url}`;
       }
 
       return url;
@@ -196,7 +197,7 @@ export class SubjectDetailComponent implements OnInit {
     // Thử decode URI nếu có kí tự đặc biệt
     try {
       const decodedFileName = decodeURIComponent(fileName);
-      const alternativeUrl = `http://localhost:8080/uploads/${decodedFileName}`;
+      const alternativeUrl = `${environment.apiUrl}/uploads/${decodedFileName}`;
       
       if (!this.imageErrors.has(alternativeUrl)) {
 
@@ -211,7 +212,7 @@ export class SubjectDetailComponent implements OnInit {
     try {
       const cleanFileName = fileName.replace(/%20/g, ' ');
       const encodedFileName = encodeURIComponent(cleanFileName);
-      const encodedUrl = `http://localhost:8080/uploads/${encodedFileName}`;
+      const encodedUrl = `${environment.apiUrl}/uploads/${encodedFileName}`;
       
       if (!this.imageErrors.has(encodedUrl)) {
 

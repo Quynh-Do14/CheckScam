@@ -4,6 +4,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
 import { MistakeService } from '../../../services/mistake.service'; // Đảm bảo đường dẫn đúng
 import { Mistake } from '../../../services/mistake.service'; // Import Mistake DTO
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-mistake-detail',
@@ -21,7 +22,7 @@ export class MistakeDetailComponent implements OnInit {
   loading: boolean = true;
   error: string | null = null;
 
-  backendBaseUrl: string = 'http://localhost:8080'; // URL cơ sở của backend nơi ảnh được lưu trữ
+  backendBaseUrl: string = `${environment.apiUrl}`; // URL cơ sở của backend nơi ảnh được lưu trữ
 
   // === BIẾN MỚI CHO MODAL XEM ẢNH ===
   isImageModalOpen: boolean = false;

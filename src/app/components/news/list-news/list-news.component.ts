@@ -7,6 +7,7 @@ import { NewsService } from '../../../services/news.service';
 import { HeaderComponent } from '../../header/header.component';
 import { FooterComponent } from '../../footer/footer.component';
 import { ChatBoxComponent } from '../../chat-box/chat-box.component';
+import { environment } from '../../../environments/environment';
 
 interface AttachmentDto {
   id: number;
@@ -50,7 +51,7 @@ export class ListNewsComponent implements OnInit {
   showChatbox = false;
 
   /* URL ảnh */
-  readonly imageBaseUrl = 'http://localhost:8080/api/v1/report/image/';
+  readonly imageBaseUrl = `${environment.apiBaseUrl}/report/image/`;
 
   constructor(
     private newsService: NewsService,

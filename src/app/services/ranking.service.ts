@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
+import { environment } from '../environments/environment';
 
 export interface ReporterRanking {
   rank: number;
@@ -32,7 +33,7 @@ export interface RankingStats {
   providedIn: 'root'
 })
 export class RankingService {
-  private apiUrl = 'http://localhost:8080/api/v1/report';
+  private apiUrl = `${environment.apiBaseUrl}/report`;
 
   constructor(private http: HttpClient) { }
 

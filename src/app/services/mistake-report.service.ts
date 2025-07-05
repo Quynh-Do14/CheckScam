@@ -23,7 +23,7 @@ interface MistakeFrontendRequest {
 })
 export class MistakeReportService {
 
-  private apiUrl = environment.apiUrl + '/mistakes'; 
+  private apiUrl = environment.apiBaseUrl + '/mistakes'; 
 
   constructor(private http: HttpClient) { }
 

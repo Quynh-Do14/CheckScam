@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { environment } from '../environments/environment';
 
 export interface UserState {
   id: number;
@@ -80,7 +81,7 @@ export class UserStateService {
       id: user.id,
       name: user.name,
       email: user.email,
-      avatar: user.avatar.replace('http://localhost:8080/', ''), // Save relative path
+      avatar: user.avatar.replace(`${environment.apiUrl}/`, ''), // Save relative path
       description: user.description
     };
     
@@ -100,7 +101,7 @@ export class UserStateService {
     const cleanPath = avatarPath.startsWith('/') ? 
       avatarPath.substring(1) : avatarPath;
     
-    return `http://localhost:8080/${cleanPath}`;
+    return `${environment.apiUrl}/${cleanPath}`;
   }
 
   getCurrentUser(): UserState | null {

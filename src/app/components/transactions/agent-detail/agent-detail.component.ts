@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { HeaderComponent } from '../../header/header.component';
 import { FooterComponent } from '../../footer/footer.component';
+import { environment } from '../../../environments/environment';
 
 interface Profile {
   id: number;
@@ -49,7 +50,7 @@ export class AgentDetailComponent implements OnInit {
   error: string | null = null;
   agentId: number | null = null;
 
-  private readonly BASE_URL = 'http://localhost:8080';
+  private readonly BASE_URL = `${environment.apiUrl}`;
 
   constructor(
     private route: ActivatedRoute,

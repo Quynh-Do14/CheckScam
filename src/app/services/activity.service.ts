@@ -39,7 +39,7 @@ export interface ActivityStats {
   providedIn: 'root'
 })
 export class ActivityService {
-  private readonly API_URL = environment.apiUrl + '/activities';
+  private readonly API_URL = environment.apiBaseUrl + '/activities';
   
   // Subjects for reactive data streams
   private connectionStatusSubject = new BehaviorSubject<boolean>(false);

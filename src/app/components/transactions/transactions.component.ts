@@ -6,6 +6,7 @@ import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
 import { HttpClient } from '@angular/common/http';
 import { ChatBoxComponent } from '../chat-box/chat-box.component';
+import { environment } from '../../environments/environment';
 
 interface TransactionAgent {
   id: number;
@@ -38,7 +39,7 @@ export class TransactionsComponent implements OnInit {
   showChatbox = false;
 
   // Base URL for your backend
-  private readonly BASE_URL = 'http://localhost:8080';
+  private readonly BASE_URL = `${environment.apiUrl}`;
   private readonly API_URL = `${this.BASE_URL}/api/v1/users`;
 
   constructor(private http: HttpClient, private router: Router) { }

@@ -8,6 +8,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faFacebookF } from '@fortawesome/free-brands-svg-icons';
 import { faClock, faArrowLeft, faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
+import { environment } from '../../../environments/environment';
 
 
 // Định nghĩa các interface để có kiểu dữ liệu mạnh mẽ hơn
@@ -46,7 +47,7 @@ export class ViewNewsComponent implements OnInit {
   currentUrl: string = '';
   relatedNews: Post[] = []; // Mảng để lưu trữ tin tức liên quan
 
-  readonly imageBaseUrl = 'http://localhost:8080/api/v1/report/image/';
+  readonly imageBaseUrl = `${environment.apiBaseUrl}/report/image/`;
 
   constructor(
     private newsService: NewsService,

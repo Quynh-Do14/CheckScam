@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../environments/environment';
 
 export interface SubjectDetailResponse {
   status: string;
@@ -43,7 +44,7 @@ export interface RelatedSubject {
 })
 export class SubjectDetailService {
 
-  private baseUrl = 'http://localhost:8080/api/v1'; // Hard-coded URL
+  private baseUrl = `${environment.apiBaseUrl}`; // Hard-coded URL
 
   constructor(private http: HttpClient) { }
 

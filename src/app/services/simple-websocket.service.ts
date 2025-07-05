@@ -1,1 +1,258 @@
-import { Injectable } from '@angular/core';\nimport { BehaviorSubject, Observable } from 'rxjs';\nimport { environment } from '../environments/environment';\nimport { Activity } from './activity.service';\n\n@Injectable({\n  providedIn: 'root'\n})\nexport class SimpleWebSocketService {\n  private socket: WebSocket | null = null;\n  private readonly WS_URL = 'ws://api-v1.ai6.vn/ws-simple'; // Use simple WebSocket endpoint\n  \n  // Reactive streams\n  private connectionSubject = new BehaviorSubject<boolean>(false);\n  private newActivitySubject = new BehaviorSubject<Activity | null>(null);\n  private connectedClientsSubject = new BehaviorSubject<number>(0);\n  private reconnectAttempts = 0;\n  private maxReconnectAttempts = 5;\n\n  constructor() {}\n\n  connect(): void {\n    if (this.socket && this.socket.readyState === WebSocket.OPEN) {\n      console.log('WebSocket already connected');\n      return;\n    }\n\n    try {\n      this.socket = new WebSocket(this.WS_URL);\n      \n      this.socket.onopen = (event) => {\n        console.log('✅ Simple WebSocket connected');\n        this.connectionSubject.next(true);\n        this.reconnectAttempts = 0;\n        \n        // Send a ping to establish connection\n        this.send({ type: 'ping' });\n      };\n\n      this.socket.onmessage = (event) => {\n        try {\n          const data = JSON.parse(event.data);\n          this.handleMessage(data);\n        } catch (error) {\n          console.error('Error parsing WebSocket message:', error);\n        }\n      };\n\n      this.socket.onclose = (event) => {\n        console.log('WebSocket connection closed:', event.code, event.reason);\n        this.connectionSubject.next(false);\n        this.attemptReconnect();\n      };\n\n      this.socket.onerror = (error) => {\n        console.error('WebSocket error:', error);\n        this.connectionSubject.next(false);\n      };\n\n    } catch (error) {\n      console.error('Error creating WebSocket connection:', error);\n      this.connectionSubject.next(false);\n      this.attemptReconnect();\n    }\n  }\n\n  private handleMessage(data: any): void {\n    switch (data.type) {\n      case 'activity':\n        const activity: Activity = this.transformActivity(data.payload);\n        activity.isNew = true;\n        this.newActivitySubject.next(activity);\n        this.showBrowserNotification(activity);\n        break;\n        \n      case 'stats':\n        if (data.payload.connectedClients !== undefined) {\n          this.connectedClientsSubject.next(data.payload.connectedClients);\n        }\n        break;\n        \n      case 'pong':\n        console.log('Received pong from server');\n        break;\n        \n      default:\n        console.log('Unknown message type:', data.type);\n    }\n  }\n\n  private attemptReconnect(): void {\n    if (this.reconnectAttempts < this.maxReconnectAttempts) {\n      this.reconnectAttempts++;\n      const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000);\n      \n      console.log(`Attempting to reconnect (${this.reconnectAttempts}/${this.maxReconnectAttempts}) in ${delay}ms`);\n      \n      setTimeout(() => {\n        this.connect();\n      }, delay);\n    } else {\n      console.error('Max reconnection attempts reached');\n    }\n  }\n\n  disconnect(): void {\n    if (this.socket) {\n      this.socket.close();\n      this.socket = null;\n    }\n    this.connectionSubject.next(false);\n  }\n\n  send(message: any): void {\n    if (this.socket && this.socket.readyState === WebSocket.OPEN) {\n      this.socket.send(JSON.stringify(message));\n    } else {\n      console.warn('WebSocket is not connected');\n    }\n  }\n\n  sendActivity(activity: Partial<Activity>): void {\n    this.send({\n      type: 'activity',\n      payload: activity\n    });\n  }\n\n  // Observable getters\n  getConnectionStatus(): Observable<boolean> {\n    return this.connectionSubject.asObservable();\n  }\n\n  getNewActivity(): Observable<Activity | null> {\n    return this.newActivitySubject.asObservable();\n  }\n\n  getConnectedClients(): Observable<number> {\n    return this.connectedClientsSubject.asObservable();\n  }\n\n  private showBrowserNotification(activity: Activity): void {\n    if (!this.isImportantActivity(activity)) return;\n\n    if ('Notification' in window && Notification.permission === 'granted') {\n      const title = '🛡️ CheckScam Alert';\n      const options = {\n        body: this.getNotificationMessage(activity),\n        icon: '/assets/icons/checkscam-icon.png',\n        badge: '/assets/icons/checkscam-badge.png',\n        tag: 'checkscam-activity',\n        renotify: true,\n        requireInteraction: false,\n        silent: false\n      };\n\n      const notification = new Notification(title, options);\n      setTimeout(() => notification.close(), 5000);\n\n      notification.onclick = () => {\n        window.focus();\n        notification.close();\n      };\n    }\n  }\n\n  private isImportantActivity(activity: Activity): boolean {\n    const metadata = activity.metadata || {};\n    return (\n      (activity.actionType === 'REPORT') ||\n      (activity.actionType === 'POST' && metadata.category === 'warning')\n    );\n  }\n\n  private getNotificationMessage(activity: Activity): string {\n    const metadata = activity.metadata || {};\n    \n    if (activity.actionType === 'REPORT') {\n      return `📋 Báo cáo mới từ ${activity.userName}: ${activity.targetName}`;\n    }\n    if (activity.actionType === 'POST' && metadata.category === 'warning') {\n      return `⚠️ Bài đăng cảnh báo: ${activity.targetName}`;\n    }\n    \n    return `${activity.userName} ${this.getActionText(activity.actionType)} ${activity.targetName}`;\n  }\n\n  private getActionText(actionType: string): string {\n    const actions: { [key: string]: string } = {\n      'SCAN': 'đã quét kiểm tra',\n      'CHECK': 'đã tra cứu',\n      'UPLOAD': 'đã báo cáo',\n      'JOIN': 'đã tham gia',\n      'COMMENT': 'đã bình luận về',\n      'POST': 'đã đăng',\n      'REPORT': 'đã báo cáo'\n    };\n    return actions[actionType] || 'đã thực hiện';\n  }\n\n  requestNotificationPermission(): Promise<NotificationPermission> {\n    if ('Notification' in window) {\n      return Notification.requestPermission();\n    }\n    return Promise.resolve('denied');\n  }\n\n  private transformActivity(activity: any): Activity {\n    let metadata = activity.metadata;\n    if (typeof metadata === 'string') {\n      try {\n        metadata = JSON.parse(metadata);\n      } catch (e) {\n        metadata = {};\n      }\n    }\n\n    const userName = activity.userName || activity.user?.name || 'Unknown User';\n    const userAvatar = activity.userAvatar || activity.user?.avatar || \n      `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=e74c3c&color=fff`;\n    const targetName = activity.targetName || activity.target_name || 'Unknown Target';\n    const createdAt = activity.createdAt || activity.created_at || new Date().toISOString();\n\n    return {\n      id: activity.id || 0,\n      userId: activity.userId || activity.user?.id || 0,\n      userName: userName,\n      userAvatar: userAvatar,\n      actionType: this.mapActionType(activity.actionType) || 'POST',\n      targetType: activity.targetType,\n      targetName: targetName,\n      targetUrl: activity.targetUrl || activity.target_url,\n      metadata: metadata,\n      createdAt: createdAt,\n      isNew: activity.isNew || false,\n      user: {\n        id: activity.userId || activity.user?.id || 0,\n        name: userName,\n        avatar: userAvatar\n      }\n    };\n  }\n\n  private mapActionType(actionType: string): 'POST' | 'REPORT' | 'JOIN' {\n    const mappings: { [key: string]: 'POST' | 'REPORT' | 'JOIN' } = {\n      'SCAN': 'POST',\n      'CHECK': 'POST', \n      'UPLOAD': 'REPORT',\n      'COMMENT': 'POST',\n      'LIKE': 'POST',\n      'SHARE': 'POST',\n      'POST': 'POST',\n      'REPORT': 'REPORT',\n      'JOIN': 'JOIN'\n    };\n    return mappings[actionType] || 'POST';\n  }\n}\n
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { environment } from '../environments/environment';
+import { Activity } from './activity.service';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class SimpleWebSocketService {
+  private socket: WebSocket | null = null;
+  private readonly WS_URL = 'wss://api-v1.ai6.vn/ws-simple';
+  
+  // Reactive streams
+  private connectionSubject = new BehaviorSubject<boolean>(false);
+  private newActivitySubject = new BehaviorSubject<Activity | null>(null);
+  private connectedClientsSubject = new BehaviorSubject<number>(0);
+  private reconnectAttempts = 0;
+  private maxReconnectAttempts = 5;
+
+  constructor() {}
+
+  connect(): void {
+    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+      console.log('WebSocket already connected');
+      return;
+    }
+
+    try {
+      this.socket = new WebSocket(this.WS_URL);
+      
+      this.socket.onopen = (event) => {
+        console.log('✅ Simple WebSocket connected');
+        this.connectionSubject.next(true);
+        this.reconnectAttempts = 0;
+        
+        // Send a ping to establish connection
+        this.send({ type: 'ping' });
+      };
+
+      this.socket.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          this.handleMessage(data);
+        } catch (error) {
+          console.error('Error parsing WebSocket message:', error);
+        }
+      };
+
+      this.socket.onclose = (event) => {
+        console.log('WebSocket connection closed:', event.code, event.reason);
+        this.connectionSubject.next(false);
+        this.attemptReconnect();
+      };
+
+      this.socket.onerror = (error) => {
+        console.error('WebSocket error:', error);
+        this.connectionSubject.next(false);
+      };
+
+    } catch (error) {
+      console.error('Error creating WebSocket connection:', error);
+      this.connectionSubject.next(false);
+      this.attemptReconnect();
+    }
+  }
+
+  private handleMessage(data: any): void {
+    switch (data.type) {
+      case 'activity':
+        const activity: Activity = this.transformActivity(data.payload);
+        activity.isNew = true;
+        this.newActivitySubject.next(activity);
+        this.showBrowserNotification(activity);
+        break;
+        
+      case 'stats':
+        if (data.payload.connectedClients !== undefined) {
+          this.connectedClientsSubject.next(data.payload.connectedClients);
+        }
+        break;
+        
+      case 'pong':
+        console.log('Received pong from server');
+        break;
+        
+      default:
+        console.log('Unknown message type:', data.type);
+    }
+  }
+
+  private attemptReconnect(): void {
+    if (this.reconnectAttempts < this.maxReconnectAttempts) {
+      this.reconnectAttempts++;
+      const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000);
+      
+      console.log(`Attempting to reconnect (${this.reconnectAttempts}/${this.maxReconnectAttempts}) in ${delay}ms`);
+      
+      setTimeout(() => {
+        this.connect();
+      }, delay);
+    } else {
+      console.error('Max reconnection attempts reached');
+    }
+  }
+
+  disconnect(): void {
+    if (this.socket) {
+      this.socket.close();
+      this.socket = null;
+    }
+    this.connectionSubject.next(false);
+  }
+
+  send(message: any): void {
+    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+      this.socket.send(JSON.stringify(message));
+    } else {
+      console.warn('WebSocket is not connected');
+    }
+  }
+
+  sendActivity(activity: Partial<Activity>): void {
+    this.send({
+      type: 'activity',
+      payload: activity
+    });
+  }
+
+  // Observable getters
+  getConnectionStatus(): Observable<boolean> {
+    return this.connectionSubject.asObservable();
+  }
+
+  getNewActivity(): Observable<Activity | null> {
+    return this.newActivitySubject.asObservable();
+  }
+
+  getConnectedClients(): Observable<number> {
+    return this.connectedClientsSubject.asObservable();
+  }
+
+  private showBrowserNotification(activity: Activity): void {
+    if (!this.isImportantActivity(activity)) return;
+
+    if ('Notification' in window && Notification.permission === 'granted') {
+      const title = '🛡️ CheckScam Alert';
+      const options = {
+        body: this.getNotificationMessage(activity),
+        icon: '/assets/icons/checkscam-icon.png',
+        badge: '/assets/icons/checkscam-badge.png',
+        tag: 'checkscam-activity',
+        renotify: true,
+        requireInteraction: false,
+        silent: false
+      };
+
+      const notification = new Notification(title, options);
+      setTimeout(() => notification.close(), 5000);
+
+      notification.onclick = () => {
+        window.focus();
+        notification.close();
+      };
+    }
+  }
+
+  private isImportantActivity(activity: Activity): boolean {
+    const metadata = activity.metadata || {};
+    return (
+      (activity.actionType === 'REPORT') ||
+      (activity.actionType === 'POST' && metadata.category === 'warning')
+    );
+  }
+
+  private getNotificationMessage(activity: Activity): string {
+    const metadata = activity.metadata || {};
+    
+    if (activity.actionType === 'REPORT') {
+      return `📋 Báo cáo mới từ ${activity.userName}: ${activity.targetName}`;
+    }
+    if (activity.actionType === 'POST' && metadata.category === 'warning') {
+      return `⚠️ Bài đăng cảnh báo: ${activity.targetName}`;
+    }
+    
+    return `${activity.userName} ${this.getActionText(activity.actionType)} ${activity.targetName}`;
+  }
+
+  private getActionText(actionType: string): string {
+    const actions: { [key: string]: string } = {
+      'SCAN': 'đã quét kiểm tra',
+      'CHECK': 'đã tra cứu',
+      'UPLOAD': 'đã báo cáo',
+      'JOIN': 'đã tham gia',
+      'COMMENT': 'đã bình luận về',
+      'POST': 'đã đăng',
+      'REPORT': 'đã báo cáo'
+    };
+    return actions[actionType] || 'đã thực hiện';
+  }
+
+  requestNotificationPermission(): Promise<NotificationPermission> {
+    if ('Notification' in window) {
+      return Notification.requestPermission();
+    }
+    return Promise.resolve('denied');
+  }
+
+  private transformActivity(activity: any): Activity {
+    let metadata = activity.metadata;
+    if (typeof metadata === 'string') {
+      try {
+        metadata = JSON.parse(metadata);
+      } catch (e) {
+        metadata = {};
+      }
+    }
+
+    const userName = activity.userName || activity.user?.name || 'Unknown User';
+    const userAvatar = activity.userAvatar || activity.user?.avatar || 
+      `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=e74c3c&color=fff`;
+    const targetName = activity.targetName || activity.target_name || 'Unknown Target';
+    const createdAt = activity.createdAt || activity.created_at || new Date().toISOString();
+
+    return {
+      id: activity.id || 0,
+      userId: activity.userId || activity.user?.id || 0,
+      userName: userName,
+      userAvatar: userAvatar,
+      actionType: this.mapActionType(activity.actionType) || 'POST',
+      targetType: activity.targetType,
+      targetName: targetName,
+      targetUrl: activity.targetUrl || activity.target_url,
+      metadata: metadata,
+      createdAt: createdAt,
+      isNew: activity.isNew || false,
+      user: {
+        id: activity.userId || activity.user?.id || 0,
+        name: userName,
+        avatar: userAvatar
+      }
+    };
+  }
+
+  private mapActionType(actionType: string): 'POST' | 'REPORT' | 'JOIN' {
+    const mappings: { [key: string]: 'POST' | 'REPORT' | 'JOIN' } = {
+      'SCAN': 'POST',
+      'CHECK': 'POST', 
+      'UPLOAD': 'REPORT',
+      'COMMENT': 'POST',
+      'LIKE': 'POST',
+      'SHARE': 'POST',
+      'POST': 'POST',
+      'REPORT': 'REPORT',
+      'JOIN': 'JOIN'
+    };
+    return mappings[actionType] || 'POST';
+  }
+}

@@ -1367,9 +1367,6 @@ app-footer {
   }
 }
 
-/* Các style khác giữ nguyên hoặc rút gọn để tránh quá dài */
-
-/* ========== THREE COLUMN LAYOUT: ROBOT LEFT - SEARCH CENTER - ACTIVITY RIGHT ========== */
 .three-column-layout {
   display: flex;
   align-items: flex-start;
@@ -1487,7 +1484,6 @@ app-footer {
   }
 }
 
-/* Floating elements cho robot */
 .left-column .floating-elements {
   position: absolute;
   width: 100%;
@@ -1526,7 +1522,7 @@ app-footer {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 240px; /* Tăng kích thước glow phù hợp với robot lớn hơn */
+  width: 240px; 
   height: 240px;
   background: radial-gradient(circle, rgba(255, 107, 53, 0.2) 0%, transparent 70%);
   border-radius: 50%;
@@ -1544,11 +1540,9 @@ app-footer {
   }
 }
 
-/* Activity widget container cho right column - kích thước 300x455 */
 .right-column .activity-log-widget {
   background: linear-gradient(135deg, #faee40 0%, #f8f9fa 100%);
   border-radius: 20px;
-  // padding: 18px; /* Tăng padding cho width rộng hơn */
   box-shadow: 
     0 10px 30px rgba(0, 0, 0, 0.1),
     0 1px 8px rgba(0, 0, 0, 0.05),
@@ -1556,8 +1550,8 @@ app-footer {
   border: 1px solid rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
-  width: 300px; /* Chiều rộng 300px */
-  height: 525px; /* Giữ nguyên chiều cao robot */
+  width: 300px; 
+  height: 525px; 
   
   &:hover {
     box-shadow: 
@@ -1582,7 +1576,6 @@ app-footer {
   }
 }
 
-/* Activity widget overrides để fit với design 3 cột */
 .right-column .activity-log-widget ::ng-deep .activity-widget {
   background: transparent;
   box-shadow: none;
@@ -1602,18 +1595,17 @@ app-footer {
 .right-column .activity-log-widget ::ng-deep .widget-content {
   flex: 1;
   overflow-y: auto;
-  /* Điều chỉnh cho kích thước 300x455 với padding tăng lên */
   max-height: calc(100% - 80px);
 }
 
 .right-column .activity-log-widget ::ng-deep .widget-title h3 {
   color: #ffffff;
-  font-size: 1.2em; /* Tăng font size cho width rộng hơn */
+  font-size: 1.2em; 
   font-weight: 600;
 }
 
 .right-column .activity-log-widget ::ng-deep .activity-item {
-  padding: 10px; /* Tăng padding cho width rộng hơn */
+  padding: 10px; 
   margin-bottom: 8px;
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.7);
@@ -1627,11 +1619,10 @@ app-footer {
   border-color: rgba(255, 107, 53, 0.2);
 }
 
-/* Main content adjustments cho center column */
 .center-column .main-content {
   text-align: center;
   width: 100%;
-  max-width: 100%; /* Sử dụng toàn bộ chiều rộng center column */
+  max-width: 100%; 
   margin: 0 auto;
   padding: 0;
   
@@ -1641,15 +1632,13 @@ app-footer {
   }
 }
 
-/* Search box container adjustments - tăng độ rộng */
 .center-column .search-box-container {
   margin: 0 auto;
-  max-width: 750px; /* Tăng từ 580px lên 750px */
+  max-width: 750px; 
   width: 100%;
 }
 
-/* Responsive cho layout 3 cột */
-@media (max-width: 1400px) { /* Tăng breakpoint từ 1200px */
+@media (max-width: 1400px) { 
   .three-column-layout {
     .left-column {
       display: flex;
@@ -1687,9 +1676,6 @@ app-footer {
   }
 }
 
-/* ========== TOP 10 SECTION STYLES ========== */
-
-/* Top searched section với vertical banners */
 .top-searched-with-banners {
   display: flex;
   align-items: flex-start;
@@ -2131,7 +2117,6 @@ app-footer {
   }
 }
 
-/* Section footer */
 .section-footer {
   margin-top: 30px;
   text-align: center;
@@ -2151,7 +2136,6 @@ app-footer {
   font-style: italic;
 }
 
-/* Responsive adjustments for mobile */
 @media (max-width: 480px) {
   .ranking-item {
     flex-wrap: wrap;

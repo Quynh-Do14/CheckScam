@@ -22,7 +22,6 @@ export interface Mistake {
   id: number;
   emailAuthorMistake: string;
   complaintReason: string;
-  // Sử dụng enum MistakeStatus cho thuộc tính status
   status: MistakeStatus;
   dateMistake: string;
   mistakeDetails: MistakeDetailResponse[];

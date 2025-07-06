@@ -3,9 +3,8 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../environments/environment';
 
-// *** THAY ĐỔI Ở ĐÂY: Đổi 'typeToComplain' thành 'type' ***
 interface MistakeDetailFrontendRequest {
-  type: 1 | 2 | 3; // <-- Đã đổi tên
+  type: 1 | 2 | 3;
   info: string;
   info2?: string;
   info3?: string;

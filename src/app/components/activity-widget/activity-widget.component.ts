@@ -13,8 +13,8 @@ import { Subscription } from 'rxjs';
 })
 export class ActivityWidgetComponent implements OnInit, OnDestroy {
   recentActivities: Activity[] = [];
-  isConnected: boolean = true; // Luôn hiển thị như đã kết nối
-  isLoading: boolean = false; // Bỏ trạng thái loading
+  isConnected: boolean = true; 
+  isLoading: boolean = false; 
 
   private subscriptions: Subscription[] = [];
 
@@ -30,10 +30,8 @@ export class ActivityWidgetComponent implements OnInit, OnDestroy {
 
 
   private initializeWidget() {
-    // Connect to activity service
     this.activityService.connect();
     
-    // Subscribe to connection status
     const connectionSub = this.activityService.getConnectionStatus().subscribe(
       connected => {
         this.isConnected = connected;
@@ -44,7 +42,6 @@ export class ActivityWidgetComponent implements OnInit, OnDestroy {
     );
     this.subscriptions.push(connectionSub);
 
-    // Subscribe to activities - limit to 5 for widget
     const activitiesSub = this.activityService.getActivities().subscribe(
       activities => {
         this.recentActivities = activities.slice(0, 5);
@@ -53,12 +50,10 @@ export class ActivityWidgetComponent implements OnInit, OnDestroy {
     );
     this.subscriptions.push(activitiesSub);
 
-    // Subscribe to new activities
     const newActivitySub = this.activityService.getNewActivity().subscribe(
       activity => {
         if (activity) {
           this.recentActivities.unshift(activity);
-          // Keep only 5 recent activities
           this.recentActivities = this.recentActivities.slice(0, 5);
         }
       }
@@ -73,8 +68,8 @@ export class ActivityWidgetComponent implements OnInit, OnDestroy {
   getActionIcon(actionType: string): string {
     const icons: { [key: string]: string } = {
       POST: '🔍',
-      UPLOAD: '📝',     // UPLOAD = đăng tin tức
-      REPORT: '📤',     // REPORT = gửi báo cáo
+      UPLOAD: '📝',     
+      REPORT: '📤',     
       JOIN: '👥'
     };
     return icons[actionType] || '📌';
@@ -117,13 +112,11 @@ export class ActivityWidgetComponent implements OnInit, OnDestroy {
     return '';
   }
   
-  // Kiểm tra xem activity có thể navigate không
   canNavigate(activity: Activity): boolean {
     const metadata = activity.metadata || {};
     return !!(metadata.newsId || metadata.reportId);
   }
   
-  // Handle click vào activity
   onActivityClick(activity: Activity): void {
     const metadata = activity.metadata || {};
     

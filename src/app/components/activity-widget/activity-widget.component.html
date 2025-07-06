@@ -13,7 +13,6 @@
       <span>Đang tải...</span>
     </div>
 
-    <!-- Bỏ thông báo lỗi kết nối -->
 
     <!-- Luôn hiển thị danh sách hoạt động -->
     <div *ngIf="recentActivities.length === 0" class="empty-state">
@@ -44,8 +43,7 @@
           <div class="activity-target">
             {{ activity.targetName }}
           </div>
-          <!-- Risk indicators -->
-          <div *ngIf="activity.metadata?.risk_level === 'high'" class="risk-indicator high">
+\          <div *ngIf="activity.metadata?.risk_level === 'high'" class="risk-indicator high">
             ⚠️ Mức độ cao
           </div>
           <div *ngIf="activity.metadata?.result === 'scam'" class="risk-indicator scam">

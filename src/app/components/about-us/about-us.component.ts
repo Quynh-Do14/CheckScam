@@ -16,7 +16,6 @@ export class AboutUsComponent implements OnInit {
   constructor(private location: Location) { }
 
   ngOnInit(): void {
-    // Bạn có thể thêm logic khởi tạo dữ liệu ở đây nếu cần
   }
 
   goBack(): void {

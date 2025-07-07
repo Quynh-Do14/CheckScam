@@ -1,4 +1,3 @@
-// src/app/services/user.service.ts
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
@@ -7,7 +6,7 @@ import { BehaviorSubject, Observable, tap, catchError, of } from 'rxjs';
 import { LoginDTO } from '../dtos/login.dto';
 import { environment } from '../environments/environment';
 import { UpdateProfileDTO, UserProfileDTO, ProfileResponseDTO, UpdateUserDTO } from '../dtos/profile.dto'; 
-import { UserDTO } from '../dtos/user.dto'; // Đã sửa lỗi typo nếu có UserDTO => UserDTO
+import { UserDTO } from '../dtos/user.dto'; 
 import { RegisterDTO } from '../dtos/register.dto';
 
 @Injectable({
@@ -28,7 +27,6 @@ export class UserService {
   private _isLoggedIn = new BehaviorSubject<boolean>(this.hasToken());
   authStatus$: Observable<boolean> = this._isLoggedIn.asObservable();
 
-  // Thêm BehaviorSubject cho dữ liệu người dùng
   private _currentUserData = new BehaviorSubject<any>(this.getUserData()); 
   currentUserData$: Observable<any> = this._currentUserData.asObservable();
 
@@ -36,7 +34,6 @@ export class UserService {
     private http: HttpClient,
     private httpUtilService: HttpUtilService
   ) {
-    // Đảm bảo BehaviorSubject được khởi tạo với trạng thái hiện tại
     this._isLoggedIn.next(this.hasToken());
     this._currentUserData.next(this.getUserData());
   }
@@ -213,9 +210,6 @@ export class UserService {
 
   saveUserData(response: any): void {
     try {
-      // 1. Trích xuất rawToken:
-      // Ưu tiên response?.token (như ảnh 10.04.49.png, 10.56.13.png)
-      // Sau đó đến response?.access_token (phổ biến)
       const rawToken = typeof response === 'string' ? response : response?.token || response?.access_token;
       
       if (!rawToken || typeof rawToken !== 'string') {
@@ -226,10 +220,8 @@ export class UserService {
 
       localStorage.setItem('jwt_token', rawToken);
 
-      // 2. Cố gắng phân tích payload từ token, nhưng ưu tiên dữ liệu trực tiếp nếu có
       let payload: any = {};
       try {
-        // Chỉ phân tích payload nếu rawToken có đủ 3 phần của JWT (header.payload.signature)
         if (rawToken.split('.').length === 3) {
             payload = JSON.parse(atob(rawToken.split('.')[1]));
         } else {
@@ -255,12 +247,10 @@ export class UserService {
           roles = [];
       }
 
-      // 4. Trích xuất User ID: Ưu tiên từ response.id, sau đó mới đến payload
       const userId = response?.id || this.extractUserIdFromJWT(payload); 
       
-      // 5. Trích xuất Name, Email, Avatar: ƯU TIÊN TỪ BODY RESPONSE TRƯỚC, SAU ĐÓ ĐẾN JWT PAYLOAD
       const userName = response?.name || payload?.name || payload?.CheckScam?.principal?.username || payload?.username || payload?.sub;
-      const userEmail = response?.email || payload?.email || payload?.sub; // QUAN TRỌNG: Lấy email từ response.email
+      const userEmail = response?.email || payload?.email || payload?.sub; 
       const userAvatar = response?.avatar || response?.picture || payload?.picture || payload?.CheckScam?.principal?.avatar; 
 
       const userData = {
@@ -273,11 +263,11 @@ export class UserService {
       };
 
       localStorage.setItem('user', JSON.stringify(userData));
-      this._isLoggedIn.next(true); // Cập nhật trạng thái đăng nhập
-      this._currentUserData.next(userData); // Cập nhật dữ liệu người dùng
+      this._isLoggedIn.next(true); 
+      this._currentUserData.next(userData); 
       console.log('UserData saved and BehaviorSubjects updated:', userData);
     } catch (error) {
-      console.error("❌ Lỗi toàn bộ quá trình phân tích token và lưu dữ liệu người dùng:", error); // Log rõ hơn
+      console.error("❌ Lỗi toàn bộ quá trình phân tích token và lưu dữ liệu người dùng:", error);
       this.clearUserData();
     }
   }

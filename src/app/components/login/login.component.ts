@@ -5,14 +5,14 @@ import { UserService } from '../../services/user.service';
 import { LoginDTO } from '../../dtos/login.dto';
 import { TokenService } from '../../services/token.service';
 import { HttpErrorResponse } from '@angular/common/http';
-import { CommonModule } from '@angular/common'; // Thêm import này
+import { CommonModule } from '@angular/common'; 
 
 declare var google: any;
 
 @Component({
     selector: 'app-login',
     standalone: true,
-    imports: [FormsModule, RouterModule, CommonModule], // Thêm CommonModule vào đây
+    imports: [FormsModule, RouterModule, CommonModule],
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.scss']
 })

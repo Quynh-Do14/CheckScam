@@ -30,17 +30,25 @@ export class ActivityWidgetComponent implements OnInit, OnDestroy {
 
 
   private initializeWidget() {
-    this.activityService.connect();
+    // COMMENTED: WebSocket connection disabled
+    // this.activityService.connect();
     
-    const connectionSub = this.activityService.getConnectionStatus().subscribe(
-      connected => {
-        this.isConnected = connected;
-        if (connected) {
-          this.loadRecentActivities();
-        }
-      }
-    );
-    this.subscriptions.push(connectionSub);
+    // COMMENTED: Connection status subscription disabled
+    // const connectionSub = this.activityService.getConnectionStatus().subscribe(
+    //   connected => {
+    //     this.isConnected = connected;
+    //     if (connected) {
+    //       this.loadRecentActivities();
+    //     }
+    //   }
+    // );
+    // this.subscriptions.push(connectionSub);
+
+    // Set connection to false since WebSocket is disabled
+    this.isConnected = false;
+    
+    // Load activities using REST API only
+    this.loadRecentActivities();
 
     const activitiesSub = this.activityService.getActivities().subscribe(
       activities => {
@@ -50,19 +58,32 @@ export class ActivityWidgetComponent implements OnInit, OnDestroy {
     );
     this.subscriptions.push(activitiesSub);
 
-    const newActivitySub = this.activityService.getNewActivity().subscribe(
-      activity => {
-        if (activity) {
-          this.recentActivities.unshift(activity);
-          this.recentActivities = this.recentActivities.slice(0, 5);
-        }
-      }
-    );
-    this.subscriptions.push(newActivitySub);
+    // COMMENTED: Real-time activity subscription disabled
+    // const newActivitySub = this.activityService.getNewActivity().subscribe(
+    //   activity => {
+    //     if (activity) {
+    //       this.recentActivities.unshift(activity);
+    //       this.recentActivities = this.recentActivities.slice(0, 5);
+    //     }
+    //   }
+    // );
+    // this.subscriptions.push(newActivitySub);
   }
 
   private loadRecentActivities() {
-    this.activityService.requestActivities(5, 0);
+    // Load activities using REST API directly instead of WebSocket
+    this.isLoading = true;
+    this.activityService.getActivities(5, 0).subscribe(
+      activities => {
+        this.recentActivities = activities;
+        this.isLoading = false;
+      },
+      error => {
+        console.error('Error loading activities:', error);
+        this.isLoading = false;
+        this.recentActivities = [];
+      }
+    );
   }
 
   getActionIcon(actionType: string): string {

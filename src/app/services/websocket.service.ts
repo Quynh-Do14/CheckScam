@@ -10,6 +10,7 @@ declare var Stomp: any;
   providedIn: 'root'
 })
 export class WebSocketService {
+  // COMMENTED: Tạm thời disable toàn bộ WebSocketService
   private stompClient: any = null;
   private readonly WS_URL = 'wss://api-v1.ai6.vn/ws';
   
@@ -25,65 +26,69 @@ export class WebSocketService {
   constructor() {}
 
   connect(): void {
-    if (this.stompClient?.connected) {
-      console.log('WebSocket already connected');
-      return;
-    }
-
-    if (typeof SockJS === 'undefined' || typeof Stomp === 'undefined') {
-      console.error('SockJS or STOMP libraries not loaded');
-      setTimeout(() => this.connect(), 2000);
-      return;
-    }
+    // COMMENTED: WebSocket connection disabled
+    console.log('WebSocketService: WebSocket connection disabled');
+    this.connectionSubject.next(false);
     
-    try {
-      console.log('Connecting to WebSocket:', this.WS_URL);
-      
-      // Create SockJS socket WITHOUT credentials
-      const socket = new SockJS(this.WS_URL, null, {
-        timeout: 15000,
-        withCredentials: false, // CRITICAL: disable credentials
-        transports: ['websocket', 'xhr-polling']
-      });
-      
-      this.stompClient = Stomp.over(socket);
-      
-      // Configure STOMP
-      this.stompClient.heartbeat.outgoing = 20000;
-      this.stompClient.heartbeat.incoming = 20000;
-      
-      // Disable debug in production
-      if (environment.production) {
-        this.stompClient.debug = null;
-      } else {
-        this.stompClient.debug = (msg: string) => {
-          console.log('STOMP:', msg);
-        };
-      }
+    // if (this.stompClient?.connected) {
+    //   console.log('WebSocket already connected');
+    //   return;
+    // }
 
-      // Connect to STOMP WITHOUT credentials
-      this.stompClient.connect(
-        {}, // Empty headers - no credentials
-        (frame: any) => {
-          console.log('✅ WebSocket connected successfully:', frame);
-          this.connectionSubject.next(true);
-          this.reconnectAttempts = 0;
-          
-          // Subscribe to topics
-          this.subscribeToTopics();
-        },
-        (error: any) => {
-          console.error('❌ WebSocket connection error:', error);
-          this.connectionSubject.next(false);
-          this.handleReconnect();
-        }
-      );
-      
-    } catch (error) {
-      console.error('Error creating WebSocket:', error);
-      this.connectionSubject.next(false);
-      this.handleReconnect();
-    }
+    // if (typeof SockJS === 'undefined' || typeof Stomp === 'undefined') {
+    //   console.error('SockJS or STOMP libraries not loaded');
+    //   setTimeout(() => this.connect(), 2000);
+    //   return;
+    // }
+    
+    // try {
+    //   console.log('Connecting to WebSocket:', this.WS_URL);
+    //   
+    //   // Create SockJS socket WITHOUT credentials
+    //   const socket = new SockJS(this.WS_URL, null, {
+    //     timeout: 15000,
+    //     withCredentials: false, // CRITICAL: disable credentials
+    //     transports: ['websocket', 'xhr-polling']
+    //   });
+    //   
+    //   this.stompClient = Stomp.over(socket);
+    //   
+    //   // Configure STOMP
+    //   this.stompClient.heartbeat.outgoing = 20000;
+    //   this.stompClient.heartbeat.incoming = 20000;
+    //   
+    //   // Disable debug in production
+    //   if (environment.production) {
+    //     this.stompClient.debug = null;
+    //   } else {
+    //     this.stompClient.debug = (msg: string) => {
+    //       console.log('STOMP:', msg);
+    //     };
+    //   }
+
+    //   // Connect to STOMP WITHOUT credentials
+    //   this.stompClient.connect(
+    //     {}, // Empty headers - no credentials
+    //     (frame: any) => {
+    //       console.log('✅ WebSocket connected successfully:', frame);
+    //       this.connectionSubject.next(true);
+    //       this.reconnectAttempts = 0;
+    //       
+    //       // Subscribe to topics
+    //       this.subscribeToTopics();
+    //     },
+    //     (error: any) => {
+    //       console.error('❌ WebSocket connection error:', error);
+    //       this.connectionSubject.next(false);
+    //       this.handleReconnect();
+    //     }
+    //   );
+    //   
+    // } catch (error) {
+    //   console.error('Error creating WebSocket:', error);
+    //   this.connectionSubject.next(false);
+    //   this.handleReconnect();
+    // }
   }
 
   private subscribeToTopics(): void {
@@ -140,25 +145,32 @@ export class WebSocketService {
   }
 
   disconnect(): void {
-    if (this.stompClient?.connected) {
-      this.stompClient.disconnect(() => {
-        console.log('WebSocket disconnected');
-        this.connectionSubject.next(false);
-      });
-    }
-    this.stompClient = null;
+    // COMMENTED: WebSocket disconnect disabled
+    console.log('WebSocketService: WebSocket disconnect disabled');
+    this.connectionSubject.next(false);
+    
+    // if (this.stompClient?.connected) {
+    //   this.stompClient.disconnect(() => {
+    //     console.log('WebSocket disconnected');
+    //     this.connectionSubject.next(false);
+    //   });
+    // }
+    // this.stompClient = null;
   }
 
   sendActivity(activity: Partial<Activity>): void {
-    if (this.stompClient?.connected) {
-      try {
-        this.stompClient.send('/app/activity', {}, JSON.stringify(activity));
-      } catch (error) {
-        console.error('Error sending activity:', error);
-      }
-    } else {
-      console.warn('Cannot send activity: WebSocket not connected');
-    }
+    // COMMENTED: WebSocket send activity disabled
+    console.log('WebSocketService: WebSocket send activity disabled');
+    
+    // if (this.stompClient?.connected) {
+    //   try {
+    //     this.stompClient.send('/app/activity', {}, JSON.stringify(activity));
+    //   } catch (error) {
+    //     console.error('Error sending activity:', error);
+    //   }
+    // } else {
+    //   console.warn('Cannot send activity: WebSocket not connected');
+    // }
   }
 
   // Observable getters

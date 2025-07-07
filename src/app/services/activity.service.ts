@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { environment } from '../environments/environment';
-import { WebSocketService } from './websocket.service';
+// import { WebSocketService } from './websocket.service'; // COMMENTED: Tạm thời không dùng WebSocket
 
 export interface Activity {
   id: number;
@@ -56,28 +56,28 @@ export class ActivityService {
 
   constructor(
     private http: HttpClient,
-    private websocketService: WebSocketService
+    // private websocketService: WebSocketService // COMMENTED: Tạm thời không dùng WebSocket
   ) {
-    // Initialize WebSocket connection
-    this.websocketService.connect();
+    // COMMENTED: Initialize WebSocket connection
+    // this.websocketService.connect();
     
-    // Request notification permission
-    this.websocketService.requestNotificationPermission();
+    // COMMENTED: Request notification permission
+    // this.websocketService.requestNotificationPermission();
     
-    // Subscribe to WebSocket new activities
-    this.websocketService.getNewActivity().subscribe(newActivity => {
-      if (newActivity) {
-        this.newActivitySubject.next(newActivity);
-        
-        // Add to activities list
-        const currentActivities = this.activitiesSubject.value;
-        const updatedActivities = [newActivity, ...currentActivities].slice(0, 100);
-        this.activitiesSubject.next(updatedActivities);
-        
-        // Refresh statistics
-        this.requestStatistics();
-      }
-    });
+    // COMMENTED: Subscribe to WebSocket new activities
+    // this.websocketService.getNewActivity().subscribe(newActivity => {
+    //   if (newActivity) {
+    //     this.newActivitySubject.next(newActivity);
+    //     
+    //     // Add to activities list
+    //     const currentActivities = this.activitiesSubject.value;
+    //     const updatedActivities = [newActivity, ...currentActivities].slice(0, 100);
+    //     this.activitiesSubject.next(updatedActivities);
+    //     
+    //     // Refresh statistics
+    //     this.requestStatistics();
+    //   }
+    // });
   }
 
   // REST API Methods
@@ -122,13 +122,15 @@ export class ActivityService {
     );
   }
 
-  // Connection management
+  // COMMENTED: Connection management
   connect(): void {
-    this.websocketService.connect();
+    // this.websocketService.connect(); // COMMENTED: Tạm thời không dùng WebSocket
+    console.log('WebSocket connection disabled');
   }
 
   disconnect(): void {
-    this.websocketService.disconnect();
+    // this.websocketService.disconnect(); // COMMENTED: Tạm thời không dùng WebSocket
+    console.log('WebSocket disconnect disabled');
   }
 
   // Request methods for components
@@ -177,9 +179,10 @@ export class ActivityService {
     );
   }
 
-  // Observable getters
+  // COMMENTED: Observable getters
   getConnectionStatus(): Observable<boolean> {
-    return this.websocketService.getConnectionStatus();
+    // return this.websocketService.getConnectionStatus(); // COMMENTED: Tạm thời không dùng WebSocket
+    return new BehaviorSubject<boolean>(false).asObservable(); // Return false as not connected
   }
 
   getActivitiesStream(): Observable<Activity[]> {

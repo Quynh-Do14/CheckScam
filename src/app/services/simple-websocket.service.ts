@@ -7,6 +7,7 @@ import { Activity } from './activity.service';
   providedIn: 'root'
 })
 export class SimpleWebSocketService {
+  // COMMENTED: Tạm thời disable toàn bộ SimpleWebSocketService
   private socket: WebSocket | null = null;
   private readonly WS_URL = 'wss://api-v1.ai6.vn/ws-simple';
   
@@ -20,48 +21,52 @@ export class SimpleWebSocketService {
   constructor() {}
 
   connect(): void {
-    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-      console.log('WebSocket already connected');
-      return;
-    }
+    // COMMENTED: WebSocket connection disabled
+    console.log('SimpleWebSocketService: WebSocket connection disabled');
+    this.connectionSubject.next(false);
+    
+    // if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+    //   console.log('WebSocket already connected');
+    //   return;
+    // }
 
-    try {
-      this.socket = new WebSocket(this.WS_URL);
-      
-      this.socket.onopen = (event) => {
-        console.log('✅ Simple WebSocket connected');
-        this.connectionSubject.next(true);
-        this.reconnectAttempts = 0;
-        
-        // Send a ping to establish connection
-        this.send({ type: 'ping' });
-      };
+    // try {
+    //   this.socket = new WebSocket(this.WS_URL);
+    //   
+    //   this.socket.onopen = (event) => {
+    //     console.log('✅ Simple WebSocket connected');
+    //     this.connectionSubject.next(true);
+    //     this.reconnectAttempts = 0;
+    //     
+    //     // Send a ping to establish connection
+    //     this.send({ type: 'ping' });
+    //   };
 
-      this.socket.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data);
-          this.handleMessage(data);
-        } catch (error) {
-          console.error('Error parsing WebSocket message:', error);
-        }
-      };
+    //   this.socket.onmessage = (event) => {
+    //     try {
+    //       const data = JSON.parse(event.data);
+    //       this.handleMessage(data);
+    //     } catch (error) {
+    //       console.error('Error parsing WebSocket message:', error);
+    //     }
+    //   };
 
-      this.socket.onclose = (event) => {
-        console.log('WebSocket connection closed:', event.code, event.reason);
-        this.connectionSubject.next(false);
-        this.attemptReconnect();
-      };
+    //   this.socket.onclose = (event) => {
+    //     console.log('WebSocket connection closed:', event.code, event.reason);
+    //     this.connectionSubject.next(false);
+    //     this.attemptReconnect();
+    //   };
 
-      this.socket.onerror = (error) => {
-        console.error('WebSocket error:', error);
-        this.connectionSubject.next(false);
-      };
+    //   this.socket.onerror = (error) => {
+    //     console.error('WebSocket error:', error);
+    //     this.connectionSubject.next(false);
+    //   };
 
-    } catch (error) {
-      console.error('Error creating WebSocket connection:', error);
-      this.connectionSubject.next(false);
-      this.attemptReconnect();
-    }
+    // } catch (error) {
+    //   console.error('Error creating WebSocket connection:', error);
+    //   this.connectionSubject.next(false);
+    //   this.attemptReconnect();
+    // }
   }
 
   private handleMessage(data: any): void {
@@ -104,19 +109,26 @@ export class SimpleWebSocketService {
   }
 
   disconnect(): void {
-    if (this.socket) {
-      this.socket.close();
-      this.socket = null;
-    }
+    // COMMENTED: WebSocket disconnect disabled
+    console.log('SimpleWebSocketService: WebSocket disconnect disabled');
     this.connectionSubject.next(false);
+    
+    // if (this.socket) {
+    //   this.socket.close();
+    //   this.socket = null;
+    // }
+    // this.connectionSubject.next(false);
   }
 
   send(message: any): void {
-    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
-      this.socket.send(JSON.stringify(message));
-    } else {
-      console.warn('WebSocket is not connected');
-    }
+    // COMMENTED: WebSocket send disabled
+    console.log('SimpleWebSocketService: WebSocket send disabled');
+    
+    // if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+    //   this.socket.send(JSON.stringify(message));
+    // } else {
+    //   console.warn('WebSocket is not connected');
+    // }
   }
 
   sendActivity(activity: Partial<Activity>): void {

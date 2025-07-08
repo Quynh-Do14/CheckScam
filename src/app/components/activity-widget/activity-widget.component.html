@@ -43,7 +43,7 @@
           <div class="activity-target">
             {{ activity.targetName }}
           </div>
-\          <div *ngIf="activity.metadata?.risk_level === 'high'" class="risk-indicator high">
+          <div *ngIf="activity.metadata?.risk_level === 'high'" class="risk-indicator high">
             ⚠️ Mức độ cao
           </div>
           <div *ngIf="activity.metadata?.result === 'scam'" class="risk-indicator scam">

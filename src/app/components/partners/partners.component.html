@@ -1,6 +1,7 @@
 <app-header (aiTuVanClicked)="onAiTuVanClicked()"></app-header>
-<div class="partners-policy-container"> <div class="header-section">
-    <h1 class="main-heading">TRỞ THÀNH ĐỐI TÁC</h1>
+<div class="partners-policy-container">
+  <div class="header-section">
+    <h1 class="main-heading">Trở Thành Đối Tác</h1>
   </div>
 
   <div class="policy-section">
@@ -12,11 +13,11 @@
   <div class="policy-section">
     <h2 class="section-title">2. Lợi Ích Khi Trở Thành Đối Tác</h2>
     <ul class="item-list">
-      <li>**Mở rộng tầm vóc:** Tiếp cận mạng lưới khách hàng rộng lớn và đa dạng của chúng tôi.</li>
-      <li>**Tăng trưởng doanh thu:** Khám phá các cơ hội kinh doanh mới và mô hình chia sẻ doanh thu hấp dẫn.</li>
-      <li>**Nâng cao thương hiệu:** Liên kết với một nền tảng uy tín, tăng cường hình ảnh và nhận diện thương hiệu của bạn.</li>
-      <li>**Đổi mới sáng tạo:** Cùng phát triển các giải pháp đột phá, khai thác tối đa tiềm năng công nghệ.</li>
-      <li>**Hỗ trợ toàn diện:** Nhận được sự hỗ trợ tận tâm từ đội ngũ chuyên gia của chúng tôi trong suốt quá trình hợp tác.</li>
+      <li><strong>Mở rộng tầm vóc:</strong> Tiếp cận mạng lưới khách hàng rộng lớn và đa dạng của chúng tôi.</li>
+      <li><strong>Tăng trưởng doanh thu:</strong> Khám phá các cơ hội kinh doanh mới và mô hình chia sẻ doanh thu hấp dẫn.</li>
+      <li><strong>Nâng cao thương hiệu:</strong> Liên kết với một nền tảng uy tín, tăng cường hình ảnh và nhận diện thương hiệu của bạn.</li>
+      <li><strong>Đổi mới sáng tạo:</strong> Cùng phát triển các giải pháp đột phá, khai thác tối đa tiềm năng công nghệ.</li>
+      <li><strong>Hỗ trợ toàn diện:</strong> Nhận được sự hỗ trợ tận tâm từ đội ngũ chuyên gia của chúng tôi trong suốt quá trình hợp tác.</li>
     </ul>
   </div>
 
@@ -41,46 +42,6 @@
       <li>Bước 4: Triển Khai & Cùng Phát Triển: Bắt đầu dự án hợp tác, theo dõi hiệu quả và cùng nhau hướng tới thành công bền vững.</li>
     </ul>
   </div>
-
-  <!-- <div class="policy-section" id="contactSection">
-    <h2 class="section-title">5. Liên Hệ Hợp Tác Ngay Hôm Nay</h2>
-    <p>Hãy cùng nhau xây dựng tương lai! Điền vào biểu mẫu dưới đây để đội ngũ chuyên trách của chúng tôi có thể liên hệ lại với bạn.</p>
-    <div class="contact-form-container">
-      <form (ngSubmit)="submitPartnershipForm()" #partnershipForm="ngForm">
-        <div class="form-group">
-          <label for="name">Tên Công Ty / Cá Nhân của bạn <span class="required">*</span></label>
-          <input type="text" id="name" name="name" [(ngModel)]="partnershipData.name" required>
-        </div>
-        <div class="form-group">
-          <label for="email">Email Liên Hệ <span class="required">*</span></label>
-          <input type="email" id="email" name="email" [(ngModel)]="partnershipData.email" required email>
-        </div>
-        <div class="form-group">
-          <label for="phone">Số Điện Thoại</label>
-          <input type="tel" id="phone" name="phone" [(ngModel)]="partnershipData.phone">
-        </div>
-        <div class="form-group">
-          <label for="partnershipType">Loại Hình Hợp Tác Quan Tâm</label>
-          <select id="partnershipType" name="partnershipType" [(ngModel)]="partnershipData.partnershipType">
-            <option value="">-- Chọn một loại hình --</option>
-            <option value="content">Hợp Tác Nội Dung</option>
-            <option value="technical">Hợp Tác Kỹ Thuật</option>
-            <option value="marketing">Hợp Tác Marketing</option>
-            <option value="financial">Hợp Tác Tài Chính</option>
-            <option value="other">Khác</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="message">Ý Tưởng Hợp Tác / Lời Nhắn Của Bạn <span class="required">*</span></label>
-          <textarea id="message" name="message" rows="5" [(ngModel)]="partnershipData.message" required></textarea>
-        </div>
-        <button type="submit" class="submit-button" [disabled]="!partnershipForm.valid">
-          Gửi Đề Xuất <i class="fas fa-paper-plane icon-margin-left"></i>
-        </button>
-      </form>
-    </div>
-    <p class="note-text">Lưu ý: Chúng tôi cam kết bảo mật mọi thông tin bạn cung cấp. Đội ngũ của chúng tôi sẽ liên hệ lại trong thời gian sớm nhất để thảo luận chi tiết.</p>
-  </div> -->
 </div>
 <app-chat-box *ngIf="showChatbox" (close)="closeChatbox()"></app-chat-box>
 

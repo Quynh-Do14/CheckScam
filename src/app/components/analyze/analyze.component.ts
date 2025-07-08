@@ -47,7 +47,8 @@ interface ExternalCheckResponse {
     HeaderComponent,
     FooterComponent,
     RouterModule,
-    FormsModule
+    FormsModule,
+    ChatBoxComponent
 ],
   templateUrl: './analyze.component.html',
   styleUrls: ['./analyze.component.scss']

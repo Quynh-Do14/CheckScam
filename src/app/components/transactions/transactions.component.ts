@@ -40,7 +40,7 @@ export class TransactionsComponent implements OnInit {
 
   // Base URL for your backend
   private readonly BASE_URL = `${environment.apiUrl}`;
-  private readonly API_URL = `${this.BASE_URL}/api/v1/users`;
+  private readonly API_URL = `${this.BASE_URL}/api/v1/users/collaborators`; // ✅ Sử dụng API mới
 
   constructor(private http: HttpClient, private router: Router) { }
 

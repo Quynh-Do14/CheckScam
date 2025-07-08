@@ -189,7 +189,7 @@ export class RankingComponent implements OnInit {
     return local; // Trả về đầy đủ phần username
   }
 
-  // ✅ Hàm mới: Ẩn ký tự giữa của tên
+  // ✅ Hàm mới: Ẩn 3 ký tự ở giữa của tên
   getMaskedName(name: string): string {
     if (!name || name.trim().length === 0) {
       return 'Unknown';
@@ -197,22 +197,29 @@ export class RankingComponent implements OnInit {
     
     const trimmedName = name.trim();
     
-    // Nếu tên quá ngắn (≤ 3 ký tự), chỉ ẩn ký tự giữa
-    if (trimmedName.length <= 3) {
-      if (trimmedName.length === 1) return trimmedName;
-      if (trimmedName.length === 2) return trimmedName[0] + '*';
-      return trimmedName[0] + '*' + trimmedName[trimmedName.length - 1];
+    // Nếu tên quá ngắn (≤ 4 ký tự), không ẩn
+    if (trimmedName.length <= 4) {
+      return trimmedName;
     }
     
-    // Với tên dài hơn, ẩn 3 ký tự giữa
-    const firstChar = trimmedName[0];
-    const lastChar = trimmedName[trimmedName.length - 1];
+    // Tìm vị trí giữa để ẩn 3 ký tự
+    const totalLength = trimmedName.length;
+    const hideCount = 3; // Luôn ẩn đúng 3 ký tự
     
-    // Tính số ký tự cần ẩn (tối đa 3)
-    const hideCount = Math.min(3, trimmedName.length - 2);
-    const stars = '*'.repeat(hideCount);
+    // Tính vị trí bắt đầu ẩn (ở giữa)
+    const startHide = Math.floor((totalLength - hideCount) / 2);
+    const endHide = startHide + hideCount;
     
-    return firstChar + stars + lastChar;
+    // Đảm bảo không ẩn hết tên (ít nhất giữ lại 2 ký tự)
+    if (startHide < 1 || endHide >= totalLength) {
+      return trimmedName;
+    }
+    
+    // Tạo string với 3 ký tự giữa bị ẩn
+    const beforeHidden = trimmedName.substring(0, startHide);
+    const afterHidden = trimmedName.substring(endHide);
+    
+    return beforeHidden + '***' + afterHidden;
   }
 
   // ✅ Hàm tiện ích: Lấy tên hiển thị với fallback

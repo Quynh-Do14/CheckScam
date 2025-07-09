@@ -11,11 +11,6 @@ export const tokenInterceptor: HttpInterceptorFn = (req, next) => {
   const tokenService = inject(TokenService);
   const token = tokenService.getToken();
 
-  // const isExcluded = excludedUrls.some(url => req.url.includes(url));
-  // if (isExcluded) {
-  //   return next(req);
-  // }
-
   if (token) {
     const cloned = req.clone({
       setHeaders: {

@@ -1,6 +1,6 @@
 <div class="full-screen-background">
-  <div *ngIf="showNotification" 
-       class="app-notification" 
+  <div *ngIf="showNotification"
+       class="app-notification"
        [ngClass]="{'success': notificationType === 'success', 'error': notificationType === 'error', 'info': notificationType === 'info'}">
     <div class="notification-content">
       {{ notificationMessage }}
@@ -90,12 +90,19 @@
         <div id="google-login-button"></div>
       </div>
 
-      <div class="text-center">
-        <p class="text-muted mb-0">
+      <div class="text-center mb-4"> <p class="text-muted mb-0">
           Chưa có tài khoản?
           <a routerLink="/register" class="register-link fw-semibold">Đăng ký ngay</a>
         </p>
       </div>
+
+      <div class="text-center">
+        <a routerLink="/" class="back-to-home-btn">
+          <fa-icon [icon]="['fas', 'home']"></fa-icon>
+          <span>Trở về Trang chủ</span>
+        </a>
+      </div>
+
     </div>
   </div>
 </div>

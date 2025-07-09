@@ -123,7 +123,7 @@ export class UserService {
       throw new Error('No JWT token found');
     }
     
-    if (!userData || !userData.id) { 
+    if (!userData || !userData.id || userData.id <= 0) { 
       this.clearUserData(); 
       throw new Error('No user data or user ID found in localStorage');
     }
@@ -155,20 +155,25 @@ export class UserService {
   
   private extractUserIdFromJWT(payload: any): number | null {
     const possibleIds = [
+      payload?.checkscam?.principal?.id, // Thử checkscam với c thường
       payload?.CheckScam?.principal?.id, 
-      payload?.checkscam?.principal?.id,
       payload?.id,
       payload?.userId,
       payload?.user_id,
       (typeof payload?.sub === 'string' && !isNaN(parseInt(payload.sub))) ? parseInt(payload.sub) : null 
     ];
     
+    console.log('🔍 Trying to extract user ID from JWT payload:', payload);
+    console.log('🔍 Possible IDs found:', possibleIds);
+    
     for (const id of possibleIds) {
       if (id !== null && !isNaN(id) && id > 0) { 
+        console.log('✅ Found valid user ID:', id);
         return parseInt(id.toString());
       }
     }
     
+    console.log('❌ No valid user ID found in JWT payload');
     return null;
   }
   
@@ -247,11 +252,11 @@ export class UserService {
           roles = [];
       }
 
-      const userId = response?.id || this.extractUserIdFromJWT(payload); 
+      const userId = response?.user?.id || response?.id || this.extractUserIdFromJWT(payload); 
       
-      const userName = response?.name || payload?.name || payload?.CheckScam?.principal?.username || payload?.username || payload?.sub;
-      const userEmail = response?.email || payload?.email || payload?.sub; 
-      const userAvatar = response?.avatar || response?.picture || payload?.picture || payload?.CheckScam?.principal?.avatar; 
+      const userName = response?.user?.name || response?.name || payload?.name || payload?.checkscam?.principal?.username || payload?.CheckScam?.principal?.username || payload?.username || payload?.sub;
+      const userEmail = response?.user?.email || response?.email || payload?.email || payload?.sub; 
+      const userAvatar = response?.user?.avatar || response?.avatar || response?.picture || payload?.picture || payload?.checkscam?.principal?.avatar || payload?.CheckScam?.principal?.avatar; 
 
       const userData = {
         id: userId || 0,

@@ -2,7 +2,7 @@
   position: fixed;
   top: 20px;
   right: 20px;
-  background-color: #f44336; 
+  background-color: #f44336;
   color: white;
   padding: 15px;
   border-radius: 8px;
@@ -11,19 +11,19 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  max-width: 500px; 
+  max-width: 500px;
   opacity: 0;
   transform: translateY(-20px);
   animation: fadeInDown 0.5s forwards;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  
-  white-space: nowrap; 
-  overflow: hidden; 
-  text-overflow: ellipsis; 
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .app-notification.success {
-  background-color: #4CAF50; 
+  background-color: #4CAF50;
 }
 
 .app-notification.error {
@@ -67,8 +67,8 @@
 
 .full-screen-background {
   min-height: 100vh;
-  background: linear-gradient(135deg, 
-    rgba(255, 248, 240, 0.4) 0%, 
+  background: linear-gradient(135deg,
+    rgba(255, 248, 240, 0.4) 0%,
     rgba(255, 243, 224, 0.3) 25%,
     rgba(254, 240, 138, 0.2) 50%,
     rgba(252, 211, 77, 0.15) 75%,
@@ -76,7 +76,7 @@
   );
   position: relative;
   overflow: hidden;
-  
+
   &::before {
     content: '';
     position: absolute;
@@ -87,7 +87,7 @@
     background: radial-gradient(circle, rgba(252, 211, 77, 0.1) 0%, transparent 70%);
     animation: rotate 20s linear infinite;
   }
-  
+
   &::after {
     content: '';
     position: absolute;
@@ -122,21 +122,21 @@
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 
+  box-shadow:
     0 25px 50px -12px rgba(0, 0, 0, 0.25),
     0 0 0 1px rgba(255, 255, 255, 0.1);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  
+
   &:hover {
     transform: translateY(-5px);
-    box-shadow: 
+    box-shadow:
       0 35px 80px -12px rgba(0, 0, 0, 0.3),
       0 0 0 1px rgba(255, 255, 255, 0.2);
   }
 }
 
 .logo-container {
-  display: flex; 
+  display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 0.5rem;
@@ -144,9 +144,9 @@
   .logo {
     width: 120px;
     height: 120px;
-    object-fit: contain; 
+    object-fit: contain;
     transition: all 0.3s ease;
-    
+
     &:hover {
       transform: scale(1.1);
     }
@@ -165,7 +165,7 @@
 .input-group-custom {
   position: relative;
   margin-bottom: 1rem;
-  
+
   .input-group-text {
     background: linear-gradient(135deg, #f8fafc, #f1f5f9);
     border: 2px solid #e2e8f0;
@@ -173,13 +173,13 @@
     border-radius: 12px 0 0 12px;
     padding: 0.75rem 1rem;
     transition: all 0.3s ease;
-    
+
     i {
       font-size: 1.1rem;
       transition: all 0.3s ease;
     }
   }
-  
+
   .custom-input {
     border: 2px solid #e2e8f0;
     border-left: none;
@@ -188,29 +188,29 @@
     font-size: 1rem;
     transition: all 0.3s ease;
     background: rgba(255, 255, 255, 0.8);
-    
+
     &:focus {
       border-color: #f59e0b;
       box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
       background: rgba(255, 255, 255, 1);
     }
-    
+
     &::placeholder {
       color: #94a3b8;
     }
   }
-  
+
   &:hover {
     .input-group-text {
       border-color: #f59e0b;
       background: linear-gradient(135deg, #fef3c7, #fed7aa);
-      
+
       i {
         transform: scale(1.1);
         color: #d97706 !important;
       }
     }
-    
+
     .custom-input {
       border-color: #f59e0b;
     }
@@ -224,13 +224,13 @@
     width: 1.2rem;
     height: 1.2rem;
     transition: all 0.3s ease;
-    
+
     &:checked {
       background-color: #f59e0b;
       border-color: #f59e0b;
       box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
     }
-    
+
     &:focus {
       box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
     }
@@ -243,12 +243,12 @@
   font-weight: 500;
   transition: all 0.3s ease;
   position: relative;
-  
+
   &:hover {
     color: #f59e0b;
     text-decoration: none;
   }
-  
+
   &::after {
     content: '';
     position: absolute;
@@ -259,7 +259,7 @@
     background: linear-gradient(135deg, #f59e0b, #d97706);
     transition: width 0.3s ease;
   }
-  
+
   &:hover::after {
     width: 100%;
   }
@@ -276,7 +276,7 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
-  
+
   &::before {
     content: '';
     position: absolute;
@@ -287,42 +287,42 @@
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
     transition: left 0.5s ease;
   }
-  
+
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 15px 35px rgba(245, 158, 11, 0.4);
-    
+
     &::before {
       left: 100%;
     }
   }
-  
+
   &:active {
     transform: translateY(0);
   }
-  
+
   &:disabled {
     background: #e2e8f0;
     color: #94a3b8;
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
-    
+
     &:hover {
       transform: none;
       box-shadow: none;
     }
   }
-  
+
   .btn-text {
     display: inline-flex;
     align-items: center;
   }
-  
+
   i {
     transition: transform 0.3s ease;
   }
-  
+
   &:hover i {
     transform: translateX(5px);
   }
@@ -333,12 +333,12 @@
   text-decoration: none;
   transition: all 0.3s ease;
   position: relative;
-  
+
   &:hover {
     color: #d97706;
     text-decoration: none;
   }
-  
+
   &::after {
     content: '';
     position: absolute;
@@ -349,27 +349,80 @@
     background: linear-gradient(135deg, #f59e0b, #d97706);
     transition: width 0.3s ease;
   }
-  
+
   &:hover::after {
     width: 100%;
   }
 }
 
+/* --- CSS cho nút "Trở về trang chủ" mới --- */
+.back-to-home-btn {
+  display: inline-flex; /* Để căn giữa dễ hơn và căn chỉnh icon/text */
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  margin-top: 20px; /* Khoảng cách với phần đăng ký */
+  background: transparent; /* Nền trong suốt */
+  border: 2px solid #f59e0b; /* Viền màu cam */
+  border-radius: 12px;
+  text-decoration: none;
+  color: #f59e0b; /* Chữ màu cam */
+  font-weight: 600;
+  font-size: 1rem;
+  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.2);
+  transition: all 0.3s ease;
+  width: 100%; /* Chiếm toàn bộ chiều rộng */
+  max-width: 250px; /* Giới hạn chiều rộng để không quá to */
+  cursor: pointer;
+
+  &:hover {
+    background: linear-gradient(135deg, #f59e0b, #d97706); /* Nền gradient khi hover */
+    color: white; /* Chữ trắng khi hover */
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+    border-color: transparent; /* Ẩn viền khi hover */
+  }
+
+  fa-icon {
+    font-size: 1.2rem;
+    color: #f59e0b; /* Icon màu cam */
+    transition: color 0.3s ease;
+  }
+
+  &:hover fa-icon {
+    color: white; /* Icon trắng khi hover */
+  }
+}
+
+
+/* Responsive Media Queries (giữ nguyên, chỉ đảm bảo nút mới cũng được xử lý) */
 @media (max-width: 768px) {
   .custom-card-style {
     margin: 1rem;
     padding: 2rem 1.5rem !important;
   }
-  
+
   .logo-container {
-    .logo { 
+    .logo {
       width: 100px;
       height: 100px;
     }
   }
-  
+
   .text-gradient {
     font-size: 1.5rem;
+  }
+
+  .back-to-home-btn { /* Điều chỉnh responsive cho nút mới */
+    padding: 8px 15px;
+    font-size: 0.9rem;
+    gap: 6px;
+    max-width: 200px; /* Giảm max-width cho màn hình nhỏ hơn */
+
+    fa-icon {
+      font-size: 1rem;
+    }
   }
 }
 
@@ -377,5 +430,8 @@
   .custom-card-style {
     margin: 0.5rem;
     padding: 1.5rem 1rem !important;
+  }
+  .back-to-home-btn {
+    max-width: 180px; /* Giảm thêm max-width */
   }
 }

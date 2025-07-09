@@ -20,14 +20,13 @@ export class ReportComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigateByUrl('/'); // Hoặc route cụ thể bạn muốn quay lại
+    this.router.navigateByUrl('/'); 
   }
 
   goToReportCreate(): void {
     this.router.navigate(['/report/create']);
   }
 
-  // Phương thức để điều hướng đến trang khiếu nại báo cáo sai
   goToReportMistake(): void {
     this.router.navigate(['/report/mistake']);
   }

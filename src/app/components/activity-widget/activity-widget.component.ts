@@ -3,20 +3,28 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { ActivityService, Activity } from '../../services/activity.service';
 import { Subscription } from 'rxjs';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'; // Import FontAwesomeModule
 
 @Component({
   selector: 'app-activity-widget',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    FontAwesomeModule // Thêm FontAwesomeModule vào đây
+  ],
   templateUrl: './activity-widget.component.html',
   styleUrls: ['./activity-widget.component.scss']
 })
 export class ActivityWidgetComponent implements OnInit, OnDestroy {
   recentActivities: Activity[] = [];
-  isConnected: boolean = true; 
-  isLoading: boolean = false; 
+  isConnected: boolean = true;
+  isLoading: boolean = false;
 
   private subscriptions: Subscription[] = [];
+
+  // Không cần khai báo lại icon ở đây nếu đã đăng ký global trong app.config.ts
+  // readonly ionPersonOutline = ionPersonOutline; // Xóa hoặc comment dòng này
 
   constructor(private activityService: ActivityService, private router: Router) {}
 
@@ -32,7 +40,7 @@ export class ActivityWidgetComponent implements OnInit, OnDestroy {
   private initializeWidget() {
     // COMMENTED: WebSocket connection disabled
     // this.activityService.connect();
-    
+
     // COMMENTED: Connection status subscription disabled
     // const connectionSub = this.activityService.getConnectionStatus().subscribe(
     //   connected => {
@@ -46,7 +54,7 @@ export class ActivityWidgetComponent implements OnInit, OnDestroy {
 
     // Set connection to false since WebSocket is disabled
     this.isConnected = false;
-    
+
     // Load activities using REST API only
     this.loadRecentActivities();
 
@@ -88,9 +96,9 @@ export class ActivityWidgetComponent implements OnInit, OnDestroy {
 
   getActionIcon(actionType: string): string {
     const icons: { [key: string]: string } = {
-      POST: '🔍',
-      UPLOAD: '📝',     
-      REPORT: '📤',     
+      POST: '🔍', // Bạn có thể thay thế bằng Font Awesome icon tương ứng nếu muốn
+      UPLOAD: '📝',
+      REPORT: '📤',
       JOIN: '👥'
     };
     return icons[actionType] || '📌';
@@ -111,13 +119,13 @@ export class ActivityWidgetComponent implements OnInit, OnDestroy {
     const activityTime = new Date(timestamp);
     const diff = now.getTime() - activityTime.getTime();
     const minutes = Math.floor(diff / 60000);
-    
+
     if (minutes < 1) return 'vừa xong';
     if (minutes < 60) return `${minutes}p`;
-    
+
     const hours = Math.floor(minutes / 60);
     if (hours < 24) return `${hours}h`;
-    
+
     const days = Math.floor(hours / 24);
     return `${days}d`;
   }
@@ -132,25 +140,25 @@ export class ActivityWidgetComponent implements OnInit, OnDestroy {
     }
     return '';
   }
-  
+
   canNavigate(activity: Activity): boolean {
     const metadata = activity.metadata || {};
     return !!(metadata.newsId || metadata.reportId);
   }
-  
+
   onActivityClick(activity: Activity): void {
     const metadata = activity.metadata || {};
-    
+
     if (metadata.newsId) {
       this.router.navigate(['/view-news', metadata.newsId]);
     } else if (metadata.reportId) {
       this.navigateToReport(metadata.reportId);
     }
   }
-  
+
   private navigateToReport(reportId: number): void {
     const isAdmin = localStorage.getItem('userRole') === 'ADMIN';
-    
+
     if (isAdmin) {
       this.router.navigate(['/admin/report-detail', reportId]);
     } else {

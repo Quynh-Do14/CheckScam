@@ -5,14 +5,21 @@ import { UserService } from '../../services/user.service';
 import { LoginDTO } from '../../dtos/login.dto';
 import { TokenService } from '../../services/token.service';
 import { HttpErrorResponse } from '@angular/common/http';
-import { CommonModule } from '@angular/common'; 
+import { CommonModule } from '@angular/common';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'; // Đảm bảo đã import này
+
 
 declare var google: any;
 
 @Component({
     selector: 'app-login',
     standalone: true,
-    imports: [FormsModule, RouterModule, CommonModule],
+    imports: [
+      FormsModule,
+      RouterModule,
+      CommonModule,
+      FontAwesomeModule // Rất quan trọng: Đảm bảo FontAwesomeModule được thêm vào đây
+    ],
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.scss']
 })

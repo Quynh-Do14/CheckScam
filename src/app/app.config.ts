@@ -8,6 +8,16 @@ import { tokenInterceptor } from './interceptors/token.interceptor';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideToastr } from 'ngx-toastr';
 
+// Import Font Awesome
+import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
+import {
+  faRocket, 
+  faSearch, 
+  faPhone,  
+  faSyncAlt 
+} from '@fortawesome/free-solid-svg-icons';
+
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
@@ -15,11 +25,26 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(
       withInterceptors([tokenInterceptor])
     ),
-    provideAnimations(),  // Cần thiết cho các animation của Toastr và các animation Angular khác
-    provideToastr({       // Cấu hình Toastr
-      timeOut: 3000,      // Thời gian hiển thị toast (3 giây)
-      positionClass: 'toast-top-right', // Vị trí hiển thị (góc trên bên phải)
-      preventDuplicates: true, // Ngăn chặn hiển thị nhiều toast trùng lặp
+    provideAnimations(),
+    provideToastr({
+      timeOut: 3000,
+      positionClass: 'toast-top-right',
+      preventDuplicates: true,
     }),
+
+    // Cấu hình Font Awesome
+    {
+      provide: FaIconLibrary,
+      useFactory: () => {
+        const library = new FaIconLibrary();
+        library.addIcons(
+          faRocket,
+          faSearch,
+          faPhone,
+          faSyncAlt
+        );
+        return library;
+      }
+    }
   ]
 };

@@ -8,7 +8,8 @@ import { FooterComponent } from '../footer/footer.component';
 import { ChatBoxComponent } from '../chat-box/chat-box.component';
 
 interface PartnershipFormData {
-  name: string;
+  fullName: string; // Đổi từ 'name' thành 'fullName'
+  companyName: string; // Thêm trường 'companyName'
   email: string;
   phone: string;
   partnershipType: string;
@@ -29,9 +30,10 @@ interface PartnershipFormData {
   styleUrls: ['./partners.component.scss']
 })
 export class PartnersComponent implements OnInit {
-showChatbox = false;
-  partnershipData: PartnershipFormData = {
-    name: '',
+  showChatbox = false;
+  partnershipForm: PartnershipFormData = { // Đổi tên từ 'partnershipData' thành 'partnershipForm' để khớp với ví dụ HTML trước đó
+    fullName: '',
+    companyName: '',
     email: '',
     phone: '',
     partnershipType: '',
@@ -43,6 +45,8 @@ showChatbox = false;
   ngOnInit(): void {
   }
 
+  // Bạn có thể bỏ phương thức này nếu không còn phần tử 'contactSection' để scroll tới
+  // Hoặc bạn có thể thêm một ID 'contactSection' vào div .policy-section chứa form
   scrollToContact(): void {
     document.getElementById('contactSection')?.scrollIntoView({ behavior: 'smooth' });
   }
@@ -50,12 +54,14 @@ showChatbox = false;
   submitPartnershipForm(): void {
     if (this.isFormValid()) {
 
-      console.log('Partnership Proposal Submitted:', this.partnershipData);
+      console.log('Partnership Proposal Submitted:', this.partnershipForm);
 
       this.toastr.success('Đề xuất hợp tác của bạn đã được gửi thành công!', 'Thành công!');
 
-      this.partnershipData = {
-        name: '',
+      // Reset form sau khi gửi thành công
+      this.partnershipForm = {
+        fullName: '',
+        companyName: '',
         email: '',
         phone: '',
         partnershipType: '',
@@ -67,10 +73,12 @@ showChatbox = false;
   }
 
   isFormValid(): boolean {
-    return !!this.partnershipData.name &&
-           !!this.partnershipData.email &&
-           this.isValidEmail(this.partnershipData.email) &&
-           !!this.partnershipData.message;
+    return !!this.partnershipForm.fullName &&
+           !!this.partnershipForm.companyName && // Thêm kiểm tra cho companyName
+           !!this.partnershipForm.email &&
+           this.isValidEmail(this.partnershipForm.email) &&
+           !!this.partnershipForm.partnershipType && // Thêm kiểm tra cho partnershipType
+           !!this.partnershipForm.message;
   }
 
   private isValidEmail(email: string): boolean {
@@ -78,14 +86,12 @@ showChatbox = false;
     return emailRegex.test(email);
   }
 
-   /* ===== Chat ===== */
+  /* ===== Chat ===== */
   onAiTuVanClicked(): void {
-    debugger
     this.showChatbox = true;
   }
 
   closeChatbox(): void {
-    debugger
     this.showChatbox = false;
   }
 }

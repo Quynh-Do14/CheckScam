@@ -6,7 +6,7 @@ import { TokenService } from '../services/token.service';
   providedIn: 'root'
 })
 export class AdminGuard implements CanActivate {
-  
+
   constructor(
     private tokenService: TokenService,
     private router: Router
@@ -14,8 +14,9 @@ export class AdminGuard implements CanActivate {
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
     const token = this.tokenService.getToken();
-    
+
     if (!token) {
+      // Người dùng chưa đăng nhập, chuyển hướng đến trang đăng nhập
       this.router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
       return false;
     }
@@ -36,17 +37,15 @@ export class AdminGuard implements CanActivate {
       return false;
     }
 
-    // Lấy role dạng string từ authorities (object hoặc string)
     const userRoles = (decodedToken.checkscam?.principal?.authorities || [])
       .map((r: any) => r.role || r);
     const hasAdminRole = userRoles.includes('ADMIN');
-    
+
     if (!hasAdminRole) {
-      // Nếu không có quyền admin, chuyển về trang chủ
-      this.router.navigate(['/']);
+      this.router.navigate(['/access-denied']);
       return false;
     }
 
     return true;
   }
-} 
+}

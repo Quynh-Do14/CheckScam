@@ -189,6 +189,47 @@ export class RankingComponent implements OnInit {
     return local; // Trả về đầy đủ phần username
   }
 
+  // ✅ Hàm mới: Ẩn 3 ký tự ở giữa của tên
+  getMaskedName(name: string): string {
+    if (!name || name.trim().length === 0) {
+      return 'Unknown';
+    }
+    
+    const trimmedName = name.trim();
+    
+    // Nếu tên quá ngắn (≤ 4 ký tự), không ẩn
+    if (trimmedName.length <= 4) {
+      return trimmedName;
+    }
+    
+    // Tìm vị trí giữa để ẩn 3 ký tự
+    const totalLength = trimmedName.length;
+    const hideCount = 3; // Luôn ẩn đúng 3 ký tự
+    
+    // Tính vị trí bắt đầu ẩn (ở giữa)
+    const startHide = Math.floor((totalLength - hideCount) / 2);
+    const endHide = startHide + hideCount;
+    
+    // Đảm bảo không ẩn hết tên (ít nhất giữ lại 2 ký tự)
+    if (startHide < 1 || endHide >= totalLength) {
+      return trimmedName;
+    }
+    
+    // Tạo string với 3 ký tự giữa bị ẩn
+    const beforeHidden = trimmedName.substring(0, startHide);
+    const afterHidden = trimmedName.substring(endHide);
+    
+    return beforeHidden + '***' + afterHidden;
+  }
+
+  // ✅ Hàm tiện ích: Lấy tên hiển thị với fallback
+  getDisplayName(reporter: any): string {
+    if (reporter.name && reporter.name.trim().length > 0) {
+      return this.getMaskedName(reporter.name);
+    }
+    return this.getMaskedEmail(reporter.email);
+  }
+
   // Lấy thông tin phân trang
   getPaginationInfo(): string {
     const start = this.currentPage * this.itemsPerPage + 1;

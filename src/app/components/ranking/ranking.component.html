@@ -49,7 +49,7 @@
         <span class="rank-number">2</span>
       </div>
       <div class="score">{{ topReporters[1].approvedReports }}</div>
-      <div class="username">{{ getMaskedEmail(topReporters[1].email) }}</div>
+      <div class="username">{{ getDisplayName(topReporters[1]) }}</div>
     </div>
 
     <!-- First Place -->
@@ -58,7 +58,7 @@
         <span class="rank-number">1</span>
       </div>
       <div class="score">{{ topReporters[0].approvedReports }}</div>
-      <div class="username">{{ getMaskedEmail(topReporters[0].email) }}</div>
+      <div class="username">{{ getDisplayName(topReporters[0]) }}</div>
     </div>
 
     <!-- Third Place -->
@@ -67,7 +67,7 @@
         <span class="rank-number">3</span>
       </div>
       <div class="score">{{ topReporters[2].approvedReports }}</div>
-      <div class="username">{{ getMaskedEmail(topReporters[2].email) }}</div>
+      <div class="username">{{ getDisplayName(topReporters[2]) }}</div>
     </div>
   </div>
 
@@ -188,7 +188,7 @@
         <div class="table-row" *ngFor="let reporter of getCurrentPageData(); let i = index" 
              [style.display]="isLoading || error ? 'none' : 'grid'">
           <div class="rank-col">{{ reporter.rank }}.</div>
-          <div class="name-col">{{ reporter.name }}</div>
+          <div class="name-col">{{ getDisplayName(reporter) }}</div>
           <div class="score-col">{{ reporter.approvedReports }}</div>
         </div>
         

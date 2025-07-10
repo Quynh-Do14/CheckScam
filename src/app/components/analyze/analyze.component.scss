@@ -2124,19 +2124,23 @@ html, body {
 /* REPORTS GRID CARDS STYLES */
 .reports-grid-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 16px;
-  margin-top: 20px;
+  grid-template-columns: 1fr; /* Chỉ hiển thị 1 cột để tránh tràn */
+  gap: 12px; /* Giảm gap */
+  margin-top: 15px; /* Giảm margin */
+  width: 100%; /* Đảm bảo chiếm full width */
+  overflow: hidden; /* Ẩn phần tràn */
 }
 
 .report-card {
   background: #ffffff;
-  border-radius: 12px;
-  padding: 20px;
+  border-radius: 10px; /* Giảm border-radius */
+  padding: 15px; /* Giảm padding */
   border: 2px solid #e9ecef;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
+  width: 100%; /* Đảm bảo chiếm full width */
+  box-sizing: border-box; /* Bao gồm padding trong width */
   
   &::before {
     content: '';
@@ -2144,7 +2148,7 @@ html, body {
     top: 0;
     left: 0;
     right: 0;
-    height: 4px;
+    height: 3px; /* Giảm chiều cao */
     transition: all 0.3s ease;
   }
   
@@ -2209,17 +2213,17 @@ html, body {
 }
 
 .card-icon {
-  width: 50px;
-  height: 50px;
-  border-radius: 12px;
+  width: 40px; /* Giảm từ 50px */
+  height: 40px;
+  border-radius: 10px; /* Giảm border-radius */
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 15px;
+  margin-bottom: 12px; /* Giảm margin */
   transition: all 0.3s ease;
   
   i {
-    font-size: 1.5rem;
+    font-size: 1.2rem; /* Giảm từ 1.5rem */
     transition: all 0.3s ease;
   }
   
@@ -2234,23 +2238,25 @@ html, body {
 
 .card-content {
   .provider-name {
-    font-size: 1.1rem;
+    font-size: 1rem; /* Giảm từ 1.1rem */
     font-weight: 700;
     color: #2c3e50;
-    margin: 0 0 12px 0;
+    margin: 0 0 10px 0; /* Giảm margin */
     line-height: 1.3;
+    word-break: break-word; /* Cho phép ngắt dòng */
   }
 }
 
 .status-badge {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border-radius: 20px;
-  font-size: 0.85rem;
+  gap: 6px; /* Giảm gap */
+  padding: 6px 10px; /* Giảm padding */
+  border-radius: 15px; /* Giảm border-radius */
+  font-size: 0.8rem; /* Giảm font-size */
   font-weight: 600;
   transition: all 0.3s ease;
+  word-break: break-word; /* Cho phép ngắt dòng */
   
   &.status-safe {
     background: rgba(40, 167, 69, 0.1);
@@ -2963,17 +2969,38 @@ html, body {
       height: auto !important; /* Cho phép auto height */
       border: 1px solid rgba(255, 107, 53, 0.2);
       background: #fff;
-      cursor: default !important; /* Vô hiệu hóa cursor pointer */
-      pointer-events: none; /* Vô hiệu hóa click events */
+      cursor: pointer !important; /* Kích hoạt lại cursor pointer */
+      pointer-events: auto; /* Kích hoạt lại click events */
       
       /* Crisp rendering cho screenshot */
       image-rendering: -webkit-optimize-contrast;
       image-rendering: crisp-edges;
       image-rendering: pixelated;
       
-      /* Vô hiệu hóa tooltip hint cho URL */
-      &:hover::before {
-        display: none !important; /* Ẩn tooltip */
+      /* Hiệu ứng hover cho URL */
+      &:hover {
+        transform: scale(1.02) !important;
+        border-color: rgba(255, 107, 53, 0.4) !important;
+        box-shadow: 0 8px 25px rgba(255, 107, 53, 0.2) !important;
+        z-index: 2 !important;
+        
+        /* Thêm tooltip hint cho URL */
+        &::before {
+          content: '🔍 Click để phóng to';
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          background: rgba(255, 107, 53, 0.9);
+          color: white;
+          padding: 4px 8px;
+          border-radius: 4px;
+          font-size: 10px;
+          font-weight: 500;
+          z-index: 10;
+          opacity: 1;
+          animation: tooltipShow 0.3s ease-out;
+          pointer-events: none;
+        }
       }
     }
     
@@ -2982,12 +3009,9 @@ html, body {
       box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
       z-index: 2; /* Tăng z-index khi hover nhưng vẫn thấp hơn header */
       
-      /* Vô hiệu hóa hover effects cho URL */
+      /* Kích hoạt lại hover effects cho URL */
       &[src*="/api/v1/check-scam"]:not(.url-image) {
-        transform: none !important; /* Không scale */
-        border-color: rgba(255, 107, 53, 0.2) !important; /* Giữ nguyên border */
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important; /* Giữ nguyên shadow */
-        z-index: 1 !important; /* Giữ z-index thấp cho URL */
+        /* Hiệu ứng hover được kích hoạt lại */
       }
     }
     

@@ -622,7 +622,7 @@
   }
 
   &.right-column {
-    width: 480px;  /* Tăng lên bằng với center-column */
+    width: 550px;  /* Tăng chiều rộng để hiển thị ảnh URL rõ hơn */
     margin-left: auto;
   }
 }
@@ -2621,6 +2621,7 @@
     min-height: 500px; /* Tăng đáng kể cho URL */
     max-height: 700px; /* Cho phép scroll nếu quá cao */
     overflow-y: auto;  /* Thêm scroll vertical */
+    width: 100%; /* Đảm bảo chiếm toàn bộ chiều rộng */
     
     // Custom scrollbar cho URL container
     &::-webkit-scrollbar {
@@ -2766,6 +2767,7 @@
   padding: 0;
   position: relative; /* Thêm position relative */
   z-index: 1;         /* Z-index thấp nhất để ảnh không che header */
+  width: 100%;        /* Đảm bảo chiếm toàn bộ chiều rộng */
   
   @media (max-width: 768px) {
     gap: 12px;
@@ -2812,6 +2814,7 @@
         border: 2px solid rgba(255, 107, 53, 0.1);
         transition: all 0.3s ease;
         position: relative;
+        width: 100%; /* Đảm bảo chiếm full width */
         
         // Scroll hint overlay
         &::before {
@@ -2866,51 +2869,35 @@
     }
     
     @media (min-width: 1400px) {
-      max-width: 290px; /* Giảm từ 320px xuống 290px */
-      
-      &.url-screenshot {
-        max-width: 100%;
-        
-        .url-scroll-container {
-          max-height: 500px;
-        }
-      }
+    max-width: 100%; /* Chiếm toàn bộ width */
+    
+    .url-scroll-container {
+    max-height: 500px;
+    }
     }
     
     @media (max-width: 1399px) {
-      max-width: 250px; /* Giảm từ 280px xuống 250px */
+    max-width: 100%; /* Chiếm toàn bộ width */
       
-      &.url-screenshot {
-        max-width: 100%;
-        
-        .url-scroll-container {
-          max-height: 420px;
-        }
-      }
+      .url-scroll-container {
+        max-height: 420px;
+    }
     }
     
     @media (max-width: 1200px) {
-      max-width: 230px; /* Giảm từ 260px xuống 230px */
-      
-      &.url-screenshot {
-        max-width: 100%;
-        
-        .url-scroll-container {
-          max-height: 360px;
-        }
-      }
+    max-width: 100%; /* Chiếm toàn bộ width */
+    
+    .url-scroll-container {
+    max-height: 360px;
+    }
     }
     
     @media (max-width: 768px) {
-      max-width: 200px; /* Giảm từ 220px xuống 200px */
-      
-      &.url-screenshot {
-        max-width: 100%;
-        
-        .url-scroll-container {
-          max-height: 280px;
-        }
-      }
+    max-width: 100%; /* Chiếm toàn bộ width */
+    
+    .url-scroll-container {
+    max-height: 280px;
+    }
     }
     }
   }
@@ -3521,11 +3508,11 @@
   
   .analysis-column {
     &.right-column {
-      width: 520px;  /* Tăng để cân bằng */
+      width: 580px;  /* Tăng chiều rộng cho ảnh URL */
     }
     
     &.center-column {
-      width: 520px;  /* Bằng với right-column */
+      width: 420px;  /* Giảm để cân bằng */
       margin-right: 25px; /* Tăng margin */
     }
     
@@ -3538,11 +3525,11 @@
 @media (max-width: 1399px) {
   .analysis-column {
     &.right-column {
-      width: 420px;  /* Tăng để cân bằng */
+      width: 520px;  /* Tăng chiều rộng cho ảnh URL */
     }
     
     &.center-column {
-      width: 420px;  /* Bằng với right-column */
+      width: 380px;  /* Giảm để cân bằng */
       margin-right: 20px;
     }
     
@@ -3555,11 +3542,11 @@
 @media (max-width: 1200px) {
   .analysis-column {
     &.right-column {
-      width: 380px;  /* Tăng để cân bằng */
+      width: 450px;  /* Tăng chiều rộng cho ảnh URL */
     }
     
     &.center-column {
-      width: 380px;  /* Bằng với right-column */
+      width: 350px;  /* Giảm để cân bằng */
       margin-right: 15px;
     }
     

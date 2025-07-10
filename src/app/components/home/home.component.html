@@ -98,10 +98,18 @@
 
           <div class="status-messages">
             <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
-            <!-- Original loading spinner for inline display -->
-            <div class="loading-spinner" *ngIf="isLoading">
-              <div class="spinner"></div>
-              <p>Đang tra cứu...</p>
+            <!-- Loading theo mẫu analyze -->
+            <div class="loading-overlay" *ngIf="isLoading">
+              <div class="loading-content">
+                <div class="loading-spinner-large">
+                  <i class="fas fa-shield-alt fa-spin"></i>
+                </div>
+                <h3>Phân tích an toàn</h3>
+                <p>Đang kiểm tra thông tin và phân tích mức độ rủi ro...</p>
+                <div class="loading-progress">
+                  <div class="progress-bar animated"></div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -147,7 +155,7 @@
   </div>
 
   <!-- Top 10 Most Searched Section với Vertical Banners - BẢNG MỚI -->
-  <div class="top-searched-with-banners">
+  <div class="top-searched-with-banners" *ngIf="!isLoading">
     <!-- Left Banner -->
     <app-vertical-banner position="left"></app-vertical-banner>
     
@@ -326,7 +334,7 @@
   </div>
 </div>
 
-<div class="features-section">
+<div class="features-section" *ngIf="!isLoading">
   <div class="container">
     <div class="section-header">
       <p class="section-label">TÍNH NĂNG</p>
@@ -380,7 +388,7 @@
   </div>
 </div>
 
-<div class="about-us-section">
+<div class="about-us-section" *ngIf="!isLoading">
   <div class="container">
     <div class="about-us-content">
       <div class="text-column">
@@ -473,5 +481,5 @@
   </div>
 </div>
 
-<app-chat-box *ngIf="showChatbox" (close)="closeChatbox()"></app-chat-box>
-<app-footer></app-footer>
+<app-chat-box *ngIf="showChatbox && !isLoading" (close)="closeChatbox()"></app-chat-box>
+<app-footer *ngIf="!isLoading"></app-footer>

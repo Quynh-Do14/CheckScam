@@ -27,7 +27,8 @@ import { ReportComponent } from './components/report/report.component';
 import { MistakeComponent } from './components/report/mistake/mistake.component';
 
 import { AuthGuard } from './guards/auth.guard';
-import { AuthChildGuard } from './guards/auth-child.guard'; 
+import { AuthChildGuard } from './guards/auth-child.guard';
+import { PublicGuard } from './guards/public.guard'; 
 
 import { ReportMangementComponent } from './components/report/report-management/report-management.component';
 import { MistakeManagementComponent } from './components/report/mistake-management/mistake-management.component';
@@ -40,49 +41,45 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { ReportDetailComponent } from './components/report/report-detail/report-detail.component';
 import { MistakeDetailComponent } from './components/report/mistake-detail/mistake-detail.component';
 import { RegisterComponent } from './components/register/register.component';
-import { AccessDeniedComponent } from './components/access-denied/access-denied.component'; 
+import { AccessDeniedComponent } from './components/access-denied/access-denied.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent, pathMatch: 'full' },
     {
         path: 'admin',
         component: LayoutComponent,
-        canActivate: [AuthGuard], 
-        canActivateChild: [AuthChildGuard], // AuthChildGuard kiểm tra quyền cho các child routes
-        data: { roles: ['ADMIN', 'COLLAB'] }, 
+        canActivate: [AuthGuard],
+        canActivateChild: [AuthChildGuard],
+        data: { roles: ['ADMIN', 'COLLAB'] },
         children: [
           { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
           { path: 'dashboard', component: DashboardComponent },
           {
             path: 'news',
             component: NewsComponent,
-            // Nếu chỉ ADMIN/COLLAB có thể quản lý tin tức, thì AuthChildGuard đã có data: { roles: ['ADMIN', 'COLLAB'] } ở route cha
           },
           {
             path: 'users',
             component: UserComponent,
-            data: { roles: ['ADMIN'] } // **Chỉ ADMIN được vào đây, AuthChildGuard sẽ chặn COLLAB**
+            data: { roles: ['ADMIN'] }
           },
           {
             path: 'create-user',
             component: CreateUserComponent,
-            data: { roles: ['ADMIN'] } // **Chỉ ADMIN được vào đây**
+            data: { roles: ['ADMIN'] }
           },
           {
             path: 'create-news',
             component: CreateNewsComponent,
-            // data: { roles: ['ADMIN', 'COLLAB'] } // Tùy vào ai được tạo tin tức
           },
           {
             path: 'reports',
             component: ReportMangementComponent,
-            // data: { roles: ['ADMIN', 'COLLAB'] } // Tùy vào ai được quản lý báo cáo
           },
           { path: 'detail-news/:id', component: DetailNewsComponent },
           {
             path: 'update-news/:id',
             component: UpdateNewsComponent,
-            // data: { roles: ['ADMIN', 'COLLAB'] } // Tùy vào ai được cập nhật tin tức
           },
           { path: 'report-detail/:id', component: ReportDetailComponent },
           { path: 'mistake-detail/:id', component: MistakeDetailComponent },
@@ -90,8 +87,8 @@ export const routes: Routes = [
           { path: 'profile', component: ProfileComponent },
         ],
     },
-    { path: 'register', component: RegisterComponent },
-    { path: 'login', component: LoginComponent },
+    { path: 'register', component: RegisterComponent, canActivate: [PublicGuard] }, 
+    { path: 'login', component: LoginComponent, canActivate: [PublicGuard] },       
     { path: 'list-news', component: ListNewsComponent },
     { path: 'view-news/:id', component: ViewNewsComponent },
     { path: 'chatbox', component: ChatBoxComponent },
@@ -111,6 +108,6 @@ export const routes: Routes = [
     { path: 'partners', component: PartnersComponent },
     { path: 'transactions', component: TransactionsComponent },
     { path: 'transactions/agent/:id', component: AgentDetailComponent },
-    { path: 'access-denied', component: AccessDeniedComponent }, 
+    { path: 'access-denied', component: AccessDeniedComponent },
     { path: '**', redirectTo: '' },
 ];

@@ -1157,9 +1157,9 @@ parseAIRecommendations(text: string): string {
 
   getImageDisplayInfo(imageUrl: string): string {
     if (this.isUrlScreenshot(imageUrl)) {
-      return 'Screenshot Website • Hiển thị Full HD (1920x1080)';
+      return 'Screenshot Website • Hiển thị chỉ đọc';
     } else {
-      return 'Bằng chứng hình ảnh • Kích thước Full HD';
+      return 'Bằng chứng hình ảnh • Click để phóng to';
     }
   }
 
@@ -1202,7 +1202,12 @@ parseAIRecommendations(text: string): string {
   onImageClick(imageUrl: string): void {
     if (!imageUrl) return;
     
-    // Tạo modal hiển thị ảnh phóng to
+    // Không cho phép click vào ảnh URL screenshot
+    if (this.isUrlScreenshot(imageUrl)) {
+      return; // Thoát không làm gì
+    }
+    
+    // Tạo modal hiển thị ảnh phóng to (chỉ cho ảnh thường)
     this.createImageModal(imageUrl);
   }
 

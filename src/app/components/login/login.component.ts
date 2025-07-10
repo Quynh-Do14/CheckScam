@@ -6,7 +6,7 @@ import { LoginDTO } from '../../dtos/login.dto';
 import { TokenService } from '../../services/token.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'; // Đảm bảo đã import này
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 
 declare var google: any;
@@ -18,7 +18,7 @@ declare var google: any;
       FormsModule,
       RouterModule,
       CommonModule,
-      FontAwesomeModule // Rất quan trọng: Đảm bảo FontAwesomeModule được thêm vào đây
+      FontAwesomeModule
     ],
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.scss']
@@ -27,6 +27,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
     @ViewChild('loginForm') loginForm!: NgForm;
     username = '';
     password = '';
+    showPassword: boolean = false; // Thêm biến này
 
     showNotification: boolean = false;
     notificationMessage: string = '';
@@ -127,6 +128,11 @@ export class LoginComponent implements OnInit, AfterViewInit {
                 this.showAppNotification(error?.error?.message || 'Đăng nhập thất bại', 'error');
             }
         });
+    }
+
+    // Hàm mới để bật/tắt hiển thị mật khẩu
+    togglePasswordVisibility() {
+        this.showPassword = !this.showPassword;
     }
 
     handleGoogleCredentialResponse(response: any) {

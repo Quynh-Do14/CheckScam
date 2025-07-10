@@ -43,10 +43,10 @@
             {{ activity.targetName }}
           </div>
           <div *ngIf="activity.metadata?.risk_level === 'high'" class="risk-indicator high">
-            ⚠️ Mức độ cao
+            <fa-icon [icon]="['fas', 'exclamation-triangle']"></fa-icon> Mức độ cao
           </div>
           <div *ngIf="activity.metadata?.result === 'scam'" class="risk-indicator scam">
-            🚨 Lừa đảo
+            <fa-icon [icon]="['fas', 'bell']"></fa-icon> Lừa đảo
           </div>
         </div>
       </div>

@@ -296,7 +296,7 @@ body {
   overflow: hidden;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border: 2px solid #4CAF50;
+  border: 2px solid #2196F3;
 }
 
 .secondary-news-card:hover {
@@ -343,7 +343,7 @@ body {
 }
 
 .secondary-news-title a:hover {
-  color: #4CAF50;
+  border: 2px solid #2196F3;
 }
 
 .secondary-news-meta {
@@ -607,7 +607,7 @@ body {
   flex-direction: column;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
-  border: 2px solid #9C27B0;
+  border: 2px solid #2196F3;
 }
 
 .news-grid .news-card:hover {

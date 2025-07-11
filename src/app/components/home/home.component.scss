@@ -330,10 +330,6 @@ html, body {
   }
 }
 
-
-
-
-
 /* Status Messages Container */
 .status-messages {
   width: 100%;
@@ -620,36 +616,6 @@ body {
   }
 }
 
-/* Style cho activity widget container */
-.activity-log-widget {
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-  border-radius: 20px;
-  // padding: 20px;
-  box-shadow: 
-    0 10px 30px rgba(0, 0, 0, 0.1),
-    0 1px 8px rgba(0, 0, 0, 0.05),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-  transition: all 0.3s ease;
-  height: 100%;
-  min-height: 400px;
-  
-  &:hover {
-    box-shadow: 
-      0 15px 40px rgba(0, 0, 0, 0.12),
-      0 2px 12px rgba(0, 0, 0, 0.08),
-      inset 0 1px 0 rgba(255, 255, 255, 0.9);
-    transform: translateY(-2px);
-  }
-  
-  @media (max-width: 768px) {
-    padding: 15px;
-    border-radius: 15px;
-    min-height: 300px;
-  }
-}
-
 /* Robot container updates cho layout mới */
 .hero-left .robot-container {
   position: relative;
@@ -729,7 +695,89 @@ body {
   }
 }
 
-/* Activity widget overrides để fit với design */
+.activity-log-widget {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 20px;
+  // padding: 20px; /* đã comment */
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.1),
+    0 1px 8px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  height: 100%;
+  min-height: 400px;
+
+  &:hover {
+    box-shadow:
+      0 15px 40px rgba(0, 0, 0, 0.12),
+      0 2px 12px rgba(0, 0, 0, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    padding: 15px;
+    border-radius: 15px;
+    min-height: 300px;
+    margin-top: 130px;
+  }
+}
+
+.activity-log-widget {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 20px;
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.1),
+    0 1px 8px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  height: 100%;
+  min-height: 400px; /* Giữ nguyên min-height mặc định cho desktop */
+
+  &:hover {
+    box-shadow:
+      0 15px 40px rgba(0, 0, 0, 0.12),
+      0 2px 12px rgba(0, 0, 0, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    transform: translateY(-2px);
+  }
+
+  /* Áp dụng cho các màn hình nhỏ hơn hoặc bằng 992px (bao gồm cả tablet ngang và điện thoại) */
+  @media (max-width: 992px) {
+    min-height: 350px; /* Có thể điều chỉnh min-height cho tablet */
+    padding: 15px; 
+    border-radius: 15px;    
+    margin-top: 130px;
+
+  }
+
+  @media (max-width: 768px) {
+    margin-top: 130px; 
+    min-height: 500px; 
+    padding: 10px; 
+    border-radius: 10px;
+  }
+
+  @media (min-width: 769px) and (max-width: 1200px) {
+    margin-top: 150px; 
+    min-height: 500px; 
+    padding: 10px; 
+    border-radius: 10px;
+  }
+
+  @media (min-width: 1200px) and (max-width: 1400px) {
+    margin-top: 190px; 
+    min-height: 500px; 
+    padding: 10px; 
+    border-radius: 10px;
+  }
+
+}
+
 .activity-log-widget ::ng-deep .activity-widget {
   background: transparent;
   box-shadow: none;
@@ -750,12 +798,6 @@ body {
 
 .activity-log-widget ::ng-deep .activity-item {
   margin: 10px;
-  // padding: 12px;
-  // margin-bottom: 10px;
-  // border-radius: 10px;
-  // background: rgba(255, 255, 255, 0.7);
-  // border: 1px solid rgba(0, 0, 0, 0.05);
-  // transition: all 0.2s ease;
 }
 
 .activity-log-widget ::ng-deep .activity-item:hover {
@@ -764,8 +806,6 @@ body {
   border-color: rgba(255, 107, 53, 0.2);
 }
 
-/* Search box and other existing styles remain the same */
-/* Search box container - New design theo hình - tăng chiều rộng */
 .search-box-container {
   display: flex;
   flex-direction: column;
@@ -776,15 +816,14 @@ body {
     0 20px 40px rgba(255, 152, 95, 0.3),
     0 8px 16px rgba(255, 152, 95, 0.2),
     inset 0 -2px 8px rgba(255, 152, 95, 0.2);
-  max-width: none; /* Bỏ giới hạn max-width */
-  width: 100%; /* Sử dụng toàn bộ chiều rộng */
+  max-width: none; 
+  width: 100%; 
   margin: 0 auto;
   position: relative;
   overflow: visible;
   gap: 15px;
   transition: all 0.3s ease;
   
-  /* Modern glassmorphism effect */
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.3);
   
@@ -1685,7 +1724,7 @@ app-footer {
 
 .left-column .hero-robot-image {
   width: 100%;
-  max-width: 300px; /* Sử dụng toàn bộ chiều rộng column 300px */
+  max-width: 300px; 
   height: auto;
   object-fit: contain;
   filter: drop-shadow(0 10px 30px rgba(255, 107, 53, 0.3));
@@ -1746,8 +1785,8 @@ app-footer {
   pointer-events: none;
   
   @media (max-width: 1200px) {
-    width: 200px;
-    height: 200px;
+    width: 300px;
+    height: 300px;
   }
   
   @media (max-width: 768px) {
@@ -1787,7 +1826,7 @@ app-footer {
   @media (max-width: 768px) {
     padding: 15px;
     border-radius: 15px;
-    height: 320px;
+    height: 500px;
     max-width: 100%;
   }
 }

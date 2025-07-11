@@ -109,6 +109,14 @@
     height: 100%;
     white-space: nowrap;
     box-sizing: border-box;
+
+    // THÊM STYLE CHO ACTIVE LINK TẠI ĐÂY
+    &.active-link {
+      background-color: #FFD23F; // Màu vàng
+      color: #D32F2F; // Màu chữ đỏ đậm
+      box-shadow: 0 4px 10px rgba(255, 210, 63, 0.4);
+      transform: translateY(-2px); // Hiệu ứng nhấc nhẹ lên
+    }
   }
 
   .nav-links li a:hover {
@@ -126,7 +134,6 @@
     transform: none;
     left: auto;
 
-    // Khoảng cách sau nút "Đối tác" cho desktop
     li:not(.mobile-auth-section):last-of-type {
       margin-right: 30px;
     }
@@ -142,12 +149,17 @@
     z-index: 102;
 
     .login-button a {
-background: linear-gradient(135deg, #e74c3c 0%, #d31400 100%);
+      background: linear-gradient(135deg, #e74c3c 0%, #d31400 100%);
       padding: 10px 20px;
       border-radius: 20px;
       margin-left: 20px;
       &:hover {
         background-color: #ff4b15;
+      }
+      // THÊM STYLE CHO ACTIVE LOGIN BUTTON TẠI ĐÂY
+      &.active-link {
+        background: linear-gradient(135deg, #ff4b15 0%, #ff6b35 100%);
+        box-shadow: 0 4px 10px rgba(255, 75, 21, 0.4);
       }
     }
 
@@ -311,6 +323,12 @@ body.no-scroll {
       li a {
         padding: 8px 14px;
         font-size: 15px;
+
+        // THÊM STYLE CHO ACTIVE LINK TRONG MEDIA QUERY
+        &.active-link {
+          box-shadow: 0 3px 8px rgba(255, 210, 63, 0.3);
+          transform: translateY(-1px);
+        }
       }
       li:not(.mobile-auth-section):last-of-type {
         margin-right: 25px;
@@ -342,6 +360,12 @@ body.no-scroll {
       li a {
         padding: 8px 12px;
         font-size: 14px;
+
+        // THÊM STYLE CHO ACTIVE LINK TRONG MEDIA QUERY
+        &.active-link {
+          box-shadow: 0 2px 6px rgba(255, 210, 63, 0.3);
+          transform: translateY(-1px);
+        }
       }
       li:not(.mobile-auth-section):last-of-type {
         margin-right: 20px;
@@ -429,6 +453,12 @@ body.no-scroll {
           color: #FFD23F;
           transform: translateX(5px);
         }
+        // THÊM STYLE CHO ACTIVE LINK TRONG MEDIA QUERY
+        &.active-link {
+          background-color: rgba(255, 210, 63, 0.2);
+          color: #FFD23F;
+          transform: translateX(5px);
+        }
       }
 
       .mobile-auth-section {
@@ -479,14 +509,20 @@ body.no-scroll {
           }
         }
         .mobile-login-btn, .mobile-register-btn {
-            background-color: #FF5722; // Màu chủ đạo, hoặc #FF6B35
-            border-color: #FF5722;   // Đồng bộ border color
-            color: #fff; // Giữ màu chữ trắng cho dễ nhìn
+            background-color: #FF5722;
+            border-color: #FF5722;
+            color: #fff;
 
             &:hover {
-                background-color: #FF8C68; // Một màu sáng hơn của chủ đạo cho hover
+                background-color: #FF8C68;
                 border-color: #FF8C68;
                 color: #fff;
+            }
+            // THÊM STYLE CHO ACTIVE MOBILE LOGIN BUTTON
+            &.active-link {
+              background-color: #FF8C68;
+              border-color: #FF8C68;
+              box-shadow: 0 2px 8px rgba(0,0,0,0.2);
             }
         }
       }

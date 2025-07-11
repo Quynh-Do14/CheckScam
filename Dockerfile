@@ -8,6 +8,11 @@ RUN npm run build -- --configuration=production
 FROM node:20-alpine
 WORKDIR /app
 COPY --from=build /app/dist/CheckScam-admin/browser ./dist
-RUN npm install -g http-server
-EXPOSE 4200
-CMD ["http-server", "dist", "-p", "4200", "--push-state"]
+
+# Dùng 'serve' để chắc chắn SPA routing work
+RUN npm install -g serve
+
+EXPOSE 8080
+
+# Dùng serve thay vì http-server
+CMD ["serve", "-s", "dist", "-l", "8080"]

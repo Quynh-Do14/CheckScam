@@ -1,6 +1,5 @@
-// src/app/header/header.component.ts
 import { Component, EventEmitter, HostListener, OnInit, Output, Input, OnDestroy } from '@angular/core';
-import { RouterLink, NavigationEnd, Router, RouterModule } from '@angular/router'; // Thêm RouterModule ở đây
+import { RouterLink, NavigationEnd, Router, RouterModule } from '@angular/router'; 
 import { CommonModule } from '@angular/common'; 
 import { UserService } from '../../services/user.service'; 
 import { Subscription } from 'rxjs'; 
@@ -12,7 +11,7 @@ import { environment } from '../../environments/environment';
   imports: [
     RouterLink,
     CommonModule,
-    RouterModule // Thêm RouterModule vào đây
+    RouterModule 
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'

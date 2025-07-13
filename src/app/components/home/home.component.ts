@@ -351,7 +351,6 @@ searchResult: any;
     }
   }
 
-  // Helper methods for top searched table
   getTypeIcon(type: string): string {
     switch (type) {
       case 'phone': return 'fas fa-mobile-alt';

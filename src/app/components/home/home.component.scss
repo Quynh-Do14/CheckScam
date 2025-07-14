@@ -1476,6 +1476,59 @@ body {
   max-width: 600px;
   text-align: left;
 
+  .section-main-title {
+    font-family: 'Be Vietnam Pro', sans-serif; /* Một font hiện đại, rõ ràng */
+    font-size: 48px; /* Tăng kích thước để nổi bật hơn */
+    font-weight: 800; /* Rất đậm để tạo điểm nhấn mạnh mẽ */
+    color: #333; /* Màu chữ đậm hơn để tương phản tốt */
+    line-height: 1.15; /* Giảm khoảng cách dòng để chữ nhìn gọn hơn */
+    letter-spacing: -0.02em; /* Giảm nhẹ khoảng cách ký tự để chữ gần nhau hơn, tạo sự hiện đại */
+    margin-bottom: 20px; /* Thêm khoảng cách dưới tiêu đề */
+
+    @media (max-width: 768px) {
+      font-size: 36px; /* Điều chỉnh kích thước font cho mobile */
+      margin-bottom: 15px;
+    }
+
+    @media (max-width: 480px) {
+      font-size: 30px; /* Điều chỉnh kích thước font cho các màn hình nhỏ hơn nữa */
+    }
+  }
+
+  .section-description {
+    font-family: 'Inter', sans-serif; /* Một font thân thiện, dễ đọc cho đoạn văn */
+    font-size: 18px; /* Tăng kích thước font để dễ đọc hơn */
+    color: #666; /* Màu xám đậm nhẹ nhàng hơn cho đoạn văn */
+    line-height: 1.6; /* Điều chỉnh khoảng cách dòng để đoạn văn thoáng và dễ đọc */
+    margin-bottom: 30px; /* Thêm khoảng cách dưới đoạn mô tả */
+
+    @media (max-width: 768px) {
+      font-size: 16px; /* Điều chỉnh kích thước font cho mobile */
+      margin-bottom: 25px;
+    }
+  }
+
+  .btn-about-us {
+    font-family: 'Be Vietnam Pro', sans-serif; /* Sử dụng cùng font với tiêu đề để đồng bộ */
+    font-weight: 600; /* Đậm vừa phải */
+    font-size: 16px;
+    padding: 12px 25px;
+    border-radius: 30px;
+    background: linear-gradient(135deg, #FF6B35, #FF5722);
+    color: #fff;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+    }
+  }
+
   @media (max-width: 992px) {
     text-align: center;
     padding: 0 20px;

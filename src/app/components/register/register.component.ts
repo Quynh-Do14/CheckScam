@@ -50,7 +50,7 @@ export class RegisterComponent implements OnInit {
 
     this.userService.register(registerDTO).subscribe({
       next: (response) => {
-        this.successMessage = 'Đăng ký tài khoản thành công! Vui lòng đăng nhập.';
+        this.successMessage = 'Đăng ký tài khoản thành công! Vui lòng xác minh email để kích hoạt tài khoản của bạn.';
         setTimeout(() => {
           this.router.navigate(['/login']);
         }, 3000); 

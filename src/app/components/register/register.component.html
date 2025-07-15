@@ -22,7 +22,9 @@
               name="name"
               [(ngModel)]="name"
               required
-              minlength="5"                  maxlength="20"                  pattern="^[a-zA-Z0-9]+$"      #nameInput="ngModel"
+              minlength="5"   maxlength="20"
+              pattern="^[a-zA-ZÀÁẠẢÃĂẰẮẶẲẴÂẦẤẬẨẪĐđÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸàáạảãăằắặẳẵâầấậẩẫèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹ\s]+$"
+              #nameInput="ngModel"
             />
           </div>
           <div *ngIf="nameInput.invalid && (nameInput.dirty || nameInput.touched)" class="error-message">
@@ -40,7 +42,7 @@
             </div>
             <div *ngIf="nameInput.errors?.['pattern']">
               <i class="bi bi-exclamation-circle me-1"></i>
-              Tên không được chứa dấu cách hoặc ký tự đặc biệt (chỉ chấp nhận chữ cái và số).
+              Tên không được chứa số hoặc ký tự đặc biệt (chỉ chấp nhận chữ cái và dấu cách).
             </div>
           </div>
         </div>

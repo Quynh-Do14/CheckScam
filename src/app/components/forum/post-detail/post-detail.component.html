@@ -1,0 +1,150 @@
+<div class="post-detail-container">
+  <!-- Back Button -->
+  <div class="back-section">
+    <button class="back-btn" (click)="goBack()">
+      <i class="bi bi-arrow-left"></i>
+      Quay lại diễn đàn
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="loading">
+    <div class="loading-spinner"></div>
+    <p>Đang tải bài viết...</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="error-container" *ngIf="error && !loading">
+    <div class="error-message">
+      <i class="bi bi-exclamation-triangle"></i>
+      {{ error }}
+    </div>
+    <button class="retry-btn" (click)="loadPost()">Thử lại</button>
+  </div>
+
+  <!-- Post Content -->
+  <div class="post-container" *ngIf="post && !loading && !error">
+    <!-- Post Header -->
+    <div class="post-header">
+      <div class="author-info" [routerLink]="['/forum/user', post.authorId]">
+        <img 
+          [src]="post.authorAvatarUrl || 'assets/img/default-avatar.png'" 
+          [alt]="post.authorName"
+          class="author-avatar"
+          (error)="onImageError($event)">
+        <div class="author-details">
+          <h4 class="author-name">{{ getMaskedEmail(post.authorEmail) }}</h4>
+          <span class="post-time">{{ getTimeAgo(post.createdAt) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Post Content -->
+    <div class="post-content">
+      <h1 class="post-title">{{ post.title }}</h1>
+      
+      <div class="post-body">
+        <p class="post-text">{{ post.content }}</p>
+        
+        <div class="post-image" *ngIf="post.imageUrl">
+          <img [src]="post.imageUrl" [alt]="post.title" class="content-image">
+        </div>
+      </div>
+    </div>
+
+    <!-- Post Actions -->
+    <div class="post-actions">
+      <button 
+        class="action-btn like-btn"
+        [class.liked]="post.isLiked"
+        (click)="onLikePost()"
+        [disabled]="!isLoggedIn">
+        <i class="bi" [ngClass]="post.isLiked ? 'bi-heart-fill' : 'bi-heart'"></i>
+        <span>{{ post.likesCount }}</span>
+      </button>
+      
+      <div class="action-btn comment-info">
+        <i class="bi bi-chat"></i>
+        <span>{{ post.commentsCount }} bình luận</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comments Section -->
+  <div class="comments-section" *ngIf="post && !loading && !error">
+    <h2 class="comments-title">Bình luận ({{ post.commentsCount }})</h2>
+    
+    <!-- Comment Form -->
+    <div class="comment-form" *ngIf="isLoggedIn">
+      <div class="comment-input-container">
+        <textarea 
+          [(ngModel)]="newComment.content"
+          placeholder="Viết bình luận của bạn..."
+          class="comment-input"
+          rows="3"
+          maxlength="1000"></textarea>
+        <div class="comment-actions">
+          <div class="character-count">{{ newComment.content.length }}/1000</div>
+          <button 
+            class="submit-comment-btn"
+            (click)="onSubmitComment()"
+            [disabled]="!newComment.content.trim() || submittingComment">
+            <span *ngIf="submittingComment" class="loading-spinner"></span>
+            <span *ngIf="!submittingComment">Gửi</span>
+            <span *ngIf="submittingComment">Đang gửi...</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="login-prompt" *ngIf="!isLoggedIn">
+      <p>
+        <a routerLink="/login" class="login-link">Đăng nhập</a> để tham gia bình luận
+      </p>
+    </div>
+
+    <!-- Comments List -->
+    <div class="comments-loading" *ngIf="commentsLoading">
+      <div class="loading-spinner"></div>
+      <p>Đang tải bình luận...</p>
+    </div>
+
+    <div class="comments-list" *ngIf="!commentsLoading">
+      <div class="comment-item" *ngFor="let comment of comments">
+        <div class="comment-header">
+          <div class="comment-author" [routerLink]="['/forum/user', comment.authorId]">
+            <img 
+              [src]="comment.authorAvatarUrl || 'assets/img/default-avatar.png'" 
+              [alt]="comment.authorName"
+              class="comment-avatar"
+              (error)="onImageError($event)">
+            <div class="comment-author-info">
+              <h5 class="comment-author-name">{{ getMaskedEmail(comment.authorEmail) }}</h5>
+              <span class="comment-time">{{ getTimeAgo(comment.createdAt) }}</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="comment-content">
+          <p>{{ comment.content }}</p>
+        </div>
+        
+        <div class="comment-actions">
+          <button 
+            class="comment-like-btn"
+            [class.liked]="comment.isLiked"
+            (click)="onLikeComment(comment)"
+            [disabled]="!isLoggedIn">
+            <i class="bi" [ngClass]="comment.isLiked ? 'bi-heart-fill' : 'bi-heart'"></i>
+            <span>{{ comment.likesCount }}</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="no-comments" *ngIf="comments.length === 0">
+        <i class="bi bi-chat-square"></i>
+        <p>Chưa có bình luận nào. Hãy là người đầu tiên!</p>
+      </div>
+    </div>
+  </div>
+</div>

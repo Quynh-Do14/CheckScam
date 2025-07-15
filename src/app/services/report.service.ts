@@ -70,4 +70,8 @@ export class ReportService {
       `${this.apiBaseUrl}/report/yearly`, this.getApiConfig()
     );
   }
+
+  getUserReports(userId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiBaseUrl}/report/user/${userId}`, this.getApiConfig());
+  }
 }

@@ -1,0 +1,294 @@
+<div class="page-layout">
+  <!-- Header -->
+  <app-header></app-header>
+
+  <!-- Forum Content -->
+  <div class="facebook-layout">
+  <!-- Left Sidebar -->
+  <div class="left-sidebar">
+    <div class="sidebar-menu">
+      <div class="menu-item" *ngIf="isLoggedIn">
+        <img [src]="currentUser?.avatarUrl || 'assets/img/default-avatar.png'" 
+             alt="Profile" 
+             class="menu-avatar"
+             (error)="onImageError($event)">
+        <span>{{ getMaskedEmail(currentUser?.email || '') }}</span>
+      </div>
+      
+      <div class="menu-item">
+        <i class="bi bi-shield-check menu-icon"></i>
+        <span>An toàn mạng</span>
+      </div>
+      
+      <div class="menu-item">
+        <i class="bi bi-exclamation-triangle menu-icon"></i>
+        <span>Cảnh báo lừa đảo</span>
+      </div>
+      
+      <div class="menu-item">
+        <i class="bi bi-newspaper menu-icon"></i>
+        <span>Tin tức bảo mật</span>
+      </div>
+      
+      <div class="menu-item">
+        <i class="bi bi-people menu-icon"></i>
+        <span>Cộng đồng</span>
+      </div>
+      
+      <div class="menu-item">
+        <i class="bi bi-question-circle menu-icon"></i>
+        <span>Hỗ trợ & Giúp đỡ</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+  <!-- Create Post Box -->
+  <div class="create-post-box" *ngIf="isLoggedIn">
+  <div class="create-post-header">
+  <img [src]="currentUser?.avatarUrl || 'assets/img/default-avatar.png'" 
+     alt="Profile" 
+   class="user-avatar"
+  (error)="onImageError($event)">
+  <div class="post-input" (click)="showCreatePost = true">
+  {{ getMaskedEmail(currentUser?.email || '') }} ơi, bạn muốn chia sẻ tin tức gì?
+  </div>
+  </div>
+  </div>
+
+    <!-- Create Post Modal -->
+    <div class="modal-overlay" *ngIf="showCreatePost" (click)="showCreatePost = false">
+      <div class="create-post-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h3>Tạo bài viết - {{ selectedPostType?.name }}</h3>
+          <button class="close-btn" (click)="showCreatePost = false">
+            <i class="bi bi-x"></i>
+          </button>
+        </div>
+        
+        <div class="modal-body">
+          <div class="author-info">
+            <img [src]="currentUser?.avatarUrl || 'assets/img/default-avatar.png'" 
+                 alt="Profile" 
+                 class="author-avatar"
+                 (error)="onImageError($event)">
+            <div class="author-details">
+              <span class="author-name">{{ getMaskedEmail(currentUser?.email || '') }}</span>
+              <div class="privacy-selector">
+                <i class="bi bi-globe"></i>
+                <span>Công khai</span>
+                <i class="bi bi-caret-down-fill"></i>
+              </div>
+            </div>
+          </div>
+          
+          <textarea 
+            [(ngModel)]="newPostContent"
+            [placeholder]="getCurrentPlaceholder()"
+            class="post-textarea"
+            rows="6"></textarea>
+          
+          <div class="image-preview" *ngIf="imagePreview">
+            <img [src]="imagePreview" alt="Preview" class="preview-img">
+            <button class="remove-image" (click)="removeImage()">
+              <i class="bi bi-x"></i>
+            </button>
+          </div>
+          
+          <div class="post-options">
+            <div class="option-label">Thêm vào bài viết của bạn</div>
+            <div class="options-row">
+              <label class="option-btn photo-option">
+                <i class="bi bi-image-fill"></i>
+                <input type="file" accept="image/*" (change)="onFileSelected($event)" hidden>
+              </label>
+              <button class="option-btn">
+                <i class="bi bi-link-45deg"></i>
+              </button>
+              <button class="option-btn">
+                <i class="bi bi-geo-alt-fill"></i>
+              </button>
+              <button class="option-btn">
+                <i class="bi bi-hash"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="modal-footer">
+          <button 
+            class="post-btn"
+            [disabled]="!newPostContent.trim()"
+            (click)="onCreatePost()">
+            Đăng
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Login Prompt -->
+    <div class="login-prompt" *ngIf="!isLoggedIn">
+      <div class="prompt-content">
+        <i class="bi bi-person-circle"></i>
+        <h3>Tham gia cộng đồng</h3>
+        <p>Đăng nhập để chia sẻ kinh nghiệm và tham gia thảo luận về an toàn mạng</p>
+        <button class="login-btn" routerLink="/login">Đăng nhập</button>
+      </div>
+    </div>
+
+    <!-- Posts Feed -->
+    <div class="posts-feed">
+      <div class="loading-post" *ngIf="loading">
+        <div class="skeleton-post">
+          <div class="skeleton-header">
+            <div class="skeleton-avatar"></div>
+            <div class="skeleton-text">
+              <div class="skeleton-line short"></div>
+              <div class="skeleton-line shorter"></div>
+            </div>
+          </div>
+          <div class="skeleton-content">
+            <div class="skeleton-line"></div>
+            <div class="skeleton-line"></div>
+            <div class="skeleton-line medium"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="post-card" *ngFor="let post of posts">
+        <!-- Post Header -->
+        <div class="post-header">
+          <div class="author-info" [routerLink]="['/forum/user', post.authorId]">
+            <img [src]="post.authorAvatarUrl || 'assets/img/default-avatar.png'" 
+                 alt="Author" 
+                 class="author-avatar"
+                 (error)="onImageError($event)">
+            <div class="author-details">
+              <div class="author-name">{{ getMaskedEmail(post.authorEmail) }}</div>
+              <div class="post-time">
+                {{ getTimeAgo(post.createdAt) }}
+                <i class="bi bi-globe"></i>
+              </div>
+            </div>
+          </div>
+          <div class="post-menu">
+            <button class="menu-btn">
+              <i class="bi bi-three-dots"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Post Content -->
+        <div class="post-content">
+          <div class="post-text" *ngIf="post.title">
+            <h3>{{ post.title }}</h3>
+          </div>
+          <div class="post-text" *ngIf="post.content">
+            {{ post.content }}
+          </div>
+          
+          <div class="post-media" *ngIf="post.imageUrl">
+            <img [src]="post.imageUrl" alt="Post image" class="post-image">
+          </div>
+        </div>
+
+        <!-- Post Stats -->
+        <div class="post-stats" *ngIf="post.likesCount > 0 || post.commentsCount > 0">
+          <div class="stats-left">
+            <div class="reaction-count" *ngIf="post.likesCount > 0">
+              <div class="reaction-icons">
+                <i class="bi bi-heart-fill like-icon"></i>
+              </div>
+              <span>{{ post.likesCount }}</span>
+            </div>
+          </div>
+          <div class="stats-right">
+            <span *ngIf="post.commentsCount > 0">{{ post.commentsCount }} bình luận</span>
+          </div>
+        </div>
+
+        <!-- Post Actions -->
+        <div class="post-actions">
+          <button 
+            class="action-btn like-action"
+            [class.liked]="post.isLiked"
+            (click)="onLikePost(post)">
+            <i class="bi" [ngClass]="post.isLiked ? 'bi-heart-fill' : 'bi-heart'"></i>
+            <span>Thích</span>
+          </button>
+          
+          <button class="action-btn comment-action" [routerLink]="['/forum/post', post.id]">
+            <i class="bi bi-chat"></i>
+            <span>Bình luận</span>
+          </button>
+          
+          <button class="action-btn share-action">
+            <i class="bi bi-share"></i>
+            <span>Chia sẻ</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Sidebar -->
+  <div class="right-sidebar">
+    <div class="sidebar-section">
+      <h4 class="section-title">Thông tin hữu ích</h4>
+      <div class="sponsored-item">
+        <img src="https://via.placeholder.com/60x60/4267B2/white?text=SEC" alt="Security" class="sponsored-image">
+        <div class="sponsored-content">
+          <div class="sponsored-title">Bảo mật ngân hàng</div>
+          <div class="sponsored-subtitle">Tìm hiểu cách bảo vệ tài khoản</div>
+        </div>
+      </div>
+      <div class="sponsored-item">
+        <img src="https://via.placeholder.com/60x60/FF6B6B/white?text=WARN" alt="Warning" class="sponsored-image">
+        <div class="sponsored-content">
+          <div class="sponsored-title">Cảnh báo lừa đảo</div>
+          <div class="sponsored-subtitle">Cập nhật thủ đoạn mới nhất</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <h4 class="section-title">Người liên hệ</h4>
+      <div class="contact-item">
+        <div class="contact-avatar">
+          <img src="assets/img/default-avatar.png" alt="Contact">
+          <div class="online-indicator"></div>
+        </div>
+        <span class="contact-name">Admin hỗ trợ</span>
+      </div>
+      <div class="contact-item">
+        <div class="contact-avatar">
+          <img src="assets/img/default-avatar.png" alt="Contact">
+          <div class="online-indicator"></div>
+        </div>
+        <span class="contact-name">Chuyên gia bảo mật</span>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <h4 class="section-title">Nhóm đề xuất</h4>
+      <div class="suggested-group">
+        <img src="https://via.placeholder.com/60x60/42B883/white?text=ATM" alt="Group" class="group-image">
+        <div class="group-content">
+          <div class="group-name">An toàn mạng Việt Nam</div>
+          <div class="group-members">2,543 thành viên</div>
+          <button class="join-btn">Tham gia</button>
+        </div>
+      </div>
+      <div class="suggested-group">
+        <img src="https://via.placeholder.com/60x60/FF9800/white?text=SEC" alt="Group" class="group-image">
+        <div class="group-content">
+          <div class="group-name">Chuyên gia bảo mật</div>
+          <div class="group-members">1,876 thành viên</div>
+          <button class="join-btn">Tham gia</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>

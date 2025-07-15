@@ -48,6 +48,7 @@ import { PostDetailComponent } from './components/forum/post-detail/post-detail.
 import { UserProfileComponent } from './components/forum/user-profile/user-profile.component';
 import { ForumTestComponent } from './components/forum/forum-test.component';
 import { ForumSimpleComponent } from './components/forum/forum-simple.component';
+import { EmailVerificationComponent } from './components/emailverification/emailverification.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent, pathMatch: 'full' },
@@ -95,6 +96,7 @@ export const routes: Routes = [
     },
     { path: 'register', component: RegisterComponent, canActivate: [PublicGuard] }, 
     { path: 'login', component: LoginComponent, canActivate: [PublicGuard] },       
+    { path: 'verify-email', component: EmailVerificationComponent, canActivate: [PublicGuard] }, // Đã thêm dòng này
     { path: 'list-news', component: ListNewsComponent },
     { path: 'view-news/:id', component: ViewNewsComponent },
     { path: 'chatbox', component: ChatBoxComponent },

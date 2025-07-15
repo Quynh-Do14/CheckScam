@@ -1,0 +1,34 @@
+<div class="verification-container">
+  <div class="verification-card">
+    <ng-container *ngIf="!isLoaded">
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <h2>Đang xác minh tài khoản của bạn...</h2>
+        <p>Vui lòng chờ trong giây lát.</p>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="isLoaded">
+      <div [ngClass]="{'success-state': isVerified, 'error-state': !isVerified}">
+        <ng-container *ngIf="isVerified">
+          <img src="assets/success-icon.png" alt="Success Icon" class="status-icon">
+          <h2>Xác minh thành công! 🎉</h2>
+          <p class="status-message">Tài khoản của bạn đã được xác minh thành công. Bạn đã sẵn sàng đăng nhập.</p>
+          <p class="redirect-message">Bạn sẽ được chuyển hướng đến trang đăng nhập trong {{ countdown }} giây...</p>
+          <button class="btn btn-primary" (click)="navigateToLogin()">Đăng nhập ngay</button>
+        </ng-container>
+
+        <ng-container *ngIf="!isVerified">
+          <img src="assets/error-icon.png" alt="Error Icon" class="status-icon">
+          <h2>Xác minh thất bại!</h2>
+          <p class="status-message">{{ errorMessage }}</p>
+          <p class="guidance-message">
+            Vui lòng kiểm tra lại liên kết xác minh hoặc thử yêu cầu gửi lại email.
+          </p>
+          <button class="btn btn-secondary" (click)="requestResendEmail()">Gửi lại email xác minh</button>
+          <a routerLink="/login" class="back-to-login">Quay lại trang Đăng nhập</a>
+        </ng-container>
+      </div>
+    </ng-container>
+  </div>
+</div>

@@ -16,6 +16,7 @@
         <div class="user-profile-mobile">
           <img class="avatar-img-mobile" [src]="userAvatarUrl" (error)="onImageError($event)" alt="User Avatar">
           <span class="user-email-mobile">{{ userEmail }}</span>
+          <a *ngIf="isAdminOrCollab" routerLink="/admin" class="admin-link-mobile" (click)="onNavLinkClick()">Trang quản trị</a>
           <a (click)="logout(); onNavLinkClick()">Đăng xuất</a>
         </div>
       </li>
@@ -31,10 +32,11 @@
       <li *ngIf="isLoggedIn" class="user-profile">
         <div class="user-avatar" (click)="toggleProfileDropdown()">
           <img [src]="userAvatarUrl" alt="User Avatar" class="avatar-img">
-          <span class="user-email desktop-only-email">{{ userEmail }}</span> 
+          <span class="user-email desktop-only-email">{{ userEmail }}</span>
           <i class="bi bi-chevron-down dropdown-arrow" [class.open]="isProfileDropdownOpen"></i>
         </div>
         <div class="profile-dropdown" [class.open]="isProfileDropdownOpen">
+          <a *ngIf="isAdminOrCollab" routerLink="/admin" (click)="onNavLinkClick()">Trang quản trị</a>
           <a (click)="logout()">Đăng xuất</a>
         </div>
       </li>

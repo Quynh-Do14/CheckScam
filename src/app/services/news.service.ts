@@ -23,6 +23,18 @@ export class NewsService {
     };
   }
 
+  private getMultipartApiConfig() {
+    const token = localStorage.getItem('jwt_token');
+    return {
+      headers: {
+        'Authorization': token ? `Bearer ${token}` : '',
+        'Accept-Language': 'vi'
+        // Đặc biệt không set Content-Type cho multipart/form-data
+        // Browser sẽ tự động set kèm boundary
+      }
+    };
+  }
+
   getAllNews(page: number = 0, size: number = 5): Observable<any> { 
 
     return this.http.get<any>(`${this.apiNews}?page=${page}&size=${size}`);
@@ -57,7 +69,11 @@ export class NewsService {
   }
 
   uploadFiles(newsId: number | string, formData: FormData): Observable<any> {
-    return this.http.post<any>(`${environment.apiBaseUrl}/news/uploads/${newsId}`, formData);
+    return this.http.post<any>(
+      `${environment.apiBaseUrl}/news/uploads/${newsId}`, 
+      formData, 
+      this.getMultipartApiConfig()  // Fix luôn cho attachments
+    );
   }
 
   updateNews(id: number,newsDTO: NewsDTO): Observable<any> {
@@ -72,5 +88,66 @@ export class NewsService {
   // Lấy tin thường (không phải tin chính)
   getRegularNews(): Observable<any> {
     return this.http.get(`${environment.apiBaseUrl}/news/regular`);
+  }
+
+  // ===== NEW APIs - Upload Content Images =====
+
+  /**
+   * Upload 1 ảnh để sử dụng trong content HTML
+   * Response: { fileName, url, fullUrl, htmlTag }
+   */
+  uploadContentImage(image: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('image', image);
+    
+    console.log('Uploading content image:', image.name);
+    console.log('FormData created:', formData.has('image'));
+    
+    return this.http.post<any>(
+      `${environment.apiBaseUrl}/news/content-image`, 
+      formData, 
+      this.getMultipartApiConfig()  // Sử dụng config cho multipart
+    );
+  }
+
+  /**
+   * Upload nhiều ảnh cùng lúc cho content
+   * Response: { count, images: [{ fileName, url, originalName, htmlTag }] }
+   */
+  uploadContentImages(images: File[]): Observable<any> {
+    const formData = new FormData();
+    images.forEach(image => {
+      formData.append('images', image);
+    });
+    
+    console.log('Uploading multiple content images:', images.length);
+    return this.http.post<any>(
+      `${environment.apiBaseUrl}/news/content-images`, 
+      formData, 
+      this.getMultipartApiConfig()  // Sử dụng config cho multipart
+    );
+  }
+
+ 
+  getImageUrl(fileName: string): string {
+    if (!fileName) return '';
+    
+    // Lấy từ environment cho flexibility
+    return `${environment.apiUrl}/api/v1/news/image/${fileName}`;
+  }
+
+  /**
+   * Kiểm tra ảnh có tồn tại không (optional)
+   */
+  checkImageExists(fileName: string): Observable<any> {
+    const url = this.getImageUrl(fileName);
+    return this.http.head(url, { observe: 'response' });
+  }
+
+  /**
+   * Preview ảnh theo fileName
+   */
+  previewImage(fileName: string): string {
+    return this.getImageUrl(fileName);
   }
 }

@@ -49,9 +49,18 @@ export class NewsComponent implements OnInit {
   deleteNews(id: number): void {
     if (!confirm('Bạn có chắc muốn xóa bài đăng này?')) { return; }
 
+    console.log('🗑️ Bắt đầu xóa tin tức ID:', id);
     this.newsService.deleteNewsById(id).subscribe({
-      next: () => this.loadAllNews(),
-      error: err => alert(err.error || 'Xóa thất bại')
+      next: (response) => {
+        console.log('✅ Xóa thành công:', response);
+        alert('Xóa tin tức thành công!');
+        this.loadAllNews();
+      },
+      error: (err) => {
+        console.error('❌ Lỗi xóa tin tức:', err);
+        const errorMessage = err.error?.message || err.message || 'Xóa thất bại';
+        alert('Lỗi xóa tin tức: ' + errorMessage);
+      }
     });
   }
 

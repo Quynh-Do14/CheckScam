@@ -6,6 +6,7 @@ import { Router, RouterModule } from '@angular/router';
 
 import { NewsService } from '../../../services/news.service';
 import { NewsDTO } from '../../../dtos/news.dto';
+import { environment } from '../../../environments/environment';
 
 interface FileWithPreview extends File {
   preview?: string;
@@ -194,36 +195,101 @@ export class CreateNewsComponent implements OnInit, AfterViewInit {
     input.value = '';
   }
 
-  private uploadAndInsertImage(file: File, index: number) {
-    // Show upload progress for first image
-    if (index === 0) {
-      this.uploadProgress = 0;
-    }
+  private async uploadAndInsertImage(file: File, index: number) {
+    try {
+      // Show upload progress for first image
+      if (index === 0) {
+        this.uploadProgress = 0;
+      }
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const result = e.target?.result as string;
+      // Hiển thị loading placeholder với ID duy nhất
+      const loadingId = `loading-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      const loadingHtml = `<span id="${loadingId}" style="background: #f0f8ff; padding: 8px 16px; border-radius: 4px; border: 1px dashed #007bff; display: inline-block; margin: 8px 0;">📤 Đang upload ${file.name}...</span>`;
       
-      // Insert image placeholder first
-      const imageId = `temp-image-${Date.now()}-${index}`;
-      const placeholder = `<img id="${imageId}" src="${result}" alt="Đang tải..." style="max-width: 100%; height: auto; border-radius: 0.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin: 0.5rem 0;" />`;
-      
-      // Focus editor and insert
+      // Focus editor and insert loading
       if (this.contentEditor) {
         this.contentEditor.nativeElement.focus();
       }
       
-      document.execCommand('insertHTML', false, placeholder);
+      document.execCommand('insertHTML', false, loadingHtml);
+      this.onContentChange();
+
+      console.log('🚀 Bắt đầu upload ảnh:', file.name, 'size:', file.size, 'type:', file.type);
+      console.log('🎯 Loading ID:', loadingId);
+      
+      // Bắt đầu upload lên server
+      const response = await this.newsService.uploadContentImage(file).toPromise();
+      
+      console.log('✅ Upload thành công:', response);
+      
+      // Lấy thông tin ảnh từ response
+      const imageData = response.data || response;
+      console.log('🖼️ Image data:', imageData);
+      
+      if (!imageData.fileName) {
+        throw new Error('Không nhận được fileName từ server');
+      }
+      
+      // Tự ghép URL từ environment và fileName
+      const fullImageUrl = `${environment.apiUrl}/api/v1/news/image/${imageData.fileName}`;
+      const imageHtml = `<img src="${fullImageUrl}" alt="${file.name}" style="max-width: 100%; height: auto; border-radius: 0.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin: 0.5rem 0; display: block;" />`;
+      
+      console.log('🎨 Image HTML:', imageHtml);
+      console.log('🔗 Full Image URL:', fullImageUrl);
+      console.log('📝 FileName from server:', imageData.fileName);
+      console.log('🎯 Environment API URL:', environment.apiUrl);
+      
+      // Thừng thức thay thế loading bằng ảnh thật
+      const loadingElement = document.getElementById(loadingId);
+      console.log('🔍 Loading element found:', !!loadingElement);
+      
+      if (loadingElement) {
+        loadingElement.outerHTML = imageHtml;
+        console.log('✨ Thừng thức thay thế loading bằng ảnh');
+      } else {
+        // Nếu không tìm thấy loading element, chèn ảnh vào cuối
+        console.log('⚠️ Không tìm thấy loading element, chèn ảnh vào cuối');
+        document.execCommand('insertHTML', false, imageHtml);
+      }
+      
+      this.onContentChange();
+
+      // Hiện thị thành công
+      this.simulateUploadProgress(index, true);
+      console.log('✨ Chèn ảnh vào editor thành công!');
+      
+    } catch (error: any) {
+      console.error('❌ Lỗi upload ảnh:', error);
+      
+      // Xóa loading placeholder nếu có lỗi
+      const loadingElements = document.querySelectorAll('[id^="loading-"]');
+      loadingElements.forEach(el => {
+        if (el.textContent?.includes(file.name)) {
+          el.outerHTML = `<span style="color: #dc3545; background: #f8d7da; padding: 8px; border-radius: 4px;">❌ Lỗi upload ${file.name}: ${error.error?.message || error.message || 'Lỗi không xác định'}</span>`;
+        }
+      });
+      
       this.onContentChange();
       
-      // Simulate upload progress
-      this.simulateUploadProgress(index);
-    };
-    
-    reader.readAsDataURL(file);
+      // Reset progress
+      this.uploadProgress = 0;
+      
+      // Hiện thị lỗi cho user
+      alert('Lỗi upload ảnh: ' + (error.error?.message || error.message || 'Lỗi không xác định'));
+    }
   }
 
-  private simulateUploadProgress(index: number) {
+  private simulateUploadProgress(index: number, success: boolean = false) {
+    if (success) {
+      // Nếu upload thành công, đặt 100% ngay lập tức
+      this.uploadProgress = 100;
+      setTimeout(() => {
+        this.uploadProgress = 0;
+      }, 1000);
+      return;
+    }
+    
+    // Simulate progress cho visual feedback
     let progress = 0;
     const interval = setInterval(() => {
       progress += Math.random() * 30;

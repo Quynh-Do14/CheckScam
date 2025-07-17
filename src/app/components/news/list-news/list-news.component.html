@@ -13,7 +13,7 @@
             <div class="main-news-card primary" *ngIf="mainNewsList[0]">
               <div class="main-news-image">
                 <img
-                  [src]="mainNewsList[0].attachments?.length ? getImageUrl(mainNewsList[0].attachments[0]) : 'assets/img/placeholder.png'"
+                  [src]="getDisplayImage(mainNewsList[0])"
                   (error)="onImageError($event)"
                   alt="Ảnh tin chính"
                 />
@@ -40,7 +40,7 @@
                 <div class="secondary-news-card" *ngFor="let news of mainNewsList.slice(1, 4); let i = index; trackBy: trackById">
                   <div class="secondary-news-image">
                     <img
-                      [src]="news.attachments?.length ? getImageUrl(news.attachments[0]) : 'assets/img/placeholder.png'"
+                      [src]="getDisplayImage(news)"
                       (error)="onImageError($event)"
                       alt="Ảnh tin chính nhỏ"
                     />
@@ -70,7 +70,7 @@
               <div class="quick-news-item" *ngFor="let news of regularNews.slice(0, 3); trackBy: trackById">
                 <div class="quick-news-image">
                   <img
-                    [src]="news.attachments?.length ? getImageUrl(news.attachments[0]) : 'assets/img/placeholder.png'"
+                    [src]="getDisplayImage(news)"
                     (error)="onImageError($event)"
                     alt="Ảnh tin nhanh"
                   />
@@ -130,7 +130,7 @@
           >
             <div class="card-image">
               <img
-                [src]="post.attachments?.length ? getImageUrl(post.attachments[0]) : 'assets/img/placeholder.png'"
+                [src]="getDisplayImage(post)"
                 (error)="onImageError($event)"
                 alt="Ảnh tin tức"
               />

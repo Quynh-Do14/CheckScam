@@ -2,7 +2,7 @@
   position: fixed;
   top: 20px;
   right: 20px;
-  background-color: #333; // Default background
+  background-color: #333; 
   color: white;
   padding: 15px 25px;
   border-radius: 8px;
@@ -15,19 +15,19 @@
   opacity: 0;
   transform: translateY(-20px);
   animation: fadeInDown 0.5s forwards;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; // Font hiện đại
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
 }
 
 .app-notification.success {
-  background-color: #4CAF50; /* Green for success */
+  background-color: #4CAF50; 
 }
 
 .app-notification.error {
-  background-color: #f44336; /* Red for error */
+  background-color: #f44336; 
 }
 
 .app-notification.info {
-  background-color: #2196F3; /* Blue for info */
+  background-color: #2196F3; 
 }
 
 .notification-content {
@@ -95,14 +95,23 @@ $secondary-blue: #007bff; // Màu xanh cho các yếu tố tương tác
   }
 }
 
+
 .report-page-container {
   padding-top: 70px;
-  background-color: $background-page;
+  background: linear-gradient(135deg, 
+    rgba(255, 248, 240, 0.4) 0%, 
+    rgba(255, 243, 224, 0.3) 25%,
+    rgba(254, 240, 138, 0.2) 50%,
+    rgba(252, 211, 77, 0.15) 75%,
+    rgba(245, 158, 11, 0.1) 100%
+  );
   min-height: calc(100vh - 70px - 50px);
   display: flex;
   justify-content: center;
   align-items: flex-start;
   padding-bottom: 30px;
+  opacity: 0; /* Đảm bảo phần tử ẩn ban đầu trước khi animation chạy */
+  animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .two-column-layout {
@@ -301,14 +310,14 @@ $secondary-blue: #007bff; // Màu xanh cho các yếu tố tương tác
       min-width: 140px; // Tăng min-width cho các button
 
       &:hover {
-        background-color: lighten($secondary-blue, 45%); // Nền xanh nhạt hơn
+        background-color: lighten($secondary-blue, 45%); 
         border-color: $secondary-blue;
         color: $secondary-blue;
       }
     }
 
     input[type="radio"]:checked + .radio-button-label {
-      background-color: $secondary-blue; // Màu xanh khi được chọn
+      background-color: $secondary-blue;
       color: white;
       border-color: $secondary-blue;
       box-shadow: 0 4px 8px rgba($secondary-blue, 0.2);
@@ -326,7 +335,7 @@ $secondary-blue: #007bff; // Màu xanh cho các yếu tố tương tác
   display: block;
   width: 100%;
   padding: 14px;
-  background-color: $primary-orange; /* Màu cam cho nút submit */
+  background-color: $primary-orange; 
   color: $white;
   border: none;
   border-radius: 5px;
@@ -337,7 +346,7 @@ $secondary-blue: #007bff; // Màu xanh cho các yếu tố tương tác
   transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 
   &:hover {
-    background-color: darken($primary-orange, 10%); /* Hiệu ứng hover */
+    background-color: darken($primary-orange, 10%); 
     transform: translateY(-3px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
   }
@@ -371,8 +380,8 @@ $secondary-blue: #007bff; // Màu xanh cho các yếu tố tương tác
   flex-direction: column;
 
   &:hover, &.drag-over {
-    border-color: $secondary-blue; // Thay đổi màu hover của dropzone thành xanh
-    background-color: lighten($secondary-blue, 45%); /* Màu nhẹ hơn khi hover/drag */
+    border-color: $secondary-blue; 
+    background-color: lighten($secondary-blue, 45%); 
   }
 }
 
@@ -410,7 +419,7 @@ $secondary-blue: #007bff; // Màu xanh cho các yếu tố tương tác
   }
 }
 
-.group-report-item { // Giữ nguyên phần này nếu có sử dụng trong HTML (không thấy trong HTML bạn cung cấp)
+.group-report-item { 
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   padding: 20px;
@@ -455,7 +464,7 @@ $secondary-blue: #007bff; // Màu xanh cho các yếu tố tương tác
   }
 }
 
-.add-item-btn { // Giữ nguyên phần này nếu có sử dụng trong HTML
+.add-item-btn { 
   display: block;
   width: auto;
   margin: 20px auto 30px auto;
@@ -493,7 +502,7 @@ $secondary-blue: #007bff; // Màu xanh cho các yếu tố tương tác
   }
 
   .section-title {
-    color: $secondary-blue; /* Màu tiêu đề info box */
+    color: $secondary-blue;
     margin-top: 0;
     margin-bottom: 15px;
     font-size: 1.3em;
@@ -524,7 +533,7 @@ $secondary-blue: #007bff; // Màu xanh cho các yếu tố tương tác
     color: $text-dark;
 
     a {
-      color: $secondary-blue; /* Màu link */
+      color: $secondary-blue; 
       text-decoration: none;
       &:hover {
         text-decoration: underline;
@@ -537,7 +546,7 @@ $secondary-blue: #007bff; // Màu xanh cho các yếu tố tương tác
     font-weight: bold;
   }
 
-  .reference-links { // Giữ nguyên nếu có trong HTML
+  .reference-links { 
     list-style: none;
     padding: 0;
     margin: 0;
@@ -564,7 +573,7 @@ $secondary-blue: #007bff; // Màu xanh cho các yếu tố tương tác
   }
 }
 
-.info-section-bottom { // Đây là style cũ, không có trong HTML mới của bạn, nhưng tôi giữ lại để phòng trường hợp bạn có ở đâu đó
+.info-section-bottom { 
   margin-top: 30px;
   padding: 18px;
   background-color: #fff3cd;
@@ -623,7 +632,6 @@ $secondary-blue: #007bff; // Màu xanh cho các yếu tố tương tác
   color: #dc3545;
 }
 
-/* Custom Select Styling */
 .custom-select-wrapper {
   position: relative;
   width: 100%;
@@ -643,7 +651,7 @@ $secondary-blue: #007bff; // Màu xanh cho các yếu tố tương tác
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
   font-size: 1em;
 
-  &:focus, &.open { /* Khi focus hoặc mở dropdown */
+  &:focus, &.open { 
     border-color: $secondary-blue;
     box-shadow: 0 0 0 3px rgba($secondary-blue, 0.25);
     outline: none;
@@ -674,12 +682,12 @@ $secondary-blue: #007bff; // Màu xanh cho các yếu tố tương tác
   top: 100%;
   left: 0;
   right: 0;
-  border: 1px solid $secondary-blue; /* Viền xanh cho dropdown list */
+  border: 1px solid $secondary-blue; 
   border-top: none;
   border-radius: 0 0 6px 6px;
   background-color: $white;
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-  max-height: 250px; /* Tăng chiều cao tối đa để hiển thị nhiều tùy chọn hơn */
+  max-height: 250px; 
   overflow-y: auto;
   z-index: 10;
   opacity: 0;
@@ -687,7 +695,7 @@ $secondary-blue: #007bff; // Màu xanh cho các yếu tố tương tác
   transform: translateY(-10px);
   transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
   margin-top: 1px;
-  padding: 5px 0; /* Thêm padding trên dưới cho custom-options */
+  padding: 5px 0;
 
   &.show {
     opacity: 1;
@@ -697,20 +705,20 @@ $secondary-blue: #007bff; // Màu xanh cho các yếu tố tương tác
 }
 
 .custom-option {
-  padding: 12px 15px; /* Tăng padding để khớp với hình ảnh */
+  padding: 12px 15px;
   cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease;
-  font-size: 1em; /* Tăng kích thước chữ để dễ đọc hơn */
-  color: #333; /* Màu chữ mặc định */
+  font-size: 1em;
+  color: #333; 
 
   &:hover {
-    background-color: lighten($secondary-blue, 45%); /* Nền xanh nhạt khi hover */
-    color: $secondary-blue; /* Chữ xanh khi hover */
+    background-color: lighten($secondary-blue, 45%); 
+    color: $secondary-blue;
   }
 
   &.selected {
-    background-color: $secondary-blue; /* Nền xanh khi được chọn */
-    color: white; /* Chữ trắng khi được chọn */
+    background-color: $secondary-blue; 
+    color: white; 
     font-weight: 600;
   }
 }

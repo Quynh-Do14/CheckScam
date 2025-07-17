@@ -2,7 +2,7 @@
   position: fixed;
   top: 20px;
   right: 20px;
-  background-color: #333; 
+  background-color: #333;
   color: white;
   padding: 15px 25px;
   border-radius: 8px;
@@ -15,19 +15,19 @@
   opacity: 0;
   transform: translateY(-20px);
   animation: fadeInDown 0.5s forwards;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .app-notification.success {
-  background-color: #4CAF50; 
+  background-color: #4CAF50;
 }
 
 .app-notification.error {
-  background-color: #f44336; 
+  background-color: #f44336;
 }
 
 .app-notification.info {
-  background-color: #2196F3; 
+  background-color: #2196F3;
 }
 
 .notification-content {
@@ -72,15 +72,32 @@
   }
 }
 
-/* General layout adjustments */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .report-page-container {
   padding-top: 70px;
-  background-color: #f8f9fa;
+  background: linear-gradient(135deg, 
+    rgba(255, 248, 240, 0.4) 0%, 
+    rgba(255, 243, 224, 0.3) 25%,
+    rgba(254, 240, 138, 0.2) 50%,
+    rgba(252, 211, 77, 0.15) 75%,
+    rgba(245, 158, 11, 0.1) 100%
+  );
   min-height: calc(100vh - 70px - 50px);
   display: flex;
   justify-content: center;
   align-items: flex-start;
   padding-bottom: 30px;
+  animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .two-column-layout {
@@ -125,46 +142,42 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
 }
 
-// Bắt đầu phần CSS đã chỉnh sửa cho H1 và slogan
 .report-form h1.info-box-title {
   text-align: center;
-  color: #d9534f; /* Màu đỏ nổi bật cho "BÁO CÁO LỪA ĐẢO" */
+  color: #d9534f;
   margin-top: 0;
-  margin-bottom: 20px; /* Giảm margin bottom để slogan gần hơn */
-  font-size: 2.5em; /* Tăng kích thước chữ để làm tiêu đề chính */
-  font-weight: 900; /* Cực kỳ đậm */
+  margin-bottom: 20px;
+  font-size: 2.5em;
+  font-weight: 900;
   position: relative;
-  line-height: 1.2; /* Tối ưu khoảng cách dòng */
-  text-transform: uppercase; /* Chữ hoa toàn bộ cho tiêu đề chính */
-  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); /* Thêm bóng đổ mạnh hơn */
-  padding-bottom: 15px; /* Đẩy đường kẻ dưới ra xa hơn một chút */
+  line-height: 1.2;
+  text-transform: uppercase;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  padding-bottom: 15px;
 
   &::after {
     content: '';
     display: block;
-    width: 100px; /* Chiều rộng đường kẻ dưới */
-    height: 5px; /* Độ dày đường kẻ dưới */
-    background: linear-gradient(to right, #d9534f, #ff8a04); /* Gradient từ đỏ sang cam */
+    width: 100px;
+    height: 5px;
+    background: linear-gradient(to right, #d9534f, #ff8a04);
     margin: 15px auto 0;
     border-radius: 3px;
-    box-shadow: 0 4px 10px rgba(217, 83, 79, 0.4); /* Bóng đổ cho đường kẻ */
+    box-shadow: 0 4px 10px rgba(217, 83, 79, 0.4);
   }
 
-  /* Style cho phần slogan nhỏ bên dưới */
   .subtitle-slogan {
-    display: block; /* Đảm bảo nó xuống dòng */
-    font-size: 0.75em; /* Kích thước chữ nhỏ hơn so với H1 cha */
-    font-weight: 600; /* Đủ đậm để dễ đọc */
-    color: #555; /* Màu xám đậm để dịu mắt hơn */
-    margin-top: 10px; /* Khoảng cách từ tiêu đề chính */
-    letter-spacing: 0.5px; /* Thêm khoảng cách chữ một chút */
+    display: block;
+    font-size: 0.75em;
+    font-weight: 600;
+    color: #555;
+    margin-top: 10px;
+    letter-spacing: 0.5px;
     line-height: 1.5;
-    text-transform: none; /* Đảm bảo slogan không bị uppercase */
-    text-shadow: none; /* Bỏ bóng chữ nếu H1 có */
+    text-transform: none;
+    text-shadow: none;
   }
 }
-// Kết thúc phần CSS đã chỉnh sửa cho H1 và slogan
-
 
 .form-group {
   margin-bottom: 20px;
@@ -542,9 +555,9 @@
   .highlight-text {
     color: #d9534f;
     font-weight: bold;
-    display: flex; /* Để icon và text cùng nằm trên một hàng */
-    align-items: center; /* Căn giữa icon và text theo chiều dọc */
-    gap: 8px; /* Khoảng cách giữa icon và text */
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 }
 
@@ -605,9 +618,9 @@
   position: relative;
   width: 100%;
   padding: 12px 15px;
-  border: 1px solid #007bff; /* Viền xanh mặc định */
+  border: 1px solid #007bff;
   border-radius: 6px;
-  font-size: 1em; 
+  font-size: 1em;
   background-color: #fff;
   cursor: pointer;
   box-sizing: border-box;
@@ -617,22 +630,22 @@
   justify-content: space-between;
 
   &:focus {
-    border-color: #007bff; /* Viền xanh khi focus */
+    border-color: #007bff;
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
     outline: none;
   }
 
   &.open {
-    border-color: #007bff; /* Viền xanh khi mở */
+    border-color: #007bff;
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
   }
 
   &::after {
-    // content: '\f078'; /* FontAwesome angle-down icon */
+    // content: '\f078';
     font-family: 'Font Awesome 5 Free';
     font-weight: 900;
     font-size: 0.8em;
-    color: #007bff; /* Mũi tên màu xanh */
+    color: #007bff;
     margin-left: 10px;
     transition: transform 0.3s ease;
   }
@@ -645,18 +658,18 @@
 .custom-options {
   display: none;
   position: absolute;
-  top: 100%; 
+  top: 100%;
   left: 0;
   right: 0;
-  z-index: 1000; 
+  z-index: 1000;
   background-color: #fff;
-  border: 1px solid #007bff; /* Viền xanh cho dropdown */
+  border: 1px solid #007bff;
   border-top: none;
   border-radius: 0 0 6px 6px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-  max-height: 250px; 
+  max-height: 250px;
   overflow-y: auto;
-  padding: 5px 0; 
+  padding: 5px 0;
 
   &.show {
     display: block;
@@ -664,20 +677,20 @@
 }
 
 .custom-option {
-  padding: 12px 15px; 
-  font-size: 1em;  
+  padding: 12px 15px;
+  font-size: 1em;
   color: #333;
   cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease;
 
   &:hover {
-    background-color: #e6f7ff; /* Nền xanh nhạt khi hover */
-    color: #007bff; /* Chữ xanh khi hover */
+    background-color: #e6f7ff;
+    color: #007bff;
   }
 
   &.selected {
-    background-color: #007bff; /* Nền xanh khi được chọn */
-    color: white; /* Chữ trắng khi được chọn */
+    background-color: #007bff;
+    color: white;
     font-weight: 600;
   }
 }
@@ -688,8 +701,8 @@
   }
 
   .custom-option {
-    padding: 18px 20px; 
-    font-size: 1em;  
+    padding: 18px 20px;
+    font-size: 1em;
   }
 
   .custom-options {

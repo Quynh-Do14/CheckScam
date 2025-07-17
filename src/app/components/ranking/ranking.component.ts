@@ -6,6 +6,7 @@ import { FooterComponent } from '../footer/footer.component';
 import { RankingService, ReporterRanking, RankingStats } from '../../services/ranking.service';
 import { FormsModule } from '@angular/forms';
 import { ChatBoxComponent } from "../chat-box/chat-box.component";
+import { Title, Meta } from '@angular/platform-browser'; // Import Title và Meta service
 
 @Component({
   selector: 'app-ranking',
@@ -20,20 +21,20 @@ export class RankingComponent implements OnInit {
   // Dữ liệu từ API
   topReporters: ReporterRanking[] = [];
   currentPageReporters: ReporterRanking[] = [];
-  
+
   // Pagination
   currentPage: number = 0; // API bắt đầu từ 0
   itemsPerPage: number = 10;
   totalPages: number = 0;
   totalElements: number = 0;
-  
+
   // Stats
   stats: RankingStats = {
     totalReporters: 0,
     totalApprovedReports: 0,
     averageSuccessRate: 0
   };
-  
+
   // Loading states
   isLoading: boolean = false;
   isLoadingStats: boolean = false;
@@ -41,10 +42,19 @@ export class RankingComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private rankingService: RankingService
+    private rankingService: RankingService,
+    private titleService: Title, // Inject Title service
+    private metaService: Meta // Inject Meta service
   ) { }
 
   ngOnInit(): void {
+    // Cập nhật Title và Meta Description khi component được khởi tạo
+    this.titleService.setTitle('Top 10 Xếp Hạng Lừa Đảo AI6 - Săn Người Xấu, Diệt Kẻ Gian');
+    this.metaService.updateTag({
+      name: 'description',
+      content: 'Khám phá top 10 đối tượng gian lận hàng đầu trên AI6. Phân tích lừa đảo qua số điện thoại, URL – dữ liệu uy tín từ Bộ Công An và các trang uy tín. Săn người xấu ngay để diệt kẻ gian!'
+    });
+
     this.loadTop3Reporters();
     this.loadCurrentPageData();
     this.loadStats();
@@ -130,23 +140,23 @@ export class RankingComponent implements OnInit {
     const pages: number[] = [];
     const maxVisible = 5;
     const half = Math.floor(maxVisible / 2);
-    
+
     let start = Math.max(0, this.currentPage - half);
     let end = Math.min(this.totalPages - 1, start + maxVisible - 1);
-    
+
     // Điều chỉnh start nếu end đã đạt max
     if (end - start + 1 < maxVisible) {
       start = Math.max(0, end - maxVisible + 1);
     }
-    
+
     for (let i = start; i <= end; i++) {
       pages.push(i);
     }
-    
+
     return pages;
   }
 
-  // Lấy class CSS cho rank  
+  // Lấy class CSS cho rank
   getRankClass(rank: number): string {
     if (rank <= 3) return 'top-three';
     if (rank <= 10) return 'top-ten';
@@ -182,42 +192,43 @@ export class RankingComponent implements OnInit {
     return now.toLocaleDateString('vi-VN') + ' ' + now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
   }
   // Ẩn 3 ký tự ở giữa của email (bỏ đuôi @domain)
-getMaskedEmail(email: string): string {
-  if (!email || email.trim().length === 0) {
-    return 'Unknown';
+  getMaskedEmail(email: string): string {
+    if (!email || email.trim().length === 0) {
+      return 'Unknown';
+    }
+
+    // Cắt bỏ @gmail.com và các domain khác, chỉ lấy phần username
+    const [local] = email.split('@');
+    const trimmedLocal = local.trim();
+
+    // Nếu username quá ngắn (≤ 4 ký tự), không ẩn
+    if (trimmedLocal.length <= 4) {
+      return trimmedLocal;
+    }
+
+    // Tìm vị trí giữa để ẩn 3 ký tự
+    const totalLength = trimmedLocal.length;
+    const hideCount = 3; // Luôn ẩn đúng 3 ký tự
+
+    // Tính vị trí bắt đầu ẩn (ở giữa)
+    const startHide = Math.floor((totalLength - hideCount) / 2);
+    const endHide = startHide + hideCount;
+
+    // Đảm bảo không ẩn hết username (ít nhất giữ lại 2 ký tự)
+    if (startHide < 1 || endHide >= totalLength) {
+      return trimmedLocal;
+    }
+
+    // Tạo string với 3 ký tự giữa bị ẩn
+    const beforeHidden = trimmedLocal.substring(0, startHide);
+    const afterHidden = trimmedLocal.substring(endHide);
+
+    return beforeHidden + '***' + afterHidden;
   }
-  
-  // Cắt bỏ @gmail.com và các domain khác, chỉ lấy phần username
-  const [local] = email.split('@');
-  const trimmedLocal = local.trim();
-  
-  // Nếu username quá ngắn (≤ 4 ký tự), không ẩn
-  if (trimmedLocal.length <= 4) {
-    return trimmedLocal;
-  }
-  
-  // Tìm vị trí giữa để ẩn 3 ký tự
-  const totalLength = trimmedLocal.length;
-  const hideCount = 3; // Luôn ẩn đúng 3 ký tự
-  
-  // Tính vị trí bắt đầu ẩn (ở giữa)
-  const startHide = Math.floor((totalLength - hideCount) / 2);
-  const endHide = startHide + hideCount;
-  
-  // Đảm bảo không ẩn hết username (ít nhất giữ lại 2 ký tự)
-  if (startHide < 1 || endHide >= totalLength) {
-    return trimmedLocal;
-  }
-  
-  // Tạo string với 3 ký tự giữa bị ẩn
-  const beforeHidden = trimmedLocal.substring(0, startHide);
-  const afterHidden = trimmedLocal.substring(endHide);
-  
-  return beforeHidden + '***' + afterHidden;
-}
   // ✅ Hàm tiện ích: Lấy tên hiển thị với fallback
   getDisplayName(reporter: any): string {
-   
+
+
     return this.getMaskedEmail(reporter.email);
   }
 
@@ -240,7 +251,7 @@ getMaskedEmail(email: string): string {
     this.loadCurrentPageData();
     this.loadStats();
   }
-   /* ===== Chat ===== */
+  /* ===== Chat ===== */
   onAiTuVanClicked(): void {
     debugger
     this.showChatbox = true;

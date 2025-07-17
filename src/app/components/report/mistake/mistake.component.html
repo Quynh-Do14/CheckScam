@@ -13,8 +13,10 @@
   <div class="two-column-layout">
     <div class="left-column">
       <form class="report-form" #mistakeForm="ngForm" (ngSubmit)="submitMistakeReport()" novalidate>
-        <h3 class="info-box-title">KHIẾU NẠI BÁO CÁO SAI</h3>
-
+        <h1 class="info-box-title">
+          KHIẾU NẠI BÁO CÁO SAI
+          <span class="subtitle-slogan">Với AI6 - Đảm bảo sự công bằng cho bạn</span>
+        </h1>
         <div class="form-group">
           <label for="typeToComplainCustom">Loại thông tin bị tố cáo sai:</label>
           <div class="custom-select-wrapper">
@@ -29,7 +31,7 @@
                 <div class="custom-option"
                      *ngFor="let option of typeToComplainOptions"
                      [class.selected]="mistakeReportData.typeToComplain === option.id"
-                     (click)="selectTypeToComplain(option)"
+                     (click)="selectTypeToComplain(option); $event.stopPropagation();"
                      tabindex="0"
                      (keydown.enter)="selectTypeToComplain(option)">
                   {{ option.name }}

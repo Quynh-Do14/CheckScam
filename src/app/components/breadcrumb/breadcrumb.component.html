@@ -1,0 +1,44 @@
+<nav class="breadcrumb-container" aria-label="Breadcrumb navigation">
+  <ol class="breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">
+    <!-- Home link -->
+    <li class="breadcrumb-item" 
+        *ngIf="showHome"
+        itemprop="itemListElement" 
+        itemscope 
+        itemtype="https://schema.org/ListItem">
+      <a routerLink="/" 
+         class="breadcrumb-link"
+         itemprop="item">
+        <i class="fas fa-home" aria-hidden="true"></i>
+        <span itemprop="name">Trang chủ</span>
+      </a>
+      <meta itemprop="position" content="1">
+    </li>
+
+    <!-- Dynamic breadcrumb items -->
+    <li class="breadcrumb-item"
+        *ngFor="let item of items; let i = index; let last = last"
+        [class.active]="item.active || last"
+        itemprop="itemListElement" 
+        itemscope 
+        itemtype="https://schema.org/ListItem">
+      
+      <!-- Link for non-active items -->
+      <a *ngIf="item.url && !item.active && !last" 
+         [routerLink]="item.url"
+         class="breadcrumb-link"
+         itemprop="item">
+        <span itemprop="name">{{ item.label }}</span>
+      </a>
+
+      <!-- Text for active/last items -->
+      <span *ngIf="!item.url || item.active || last" 
+            class="breadcrumb-text"
+            itemprop="name">
+        {{ item.label }}
+      </span>
+
+      <meta itemprop="position" [content]="(showHome ? 1 : 0) + i + 1">
+    </li>
+  </ol>
+</nav>

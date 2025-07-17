@@ -144,8 +144,8 @@
     }
   }
   
-  /* Images in content - FORCE CONTAINMENT */
-  img {
+  /* Images in content - CONTENT IMAGES ONLY */
+  img:not(.related-news-thumbnail):not(.small-attachment-image):not(.attachment-image):not(.avatar):not(.profile-image):not(.thumbnail):not(.logo):not(.icon) {
     max-width: 100% !important;
     width: auto !important;
     height: auto !important;
@@ -158,8 +158,46 @@
     object-fit: contain !important;
     box-sizing: border-box !important;
     
+    /* Đảm bảo ảnh không bao giờ vượt quá container */
+    max-height: 500px !important;
+    
     &:hover {
       transform: scale(1.02);
+    }
+    
+    /* Override mọi style có thể conflict */
+    &[style] {
+      max-width: 100% !important;
+      width: auto !important;
+      height: auto !important;
+    }
+  }
+  
+  /* Fix cho các container có thể chứa ảnh - EXCLUDE UI IMAGES */
+  p img:not(.related-news-thumbnail):not(.avatar):not(.thumbnail):not(.attachment-image), 
+  div img:not(.related-news-thumbnail):not(.avatar):not(.thumbnail):not(.attachment-image), 
+  span img:not(.related-news-thumbnail):not(.avatar):not(.thumbnail):not(.attachment-image), 
+  figure img:not(.related-news-thumbnail):not(.avatar):not(.thumbnail):not(.attachment-image) {
+    max-width: 100% !important;
+    width: auto !important;
+    height: auto !important;
+  }
+  
+  /* Fix cho figure elements */
+  figure {
+    max-width: 100% !important;
+    margin: 1rem auto !important;
+    text-align: center !important;
+    
+    img {
+      margin: 0 !important;
+    }
+    
+    figcaption {
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 0.5rem;
+      font-style: italic;
     }
   }
   
@@ -427,10 +465,11 @@
   
   .news-content {
     img {
-      margin: 0.5rem auto;
-      max-width: 100%;
+      margin: 0.5rem auto !important;
+      max-width: 100% !important;
       width: auto !important;
       height: auto !important;
+      max-height: 300px !important;
     }
     
     table {
@@ -483,3 +522,37 @@
   border: none;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+/* ========================================= */
+/* UI IMAGES RESTORE - OVERRIDE ANY GLOBAL FIXES */
+/* ========================================= */
+
+/* Khôi phục ảnh UI về kích thước ban đầu */
+.attachment-image,
+.related-news-thumbnail,
+.small-attachment-image,
+.avatar,
+.profile-image,
+.thumbnail,
+.logo,
+.icon {
+  max-width: initial !important;
+  width: auto !important;
+  height: auto !important;
+  margin: initial !important;
+  display: initial !important;
+  object-fit: initial !important;
+  box-sizing: initial !important;
+}
+
+/* Specific restore cho attachment images */
+.image-container .attachment-image {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  margin: 0 !important;
+}
+
+/* ========================================= */
+/* END UI IMAGES RESTORE */
+/* ========================================= */

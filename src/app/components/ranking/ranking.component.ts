@@ -228,6 +228,7 @@ export class RankingComponent implements OnInit {
   // ✅ Hàm tiện ích: Lấy tên hiển thị với fallback
   getDisplayName(reporter: any): string {
 
+
     return this.getMaskedEmail(reporter.email);
   }
 

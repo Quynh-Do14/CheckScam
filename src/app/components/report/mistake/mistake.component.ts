@@ -4,6 +4,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { RecaptchaModule } from 'ng-recaptcha';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Title, Meta } from '@angular/platform-browser'; // Import Title và Meta
 
 import { HeaderComponent } from '../../header/header.component';
 import { FooterComponent } from "../../footer/footer.component";
@@ -82,7 +83,9 @@ export class MistakeComponent implements OnInit {
   constructor(
     private mistakeReportService: MistakeReportService,
     private router: Router,
-    private el: ElementRef // Import ElementRef để xử lý click bên ngoài
+    private el: ElementRef, // Import ElementRef để xử lý click bên ngoài
+    private titleService: Title, // Inject Title service
+    private metaService: Meta // Inject Meta service
   ) { }
 
   ngOnInit(): void {
@@ -91,6 +94,18 @@ export class MistakeComponent implements OnInit {
     if (defaultOption) {
       this.selectedTypeToComplainName = defaultOption.name;
     }
+
+    // Thiết lập tiêu đề và thẻ meta cho SEO
+    this.titleService.setTitle('Khiếu Nại Báo Cáo Sai | AI6 - Đảm bảo công bằng');
+    this.metaService.addTags([
+      { name: 'description', content: 'Gửi khiếu nại về các báo cáo sai sự thật hoặc không chính xác trên AI6. Đảm bảo thông tin minh bạch và công bằng.' },
+      { name: 'keywords', content: 'khiếu nại, báo cáo sai, ai6, lừa đảo, số điện thoại lừa đảo, tài khoản lừa đảo, url lừa đảo, gỡ báo cáo' },
+      { property: 'og:title', content: 'Khiếu Nại Báo Cáo Sai | AI6 - Đảm bảo công bằng' },
+      { property: 'og:description', content: 'Gửi khiếu nại về các báo cáo sai sự thật hoặc không chính xác trên AI6. Đảm bảo thông tin minh bạch và công bằng.' },
+      { property: 'og:url', content: 'https://ai6.com.vn/khieu-nai' }, // Thay bằng URL thực tế của trang khiếu nại
+      { property: 'og:type', content: 'website' },
+      // Thêm các meta tag khác nếu cần, ví dụ: og:image, twitter:card, etc.
+    ]);
   }
 
   // --- Phương thức hiển thị và đóng thông báo (sao chép từ create.component.ts) ---
@@ -240,13 +255,13 @@ export class MistakeComponent implements OnInit {
     this.mistakeReportService.createMistakeReport(payload).subscribe({
       next: (res: any) => {
         // Thay thế alert bằng thông báo tùy chỉnh
-        this.showAppNotification('Gửi khiếu nại thành công! Chúng tôi sẽ xem xét với trường hợp của bạn', 'success', 5000); // 3 giây để đọc
-        
+        this.showAppNotification('Gửi khiếu nại thành công! Chúng tôi sẽ xem xét với trường hợp của bạn', 'success', 5000); // 5 giây để đọc
+
         const complaintId = res.data?.id ?? res.id;
         if (!complaintId) {
           console.warn('Không nhận được ID khiếu nại từ server. Không thể tải tệp đính kèm.');
           // Thay thế alert bằng thông báo tùy chỉnh
-          this.showAppNotification('Không nhận được ID khiếu nại từ server. Không thể tải tệp đính kèm.', 'info');
+          this.showAppNotification('Không nhận được ID khiếu nại từ server. Không thể tải tệp đính kèm.', 'info', 5000);
           setTimeout(() => { // Đảm bảo người dùng đọc được thông báo trước khi chuyển hướng
             this.router.navigate(['/khieu-nai-thanh-cong']);
           }, 3000);
@@ -269,7 +284,7 @@ export class MistakeComponent implements OnInit {
         }
 
         // Thay thế alert lỗi bằng thông báo tùy chỉnh
-        this.showAppNotification(`Gửi khiếu nại thất bại: ${errorMessage}\n${fieldErrors || ''}`, 'error');
+        this.showAppNotification(`Gửi khiếu nại thất bại: ${errorMessage}\n${fieldErrors || ''}`, 'error', 7000); // Tăng thời gian hiển thị lỗi
       }
     });
   }
@@ -283,7 +298,7 @@ export class MistakeComponent implements OnInit {
     this.mistakeReportService.uploadFiles(complaintId, formData).subscribe({
       next: () => {
         // Thay thế alert bằng thông báo tùy chỉnh
-        this.showAppNotification('Tải lên tệp đính kèm thành công! Chúng tôi sẽ xem xét với trường hợp của bạn', 'success', 5000); // 3 giây để đọc
+        this.showAppNotification('Tải lên tệp đính kèm thành công! Chúng tôi sẽ xem xét với trường hợp của bạn', 'success', 5000); // 5 giây để đọc
         setTimeout(() => { // Đảm bảo người dùng đọc được thông báo trước khi chuyển hướng
           this.router.navigate(['/khieu-nai-thanh-cong']);
         }, 3000);
@@ -291,7 +306,7 @@ export class MistakeComponent implements OnInit {
       error: (err: HttpErrorResponse) => {
         console.error('Lỗi khi tải lên tệp đính kèm:', err);
         // Thay thế alert lỗi bằng thông báo tùy chỉnh
-        this.showAppNotification('Lỗi khi tải lên tệp đính kèm. Vui lòng thử lại hoặc liên hệ hỗ trợ.', 'error');
+        this.showAppNotification('Lỗi khi tải lên tệp đính kèm. Vui lòng thử lại hoặc liên hệ hỗ trợ.', 'error', 7000); // Tăng thời gian hiển thị lỗi
         setTimeout(() => { // Đảm bảo người dùng đọc được thông báo trước khi chuyển hướng
           this.router.navigate(['/khieu-nai-thanh-cong']);
         }, 3000);

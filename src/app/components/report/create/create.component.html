@@ -1,7 +1,7 @@
 <app-header (aiTuVanClicked)="onAiTuVanClicked()"></app-header>
 
-<div *ngIf="showNotification" 
-     class="app-notification" 
+<div *ngIf="showNotification"
+     class="app-notification"
      [ngClass]="{'success': notificationType === 'success', 'error': notificationType === 'error', 'info': notificationType === 'info'}">
   <div class="notification-content">
     {{ notificationMessage }}
@@ -14,15 +14,17 @@
 
     <div class="left-column">
       <form class="report-form" #reportForm="ngForm" (ngSubmit)="createReport()" novalidate>
-        <h3 class="info-box-title">BÁO CÁO LỪA ĐẢO</h3>
-
+      <h1 class="info-box-title">
+        BÁO CÁO LỪA ĐẢO
+        <span class="subtitle-slogan">Săn Người Xấu, Diệt Kẻ Gian: Phân Tích Và Hành Động Ngay</span>
+      </h1>
         <div class="form-group report-type-selection">
-          <label class="section-label">Chọn loại báo cáo:</label> 
-          <div class="radio-group-modern"> 
+          <label class="section-label">Chọn loại báo cáo:</label>
+          <div class="radio-group-modern">
             <input type="radio" id="singleReport" name="reportType" [value]="'single'" [(ngModel)]="reportType" required (change)="onReportTypeChange()">
-            <label for="singleReport" class="radio-button-label">Báo cáo đơn</label> 
+            <label for="singleReport" class="radio-button-label">Báo cáo đơn</label>
             <input type="radio" id="groupReport" name="reportType" [value]="'group'" [(ngModel)]="reportType" required (change)="onReportTypeChange()">
-            <label for="groupReport" class="radio-button-label">Báo cáo gộp</label> 
+            <label for="groupReport" class="radio-button-label">Báo cáo gộp</label>
           </div>
         </div>
 
@@ -40,7 +42,7 @@
                 <div class="custom-option"
                      *ngFor="let category of categories"
                      [class.selected]="requestPayload.categoryId === category.id"
-                     (click)="selectCategory(category)"
+                     (click)="selectCategory(category); $event.stopPropagation();"
                      tabindex="0"
                      (keydown.enter)="selectCategory(category)">
                   {{ category.name }}
@@ -75,7 +77,7 @@
                   <div class="custom-option"
                        *ngFor="let option of reportTypeOptions"
                        [class.selected]="item.type === option.id"
-                       (click)="selectReportType(item, option)"
+                       (click)="selectReportType(item, option); $event.stopPropagation();"
                        tabindex="0"
                        (keydown.enter)="selectReportType(item, option)">
                     {{ option.name }}
@@ -133,9 +135,10 @@
 
         <div class="form-group">
             <label for="scamAmount">Số tiền chiếm đoạt (VND) <span class="required-asterisk">*</span></label>
-            <input id="scamAmount" type="number" name="scamAmount"
-                   placeholder="Ví dụ: 1000000"
-                   [(ngModel)]="requestPayload.moneyScam"
+            <input id="scamAmount" type="text" name="scamAmount"
+                   placeholder="Ví dụ: 10.000.000"
+                   [value]="formatMoney(requestPayload.moneyScam)"
+                   (input)="onMoneyScamInput($event)"
                    required
                    min="10000"
                    class="form-control-custom">
@@ -149,7 +152,7 @@
             </div>
         </div>
 
-        <div class="form-group">  
+        <div class="form-group">
             <label for="common_description">Mô tả chi tiết:</label>
             <textarea
               id="common_description"

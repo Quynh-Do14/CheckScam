@@ -1,11 +1,8 @@
-/* create.component.scss */
-
-/* Notification Styles */
 .app-notification {
   position: fixed;
   top: 20px;
   right: 20px;
-  background-color: #333; // Default background
+  background-color: #333; 
   color: white;
   padding: 15px 25px;
   border-radius: 8px;
@@ -18,19 +15,19 @@
   opacity: 0;
   transform: translateY(-20px);
   animation: fadeInDown 0.5s forwards;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; // Font hiện đại
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
 }
 
 .app-notification.success {
-  background-color: #4CAF50; /* Green for success */
+  background-color: #4CAF50; 
 }
 
 .app-notification.error {
-  background-color: #f44336; /* Red for error */
+  background-color: #f44336; 
 }
 
 .app-notification.info {
-  background-color: #2196F3; /* Blue for info */
+  background-color: #2196F3; 
 }
 
 .notification-content {
@@ -74,16 +71,6 @@
     transform: translateY(-20px);
   }
 }
-
-/* Angular's *ngIf handles removing the element, so we can use a class on the element itself
-   or manage it with host binding for more complex cases. For simplicity with *ngIf,
-   the element is removed from DOM after animation. If you want a more controlled leave animation,
-   you'd use Angular animations module. For this simple case, the element just disappears.
-   However, if showNotification is set to false, it will fade out if you add ng-leave animation
-   via a state or an explicit animation trigger. For now, the element just gets removed by *ngIf.
-   To make it fade out, you would need to use Angular's Animation Module or
-   delay the *ngIf removal. For now, the element simply fades in.
-*/
 
 /* General layout adjustments */
 .report-page-container {
@@ -138,24 +125,46 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
 }
 
-.report-form h3.info-box-title {
+// Bắt đầu phần CSS đã chỉnh sửa cho H1 và slogan
+.report-form h1.info-box-title {
   text-align: center;
-  color: #d9534f;
+  color: #d9534f; /* Màu đỏ nổi bật cho "BÁO CÁO LỪA ĐẢO" */
   margin-top: 0;
-  margin-bottom: 30px;
-  font-size: 1.8em;
-  font-weight: bold;
+  margin-bottom: 20px; /* Giảm margin bottom để slogan gần hơn */
+  font-size: 2.5em; /* Tăng kích thước chữ để làm tiêu đề chính */
+  font-weight: 900; /* Cực kỳ đậm */
   position: relative;
+  line-height: 1.2; /* Tối ưu khoảng cách dòng */
+  text-transform: uppercase; /* Chữ hoa toàn bộ cho tiêu đề chính */
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); /* Thêm bóng đổ mạnh hơn */
+  padding-bottom: 15px; /* Đẩy đường kẻ dưới ra xa hơn một chút */
+
   &::after {
     content: '';
     display: block;
-    width: 60px;
-    height: 3px;
-    background-color: #d9534f;
-    margin: 10px auto 0;
-    border-radius: 2px;
+    width: 100px; /* Chiều rộng đường kẻ dưới */
+    height: 5px; /* Độ dày đường kẻ dưới */
+    background: linear-gradient(to right, #d9534f, #ff8a04); /* Gradient từ đỏ sang cam */
+    margin: 15px auto 0;
+    border-radius: 3px;
+    box-shadow: 0 4px 10px rgba(217, 83, 79, 0.4); /* Bóng đổ cho đường kẻ */
+  }
+
+  /* Style cho phần slogan nhỏ bên dưới */
+  .subtitle-slogan {
+    display: block; /* Đảm bảo nó xuống dòng */
+    font-size: 0.75em; /* Kích thước chữ nhỏ hơn so với H1 cha */
+    font-weight: 600; /* Đủ đậm để dễ đọc */
+    color: #555; /* Màu xám đậm để dịu mắt hơn */
+    margin-top: 10px; /* Khoảng cách từ tiêu đề chính */
+    letter-spacing: 0.5px; /* Thêm khoảng cách chữ một chút */
+    line-height: 1.5;
+    text-transform: none; /* Đảm bảo slogan không bị uppercase */
+    text-shadow: none; /* Bỏ bóng chữ nếu H1 có */
   }
 }
+// Kết thúc phần CSS đã chỉnh sửa cho H1 và slogan
+
 
 .form-group {
   margin-bottom: 20px;
@@ -533,6 +542,9 @@
   .highlight-text {
     color: #d9534f;
     font-weight: bold;
+    display: flex; /* Để icon và text cùng nằm trên một hàng */
+    align-items: center; /* Căn giữa icon và text theo chiều dọc */
+    gap: 8px; /* Khoảng cách giữa icon và text */
   }
 }
 
@@ -593,7 +605,7 @@
   position: relative;
   width: 100%;
   padding: 12px 15px;
-  border: 1px solid #ddd;
+  border: 1px solid #007bff; /* Viền xanh mặc định */
   border-radius: 6px;
   font-size: 1em; 
   background-color: #fff;
@@ -602,12 +614,17 @@
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
   display: flex;
   align-items: center;
-  justify-content: space-between; /* Để có thể thêm mũi tên bên phải */
+  justify-content: space-between;
 
   &:focus {
-    border-color: #007bff;
+    border-color: #007bff; /* Viền xanh khi focus */
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
     outline: none;
+  }
+
+  &.open {
+    border-color: #007bff; /* Viền xanh khi mở */
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
   }
 
   &::after {
@@ -615,7 +632,7 @@
     font-family: 'Font Awesome 5 Free';
     font-weight: 900;
     font-size: 0.8em;
-    color: #888;
+    color: #007bff; /* Mũi tên màu xanh */
     margin-left: 10px;
     transition: transform 0.3s ease;
   }
@@ -633,7 +650,7 @@
   right: 0;
   z-index: 1000; 
   background-color: #fff;
-  border: 1px solid #ddd;
+  border: 1px solid #007bff; /* Viền xanh cho dropdown */
   border-top: none;
   border-radius: 0 0 6px 6px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
@@ -648,18 +665,19 @@
 
 .custom-option {
   padding: 12px 15px; 
-  font-size: 1.1em;  
+  font-size: 1em;  
   color: #333;
   cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease;
 
   &:hover {
-    background-color: #f0f0f0;
+    background-color: #e6f7ff; /* Nền xanh nhạt khi hover */
+    color: #007bff; /* Chữ xanh khi hover */
   }
 
   &.selected {
-    background-color: #e2e6ea;
-    color: #000;
+    background-color: #007bff; /* Nền xanh khi được chọn */
+    color: white; /* Chữ trắng khi được chọn */
     font-weight: 600;
   }
 }
@@ -667,7 +685,6 @@
 @media (max-width: 576px) {
   .custom-select {
     padding: 16px 20px;
-    // font-size: 1.2em;  
   }
 
   .custom-option {

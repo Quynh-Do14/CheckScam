@@ -602,7 +602,7 @@ html {
     list-style: none;
     padding: 0;
     margin: 0;
-    counter-reset: h1-counter;
+    counter-reset: main-counter; /* Reset counter chính */
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     min-height: 450px; // Đảm bảo danh sách chiếm đủ chiều cao
     display: flex;
@@ -634,12 +634,12 @@ html {
     }
     
     &[data-level="1"] {
-        counter-increment: h1-counter;
-        counter-reset: h2-counter h3-counter h4-counter h5-counter h6-counter;
+        counter-increment: main-counter;
+        counter-reset: sub-counter-1 sub-counter-2 sub-counter-3 sub-counter-4 sub-counter-5;
         font-weight: 600;
         margin-bottom: 8px;
         margin-top: 12px;
-        display: flex; /* Sử dụng flex để nằm trên cùng một dòng */
+        display: flex;
         align-items: flex-start;
         
         &:first-child {
@@ -650,16 +650,14 @@ html {
             font-size: 1em;
             font-weight: 600;
             color: #2c3e50;
-            flex: 1; /* Chiếm hết không gian còn lại */
+            flex: 1;
             
-            /* Thêm icon giọt nước cho một số mục cấp 1 */
             &.has-icon::after {
-                content: '💧'; /* Icon giọt nước */
+                content: '💧';
                 margin-left: 8px;
                 font-size: 0.9em;
             }
             
-            /* Màu xanh cho một số mục đặc biệt */
             &.highlighted {
                 color: #007bff !important;
                 font-weight: 700;
@@ -667,36 +665,34 @@ html {
         }
         
         &:before {
-            content: counter(h1-counter) ". ";
+            content: counter(main-counter) ". ";
             color: #2c3e50;
             font-weight: 600;
             min-width: 25px;
             display: inline-block;
-            flex-shrink: 0; /* Không cho phép thu nhỏ */
+            flex-shrink: 0;
         }
     }
     
     &[data-level="2"] {
-        counter-increment: h2-counter;
-        counter-reset: h3-counter h4-counter h5-counter h6-counter;
-        margin-left: 16px;
-        display: flex; /* Sử dụng flex cho cấp 2 */
+        counter-increment: sub-counter-1;
+        counter-reset: sub-counter-2 sub-counter-3 sub-counter-4 sub-counter-5;
+        margin-left: 1mm;
+        display: flex;
         align-items: flex-start;
         
         .toc-link {
             font-size: 0.95em;
             font-weight: 500;
             color: #34495e;
-            flex: 1; /* Chiếm hết không gian còn lại */
+            flex: 1;
             
-            /* Thêm icon giọt nước cho một số mục cấp 2 */
             &.has-icon::after {
-                content: '💧'; /* Icon giọt nước */
+                content: '💧';
                 margin-left: 8px;
                 font-size: 0.8em;
             }
             
-            /* Màu xanh cho một số mục đặc biệt */
             &.highlighted {
                 color: #007bff !important;
                 font-weight: 600;
@@ -704,36 +700,34 @@ html {
         }
         
         &:before {
-            content: counter(h1-counter) "." counter(h2-counter) " ";
+            content: counter(main-counter) "." counter(sub-counter-1) " ";
             color: #34495e;
             font-weight: 500;
             min-width: 30px;
             display: inline-block;
-            flex-shrink: 0; /* Không cho phép thu nhỏ */
+            flex-shrink: 0;
         }
     }
     
     &[data-level="3"] {
-        counter-increment: h3-counter;
-        counter-reset: h4-counter h5-counter h6-counter;
-        margin-left: 32px;
-        display: flex; /* Sử dụng flex cho cấp 3 */
+        counter-increment: sub-counter-2;
+        counter-reset: sub-counter-3 sub-counter-4 sub-counter-5;
+        margin-left: 2mm;
+        display: flex;
         align-items: flex-start;
         
         .toc-link {
             font-size: 0.9em;
             font-weight: 400;
             color: #5d6d7e;
-            flex: 1; /* Chiếm hết không gian còn lại */
+            flex: 1;
             
-            /* Thêm icon giọt nước cho một số mục cấp 3 */
             &.has-icon::after {
                 content: '💧';
                 margin-left: 6px;
                 font-size: 0.75em;
             }
             
-            /* Màu xanh cho một số mục đặc biệt */
             &.highlighted {
                 color: #007bff !important;
                 font-weight: 500;
@@ -741,31 +735,31 @@ html {
         }
         
         &:before {
-            content: counter(h1-counter) "." counter(h2-counter) "." counter(h3-counter) " ";
+            content: counter(main-counter) "." counter(sub-counter-1) "." counter(sub-counter-2) " ";
             color: #5d6d7e;
             font-weight: 400;
             min-width: 35px;
             display: inline-block;
-            flex-shrink: 0; /* Không cho phép thu nhỏ */
+            flex-shrink: 0;
         }
     }
     
     &[data-level="4"] {
-        counter-increment: h4-counter;
-        counter-reset: h5-counter h6-counter;
-        margin-left: 48px;
-        display: flex; /* Sử dụng flex cho cấp 4 */
+        counter-increment: sub-counter-3;
+        counter-reset: sub-counter-4 sub-counter-5;
+        margin-left: 3mm;
+        display: flex;
         align-items: flex-start;
         
         .toc-link {
             font-size: 0.85em;
             font-weight: 400;
             color: #707b8c;
-            flex: 1; /* Chiếm hết không gian còn lại */
+            flex: 1;
         }
         
         &:before {
-            content: counter(h1-counter) "." counter(h2-counter) "." counter(h3-counter) "." counter(h4-counter) " ";
+            content: counter(main-counter) "." counter(sub-counter-1) "." counter(sub-counter-2) "." counter(sub-counter-3) " ";
             color: #707b8c;
             font-weight: 400;
             min-width: 40px;
@@ -775,21 +769,21 @@ html {
     }
     
     &[data-level="5"] {
-        counter-increment: h5-counter;
-        counter-reset: h6-counter;
-        margin-left: 64px;
-        display: flex; /* Sử dụng flex cho cấp 5 */
+        counter-increment: sub-counter-4;
+        counter-reset: sub-counter-5;
+        margin-left: 4mm;
+        display: flex;
         align-items: flex-start;
         
         .toc-link {
             font-size: 0.85em;
             font-weight: 400;
             color: #85929e;
-            flex: 1; /* Chiếm hết không gian còn lại */
+            flex: 1;
         }
         
         &:before {
-            content: counter(h1-counter) "." counter(h2-counter) "." counter(h3-counter) "." counter(h4-counter) "." counter(h5-counter) " ";
+            content: counter(main-counter) "." counter(sub-counter-1) "." counter(sub-counter-2) "." counter(sub-counter-3) "." counter(sub-counter-4) " ";
             color: #85929e;
             font-weight: 400;
             min-width: 45px;
@@ -799,20 +793,20 @@ html {
     }
     
     &[data-level="6"] {
-        counter-increment: h6-counter;
-        margin-left: 80px;
-        display: flex; /* Sử dụng flex cho cấp 6 */
+        counter-increment: sub-counter-5;
+        margin-left: 5mm;
+        display: flex;
         align-items: flex-start;
         
         .toc-link {
             font-size: 0.8em;
             font-weight: 400;
             color: #95a5a6;
-            flex: 1; /* Chiếm hết không gian còn lại */
+            flex: 1;
         }
         
         &:before {
-            content: counter(h1-counter) "." counter(h2-counter) "." counter(h3-counter) "." counter(h4-counter) "." counter(h5-counter) "." counter(h6-counter) " ";
+            content: counter(main-counter) "." counter(sub-counter-1) "." counter(sub-counter-2) "." counter(sub-counter-3) "." counter(sub-counter-4) "." counter(sub-counter-5) " ";
             color: #95a5a6;
             font-weight: 400;
             min-width: 50px;
@@ -1362,32 +1356,56 @@ html {
             list-style: none !important;
             padding: 0 !important;
             margin: 0 !important;
-            line-height: 1.2 !important; // Giảm thêm xuống 1.2
+            line-height: 1.2 !important;
+            counter-reset: main-counter !important;
             
             .toc-item {
-                margin-bottom: 1px !important; // Giảm thêm xuống 1px
+                margin-bottom: 1px !important;
                 padding-left: 0 !important;
                 
                 // Indentation dựa trên level
-                &[data-level="1"] { padding-left: 0 !important; }
-                &[data-level="2"] { padding-left: 16px !important; }
-                &[data-level="3"] { padding-left: 32px !important; }
-                &[data-level="4"] { padding-left: 48px !important; }
-                &[data-level="5"] { padding-left: 64px !important; }
-                &[data-level="6"] { padding-left: 80px !important; }
+                &[data-level="1"] { 
+                    padding-left: 0 !important;
+                    counter-increment: main-counter !important;
+                    counter-reset: sub-counter-1 sub-counter-2 sub-counter-3 sub-counter-4 sub-counter-5 !important;
+                }
+                &[data-level="2"] { 
+                    padding-left: 1mm !important;
+                    counter-increment: sub-counter-1 !important;
+                    counter-reset: sub-counter-2 sub-counter-3 sub-counter-4 sub-counter-5 !important;
+                }
+                &[data-level="3"] { 
+                    padding-left: 2mm !important;
+                    counter-increment: sub-counter-2 !important;
+                    counter-reset: sub-counter-3 sub-counter-4 sub-counter-5 !important;
+                }
+                &[data-level="4"] { 
+                    padding-left: 3mm !important;
+                    counter-increment: sub-counter-3 !important;
+                    counter-reset: sub-counter-4 sub-counter-5 !important;
+                }
+                &[data-level="5"] { 
+                    padding-left: 4mm !important;
+                    counter-increment: sub-counter-4 !important;
+                    counter-reset: sub-counter-5 !important;
+                }
+                &[data-level="6"] { 
+                    padding-left: 5mm !important;
+                    counter-increment: sub-counter-5 !important;
+                }
                 
                 .toc-link {
                     display: block !important;
-                    padding: 2px 6px !important; // Giảm thêm xuống 2px 6px
+                    padding: 2px 6px !important;
                     color: #666 !important;
                     text-decoration: none !important;
-                    border-radius: 0 !important; // Bỏ border radius
+                    border-radius: 0 !important;
                     font-size: 0.9rem !important;
-                    line-height: 1.2 !important; // Giảm thêm
+                    line-height: 1.2 !important;
                     transition: none !important;
                     cursor: pointer !important;
-                    border: none !important; // Bỏ tất cả border
-                    background: none !important; // Bỏ background
+                    border: none !important;
+                    background: none !important;
                     
                     // Level styling
                     &[data-level="1"] {
@@ -1411,7 +1429,6 @@ html {
                         font-size: 0.85rem !important;
                     }
                     
-                    // Bỏ tất cả hover states
                     &:hover {
                         background: none !important;
                         background-color: transparent !important;
@@ -1420,24 +1437,21 @@ html {
                         border: none !important;
                     }
                     
-                    // Focus states (giữ lại cho accessibility nhưng đơn giản hơn)
                     &:focus {
                         outline: 1px dotted #007bff !important;
                         background-color: transparent !important;
                     }
                     
-                    // Active state - chỉ giữ màu chữ xanh
                     &.active {
                         background: none !important;
                         background-color: transparent !important;
                         color: #007bff !important;
                         font-weight: 600 !important;
-                        border-left: 2px solid #007bff !important; // Giảm border
+                        border-left: 2px solid #007bff !important;
                         border-right: none !important;
                         border-top: none !important;
                         border-bottom: none !important;
                         
-                        // Bỏ tất cả hover effect cho active state
                         &:hover {
                             background: none !important;
                             background-color: transparent !important;
@@ -1446,7 +1460,6 @@ html {
                         }
                     }
                     
-                    // Text overflow handling - đơn giản hơn
                     &.text-overflow {
                         white-space: nowrap !important;
                         overflow: hidden !important;
@@ -1470,11 +1483,11 @@ html {
 @media (max-width: 1200px) {
     .table-of-contents {
         .toc-nav .toc-list .toc-item {
-            &[data-level="2"] { padding-left: 12px; }
-            &[data-level="3"] { padding-left: 24px; }
-            &[data-level="4"] { padding-left: 36px; }
-            &[data-level="5"] { padding-left: 48px; }
-            &[data-level="6"] { padding-left: 60px; }
+            &[data-level="2"] { margin-left: 0.8mm; }
+            &[data-level="3"] { margin-left: 1.6mm; }
+            &[data-level="4"] { margin-left: 2.4mm; }
+            &[data-level="5"] { margin-left: 3.2mm; }
+            &[data-level="6"] { margin-left: 4mm; }
             
             .toc-link {
                 padding: 6px 10px;

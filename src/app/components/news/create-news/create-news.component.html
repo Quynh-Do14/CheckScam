@@ -162,8 +162,151 @@
                   <i class="fas fa-remove-format"></i>
                 </button>
               </div>
+
+              <div class="toolbar-divider"></div>
+
+              <!-- Document Style Controls -->
+              <div class="toolbar-group document-style-group">
+                <!-- Style Toggle -->
+                <button type="button" 
+                        (click)="toggleWordStyle()" 
+                        class="toolbar-btn"
+                        [class.active]="wordStyleEnabled"
+                        title="Bật/tắt định dạng Word">
+                  <i class="fas fa-file-word"></i>
+                  <span>Word Style</span>
+                </button>
+                
+                <!-- Document Style Selector -->
+                <select class="toolbar-select" 
+                        (change)="changeDocumentStyle($any($event.target).value)"
+                        [value]="documentStyle"
+                        [disabled]="!wordStyleEnabled"
+                        title="Chọn kiểu tài liệu">
+                  <option value="word">Word Document</option>
+                  <option value="academic">Academic Paper</option>
+                  <option value="web">Web Article</option>
+                </select>
+                
+                <!-- Auto Numbering Toggle -->
+                <button type="button" 
+                        (click)="toggleAutoNumbering()" 
+                        class="toolbar-btn"
+                        [class.active]="autoNumberingEnabled"
+                        [disabled]="!wordStyleEnabled"
+                        title="Bật/tắt đánh số tự động">
+                  <i class="fas fa-list-ol"></i>
+                  <span>Auto #</span>
+                </button>
+              </div>
+
+              <div class="toolbar-divider"></div>
+
+              <!-- Numbering Controls -->
+              <div class="toolbar-group numbering-group">
+                <button type="button" 
+                        (click)="addOutlineNumbering()" 
+                        class="toolbar-btn"
+                        title="Thêm đánh số outline">
+                  <i class="fas fa-plus"></i>
+                  <span>Add #</span>
+                </button>
+                
+                <button type="button" 
+                        (click)="removeNumbering()" 
+                        class="toolbar-btn"
+                        title="Xóa đánh số">
+                  <i class="fas fa-minus"></i>
+                  <span>Remove #</span>
+                </button>
+                
+                <button type="button" 
+                        (click)="applyWordTemplate()" 
+                        class="toolbar-btn toolbar-btn-primary"
+                        title="Áp dụng template Word mẫu">
+                  <i class="fas fa-file-import"></i>
+                  <span>Template</span>
+                </button>
+              </div>
+
+              <div class="toolbar-divider"></div>
+
+              <!-- Table of Contents -->
+              <div class="toolbar-group">
+                <button type="button" 
+                        (click)="toggleTableOfContents()" 
+                        class="toolbar-btn"
+                        [class.active]="showTableOfContents"
+                        title="Hiển thị/Ẩn mục lục">
+                  <i class="fas fa-list"></i>
+                  <span>Mục lục</span>
+                </button>
+                
+                <!-- Debug button - xóa sau khi test xong -->
+                <button type="button" 
+                        (click)="debugTableOfContents()" 
+                        class="toolbar-btn"
+                        title="Debug mục lục">
+                  <i class="fas fa-bug"></i>
+                  <span>Debug</span>
+                </button>
+              </div>
             </div>
             
+            <!-- Table of Contents Panel -->
+            <div class="toc-panel" *ngIf="showTableOfContents && tableOfContents.length > 0">
+              <div class="toc-header">
+                <h6 class="toc-title">
+                  <i class="fas fa-list"></i>
+                  Mục lục ({{tableOfContents.length}} mục)
+                </h6>
+                <button type="button" 
+                        class="btn-close-toc" 
+                        (click)="toggleTableOfContents()"
+                        title="Đóng mục lục">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+              
+              <div class="toc-content">
+                <div class="toc-list">
+                  <div *ngFor="let item of tableOfContents; let i = index" 
+                       class="toc-item"
+                       [class]="'toc-level-' + item.level"
+                       (click)="scrollToHeading(item.id)">
+                    <span class="toc-number">{{i + 1}}.</span>
+                    <span class="toc-text">{{item.text}}</span>
+                    <span class="toc-tag">{{item.tag}}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Document Style Info Panel -->
+            <div class="document-style-info" *ngIf="wordStyleEnabled">
+              <div class="style-info-content">
+                <div class="current-style">
+                  <strong>Style:</strong> 
+                  <span [ngSwitch]="documentStyle">
+                    <span *ngSwitchCase="'word'">📄 Microsoft Word</span>
+                    <span *ngSwitchCase="'academic'">🎓 Academic Paper</span>
+                    <span *ngSwitchCase="'web'">🌐 Web Article</span>
+                  </span>
+                </div>
+                <div class="style-features">
+                  <span class="feature" [class.active]="autoNumberingEnabled">
+                    <i class="fas fa-list-ol"></i> Auto Numbering
+                  </span>
+                  <span class="feature active">
+                    <i class="fas fa-font"></i> Font Calibri
+                  </span>
+                  <span class="feature active">
+                    <i class="fas fa-ruler"></i> Standard Spacing
+                  </span>
+                </div>
+              </div>
+            </div>
+
             <!-- Content Area with drag & drop -->
             <div 
               #contentEditor

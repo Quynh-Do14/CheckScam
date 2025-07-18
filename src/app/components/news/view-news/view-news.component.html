@@ -2,6 +2,30 @@
 
 <div class="main-content-area">
     <div class="container news-page-container">
+        <!-- Cột 1: Xem thêm -->
+        <div class="news-sidebar-left">
+            <div class="card sidebar-card">
+                <h3 class="sidebar-title">
+                    <i class="fas fa-plus-circle"></i> Xem thêm
+                </h3>
+                <ul class="related-news-list">
+                    <li *ngFor="let relatedNewsItem of relatedNews; trackBy: trackById">
+                        <a [routerLink]="['/view-news', relatedNewsItem.id]" class="related-news-link" (click)="loadNewsById(relatedNewsItem.id)">
+                            <img [src]="getImageUrlForRelated(relatedNewsItem)" alt="{{ relatedNewsItem.name }}" class="related-news-thumbnail">
+                            <div class="related-news-info">
+                                <h4 class="related-news-title">{{ relatedNewsItem.name }}</h4>
+                                <p class="related-news-date">{{ relatedNewsItem.publishedDate | date:'dd/MM/yyyy' }}</p>
+                            </div>
+                        </a>
+                    </li>
+                    <li *ngIf="relatedNews.length === 0">
+                        <p class="no-related-news">Không có tin tức liên quan.</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Cột 2: Nội dung chính -->
         <div class="news-main-column">
             <div class="card news-detail-card">
                 <div class="back-button-container">
@@ -11,6 +35,16 @@
                 </div>
 
                 <h1 class="news-title">{{ post.name }}</h1>
+                <div class="news-meta">
+                    <span class="news-date">
+                        <i class="fas fa-calendar-alt"></i>
+                        {{ post.publishedDate | date:'dd/MM/yyyy' }}
+                    </span>
+                    <span class="news-author">
+                        <i class="fas fa-user"></i>
+                        {{ post.author || 'Admin' }}
+                    </span>
+                </div>
                 <hr class="news-divider">
 
                 <div *ngIf="attachmentDto && attachmentDto.length > 0" class="main-image-container">
@@ -38,26 +72,47 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Chia sẻ và tương tác -->
+                <div class="news-actions">
+                    <button class="btn btn-like" (click)="toggleLike()">
+                        <i class="fas fa-heart" [class.liked]="isLiked"></i>
+                        Thích ({{ likeCount }})
+                    </button>
+                    <button class="btn btn-share" (click)="shareNews()">
+                        <i class="fas fa-share-alt"></i>
+                        Chia sẻ
+                    </button>
+                </div>
             </div>
         </div>
 
-        <div class="news-sidebar-column">
+        <!-- Cột 3: Mục lục tin tức -->
+        <div class="news-sidebar-right">
             <div class="card sidebar-card">
-                <h3 class="sidebar-title">Xem thêm</h3>
-                <ul class="related-news-list">
-                    <li *ngFor="let relatedNewsItem of relatedNews; trackBy: trackById">
-                        <a [routerLink]="['/view-news', relatedNewsItem.id]" class="related-news-link" (click)="loadNewsById(relatedNewsItem.id)">
-                            <img [src]="getImageUrlForRelated(relatedNewsItem)" alt="{{ relatedNewsItem.name }}" class="related-news-thumbnail">
-                            <div class="related-news-info">
-                                <h4 class="related-news-title">{{ relatedNewsItem.name }}</h4>
-                                <p class="related-news-date">{{ relatedNewsItem.publishedDate | date:'M/d/yyyy' }}</p>
-                            </div>
-                        </a>
-                    </li>
-                    <li *ngIf="relatedNews.length === 0">
-                        <p class="no-related-news">Không có tin tức liên quan.</p>
-                    </li>
-                </ul>
+                <h3 class="sidebar-title">
+                    <i class="fas fa-list"></i> Mục lục
+                </h3>
+                <div class="table-of-contents" *ngIf="showTableOfContents && tableOfContents.length > 0">
+                    <nav class="toc-nav">
+                        <ol class="toc-list">
+                            <li class="toc-item" *ngFor="let tocItem of tableOfContents; trackBy: trackByTocId" [attr.data-level]="tocItem.level">
+                                <a class="toc-link" 
+                                   (click)="scrollToHeading($event, tocItem.id)" 
+                                   (keydown.enter)="scrollToHeading($event, tocItem.id)"
+                                   (keydown.space)="scrollToHeading($event, tocItem.id)"
+                                   role="button" 
+                                   tabindex="0"
+                                   [attr.aria-label]="'Đi đến phần: ' + tocItem.text">
+                                    {{ tocItem.text }}
+                                </a>
+                            </li>
+                        </ol>
+                    </nav>
+                </div>
+                <div *ngIf="!showTableOfContents || tableOfContents.length === 0" class="no-toc">
+                    <p>Bài viết chưa có tiêu đề phụ nên không có mục lục.</p>
+                </div>
             </div>
         </div>
     </div>

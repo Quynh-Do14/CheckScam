@@ -765,12 +765,477 @@ body {
   background-color: white;
 }
 
+/* Word-style Document Formatting - High specificity */
+.rich-text-editor .editor-content.word-style {
+  counter-reset: heading1;
+  font-family: 'Calibri', 'Arial', sans-serif !important;
+  
+  /* Heading 1 - Chuẩn Word */
+  h1 {
+    counter-increment: heading1;
+    counter-reset: heading2;
+    
+    font-family: 'Calibri', 'Arial', sans-serif !important;
+    font-size: 16pt !important; /* 22px */
+    font-weight: bold !important;
+    color: #2F5496 !important; /* Word blue */
+    line-height: 1.15 !important;
+    margin-top: 12pt !important;
+    margin-bottom: 0pt !important;
+    text-align: left !important;
+    page-break-after: avoid;
+    
+    &::before {
+      content: counter(heading1) ". " !important;
+      font-weight: bold !important;
+      color: #2F5496 !important;
+    }
+    
+    &:first-child {
+      margin-top: 0pt !important;
+    }
+    
+    &:not(:first-child) {
+      margin-top: 18pt !important;
+    }
+  }
+  
+  /* Heading 2 - Chuẩn Word */
+  h2 {
+    counter-increment: heading2;
+    counter-reset: heading3;
+    
+    font-family: 'Calibri', 'Arial', sans-serif !important;
+    font-size: 13pt !important; /* 17px */
+    font-weight: bold !important;
+    color: #2F5496 !important;
+    line-height: 1.15 !important;
+    margin-top: 2pt !important;
+    margin-bottom: 0pt !important;
+    text-align: left !important;
+    page-break-after: avoid;
+    
+    &::before {
+      content: counter(heading1) "." counter(heading2) " " !important;
+      font-weight: bold !important;
+      color: #2F5496 !important;
+    }
+    
+    &:not(:first-child) {
+      margin-top: 10pt !important;
+    }
+  }
+  
+  /* Heading 3 - Chuẩn Word */
+  h3 {
+    counter-increment: heading3;
+    counter-reset: heading4;
+    
+    font-family: 'Calibri', 'Arial', sans-serif !important;
+    font-size: 12pt !important; /* 16px */
+    font-weight: bold !important;
+    color: #1F3763 !important;
+    line-height: 1.15 !important;
+    margin-top: 2pt !important;
+    margin-bottom: 0pt !important;
+    text-align: left !important;
+    page-break-after: avoid;
+    
+    &::before {
+      content: counter(heading1) "." counter(heading2) "." counter(heading3) " " !important;
+      font-weight: bold !important;
+      color: #1F3763 !important;
+    }
+    
+    &:not(:first-child) {
+      margin-top: 8pt !important;
+    }
+  }
+  
+  /* Heading 4-6 */
+  h4, h5, h6 {
+    font-family: 'Calibri', 'Arial', sans-serif !important;
+    font-size: 11pt !important;
+    font-weight: bold !important;
+    color: #2F5496 !important;
+    line-height: 1.15 !important;
+    margin-top: 6pt !important;
+    margin-bottom: 0pt !important;
+    text-align: left !important;
+  }
+  
+  /* Paragraph chuẩn Word */
+  p {
+    font-family: 'Calibri', 'Arial', sans-serif !important;
+    font-size: 11pt !important;
+    font-weight: normal !important;
+    color: #000000 !important;
+    line-height: 1.15 !important;
+    margin-top: 0pt !important;
+    margin-bottom: 8pt !important;
+    text-align: justify !important;
+    
+    &:last-child {
+      margin-bottom: 0pt !important;
+    }
+  }
+  
+  /* Lists chuẩn Word */
+  ul, ol {
+    font-family: 'Calibri', 'Arial', sans-serif !important;
+    font-size: 11pt !important;
+    line-height: 1.15 !important;
+    margin-top: 0pt !important;
+    margin-bottom: 8pt !important;
+    margin-left: 18pt !important;
+    
+    li {
+      margin-top: 0pt !important;
+      margin-bottom: 0pt !important;
+      text-align: justify !important;
+    }
+  }
+  
+  /* Tables chuẩn Word */
+  table {
+    font-family: 'Calibri', 'Arial', sans-serif !important;
+    font-size: 11pt !important;
+    border-collapse: collapse !important;
+    margin-top: 8pt !important;
+    margin-bottom: 8pt !important;
+    
+    th, td {
+      border: 0.5pt solid #000000 !important;
+      padding: 0pt 5.4pt !important;
+      vertical-align: top !important;
+      text-align: left !important;
+    }
+    
+    th {
+      background-color: #D9E2F3 !important;
+      font-weight: bold !important;
+    }
+  }
+  
+  /* Tắt auto numbering khi có class no-numbering */
+  &.no-numbering {
+    h1::before, h2::before, h3::before, h4::before, h5::before, h6::before {
+      content: none !important;
+    }
+  }
+}
+
+/* Academic Paper Style */
+.editor-content.academic-style {
+  counter-reset: heading1;
+  
+  h1 {
+    counter-increment: heading1;
+    counter-reset: heading2;
+    
+    font-family: 'Times New Roman', serif;
+    font-size: 14pt;
+    font-weight: bold;
+    color: #000000;
+    text-align: center;
+    line-height: 1.5;
+    margin-top: 18pt;
+    margin-bottom: 12pt;
+    text-transform: uppercase;
+    
+    &::before {
+      content: counter(heading1, upper-roman) ". ";
+      font-weight: bold;
+    }
+  }
+  
+  h2 {
+    counter-increment: heading2;
+    counter-reset: heading3;
+    
+    font-family: 'Times New Roman', serif;
+    font-size: 12pt;
+    font-weight: bold;
+    color: #000000;
+    text-align: left;
+    line-height: 1.5;
+    margin-top: 12pt;
+    margin-bottom: 6pt;
+    
+    &::before {
+      content: counter(heading1, upper-roman) "." counter(heading2, upper-alpha) ". ";
+      font-weight: bold;
+    }
+  }
+  
+  p {
+    font-family: 'Times New Roman', serif;
+    font-size: 12pt;
+    line-height: 2.0;
+    text-align: justify;
+    text-indent: 0.5in;
+    margin-top: 0pt;
+    margin-bottom: 0pt;
+  }
+}
+
+/* Web Article Style */
+.editor-content.web-style {
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Georgia', 'Times', serif;
+    color: #333;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+  }
+  
+  h1 { font-size: 2.25rem; }
+  h2 { font-size: 1.875rem; }
+  h3 { font-size: 1.5rem; }
+  
+  p {
+    font-family: 'Georgia', 'Times', serif;
+    font-size: 1.125rem;
+    line-height: 1.7;
+    margin-bottom: 1.25rem;
+    color: #444;
+  }
+}
+
+/* Table of Contents Panel */
+.toc-panel {
+  position: absolute;
+  top: 60px;
+  right: 1rem;
+  width: 300px;
+  max-height: 400px;
+  background: white;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  box-shadow: var(--shadow-lg);
+  z-index: 1000;
+  overflow: hidden;
+  animation: slideInFromRight 0.3s ease-out;
+  
+  .toc-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-gradient-start));
+    color: white;
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    
+    .toc-title {
+      margin: 0;
+      font-size: 0.9rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .btn-close-toc {
+      background: transparent;
+      border: none;
+      color: white;
+      cursor: pointer;
+      padding: 0.25rem;
+      border-radius: 0.25rem;
+      transition: background-color 0.2s ease;
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+    }
+  }
+  
+  .toc-content {
+    max-height: 320px;
+    overflow-y: auto;
+    
+    .toc-list {
+      padding: 0.5rem 0;
+    }
+    
+    .toc-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      border-bottom: 1px solid #f0f0f0;
+      transition: all 0.2s ease;
+      font-size: 0.875rem;
+      
+      &:hover {
+        background: #f8f9fa;
+        color: var(--primary-color);
+        transform: translateX(2px);
+      }
+      
+      .toc-number {
+        font-weight: 600;
+        color: var(--primary-color);
+        min-width: 20px;
+        font-size: 0.8rem;
+      }
+      
+      .toc-text {
+        flex: 1;
+        line-height: 1.4;
+        word-break: break-word;
+      }
+      
+      .toc-tag {
+        font-size: 0.7rem;
+        background: #e9ecef;
+        color: #6c757d;
+        padding: 0.125rem 0.375rem;
+        border-radius: 0.25rem;
+        text-transform: uppercase;
+        font-weight: 500;
+        min-width: 24px;
+        text-align: center;
+      }
+      
+      /* Indentation theo cấp độ heading */
+      &.toc-level-1 {
+        padding-left: 1rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+        
+        .toc-tag {
+          background: var(--primary-color);
+          color: white;
+        }
+      }
+      
+      &.toc-level-2 {
+        padding-left: 1.5rem;
+        font-weight: 500;
+        
+        .toc-tag {
+          background: #17a2b8;
+          color: white;
+        }
+      }
+      
+      &.toc-level-3 {
+        padding-left: 2rem;
+        
+        .toc-tag {
+          background: #28a745;
+          color: white;
+        }
+      }
+      
+      &.toc-level-4 { padding-left: 2.5rem; }
+      &.toc-level-5 { padding-left: 3rem; }
+      &.toc-level-6 { padding-left: 3.5rem; }
+    }
+  }
+}
+
+/* Document Style Info Panel */
+.document-style-info {
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  border: 1px solid #e0e0e0;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  
+  .style-info-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    
+    .current-style {
+      font-size: 0.875rem;
+      color: var(--text-dark);
+      
+      strong {
+        color: var(--primary-color);
+      }
+    }
+    
+    .style-features {
+      display: flex;
+      gap: 0.75rem;
+      
+      .feature {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.75rem;
+        color: #6c757d;
+        
+        &.active {
+          color: var(--primary-color);
+          font-weight: 500;
+        }
+        
+        i {
+          font-size: 0.7rem;
+        }
+      }
+    }
+  }
+}
+
+/* Animation */
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Print styles cho Word format */
+@media print {
+  .editor-content.word-style {
+    font-family: 'Calibri', 'Times New Roman', serif;
+    font-size: 12pt;
+    line-height: 1.15;
+    color: #000000;
+    background: white;
+    
+    h1, h2, h3, h4, h5, h6 {
+      page-break-after: avoid;
+      page-break-inside: avoid;
+    }
+    
+    p {
+      orphans: 2;
+      widows: 2;
+    }
+    
+    table {
+      page-break-inside: avoid;
+    }
+  }
+}
+
 /* Responsive Design */
 @media (max-width: 1024px) {
   .rich-text-editor .editor-toolbar {
     .toolbar-group {
       flex-wrap: wrap;
     }
+  }
+  
+  .toc-panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 400px;
+    max-height: 70vh;
   }
 }
 
@@ -822,6 +1287,32 @@ body {
         min-width: auto;
         width: 100%;
       }
+    }
+  }
+  
+  .toc-panel {
+    width: 95%;
+    max-width: none;
+    max-height: 60vh;
+    
+    .toc-item {
+      font-size: 0.8rem;
+      padding: 0.4rem 0.8rem;
+      
+      &.toc-level-1 { padding-left: 0.8rem; }
+      &.toc-level-2 { padding-left: 1.2rem; }
+      &.toc-level-3 { padding-left: 1.6rem; }
+      &.toc-level-4 { padding-left: 2rem; }
+      &.toc-level-5 { padding-left: 2.4rem; }
+      &.toc-level-6 { padding-left: 2.8rem; }
+    }
+  }
+  
+  .document-style-info {
+    .style-info-content {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
     }
   }
 }

@@ -36,8 +36,12 @@ export class NewsService {
   }
 
   getAllNews(page: number = 0, size: number = 5): Observable<any> { 
-
     return this.http.get<any>(`${this.apiNews}?page=${page}&size=${size}`);
+  }
+
+  // Method for getting all news without pagination (for sidebar)
+  getAllNewsForSidebar(): Observable<any> {
+    return this.http.get<any>(`${this.apiNews}?page=0&size=50`); // Get more for sidebar
   }
 
   getListNews(): Observable<any> {

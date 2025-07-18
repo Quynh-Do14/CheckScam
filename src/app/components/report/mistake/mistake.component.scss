@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 /* Notification Styles (được sao chép từ create.component.scss) */
 .app-notification {
   position: fixed;
@@ -254,13 +256,13 @@ $soft-yellow: #FFD23F;
   transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 
   &:hover {
-    background-color: darken($primary-orange, 10%); /* Hiệu ứng hover */
+    background-color: color.scale($primary-orange, $lightness: -10%); /* Hiệu ứng hover */
     transform: translateY(-3px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
   }
 
   &:active {
-    background-color: darken($primary-orange, 15%);
+    background-color: color.scale($primary-orange, $lightness: -15%);
     transform: translateY(0);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   }
@@ -289,7 +291,7 @@ $soft-yellow: #FFD23F;
 
   &:hover, &.drag-over {
     border-color: $primary-orange;
-    background-color: lighten($primary-orange, 40%); /* Màu nhẹ hơn khi hover/drag */
+    background-color: color.scale($primary-orange, $lightness: 40%); /* Màu nhẹ hơn khi hover/drag */
   }
 }
 

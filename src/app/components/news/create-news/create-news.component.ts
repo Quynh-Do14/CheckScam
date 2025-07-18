@@ -1,4 +1,4 @@
-import { CommonModule, NgIf, NgFor, DecimalPipe } from '@angular/common'; 
+import { CommonModule, NgIf, NgFor, NgSwitch, NgSwitchCase, DecimalPipe } from '@angular/common'; 
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse, HttpClientModule } from '@angular/common/http';
@@ -12,6 +12,13 @@ interface FileWithPreview extends File {
   preview?: string;
 }
 
+interface TocItem {
+  id: string;
+  text: string;
+  level: number;
+  tag: string;
+}
+
 @Component({
   selector: 'app-create-news',
   standalone: true,
@@ -19,7 +26,12 @@ interface FileWithPreview extends File {
     CommonModule, 
     FormsModule, 
     RouterModule,
-    HttpClientModule
+    HttpClientModule,
+    NgIf,
+    NgFor,
+    NgSwitch,
+    NgSwitchCase,
+
   ],
   providers: [], 
   templateUrl: './create-news.component.html',
@@ -32,6 +44,13 @@ export class CreateNewsComponent implements OnInit, AfterViewInit {
   selectedFiles: FileWithPreview[] = [];
   uploadProgress = 0;
   isMain = false; // Thêm field cho checkbox tin chính
+  
+  // Word-style properties
+  wordStyleEnabled = false;
+  autoNumberingEnabled = true;
+  documentStyle = 'word'; // 'word', 'web', 'academic'
+  tableOfContents: TocItem[] = [];
+  showTableOfContents = false;
   
   @ViewChild('contentEditor', { static: false }) contentEditor!: ElementRef;
   @ViewChild('imageInput', { static: false }) imageInput!: ElementRef;
@@ -56,6 +75,10 @@ export class CreateNewsComponent implements OnInit, AfterViewInit {
       editor.style.direction = 'ltr';
       editor.style.textAlign = 'left';
       editor.setAttribute('dir', 'ltr');
+      
+      // Apply default Word style
+      this.wordStyleEnabled = true;
+      this.applyDocumentStyle();
     }
   }
 
@@ -380,6 +403,9 @@ export class CreateNewsComponent implements OnInit, AfterViewInit {
       content = this.cleanTailwindStyles(content);
       
       this.content = content;
+      
+      // Cập nhật mục lục
+      this.tableOfContents = this.generateTableOfContents();
     }
   }
 
@@ -590,5 +616,292 @@ export class CreateNewsComponent implements OnInit, AfterViewInit {
         alert(`Lỗi upload: ${errorMessage}`);
       }
     });
+  }
+
+  // ================== Word Style & Table of Contents Methods ==================
+
+  /**
+   * Toggle Word document styling
+   */
+  toggleWordStyle() {
+    this.wordStyleEnabled = !this.wordStyleEnabled;
+    this.applyDocumentStyle();
+  }
+
+  /**
+   * Toggle auto numbering cho headings
+   */
+  toggleAutoNumbering() {
+    this.autoNumberingEnabled = !this.autoNumberingEnabled;
+    this.applyDocumentStyle();
+  }
+
+  /**
+   * Thay đổi style tài liệu
+   */
+  changeDocumentStyle(style: string) {
+    this.documentStyle = style;
+    this.applyDocumentStyle();
+  }
+
+  /**
+   * Apply document style
+   */
+  private applyDocumentStyle() {
+    if (!this.contentEditor) return;
+    
+    const editor = this.contentEditor.nativeElement;
+    
+    // Remove all existing style classes
+    editor.classList.remove('word-style', 'web-style', 'academic-style', 'no-numbering');
+    
+    // Apply selected style
+    if (this.wordStyleEnabled) {
+      switch (this.documentStyle) {
+        case 'word':
+          editor.classList.add('word-style');
+          break;
+        case 'academic':
+          editor.classList.add('academic-style');
+          break;
+        case 'web':
+        default:
+          editor.classList.add('web-style');
+          break;
+      }
+      
+      // Apply numbering setting
+      if (!this.autoNumberingEnabled) {
+        editor.classList.add('no-numbering');
+      }
+    }
+  }
+
+  /**
+   * Tạo mục lục từ nội dung HTML
+   */
+  generateTableOfContents(): TocItem[] {
+    if (!this.contentEditor) return [];
+    
+    // Lấy nội dung trực tiếp từ editor
+    const editorContent = this.contentEditor.nativeElement.innerHTML;
+    if (!editorContent || editorContent.trim() === '') return [];
+    
+    // Tìm tất cả các thẻ heading trong editor
+    const headings = this.contentEditor.nativeElement.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    const toc: TocItem[] = [];
+    
+    headings.forEach((heading: HTMLElement, index: number) => {
+      const text = heading.textContent?.trim() || '';
+      if (text) {
+        // Tạo ID duy nhất cho heading
+        const id = this.generateHeadingId(text, index);
+        
+        // Thêm ID vào heading nếu chưa có
+        if (!heading.id) {
+          heading.id = id;
+        }
+        
+        toc.push({
+          id: heading.id || id,
+          text: text,
+          level: parseInt(heading.tagName.charAt(1)), // Lấy số từ h1, h2, etc.
+          tag: heading.tagName.toLowerCase()
+        });
+      }
+    });
+    
+    console.log('Generated TOC:', toc); // Debug log
+    return toc;
+  }
+
+  /**
+   * Tạo ID duy nhất cho heading
+   */
+  private generateHeadingId(text: string, index: number): string {
+    // Chuyển text thành slug
+    const slug = text
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '') // Loại bỏ dấu tiếng Việt
+      .replace(/[^a-z0-9\s-]/g, '') // Loại bỏ ký tự đặc biệt
+      .trim()
+      .replace(/\s+/g, '-') // Thay space bằng dấu gạch ngang
+      .replace(/-+/g, '-'); // Loại bỏ dấu gạch ngang thừa
+    
+    return `heading-${index}-${slug}`;
+  }
+
+  /**
+   * Cuộn đến heading được chọn trong mục lục
+   */
+  scrollToHeading(headingId: string) {
+    const element = document.getElementById(headingId);
+    if (element) {
+      element.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start' 
+      });
+      
+      // Highlight heading temporarily
+      element.style.backgroundColor = '#fff3cd';
+      element.style.transition = 'background-color 0.3s ease';
+      
+      setTimeout(() => {
+        element.style.backgroundColor = '';
+      }, 2000);
+    }
+  }
+
+  /**
+   * Debug function để kiểm tra mục lục
+   */
+  debugTableOfContents() {
+    console.log('=== DEBUG TABLE OF CONTENTS ===');
+    console.log('contentEditor:', !!this.contentEditor);
+    
+    if (this.contentEditor) {
+      console.log('Editor innerHTML:', this.contentEditor.nativeElement.innerHTML);
+      
+      const headings = this.contentEditor.nativeElement.querySelectorAll('h1, h2, h3, h4, h5, h6');
+      console.log('Found headings:', headings.length);
+      
+      headings.forEach((heading: HTMLElement, index: number) => {
+        console.log(`Heading ${index + 1}:`, {
+          tagName: heading.tagName,
+          textContent: heading.textContent,
+          id: heading.id,
+          classes: heading.className
+        });
+      });
+    }
+    
+    console.log('Word style enabled:', this.wordStyleEnabled);
+    console.log('Document style:', this.documentStyle);
+    console.log('Show TOC:', this.showTableOfContents);
+    console.log('TOC items:', this.tableOfContents);
+    console.log('=== END DEBUG ===');
+    
+    // Force generate TOC
+    this.tableOfContents = this.generateTableOfContents();
+    this.showTableOfContents = true;
+  }
+
+  /**
+   * Toggle hiển thị mục lục
+   */
+  toggleTableOfContents() {
+    this.showTableOfContents = !this.showTableOfContents;
+    console.log('Toggle TOC:', this.showTableOfContents); // Debug log
+    
+    if (this.showTableOfContents) {
+      this.tableOfContents = this.generateTableOfContents();
+      console.log('TOC items:', this.tableOfContents); // Debug log
+    }
+  }
+
+  /**
+   * Thêm outline numbering cho headings hiện có
+   */
+  addOutlineNumbering() {
+    if (!this.contentEditor) return;
+    
+    const headings = this.contentEditor.nativeElement.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    const counters = [0, 0, 0, 0, 0, 0]; // Counter cho h1-h6
+    
+    headings.forEach((heading: HTMLElement) => {
+      const level = parseInt(heading.tagName.charAt(1)) - 1; // 0-5 for h1-h6
+      
+      // Reset counters for lower levels
+      for (let i = level + 1; i < 6; i++) {
+        counters[i] = 0;
+      }
+      
+      // Increment current level
+      counters[level]++;
+      
+      // Create numbering string
+      let numbering = '';
+      for (let i = 0; i <= level; i++) {
+        if (counters[i] > 0) {
+          numbering += (numbering ? '.' : '') + counters[i];
+        }
+      }
+      
+      // Add numbering to heading text if not already present
+      const text = heading.textContent || '';
+      const hasNumbering = /^\d+(\.\d+)*\.?\s/.test(text);
+      
+      if (!hasNumbering && numbering) {
+        heading.textContent = numbering + '. ' + text;
+      }
+    });
+    
+    this.onContentChange();
+  }
+
+  /**
+   * Remove numbering từ headings
+   */
+  removeNumbering() {
+    if (!this.contentEditor) return;
+    
+    const headings = this.contentEditor.nativeElement.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    
+    headings.forEach((heading: HTMLElement) => {
+      const text = heading.textContent || '';
+      // Remove numbering pattern like "1.2.3. " or "1. "
+      const cleanText = text.replace(/^\d+(\.\d+)*\.?\s/, '');
+      heading.textContent = cleanText;
+    });
+    
+    this.onContentChange();
+  }
+
+  /**
+   * Apply Word template
+   */
+  applyWordTemplate() {
+    if (!this.contentEditor) return;
+    
+    const template = `
+      <h1>Giới thiệu</h1>
+      <p>Đây là đoạn văn mở đầu cho phần giới thiệu. Nội dung được định dạng theo chuẩn Microsoft Word với font Calibri và spacing chuẩn.</p>
+      
+      <h2>Mục tiêu</h2>
+      <p>Mô tả mục tiêu của tài liệu hoặc dự án.</p>
+      
+      <h2>Phạm vi</h2>
+      <p>Xác định phạm vi áp dụng của tài liệu.</p>
+      
+      <h1>Nội dung chính</h1>
+      <p>Phần nội dung chính của tài liệu.</p>
+      
+      <h2>Phân tích</h2>
+      <p>Nội dung phân tích chi tiết.</p>
+      
+      <h3>Phân tích kỹ thuật</h3>
+      <p>Chi tiết về các khía cạnh kỹ thuật.</p>
+      
+      <h3>Phân tích nghiệp vụ</h3>
+      <p>Chi tiết về các khía cạnh nghiệp vụ.</p>
+      
+      <h2>Đề xuất giải pháp</h2>
+      <p>Các đề xuất và khuyến nghị.</p>
+      
+      <h1>Kết luận</h1>
+      <p>Tóm tắt và kết luận của tài liệu.</p>
+    `;
+    
+    this.contentEditor.nativeElement.innerHTML = template;
+    this.wordStyleEnabled = true;
+    this.applyDocumentStyle();
+    this.onContentChange();
+    
+    // Tự động hiển thị mục lục sau khi áp dụng template
+    setTimeout(() => {
+      this.showTableOfContents = true;
+      this.tableOfContents = this.generateTableOfContents();
+    }, 100);
   }
 }

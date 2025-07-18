@@ -11,9 +11,7 @@
   </div>
 
   <div class="content-wrapper">
-    <!-- Layout 3 cột: Robot trái - Main content giữa - Activity phải -->
     <div class="three-column-layout">
-      <!-- Robot bên trái -->
       <div class="left-column">
         <div class="robot-container">
           <img src="assets/img/chatai1.png" alt="AI Robot Vietnam" class="hero-robot-image">
@@ -37,29 +35,21 @@
         </div>
       </div>
 
-      <!-- Main content ở giữa -->
       <div class="center-column">
         <div class="main-content">
-          <h1 class="main-title">
-          INTERNET AN TOÀN
-          <br>
-          CHO NGƯỜI VIỆT
-        </h1>
-          <p class="subtitle">Phát hiện lừa đảo qua số điện thoại, tài khoản ngân hàng và website độc hại</p>
+          <h1 class="main-title">Săn Người Xấu, Diệt Kẻ Gian</h1>
+          <!-- <p class="secondary-title"></p> -->
+          <p class="subtitle">Bảo vệ bạn khỏi số điện thoại, tài khoản ngân hàng và website độc hại.</p>
 
           <div class="search-box-container" [class.loading]="isLoading">
-            <!-- Robot chạy quanh search box -->
             <div class="search-robot" (click)="onRobotClick()" title="Chào bạn 👉👈">
-              <!-- Mắt robot -->
               <div class="robot-eyes"></div>
-              <!-- Chân robot -->
               <div class="robot-legs"></div>
             </div>
             <div class="search-robot-trail"></div>
             <div class="search-robot-trail"></div>
             <div class="search-robot-trail"></div>
             
-            <!-- Type Selection Buttons -->
             <div class="search-type-buttons">
               <button class="type-btn" 
                       [class.active]="selectedType === 1"
@@ -86,7 +76,6 @@
               </button>
             </div>
             
-            <!-- Search Input Group -->
             <div class="search-input-group">
               <input class="search-input" type="text" [placeholder]="getSearchPlaceholder()"
                 [(ngModel)]="info" (keydown.enter)="sendMessage()" [disabled]="isLoading">
@@ -95,26 +84,9 @@
               </button>
             </div>
           </div>
-
-          <!-- <div class="status-messages">
-            <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
-            <div class="loading-overlay" *ngIf="isLoading">
-              <div class="loading-content">
-                <div class="loading-spinner-large">
-                  <i class="fas fa-shield-alt fa-spin"></i>
-                </div>
-                <h3>Phân tích an toàn</h3>
-                <p>Đang kiểm tra thông tin và phân tích mức độ rủi ro...</p>
-                <div class="loading-progress">
-                  <div class="progress-bar animated"></div>
-                </div>
-              </div>
-            </div>
-          </div> -->
         </div>
       </div>
 
-      <!-- Activity Log Widget bên phải -->
       <div class="right-column">
         <div class="activity-log-widget">
           <app-activity-widget></app-activity-widget>
@@ -153,19 +125,15 @@
     <button class="clear-result-button" (click)="searchResult = null; errorMessage = null;">Xóa kết quả</button>
   </div>
 
-  <!-- Top 10 Most Searched Section với Vertical Banners - BẢNG MỚI -->
   <div class="top-searched-with-banners" *ngIf="!isLoading">
-    <!-- Left Banner -->
     <app-vertical-banner position="left"></app-vertical-banner>
     
-    <!-- Main Content -->
     <div class="top-searched-section-new">
       <div class="section-header">
         <h2 class="section-title">🔍 TOP 10 ĐỐI TƯỢNG BỊ TRA CỨU NHIỀU NHẤT</h2>
         <p class="section-subtitle">Những đối tượng được cộng đồng kiểm tra thường xuyên nhất</p>
       </div>
 
-      <!-- Tab Navigation -->
       <div class="tab-navigation">
         <button class="tab-button" [class.active]="activeTab === 'phone'" (click)="setActiveTab('phone')">
           <i class="fas fa-mobile-alt"></i>
@@ -181,26 +149,21 @@
         </button>
       </div>
 
-      <!-- Content for each tab -->
       <div class="tab-content-container">
         
-        <!-- Phone Numbers Tab -->
         <div class="tab-content" *ngIf="activeTab === 'phone'">
           <h3 class="tab-title"><i class="fas fa-mobile-alt"></i> Top 10 Số điện thoại</h3>
           
-          <!-- Loading state -->
           <div class="loading-state" *ngIf="isLoadingTopData">
             <div class="spinner"></div>
             <p>Đang tải dữ liệu...</p>
           </div>
           
-          <!-- Error state -->
           <div class="error-state" *ngIf="topDataError && !isLoadingTopData">
             <p class="error-message">{{ topDataError }}</p>
             <button class="retry-button" (click)="loadTopScamData()">Đồng bộ lại</button>
           </div>
           
-          <!-- Data content -->
           <div class="ranking-list" *ngIf="!isLoadingTopData && !topDataError">
             <div class="ranking-item" *ngFor="let item of getPhoneNumbers(); let i = index" 
                  [class.danger]="item.status === 'danger'"
@@ -223,30 +186,25 @@
               </div>
             </div>
             
-            <!-- Empty state -->
             <div class="empty-state" *ngIf="getPhoneNumbers().length === 0">
               <p>Không có dữ liệu số điện thoại</p>
             </div>
           </div>
         </div>
 
-        <!-- Bank Accounts Tab -->
         <div class="tab-content" *ngIf="activeTab === 'bank'">
           <h3 class="tab-title"><i class="fas fa-university"></i> Top 10 Tài khoản ngân hàng</h3>
           
-          <!-- Loading state -->
           <div class="loading-state" *ngIf="isLoadingTopData">
             <div class="spinner"></div>
             <p>Đang tải dữ liệu...</p>
           </div>
           
-          <!-- Error state -->
           <div class="error-state" *ngIf="topDataError && !isLoadingTopData">
             <p class="error-message">{{ topDataError }}</p>
             <button class="retry-button" (click)="loadTopScamData()">Đồng bộ lại</button>
           </div>
           
-          <!-- Data content -->
           <div class="ranking-list" *ngIf="!isLoadingTopData && !topDataError">
             <div class="ranking-item" *ngFor="let item of getBankAccounts(); let i = index" 
                  [class.danger]="item.status === 'danger'"
@@ -269,30 +227,25 @@
               </div>
             </div>
             
-            <!-- Empty state -->
             <div class="empty-state" *ngIf="getBankAccounts().length === 0">
               <p>Không có dữ liệu tài khoản ngân hàng</p>
             </div>
           </div>
         </div>
 
-        <!-- URLs Tab -->
         <div class="tab-content" *ngIf="activeTab === 'url'">
           <h3 class="tab-title"><i class="fas fa-globe"></i> Top 10 Website</h3>
           
-          <!-- Loading state -->
           <div class="loading-state" *ngIf="isLoadingTopData">
             <div class="spinner"></div>
             <p>Đang tải dữ liệu...</p>
           </div>
           
-          <!-- Error state -->
           <div class="error-state" *ngIf="topDataError && !isLoadingTopData">
             <p class="error-message">{{ topDataError }}</p>
             <button class="retry-button" (click)="loadTopScamData()">Đồng bộ lại</button>
           </div>
           
-          <!-- Data content -->
           <div class="ranking-list" *ngIf="!isLoadingTopData && !topDataError">
             <div class="ranking-item" *ngFor="let item of getWebsites(); let i = index" 
                  [class.danger]="item.status === 'danger'"
@@ -315,7 +268,6 @@
               </div>
             </div>
             
-            <!-- Empty state -->
             <div class="empty-state" *ngIf="getWebsites().length === 0">
               <p>Không có dữ liệu website</p>
             </div>
@@ -328,7 +280,6 @@
       </div>
     </div>
 
-    <!-- Right Banner -->
     <app-vertical-banner position="right"></app-vertical-banner>
   </div>
 </div>
@@ -391,7 +342,6 @@
   <div class="container">
     <div class="about-us-content">
       <div class="text-column">
-        <!-- <p class="section-label">VỀ CHÚNG TÔI</p> -->
         <h2 class="section-main-title">INTERNET AN TOÀN<br> CHO NGƯỜI VIỆT</h2>
         <p class="section-description">
           Tại AI6, chúng tôi tự hào là giải pháp hàng đầu, tiên phong trong sứ mệnh bảo vệ cộng đồng trực tuyến tại Việt Nam. Bằng việc ứng dụng công nghệ AI vượt trội cùng kho dữ liệu được cập nhật không ngừng, chúng tôi mang đến sự an toàn toàn diện, giúp người dùng an tâm khám phá không gian mạng.
@@ -414,13 +364,10 @@
             </radialGradient>
           </defs>
           
-          <!-- Background -->
           <rect width="500" height="400" fill="url(#aboutBg)" rx="20"/>
           
-          <!-- Internet Globe -->
           <circle cx="250" cy="180" r="80" fill="url(#internetGrad)" opacity="0.8"/>
           
-          <!-- Network Lines -->
           <g stroke="#FF6B35" stroke-width="2" opacity="0.6">
             <path d="M170 180 Q180 160 190 180 Q200 200 210 180 Q220 160 230 180">
               <animate attributeName="d" values="M170 180 Q180 160 190 180 Q200 200 210 180 Q220 160 230 180;M170 180 Q180 200 190 180 Q200 160 210 180 Q220 200 230 180;M170 180 Q180 160 190 180 Q200 200 210 180 Q220 160 230 180" dur="4s" repeatCount="indefinite"/>
@@ -436,7 +383,6 @@
             </circle>
           </g>
           
-          <!-- Security Shields -->
           <g>
             <path d="M180 120 L190 130 L190 160 Q190 170 180 175 Q170 170 170 160 L170 130 Z" fill="#FF5722" opacity="0.8"/>
             <path d="M175 140 L178 143 L185 136" stroke="white" stroke-width="2" fill="none"/>
@@ -447,11 +393,10 @@
             <path d="M180 240 L190 250 L190 280 Q190 290 180 295 Q170 290 170 280 L170 250 Z" fill="#FF5722" opacity="0.8"/>
             <path d="M175 260 L178 263 L185 256" stroke="white" stroke-width="2" fill="none"/>
             
-            <path d="M320 240 L330 250 L330 280 Q330 290 320 295 Q310 290 310 280 L310 250 Z" fill="#FF5722" opacity="0.8"/>
+            <path d="M320 240 L330 250 L330 280 Q320 290 320 295 Q310 290 310 280 L310 250 Z" fill="#FF5722" opacity="0.8"/>
             <path d="M315 260 L318 263 L325 256" stroke="white" stroke-width="2" fill="none"/>
           </g>
           
-          <!-- Vietnam Elements -->
           <rect x="220" y="50" width="60" height="36" fill="#D32F2F" rx="4"/>
           <path d="M250 58 L255 68 L265 68 L258 74 L260 84 L250 79 L240 84 L242 74 L235 68 L245 68 Z" fill="#FFD700"/>
           

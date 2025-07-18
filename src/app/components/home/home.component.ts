@@ -1,20 +1,17 @@
-// src/app/home/home.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CheckScamService } from '../../services/check-scam.service';
 import { CheckScamRequestDTO } from '../../dtos/check-scam-request.dto';
-import { Router, RouterModule } from '@angular/router'; // Đảm bảo Router đã import
-import { HeaderComponent } from '../../components/header/header.component'; // Cập nhật đường dẫn theo cấu trúc file của bạn
-import { FooterComponent } from '../../components/footer/footer.component'; // Cập nhật đường dẫn theo cấu trúc file của bạn
-import { ChatBoxComponent } from '../../components/chat-box/chat-box.component'; // Cập nhật đường dẫn theo cấu trúc file của bạn
-// import { LoadingComponent } from './loading.component';
-// import { SkeletonLoadingComponent } from './skeleton-loading.component';
+import { Router, RouterModule } from '@angular/router'; 
+import { HeaderComponent } from '../../components/header/header.component'; 
+import { FooterComponent } from '../../components/footer/footer.component'; 
+import { ChatBoxComponent } from '../../components/chat-box/chat-box.component'; 
 import { TopScamService, TopScamItem } from '../../services/top-scam.service';
 import { VerticalBannerComponent } from './vertical-banner/vertical-banner.component';
 import { ActivityWidgetComponent } from '../activity-widget/activity-widget.component';
+import { Title, Meta } from '@angular/platform-browser'; // Import Title và Meta service
 
-// Interface cho chi tiết đối tượng
 interface ScamDetail {
   id: number;
   info: string;
@@ -28,7 +25,6 @@ interface ScamDetail {
   type: 'phone' | 'bank' | 'url';
 }
 
-// CẬP NHẬT LẠI INTERFACE NÀY ĐỂ KHỚP CHÍNH XÁC VỚI JSON TỪ BACKEND CỦA BẠN (như ảnh network)
 interface SearchApiResponse {
   info: string;
   type: number;
@@ -38,12 +34,9 @@ interface SearchApiResponse {
   dateReport: string | null;
   verifiedCount: number;
   lastReportAt: string;
-  evidenceURLs: string[]; // <-- Chú ý chữ hoa 'URLs'
-  analysis: string; // Đây là trường 'analysis' từ backend
-  // Bỏ các trường `code`, `message`, `data` vì chúng không có ở cấp root của response API của bạn
-  // code?: number;
-  // message?: string;
-  // data?: any;
+  evidenceURLs: string[]; 
+  analysis: string; 
+
 }
 
 interface Message {
@@ -64,8 +57,7 @@ interface Message {
     ChatBoxComponent,
     VerticalBannerComponent,
     ActivityWidgetComponent
-    // LoadingComponent,
-    // SkeletonLoadingComponent
+
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
@@ -76,26 +68,22 @@ export class HomeComponent implements OnInit {
   selectedType: number = 1;
   currentSearchIcon: string = 'fas fa-mobile-alt';
   
-  // searchResult: SearchApiResponse | null = null; // Dòng này phải được comment hoặc xóa
   isLoading: boolean = false;
   errorMessage: string | null = null;
 
   messages: Message[] = [];
   showChatbox: boolean = false;
 
-  // Dữ liệu từ backend
   phoneNumbers: TopScamItem[] = [];
   bankAccounts: TopScamItem[] = [];
   websites: TopScamItem[] = [];
   isLoadingTopData: boolean = false;
   topDataError: string | null = null;
 
-  // Modal chi tiết
   showDetailModal: boolean = false;
   selectedScamDetail: ScamDetail | null = null;
   isLoadingDetail: boolean = false;
 
-  // Data mẫu cho chi tiết
   mockScamDetails: { [key: string]: ScamDetail } = {
     '0346304549': {
       id: 1,
@@ -162,20 +150,36 @@ export class HomeComponent implements OnInit {
     }
   };
 
-  // Tab management
   activeTab: string = 'phone';
 
 searchResult: any;
 
   constructor(
     private CheckScamService: CheckScamService,
-    private router: Router, // <-- Đảm bảo Router được inject
-    private topScamService: TopScamService
+    private router: Router, 
+    private topScamService: TopScamService,
+    private titleService: Title, // Inject Title service
+    private metaService: Meta // Inject Meta service
   ) { }
 
   ngOnInit(): void {
     this.updateSearchIcon();
     this.loadTopScamData();
+    this.setSeoTags(); // Gọi phương thức đặt SEO tags
+  }
+
+  // Phương thức mới để đặt Title và Meta Description
+  private setSeoTags(): void {
+    this.titleService.setTitle('AI6 - Săn Người Xấu, Diệt Kẻ Gian | Phát Hiện Lừa Đảo AI');
+    this.metaService.addTags([
+      { name: 'description', content: 'AI6 - Săn Người Xấu, Diệt Kẻ Gian sử dụng AI phân tích lừa đảo qua số điện thoại, tài khoản, URL. Duyệt web an toàn, giao dịch minh bạch dữ liệu được lấy từ nguồn uy tín như Bộ Công An và các báo cáo có bằng chứng từ cộng đồng.' },
+      { name: 'keywords', content: 'AI6, săn người xấu, diệt kẻ gian, phát hiện lừa đảo, lừa đảo AI, số điện thoại lừa đảo, tài khoản ngân hàng lừa đảo, website lừa đảo, Bộ Công An, báo cáo lừa đảo, an toàn trực tuyến' },
+      { property: 'og:title', content: 'AI6 - Săn Người Xấu, Diệt Kẻ Gian | Phát Hiện Lừa Đảo AI' },
+      { property: 'og:description', content: 'AI6 - Săn Người Xấu, Diệt Kẻ Gian sử dụng AI phân tích lừa đảo qua số điện thoại, tài khoản, URL. Duyệt web an toàn, giao dịch minh bạch dữ liệu được lấy từ nguồn uy tín như Bộ Công An và các báo cáo có bằng chứng từ cộng đồng.' },
+      { property: 'og:url', content: 'https://your-domain.com/' }, // Thay thế bằng URL thực tế của trang Home
+      { property: 'og:type', content: 'website' },
+      // Thêm các meta tag khác nếu cần, ví dụ: og:image, twitter:card, etc.
+    ]);
   }
 
   selectSearchType(type: number): void {
@@ -224,7 +228,6 @@ searchResult: any;
     this.errorMessage = null;
     this.isLoading = true;
 
-    // Các validate đầu vào (giữ nguyên)
     if (this.selectedType === 1 && !this.isPhoneNumber(value)) {
       this.errorMessage = 'Số điện thoại phải bắt đầu bằng 0 và gồm 10 chữ số.';
       this.isLoading = false;
@@ -269,7 +272,6 @@ searchResult: any;
     this.info = '';
   }
 
-  // ... (giữ nguyên các hàm validate và robot interaction)
   private isPhoneNumber(value: string): boolean {
     return /^0\d{9}$/.test(value.trim());
   }
@@ -455,7 +457,6 @@ searchResult: any;
     this.isLoadingTopData = false;
   }
 
-  // Methods cho template
   getPhoneNumbers(): TopScamItem[] {
     return this.phoneNumbers;
   }
@@ -468,15 +469,12 @@ searchResult: any;
     return this.websites;
   }
 
-  // Methods cho chi tiết - Navigate to detail page with correct type
   onItemClick(item: TopScamItem): void {
-    // Xác định type từ TopScamItem
-    let type = 1; // Default to phone
+    let type = 1; 
     if (item.type === 'phone') type = 1;
     else if (item.type === 'bank') type = 2;
     else if (item.type === 'url') type = 3;
     
-    // Chuyển hướng với query parameter type
     this.router.navigate(['/subject-detail', item.info], {
       queryParams: { type: type }
     });

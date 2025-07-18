@@ -1,12 +1,9 @@
-/* src/app/components/chatbot/chatbot.component.scss */
-
 html, body {
   margin: 0;
   padding: 0;
   height: 100%;
 }
 
-/* ========== KEYFRAMES ANIMATIONS ========== */
 
 /* Title slide in animation */
 @keyframes titleSlideIn {
@@ -142,14 +139,217 @@ html, body {
   }
 }
 
-/* Loading animation for search button */
-@keyframes buttonPulse {
+/* ========== SIMPLE LOADING ANIMATIONS ========== */
+
+/* Loading Overlay theo mẫu analyze */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.98); /* Tăng độ mờ */
+  backdrop-filter: blur(15px); /* Tăng blur */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999; /* Tăng z-index lên cực cao */
+  border-radius: 0;
+}
+
+.loading-content {
+  text-align: center;
+  max-width: 400px;
+  padding: 40px;
+}
+
+.loading-spinner-large {
+  font-size: 4rem;
+  color: #ff6b35;
+  margin-bottom: 30px;
+  animation: spinPulse 2s ease-in-out infinite;
+}
+
+.loading-content h3 {
+  color: #2c3e50;
+  margin: 0 0 15px 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.loading-content p {
+  color: #6c757d;
+  margin: 0 0 30px 0;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.loading-progress {
+  width: 100%;
+  height: 6px;
+  background-color: #e9ecef;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #ff6b35, #ff8a65, #ff6b35);
+  border-radius: 10px;
+  position: relative;
+  
+  &.animated {
+    animation: progressSlide 2s ease-in-out infinite;
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: shimmer 1.5s infinite;
+  }
+}
+
+@keyframes spinPulse {
   0%, 100% {
-    transform: scale(1);
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    transform: rotate(90deg) scale(1.1);
   }
   50% {
-    transform: scale(1.05);
+    transform: rotate(180deg) scale(1);
   }
+  75% {
+    transform: rotate(270deg) scale(1.1);
+  }
+}
+
+@keyframes progressSlide {
+  0% {
+    width: 0%;
+    margin-left: 0%;
+  }
+  50% {
+    width: 70%;
+    margin-left: 15%;
+  }
+  100% {
+    width: 0%;
+    margin-left: 100%;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.float-icon {
+  position: absolute;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 15px;
+  box-shadow: 
+    0 6px 15px rgba(0, 0, 0, 0.15),
+    0 2px 8px rgba(0, 0, 0, 0.1),
+    inset 0 1px 3px rgba(255, 255, 255, 0.3);
+  position: relative;
+  z-index: 1;
+  
+  /* Glowing border effect */
+  &::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.3), transparent, rgba(255, 255, 255, 0.3));
+    z-index: -1;
+    animation: iconBorderGlow 2.5s ease-in-out infinite;
+  }
+  
+  i {
+    filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.3));
+    position: relative;
+    z-index: 2;
+  }
+  
+  &.phone {
+    top: 10px;
+    left: 20px;
+    background: linear-gradient(135deg, #4CAF50, #66BB6A);
+    animation: floatUpDown 2s ease-in-out infinite;
+  }
+  
+  &.bank {
+    top: 60px;
+    left: 80px;
+    background: linear-gradient(135deg, #2196F3, #42A5F5);
+    animation: floatUpDown 2s ease-in-out infinite 0.4s;
+  }
+  
+  &.website {
+    top: 20px;
+    right: 30px;
+    background: linear-gradient(135deg, #FF9800, #FFB74D);
+    animation: floatUpDown 2s ease-in-out infinite 0.8s;
+  }
+  
+  &.shield {
+    bottom: 20px;
+    left: 40px;
+    background: linear-gradient(135deg, #F44336, #EF5350);
+    animation: floatUpDown 2s ease-in-out infinite 1.2s;
+  }
+  
+  &.search {
+    bottom: 10px;
+    right: 20px;
+    background: linear-gradient(135deg, #9C27B0, #BA68C8);
+    animation: floatUpDown 2s ease-in-out infinite 1.6s;
+  }
+}
+
+/* Status Messages Container */
+.status-messages {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin: 20px 0;
+}
+
+.error-message {
+  color: #ff4d4f;
+  font-weight: 500;
+  background-color: rgba(255, 77, 79, 0.1);
+  border-radius: 8px;
+  padding: 12px 20px;
+  border: 1px solid rgba(255, 77, 79, 0.3);
+  margin: 10px auto;
+  text-align: center;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 2px 8px rgba(255, 77, 79, 0.1);
 }
 
 body {
@@ -413,36 +613,6 @@ body {
   }
 }
 
-/* Style cho activity widget container */
-.activity-log-widget {
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-  border-radius: 20px;
-  // padding: 20px;
-  box-shadow: 
-    0 10px 30px rgba(0, 0, 0, 0.1),
-    0 1px 8px rgba(0, 0, 0, 0.05),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-  transition: all 0.3s ease;
-  height: 100%;
-  min-height: 400px;
-  
-  &:hover {
-    box-shadow: 
-      0 15px 40px rgba(0, 0, 0, 0.12),
-      0 2px 12px rgba(0, 0, 0, 0.08),
-      inset 0 1px 0 rgba(255, 255, 255, 0.9);
-    transform: translateY(-2px);
-  }
-  
-  @media (max-width: 768px) {
-    padding: 15px;
-    border-radius: 15px;
-    min-height: 300px;
-  }
-}
-
 /* Robot container updates cho layout mới */
 .hero-left .robot-container {
   position: relative;
@@ -522,7 +692,89 @@ body {
   }
 }
 
-/* Activity widget overrides để fit với design */
+.activity-log-widget {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 20px;
+  // padding: 20px; /* đã comment */
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.1),
+    0 1px 8px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  height: 100%;
+  min-height: 400px;
+
+  &:hover {
+    box-shadow:
+      0 15px 40px rgba(0, 0, 0, 0.12),
+      0 2px 12px rgba(0, 0, 0, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    padding: 15px;
+    border-radius: 15px;
+    min-height: 300px;
+    margin-top: 130px;
+  }
+}
+
+.activity-log-widget {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 20px;
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.1),
+    0 1px 8px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  height: 100%;
+  min-height: 400px; /* Giữ nguyên min-height mặc định cho desktop */
+
+  &:hover {
+    box-shadow:
+      0 15px 40px rgba(0, 0, 0, 0.12),
+      0 2px 12px rgba(0, 0, 0, 0.08),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    transform: translateY(-2px);
+  }
+
+  /* Áp dụng cho các màn hình nhỏ hơn hoặc bằng 992px (bao gồm cả tablet ngang và điện thoại) */
+  @media (max-width: 992px) {
+    min-height: 350px; /* Có thể điều chỉnh min-height cho tablet */
+    padding: 15px; 
+    border-radius: 15px;    
+    margin-top: 130px;
+
+  }
+
+  @media (max-width: 768px) {
+    margin-top: 130px; 
+    min-height: 500px; 
+    padding: 10px; 
+    border-radius: 10px;
+  }
+
+  @media (min-width: 769px) and (max-width: 1200px) {
+    margin-top: 150px; 
+    min-height: 500px; 
+    padding: 10px; 
+    border-radius: 10px;
+  }
+
+  @media (min-width: 1200px) and (max-width: 1400px) {
+    margin-top: 190px; 
+    min-height: 500px; 
+    padding: 10px; 
+    border-radius: 10px;
+  }
+
+}
+
 .activity-log-widget ::ng-deep .activity-widget {
   background: transparent;
   box-shadow: none;
@@ -543,12 +795,6 @@ body {
 
 .activity-log-widget ::ng-deep .activity-item {
   margin: 10px;
-  // padding: 12px;
-  // margin-bottom: 10px;
-  // border-radius: 10px;
-  // background: rgba(255, 255, 255, 0.7);
-  // border: 1px solid rgba(0, 0, 0, 0.05);
-  // transition: all 0.2s ease;
 }
 
 .activity-log-widget ::ng-deep .activity-item:hover {
@@ -557,8 +803,6 @@ body {
   border-color: rgba(255, 107, 53, 0.2);
 }
 
-/* Search box and other existing styles remain the same */
-/* Search box container - New design theo hình - tăng chiều rộng */
 .search-box-container {
   display: flex;
   flex-direction: column;
@@ -569,15 +813,14 @@ body {
     0 20px 40px rgba(255, 152, 95, 0.3),
     0 8px 16px rgba(255, 152, 95, 0.2),
     inset 0 -2px 8px rgba(255, 152, 95, 0.2);
-  max-width: none; /* Bỏ giới hạn max-width */
-  width: 100%; /* Sử dụng toàn bộ chiều rộng */
+  max-width: none; 
+  width: 100%; 
   margin: 0 auto;
   position: relative;
   overflow: visible;
   gap: 15px;
   transition: all 0.3s ease;
   
-  /* Modern glassmorphism effect */
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.3);
   
@@ -856,19 +1099,28 @@ body {
 
 .loading-spinner {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 10px;
-  color: #F4A261;
+  justify-content: center;
+  gap: 15px;
+  color: #FF6B35;
   font-weight: 500;
   animation: fadeIn 0.3s ease-out;
+  padding: 20px;
+  text-align: center;
 
   .spinner {
-    border: 4px solid rgba(244, 162, 97, 0.3);
-    border-top: 4px solid #F4A261;
+    border: 4px solid rgba(255, 107, 53, 0.2);
+    border-top: 4px solid #FF6B35;
     border-radius: 50%;
-    width: 20px;
-    height: 20px;
+    width: 40px;
+    height: 40px;
     animation: spin 1s linear infinite;
+  }
+  
+  span {
+    font-size: 14px;
+    color: #FF6B35;
   }
 }
 
@@ -1221,6 +1473,59 @@ body {
   max-width: 600px;
   text-align: left;
 
+  .section-main-title {
+    font-family: 'Be Vietnam Pro', sans-serif; /* Một font hiện đại, rõ ràng */
+    font-size: 48px; /* Tăng kích thước để nổi bật hơn */
+    font-weight: 800; /* Rất đậm để tạo điểm nhấn mạnh mẽ */
+    color: #333; /* Màu chữ đậm hơn để tương phản tốt */
+    line-height: 1.15; /* Giảm khoảng cách dòng để chữ nhìn gọn hơn */
+    letter-spacing: -0.02em; /* Giảm nhẹ khoảng cách ký tự để chữ gần nhau hơn, tạo sự hiện đại */
+    margin-bottom: 20px; /* Thêm khoảng cách dưới tiêu đề */
+
+    @media (max-width: 768px) {
+      font-size: 36px; /* Điều chỉnh kích thước font cho mobile */
+      margin-bottom: 15px;
+    }
+
+    @media (max-width: 480px) {
+      font-size: 30px; /* Điều chỉnh kích thước font cho các màn hình nhỏ hơn nữa */
+    }
+  }
+
+  .section-description {
+    font-family: 'Inter', sans-serif; /* Một font thân thiện, dễ đọc cho đoạn văn */
+    font-size: 18px; /* Tăng kích thước font để dễ đọc hơn */
+    color: #666; /* Màu xám đậm nhẹ nhàng hơn cho đoạn văn */
+    line-height: 1.6; /* Điều chỉnh khoảng cách dòng để đoạn văn thoáng và dễ đọc */
+    margin-bottom: 30px; /* Thêm khoảng cách dưới đoạn mô tả */
+
+    @media (max-width: 768px) {
+      font-size: 16px; /* Điều chỉnh kích thước font cho mobile */
+      margin-bottom: 25px;
+    }
+  }
+
+  .btn-about-us {
+    font-family: 'Be Vietnam Pro', sans-serif; /* Sử dụng cùng font với tiêu đề để đồng bộ */
+    font-weight: 600; /* Đậm vừa phải */
+    font-size: 16px;
+    padding: 12px 25px;
+    border-radius: 30px;
+    background: linear-gradient(135deg, #FF6B35, #FF5722);
+    color: #fff;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+    }
+  }
+
   @media (max-width: 992px) {
     text-align: center;
     padding: 0 20px;
@@ -1469,7 +1774,7 @@ app-footer {
 
 .left-column .hero-robot-image {
   width: 100%;
-  max-width: 300px; /* Sử dụng toàn bộ chiều rộng column 300px */
+  max-width: 300px; 
   height: auto;
   object-fit: contain;
   filter: drop-shadow(0 10px 30px rgba(255, 107, 53, 0.3));
@@ -1530,8 +1835,8 @@ app-footer {
   pointer-events: none;
   
   @media (max-width: 1200px) {
-    width: 200px;
-    height: 200px;
+    width: 300px;
+    height: 300px;
   }
   
   @media (max-width: 768px) {
@@ -1571,7 +1876,7 @@ app-footer {
   @media (max-width: 768px) {
     padding: 15px;
     border-radius: 15px;
-    height: 320px;
+    height: 500px;
     max-width: 100%;
   }
 }

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Title } from '@angular/platform-browser'; // Import Title service
 import { HeaderComponent } from "../header/header.component";
 import { FooterComponent } from "../footer/footer.component";
 import { ChatBoxComponent } from "../chat-box/chat-box.component";
@@ -14,20 +15,20 @@ import { CommonModule } from '@angular/common';
 })
 export class ReportComponent implements OnInit {
   showChatbox = false;
-  constructor(private router: Router) { }
+  constructor(private router: Router, private titleService: Title) { } // Inject Title service
 
   ngOnInit(): void {
+    this.titleService.setTitle('Báo cáo lừa đảo'); // Đặt tiêu đề cho tab trình duyệt
   }
 
   goBack(): void {
-    this.router.navigateByUrl('/'); // Hoặc route cụ thể bạn muốn quay lại
+    this.router.navigateByUrl('/'); 
   }
 
   goToReportCreate(): void {
     this.router.navigate(['/report/create']);
   }
 
-  // Phương thức để điều hướng đến trang khiếu nại báo cáo sai
   goToReportMistake(): void {
     this.router.navigate(['/report/mistake']);
   }

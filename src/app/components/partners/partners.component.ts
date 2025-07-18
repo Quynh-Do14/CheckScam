@@ -2,13 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { Title } from '@angular/platform-browser'; 
 
 import { HeaderComponent } from '../header/header.component'; 
 import { FooterComponent } from '../footer/footer.component'; 
 import { ChatBoxComponent } from '../chat-box/chat-box.component';
 
 interface PartnershipFormData {
-  name: string;
+  fullName: string; 
+  companyName: string; 
   email: string;
   phone: string;
   partnershipType: string;
@@ -29,18 +31,20 @@ interface PartnershipFormData {
   styleUrls: ['./partners.component.scss']
 })
 export class PartnersComponent implements OnInit {
-showChatbox = false;
-  partnershipData: PartnershipFormData = {
-    name: '',
+  showChatbox = false;
+  partnershipForm: PartnershipFormData = { 
+    fullName: '',
+    companyName: '',
     email: '',
     phone: '',
     partnershipType: '',
     message: ''
   };
 
-  constructor(private toastr: ToastrService) { }
+  constructor(private toastr: ToastrService, private titleService: Title) { } 
 
   ngOnInit(): void {
+    this.titleService.setTitle('Đối tác'); // Đặt tiêu đề cho tab trình duyệt
   }
 
   scrollToContact(): void {
@@ -49,13 +53,12 @@ showChatbox = false;
 
   submitPartnershipForm(): void {
     if (this.isFormValid()) {
-
-      console.log('Partnership Proposal Submitted:', this.partnershipData);
-
+      console.log('Partnership Proposal Submitted:', this.partnershipForm);
       this.toastr.success('Đề xuất hợp tác của bạn đã được gửi thành công!', 'Thành công!');
 
-      this.partnershipData = {
-        name: '',
+      this.partnershipForm = {
+        fullName: '',
+        companyName: '',
         email: '',
         phone: '',
         partnershipType: '',
@@ -67,10 +70,12 @@ showChatbox = false;
   }
 
   isFormValid(): boolean {
-    return !!this.partnershipData.name &&
-           !!this.partnershipData.email &&
-           this.isValidEmail(this.partnershipData.email) &&
-           !!this.partnershipData.message;
+    return !!this.partnershipForm.fullName &&
+           !!this.partnershipForm.companyName &&
+           !!this.partnershipForm.email &&
+           this.isValidEmail(this.partnershipForm.email) &&
+           !!this.partnershipForm.partnershipType &&
+           !!this.partnershipForm.message;
   }
 
   private isValidEmail(email: string): boolean {
@@ -78,14 +83,11 @@ showChatbox = false;
     return emailRegex.test(email);
   }
 
-   /* ===== Chat ===== */
   onAiTuVanClicked(): void {
-    debugger
     this.showChatbox = true;
   }
 
   closeChatbox(): void {
-    debugger
     this.showChatbox = false;
   }
 }

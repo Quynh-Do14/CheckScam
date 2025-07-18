@@ -16,7 +16,6 @@
   }
 }
 
-/* STATISTICS CARDS */
 .stats-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -123,7 +122,6 @@
   }
 }
 
-/* LOADING AND ERROR STATES */
 .loading-row, .error-row, .empty-row {
   padding: 40px 25px;
   text-align: center;
@@ -170,7 +168,6 @@
   }
 }
 
-/* PREMIUM ANIMATIONS */
 @keyframes pulse {
   0%, 100% { 
     opacity: 0.6;
@@ -220,7 +217,6 @@
   }
 }
 
-/* ENHANCED RESPONSIVE DESIGN */
 .ranking-container {
   min-height: 100vh;
   background: linear-gradient(135deg, 
@@ -236,14 +232,12 @@
   margin: 0;
   position: relative;
   
-  /* Center content but allow full width background */
   > * {
     max-width: 1400px;
     margin-left: auto;
     margin-right: auto;
   }
   
-  /* Background effects */
   &::before {
     content: '';
     position: absolute;
@@ -272,7 +266,6 @@
     z-index: 0;
   }
   
-  /* Responsive breakpoints */
   @media (max-width: 1920px) {
     padding: 80px 60px 40px 60px;
     
@@ -330,22 +323,44 @@
   margin-bottom: 80px;
   position: relative;
   z-index: 1;
-  
+
   h1 {
-    font-size: 3.5em;
     font-weight: 700;
-    background: linear-gradient(135deg, #f59e0b 0%, #eab308 50%, #f59e0b 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin: 0;
-    letter-spacing: -0.02em;
+    margin-top: 35px;
     position: relative;
-    
+    line-height: 1.2; // Đảm bảo khoảng cách dòng hợp lý
+    display: flex; // Sử dụng flexbox để căn chỉnh dễ hơn
+    flex-direction: column; // Xếp chồng các span theo cột
+    align-items: center; // Căn giữa theo chiều ngang
+    margin-bottom: 50px;
+
+    .main-title {
+      font-size: 1.5em; 
+      background: linear-gradient(135deg, #f59e0b 0%, #eab308 50%, #f59e0b 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.02em;
+      display: block; 
+    }
+
+    .slogan {
+      display: block; 
+      font-size: 1em; 
+      font-weight: 600; 
+      color: #ff7b00; 
+      -webkit-text-fill-color: #ff7b00;
+      background: none; 
+      margin-top: 10px;
+      letter-spacing: 0.05em; 
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); 
+
+    }
+
     &::after {
       content: '';
       position: absolute;
-      bottom: -15px;
+      bottom: -15px; 
       left: 50%;
       transform: translateX(-50%);
       width: 80px;
@@ -354,52 +369,51 @@
       border-radius: 2px;
     }
   }
-  
-  /* Header Responsive */
+
+  /* Responsive Adjustments */
   @media (max-width: 1200px) {
     margin-bottom: 60px;
-    
     h1 {
-      font-size: 3em;
+      .main-title { font-size: 1.5em; }
+      .slogan { font-size: 1em; }
     }
   }
-  
+
   @media (max-width: 992px) {
     margin-bottom: 50px;
-    
     h1 {
-      font-size: 2.8em;
+      .main-title { font-size: 1.5em; }
+      .slogan { font-size: 1em; }
     }
   }
-  
+
   @media (max-width: 768px) {
     margin-bottom: 40px;
-    
     h1 {
-      font-size: 2.2em;
+      .main-title { font-size: 1.5em; }
+      .slogan { font-size: 1em; }
     }
   }
-  
+
   @media (max-width: 576px) {
     margin-bottom: 35px;
-    
     h1 {
-      font-size: 2em;
+      .main-title { font-size: 1.5em; }
+      .slogan { font-size: 1em; }
     }
   }
-  
+
   @media (max-width: 480px) {
     margin-bottom: 30px;
-    
     h1 {
-      font-size: 2em;
+      .main-title { font-size: 1.5em; }
+      .slogan { font-size: 1em; }
     }
   }
 }
 
-/* Stats Cards Responsive */
 .stats-cards {
-  margin-bottom: 40px !important; /* Giảm khoảng cách xuống podium */
+  margin-bottom: 40px !important;
   
   @media (max-width: 1200px) {
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -501,7 +515,6 @@
   }
 }
 
-/* TOP 3 PODIUM */
 .podium-section {
   display: flex;
   justify-content: center;
@@ -511,10 +524,9 @@
   flex-wrap: wrap;
   position: relative;
   z-index: 1;
-  padding: 100px 20px 40px 20px !important; /* Giảm padding-top từ 180px xuống 100px */
+  padding: 100px 20px 40px 20px !important; 
   perspective: 1000px;
   
-  /* Background glow effect */
   &::before {
     content: '';
     position: absolute;
@@ -665,7 +677,6 @@
       margin-top: 5px;
     }
     
-    /* First place - CHAMPION */
     &.first {
       order: 2;
       transform: scale(1.2) translateY(-70px) !important;
@@ -955,169 +966,227 @@
     }
     
     .rewards-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 40px;
-      padding: 50px 40px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 40px;
+  padding: 50px 40px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr; // Chuyển sang cột đơn trên màn hình nhỏ
+    padding: 30px 20px;
+    gap: 30px;
+  }
+  
+  .reward-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border-radius: 24px;
+    padding: 40px 30px;
+    text-align: center;
+    border: 1px solid rgba(251, 146, 60, 0.08);
+    box-shadow: 
+      0 12px 32px rgba(0, 0, 0, 0.04),
+      0 4px 16px rgba(251, 146, 60, 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    
+    @media (max-width: 480px) {
+      padding: 30px 20px;
+    }
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      border-radius: 26px;
+      background: linear-gradient(135deg, rgba(251, 146, 60, 0.1), transparent, rgba(234, 179, 8, 0.1));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: -1; // Đảm bảo lớp phủ nằm dưới nội dung
+    }
+    
+    &:hover {
+      transform: translateY(-12px) scale(1.02);
+      box-shadow: 
+        0 24px 48px rgba(0, 0, 0, 0.08),
+        0 8px 24px rgba(251, 146, 60, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 1);
+      border-color: rgba(251, 146, 60, 0.15);
       
-      .reward-card {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(15px);
-        -webkit-backdrop-filter: blur(15px);
-        border-radius: 24px;
-        padding: 40px 30px;
-        text-align: center;
-        border: 1px solid rgba(251, 146, 60, 0.08);
-        box-shadow: 
-          0 12px 32px rgba(0, 0, 0, 0.04),
-          0 4px 16px rgba(251, 146, 60, 0.06),
-          inset 0 1px 0 rgba(255, 255, 255, 0.8);
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
-        overflow: hidden;
+      &::before {
+        opacity: 1;
+      }
+      
+      .reward-icon {
+        transform: scale(1.05); // Phóng to nhẹ khung ảnh
+        box-shadow: 0 12px 32px rgba(251, 146, 60, 0.3); // Giữ hiệu ứng đổ bóng
+      }
+
+      .reward-icon img {
+        transform: rotate(5deg); // Thêm hiệu ứng xoay cho ảnh bên trong khi hover
+      }
+    }
+    
+    .reward-icon {
+      // Kích thước mặc định của khung chứa ảnh
+      width: 130px; 
+      height: 130px; 
+      border-radius: 24px; // Bo tròn vừa phải cho khung ảnh
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 30px;
+      overflow: hidden; // Đảm bảo ảnh không tràn ra ngoài khung bo tròn
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1); // Đổ bóng nhẹ cho khung
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      background: #f0f0f0; // Màu nền nhẹ cho khung icon
+
+      @media (max-width: 768px) {
+        width: 110px; // Giảm kích thước khung trên tablet
+        height: 110px;
+        margin-bottom: 25px;
+      }
+
+      @media (max-width: 480px) {
+        width: 90px; // Giảm kích thước khung trên mobile
+        height: 90px;
+        margin-bottom: 20px;
+      }
+
+      img { // Áp dụng style cho thẻ <img> bên trong .reward-icon
+        width: 100%; // Ảnh chiếm toàn bộ chiều rộng của khung
+        height: 100%; // Ảnh chiếm toàn bộ chiều cao của khung
+        object-fit: contain; // Đảm bảo ảnh hiển thị đầy đủ mà không bị cắt
+        border-radius: 20px; // Bo tròn ảnh bên trong, nhỏ hơn khung một chút
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); // Thêm transition cho ảnh
+        // Hiệu ứng lung linh nhẹ: tăng cường độ sáng và thêm một bóng mờ nhẹ
+        filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6)) drop-shadow(0 0 15px rgba(255, 255, 255, 0.4)); 
+      }
+      
+      &::after { // Lớp phủ tạo hiệu ứng ánh sáng bóng
+        content: '';
+        position: absolute;
+        inset: 0px;
+        border-radius: 24px; // Bo tròn lớp phủ khớp với khung
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent, rgba(255, 255, 255, 0.05));
+        pointer-events: none;
+        opacity: 1;
+      }
+    }
+    
+    .reward-title {
+      font-size: 2em;
+      font-weight: 700;
+      margin-bottom: 30px;
+      color: #1f2937;
+      letter-spacing: -0.01em;
+
+      @media (max-width: 768px) {
+        font-size: 1.8em;
+        margin-bottom: 25px;
+      }
+      @media (max-width: 480px) {
+        font-size: 1.6em;
+        margin-bottom: 20px;
+      }
+    }
+    
+    .reward-prizes {
+      .prize-item {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding: 16px 0;
+        border-bottom: 1px solid rgba(251, 146, 60, 0.04);
+        font-weight: 600;
+        color: #374151;
+        transition: all 0.2s ease;
         
-        &::before {
-          content: '';
-          position: absolute;
-          top: -2px;
-          left: -2px;
-          right: -2px;
-          bottom: -2px;
-          border-radius: 26px;
-          background: linear-gradient(135deg, rgba(251, 146, 60, 0.1), transparent, rgba(234, 179, 8, 0.1));
-          opacity: 0;
-          transition: opacity 0.3s ease;
+        &:last-child {
+          border-bottom: none;
         }
         
         &:hover {
-          transform: translateY(-12px) scale(1.02);
-          box-shadow: 
-            0 24px 48px rgba(0, 0, 0, 0.08),
-            0 8px 24px rgba(251, 146, 60, 0.12),
-            inset 0 1px 0 rgba(255, 255, 255, 1);
-          border-color: rgba(251, 146, 60, 0.15);
-          
-          &::before {
-            opacity: 1;
-          }
-          
-          .reward-icon {
-            transform: scale(1.1) rotate(5deg);
-            box-shadow: 0 12px 32px rgba(251, 146, 60, 0.3);
-          }
+          color: #f59e0b;
+          transform: translateX(4px);
         }
         
-        .reward-icon {
-          width: 96px;
-          height: 96px;
-          border-radius: 24px;
+        i {
+          width: 32px;
+          height: 32px;
           display: flex;
           align-items: center;
           justify-content: center;
-          margin: 0 auto 30px;
-          font-size: 2.8em;
-          color: white;
-          box-shadow: 0 8px 24px rgba(251, 146, 60, 0.2);
-          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-          position: relative;
-          
-          &::after {
-            content: '';
-            position: absolute;
-            inset: 3px;
-            border-radius: 21px;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent);
-            pointer-events: none;
-          }
+          font-size: 1.2em;
+          color: #f59e0b;
+          background: rgba(245, 158, 11, 0.1);
+          border-radius: 8px;
+          transition: all 0.2s ease;
         }
         
-        .reward-title {
-          font-size: 2em;
-          font-weight: 700;
-          margin-bottom: 30px;
-          color: #1f2937;
-          letter-spacing: -0.01em;
-        }
-        
-        .reward-prizes {
-          .prize-item {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            padding: 16px 0;
-            border-bottom: 1px solid rgba(251, 146, 60, 0.04);
-            font-weight: 600;
-            color: #374151;
-            transition: all 0.2s ease;
-            
-            &:last-child {
-              border-bottom: none;
-            }
-            
-            &:hover {
-              color: #f59e0b;
-              transform: translateX(4px);
-            }
-            
-            i {
-              width: 32px;
-              height: 32px;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              font-size: 1.2em;
-              color: #f59e0b;
-              background: rgba(245, 158, 11, 0.1);
-              border-radius: 8px;
-              transition: all 0.2s ease;
-            }
-            
-            span {
-              font-size: 1.1em;
-              flex: 1;
-            }
-          }
-        }
-        
-        // First place styling
-        &.first-place {
-          border-color: rgba(255, 215, 0, 0.2);
-          
-          .reward-icon {
-            background: linear-gradient(135deg, #ffd700, #ffb300);
-            box-shadow: 
-              0 0 0 4px rgba(255, 215, 0, 0.1),
-              0 8px 24px rgba(255, 215, 0, 0.3);
-          }
-          
-          .reward-title {
-            background: linear-gradient(135deg, #f59e0b, #eab308);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-          }
-        }
-        
-        // Second place styling
-        &.second-place {
-          border-color: rgba(229, 231, 235, 0.3);
-          
-          .reward-icon {
-            background: linear-gradient(135deg, #e5e7eb, #d1d5db);
-            color: #374151;
-          }
-        }
-        
-        // Third place styling
-        &.third-place {
-          border-color: rgba(217, 119, 6, 0.2);
-          
-          .reward-icon {
-            background: linear-gradient(135deg, #d97706, #b45309);
+        span {
+          font-size: 1.1em;
+          flex: 1;
+
+          @media (max-width: 480px) {
+            font-size: 1em;
           }
         }
       }
     }
+    
+    // First place styling
+    &.first-place {
+      border-color: rgba(255, 215, 0, 0.2); // Viền nhẹ màu vàng cho card Hạng 1
+      
+      .reward-icon {
+        background: linear-gradient(135deg, #ffd700, #ffb300); // Nền gradient vàng cho khung icon
+        box-shadow: 
+          0 0 0 4px rgba(255, 215, 0, 0.1), // Vòng sáng vàng bên ngoài khung
+          0 8px 24px rgba(255, 215, 0, 0.3); // Đổ bóng vàng cho khung
+      }
+      
+      .reward-title {
+        background: linear-gradient(135deg, #f59e0b, #eab308);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text; // Tiêu đề màu gradient vàng
+      }
+    }
+    
+    // Second place styling
+    &.second-place {
+      border-color: rgba(229, 231, 235, 0.3); // Viền nhẹ màu bạc cho card Hạng 2
+      
+      .reward-icon {
+        background: linear-gradient(135deg, #e5e7eb, #d1d5db); // Nền gradient bạc cho khung icon
+        box-shadow: 
+          0 0 0 4px rgba(229, 231, 235, 0.1), // Vòng sáng bạc bên ngoài khung
+          0 8px 24px rgba(229, 231, 235, 0.3); // Đổ bóng bạc cho khung
+      }
+    }
+    
+    // Third place styling
+    &.third-place {
+      border-color: rgba(217, 119, 6, 0.2); // Viền nhẹ màu đồng cho card Hạng 3
+      
+      .reward-icon {
+        background: linear-gradient(135deg, #d97706, #b45309); // Nền gradient đồng cho khung icon
+        box-shadow: 
+          0 0 0 4px rgba(217, 119, 6, 0.1), // Vòng sáng đồng bên ngoài khung
+          0 8px 24px rgba(217, 119, 6, 0.3); // Đổ bóng đồng cho khung
+      }
+    }
+  }
+}
+
   }
   
   /* Rewards Responsive */
@@ -1727,20 +1796,18 @@
   }
 }
 
-/* VISUAL ENHANCEMENTS */
 .ranking-container {
   animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* FORCE PODIUM HEIGHTS - HIGHEST SPECIFICITY */
 .ranking-container .podium-section {
   gap: 50px !important;
   justify-content: space-evenly !important;
   align-items: flex-end !important;
-  display: flex !important; /* Đảm bảo flex layout */
-  width: 100% !important; /* Đảm bảo full width */
-  margin: 0 auto !important; /* Center container */
-  padding-left: 20px !important; /* Padding đều 2 bên */
+  display: flex !important;
+  width: 100% !important; 
+  margin: 0 auto !important; 
+  padding-left: 20px !important; 
   padding-right: 20px !important;
 }
 
@@ -1753,7 +1820,7 @@
   overflow: hidden !important;
   padding: 30px 25px !important;
   z-index: 100 !important;
-  margin: 0 10px !important; /* Giảm margin vì đã có space-evenly */
+  margin: 0 10px !important;
 }
 
 .ranking-container .podium-section .podium-card.second {
@@ -1765,7 +1832,7 @@
   overflow: hidden !important;
   padding: 30px 25px !important;
   z-index: 101 !important;
-  margin: 0 10px !important; /* Giảm margin vì đã có space-evenly */
+  margin: 0 10px !important; 
 }
 
 .ranking-container .podium-section .podium-card.third {
@@ -1777,10 +1844,9 @@
   overflow: hidden !important;
   padding: 25px 20px !important;
   z-index: 50 !important;
-  margin: 0 10px !important; /* Giảm margin vì đã có space-evenly */
+  margin: 0 10px !important; 
 }
 
-/* RESPONSIVE GAP ADJUSTMENT */
 @media (max-width: 1400px) {
   .ranking-container .podium-section {
     gap: 40px !important;
@@ -1826,6 +1892,7 @@
     justify-content: center !important;
     padding-left: 5px !important;
     padding-right: 5px !important;
+    align-items: center !important;
   }
   .ranking-container .podium-section .podium-card.first,
   .ranking-container .podium-section .podium-card.second,
@@ -1838,13 +1905,13 @@
   .ranking-container .podium-section {
     gap: 20px !important;
     justify-content: center !important;
-    flex-direction: column !important; /* Stack thẳng đứng trên mobile nhỏ */
+    flex-direction: column !important; 
     align-items: center !important;
   }
   .ranking-container .podium-section .podium-card.first,
   .ranking-container .podium-section .podium-card.second,
   .ranking-container .podium-section .podium-card.third {
-    margin: 10px 0 !important; /* Margin trên dưới thay vì trái phải */
+    margin: 10px 0 !important; 
     max-width: 280px !important;
     width: 100% !important;
   }

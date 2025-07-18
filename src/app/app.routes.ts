@@ -10,7 +10,7 @@ import { ViewNewsComponent } from './components/news/view-news/view-news.compone
 import { CreateUserComponent } from './components/user/create-user/create-user.component';
 import { DetailNewsComponent } from './components/news/detail-news/detail-news.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { AboutUsComponent } from './components/about-us/about-us.component'; 
+import { AboutUsComponent } from './components/about-us/about-us.component';
 import { ChatBoxComponent } from './components/chat-box/chat-box.component';
 import { ListNewsComponent } from './components/news/list-news/list-news.component';
 import { UpdateNewsComponent } from './components/news/update-news/update-news.component';
@@ -28,6 +28,8 @@ import { MistakeComponent } from './components/report/mistake/mistake.component'
 
 import { AuthGuard } from './guards/auth.guard';
 import { AuthChildGuard } from './guards/auth-child.guard';
+import { PublicGuard } from './guards/public.guard'; 
+
 import { ReportMangementComponent } from './components/report/report-management/report-management.component';
 import { MistakeManagementComponent } from './components/report/mistake-management/mistake-management.component';
 
@@ -39,48 +41,62 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { ReportDetailComponent } from './components/report/report-detail/report-detail.component';
 import { MistakeDetailComponent } from './components/report/mistake-detail/mistake-detail.component';
 import { RegisterComponent } from './components/register/register.component';
-
+import { AccessDeniedComponent } from './components/access-denied/access-denied.component';
+import { EmailVerificationComponent } from './components/emailverification/emailverification.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent, pathMatch: 'full' },
     {
-        path: 'admin', 
+        path: 'admin',
         component: LayoutComponent,
         canActivate: [AuthGuard],
         canActivateChild: [AuthChildGuard],
         data: { roles: ['ADMIN', 'COLLAB'] },
         children: [
-          { path: '', redirectTo: 'dashboard', pathMatch: 'full' }, 
+          { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
           { path: 'dashboard', component: DashboardComponent },
-          { path: 'news', component: NewsComponent }, 
-          { 
-            path: 'users', 
-            component: UserComponent, 
+          {
+            path: 'news',
+            component: NewsComponent,
+          },
+          {
+            path: 'users',
+            component: UserComponent,
             data: { roles: ['ADMIN'] }
-          }, 
-          { 
-            path: 'create-user', 
-            component: CreateUserComponent, 
+          },
+          {
+            path: 'create-user',
+            component: CreateUserComponent,
             data: { roles: ['ADMIN'] }
-          }, 
-          { path: 'create-news', component: CreateNewsComponent }, 
-          { path: 'reports', component: ReportMangementComponent }, 
-          { path: 'detail-news/:id', component: DetailNewsComponent }, 
-          { path: 'update-news/:id', component: UpdateNewsComponent }, 
-          { path: 'report-detail/:id', component: ReportDetailComponent }, 
-          { path: 'mistake-detail/:id', component: MistakeDetailComponent }, 
+          },
+          {
+            path: 'create-news',
+            component: CreateNewsComponent,
+          },
+          {
+            path: 'reports',
+            component: ReportMangementComponent,
+          },
+          { path: 'detail-news/:id', component: DetailNewsComponent },
+          {
+            path: 'update-news/:id',
+            component: UpdateNewsComponent,
+          },
+          { path: 'report-detail/:id', component: ReportDetailComponent },
+          { path: 'mistake-detail/:id', component: MistakeDetailComponent },
           { path: 'mistakes', component: MistakeManagementComponent },
-          { path: 'profile', component: ProfileComponent }, 
+          { path: 'profile', component: ProfileComponent },
         ],
     },
-    { path: 'register', component: RegisterComponent },
-    { path: 'login', component: LoginComponent }, 
-    { path: 'list-news', component: ListNewsComponent }, 
-    { path: 'view-news/:id', component: ViewNewsComponent }, 
-    { path: 'chatbox', component: ChatBoxComponent }, 
-    { path: 'analyze', component: AnalyzeComponent }, 
-    { path: 'ranking', component: RankingComponent }, 
-    { path: 'create-report', component: CreateReportComponent }, 
+    { path: 'register', component: RegisterComponent, canActivate: [PublicGuard] }, 
+    { path: 'login', component: LoginComponent, canActivate: [PublicGuard] },       
+    { path: 'verify-email', component: EmailVerificationComponent, canActivate: [PublicGuard] }, // Đã thêm dòng này
+    { path: 'list-news', component: ListNewsComponent },
+    { path: 'view-news/:id', component: ViewNewsComponent },
+    { path: 'chatbox', component: ChatBoxComponent },
+    { path: 'analyze', component: AnalyzeComponent },
+    { path: 'ranking', component: RankingComponent },
+    { path: 'create-report', component: CreateReportComponent },
     { path: 'about-us', component: AboutUsComponent },
     { path: 'policy/privacy', component: PrivacyComponent },
     { path: 'policy/termsofservice', component: TermsofserviceComponent },
@@ -94,5 +110,6 @@ export const routes: Routes = [
     { path: 'partners', component: PartnersComponent },
     { path: 'transactions', component: TransactionsComponent },
     { path: 'transactions/agent/:id', component: AgentDetailComponent },
-    { path: '**', redirectTo: '' }, 
+    { path: 'access-denied', component: AccessDeniedComponent },
+    { path: '**', redirectTo: '' },
 ];

@@ -1,7 +1,7 @@
 <div class="activity-widget">
   <div class="widget-header">
     <div class="widget-title">
-      <span class="icon">🔄</span>
+      <fa-icon [icon]="['fas', 'sync-alt']" class="icon"></fa-icon>
       <h3>Hoạt động gần đây</h3>
       <div class="connection-status" [class.connected]="isConnected"></div>
     </div>
@@ -14,15 +14,14 @@
     </div>
 
 
-    <!-- Luôn hiển thị danh sách hoạt động -->
     <div *ngIf="recentActivities.length === 0" class="empty-state">
-      <span class="empty-icon">🚀</span>
+      <fa-icon [icon]="['fas', 'rocket']" class="empty-icon"></fa-icon>
       <p>Hệ thống đang chuẩn bị...</p>
     </div>
 
     <div *ngIf="recentActivities.length > 0" class="activity-list">
-      <div *ngFor="let activity of recentActivities" 
-           class="activity-item" 
+      <div *ngFor="let activity of recentActivities"
+           class="activity-item"
            [ngClass]="getRiskClass(activity)"
            (click)="onActivityClick(activity)"
            [style.cursor]="canNavigate(activity) ? 'pointer' : 'default'">
@@ -44,10 +43,10 @@
             {{ activity.targetName }}
           </div>
           <div *ngIf="activity.metadata?.risk_level === 'high'" class="risk-indicator high">
-            ⚠️ Mức độ cao
+            <fa-icon [icon]="['fas', 'exclamation-triangle']"></fa-icon> Mức độ cao
           </div>
           <div *ngIf="activity.metadata?.result === 'scam'" class="risk-indicator scam">
-            🚨 Lừa đảo
+            <fa-icon [icon]="['fas', 'bell']"></fa-icon> Lừa đảo
           </div>
         </div>
       </div>
@@ -57,11 +56,11 @@
   <div class="widget-footer">
     <div class="quick-stats">
       <span class="stat">
-        <span class="stat-icon">🔍</span>
+        <fa-icon [icon]="['fas', 'search']" class="stat-icon"></fa-icon>
         <span class="stat-label">Quét hôm nay</span>
       </span>
       <span class="stat">
-        <span class="stat-icon">📞</span>
+        <fa-icon [icon]="['fas', 'phone']" class="stat-icon"></fa-icon>
         <span class="stat-label">Tra cứu hôm nay</span>
       </span>
     </div>

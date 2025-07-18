@@ -3,18 +3,25 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { ActivityService, Activity } from '../../services/activity.service';
 import { Subscription } from 'rxjs';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { IconName } from '@fortawesome/fontawesome-svg-core'; // Đã thêm import này để sửa lỗi Type 'string' is not assignable to type 'IconName'
+import { JsonpClientBackend } from '@angular/common/http';
 
 @Component({
   selector: 'app-activity-widget',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    FontAwesomeModule
+  ],
   templateUrl: './activity-widget.component.html',
   styleUrls: ['./activity-widget.component.scss']
 })
 export class ActivityWidgetComponent implements OnInit, OnDestroy {
   recentActivities: Activity[] = [];
-  isConnected: boolean = true; 
-  isLoading: boolean = false; 
+  isConnected: boolean = true;
+  isLoading: boolean = false;
 
   private subscriptions: Subscription[] = [];
 
@@ -28,26 +35,8 @@ export class ActivityWidgetComponent implements OnInit, OnDestroy {
     this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 
-
   private initializeWidget() {
-    // COMMENTED: WebSocket connection disabled
-    // this.activityService.connect();
-    
-    // COMMENTED: Connection status subscription disabled
-    // const connectionSub = this.activityService.getConnectionStatus().subscribe(
-    //   connected => {
-    //     this.isConnected = connected;
-    //     if (connected) {
-    //       this.loadRecentActivities();
-    //     }
-    //   }
-    // );
-    // this.subscriptions.push(connectionSub);
-
-    // Set connection to false since WebSocket is disabled
     this.isConnected = false;
-    
-    // Load activities using REST API only
     this.loadRecentActivities();
 
     const activitiesSub = this.activityService.getActivities().subscribe(
@@ -57,21 +46,9 @@ export class ActivityWidgetComponent implements OnInit, OnDestroy {
       }
     );
     this.subscriptions.push(activitiesSub);
-
-    // COMMENTED: Real-time activity subscription disabled
-    // const newActivitySub = this.activityService.getNewActivity().subscribe(
-    //   activity => {
-    //     if (activity) {
-    //       this.recentActivities.unshift(activity);
-    //       this.recentActivities = this.recentActivities.slice(0, 5);
-    //     }
-    //   }
-    // );
-    // this.subscriptions.push(newActivitySub);
   }
 
   private loadRecentActivities() {
-    // Load activities using REST API directly instead of WebSocket
     this.isLoading = true;
     this.activityService.getActivities(5, 0).subscribe(
       activities => {
@@ -88,13 +65,15 @@ export class ActivityWidgetComponent implements OnInit, OnDestroy {
 
   getActionIcon(actionType: string): string {
     const icons: { [key: string]: string } = {
-      POST: '🔍',
-      UPLOAD: '📝',     
-      REPORT: '📤',     
-      JOIN: '👥'
-    };
-    return icons[actionType] || '📌';
-  }
+    POST: '🔍', // Bạn có thể thay thế bằng Font Awesome icon tương ứng nếu muốn
+    UPLOAD: '📝',
+    REPORT: '📤',
+    JsonpClientBackendOIN: '👤'
+  };
+
+return icons[actionType] || '👤';
+
+}
 
   getActionText(actionType: string): string {
     const actions: { [key: string]: string } = {
@@ -111,13 +90,13 @@ export class ActivityWidgetComponent implements OnInit, OnDestroy {
     const activityTime = new Date(timestamp);
     const diff = now.getTime() - activityTime.getTime();
     const minutes = Math.floor(diff / 60000);
-    
+
     if (minutes < 1) return 'vừa xong';
     if (minutes < 60) return `${minutes}p`;
-    
+
     const hours = Math.floor(minutes / 60);
     if (hours < 24) return `${hours}h`;
-    
+
     const days = Math.floor(hours / 24);
     return `${days}d`;
   }
@@ -132,25 +111,36 @@ export class ActivityWidgetComponent implements OnInit, OnDestroy {
     }
     return '';
   }
-  
+
+  // ĐÃ SỬA: Phương thức canNavigate để không cho phép điều hướng với actionType 'REPORT'
   canNavigate(activity: Activity): boolean {
+    // Không thể điều hướng nếu actionType là 'REPORT'
+    if (activity.actionType === 'REPORT' || activity.actionType === 'JOIN') {
+      return false;
+    }
+    // Cho phép điều hướng nếu có newsId hoặc reportId và không phải là 'REPORT'
     const metadata = activity.metadata || {};
     return !!(metadata.newsId || metadata.reportId);
   }
-  
+
   onActivityClick(activity: Activity): void {
+    // Chỉ thực hiện điều hướng nếu canNavigate trả về true
+    if (!this.canNavigate(activity)) {
+      return; // Không làm gì nếu không được phép điều hướng
+    }
+
     const metadata = activity.metadata || {};
-    
+
     if (metadata.newsId) {
       this.router.navigate(['/view-news', metadata.newsId]);
     } else if (metadata.reportId) {
       this.navigateToReport(metadata.reportId);
     }
   }
-  
+
   private navigateToReport(reportId: number): void {
     const isAdmin = localStorage.getItem('userRole') === 'ADMIN';
-    
+
     if (isAdmin) {
       this.router.navigate(['/admin/report-detail', reportId]);
     } else {

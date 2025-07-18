@@ -1,3 +1,4 @@
+// login.component.ts
 import { Component, ViewChild, OnInit, AfterViewInit, NgZone } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
@@ -5,14 +6,22 @@ import { UserService } from '../../services/user.service';
 import { LoginDTO } from '../../dtos/login.dto';
 import { TokenService } from '../../services/token.service';
 import { HttpErrorResponse } from '@angular/common/http';
-import { CommonModule } from '@angular/common'; 
+import { CommonModule } from '@angular/common';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { Title } from '@angular/platform-browser'; // Thêm import Title service
+
 
 declare var google: any;
 
 @Component({
     selector: 'app-login',
     standalone: true,
-    imports: [FormsModule, RouterModule, CommonModule],
+    imports: [
+      FormsModule,
+      RouterModule,
+      CommonModule,
+      FontAwesomeModule
+    ],
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.scss']
 })
@@ -20,6 +29,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
     @ViewChild('loginForm') loginForm!: NgForm;
     username = '';
     password = '';
+    showPassword: boolean = false; 
 
     showNotification: boolean = false;
     notificationMessage: string = '';
@@ -31,10 +41,12 @@ export class LoginComponent implements OnInit, AfterViewInit {
         private route: ActivatedRoute,
         private userService: UserService,
         private tokenService: TokenService,
-        private ngZone: NgZone
+        private ngZone: NgZone,
+        private titleService: Title // Inject Title service
     ) { }
 
     ngOnInit() {
+        this.titleService.setTitle('AI6 - Săn Người Xấu, Diệt Kẻ Gian'); // Đặt tiêu đề cho tab trình duyệt
         this.clearExistingUserData();
     }
 
@@ -120,6 +132,10 @@ export class LoginComponent implements OnInit, AfterViewInit {
                 this.showAppNotification(error?.error?.message || 'Đăng nhập thất bại', 'error');
             }
         });
+    }
+
+    togglePasswordVisibility() {
+        this.showPassword = !this.showPassword;
     }
 
     handleGoogleCredentialResponse(response: any) {

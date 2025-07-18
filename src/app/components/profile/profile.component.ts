@@ -34,6 +34,10 @@ export class ProfileComponent implements OnInit {
   avatarUrl: string = '/assets/img/undraw_profile.svg';
   selectedFile: File | null = null;
   error: string = '';
+  isSuccessMessageVisible: boolean = false;
+  successMessageTitle: string = 'Thành công!';
+  successMessageContent: string = '';
+  successIconClass: string = 'fas fa-check-circle';
   currentUserId: number = 0;
   
   showAddProfileForm: boolean = false;
@@ -285,7 +289,7 @@ export class ProfileComponent implements OnInit {
           });
           
           this.selectedFile = null;
-          alert('Cập nhật thông tin thành công!');
+          this.showSuccessMessage('Cập nhật thành công!', `Thông tin tài khoản "<strong>${this.currentUser.name}</strong>" đã được cập nhật thành công.`);
           this.toggleEdit(); // Tắt chế độ chỉnh sửa và tải lại data
         }
       });
@@ -386,6 +390,18 @@ export class ProfileComponent implements OnInit {
     this.router.navigate(['/admin/dashboard']);
   }
   
+  showSuccessMessage(title: string, content: string): void {
+    this.successMessageTitle = title;
+    this.successMessageContent = content;
+    this.isSuccessMessageVisible = true;
+  }
+
+  closeSuccessMessage(): void {
+    this.isSuccessMessageVisible = false;
+    this.successMessageTitle = 'Thành công!';
+    this.successMessageContent = '';
+  }
+  
   getProfileIcon(nameInfo: string): string {
     const name = nameInfo.toLowerCase();
     if (name.includes('facebook')) return 'fab fa-facebook';
@@ -419,7 +435,7 @@ export class ProfileComponent implements OnInit {
       this.userService.createProfile(this.currentUserId, profileData).subscribe({
         next: (response) => {
           console.log('Profile created on backend:', response);
-          alert('Profile đã được thêm thành công!');
+          this.showSuccessMessage('Thêm thành công!', `Profile "<strong>${this.newProfile.nameInfo}</strong>" đã được thêm thành công.`);
           this.showAddProfileForm = false;
           this.newProfile = { nameInfo: '', info: '' };
           this.loadUserProfile(); // Tải lại dữ liệu để hiển thị profile mới
@@ -444,7 +460,7 @@ export class ProfileComponent implements OnInit {
           this.userService.deleteProfile(removedProfile.id).subscribe({
             next: () => {
               console.log('Profile deleted on backend:', removedProfile.id);
-              alert('Profile đã được xóa thành công!');
+              this.showSuccessMessage('Xóa thành công!', `Profile "<strong>${removedProfile.nameInfo}</strong>" đã được xóa thành công.`);
               this.loadUserProfile(); // Tải lại dữ liệu sau khi xóa
             },
             error: (error) => {

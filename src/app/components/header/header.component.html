@@ -6,37 +6,37 @@
 
     <ul class="nav-links main-nav" [class.menu-open]="isMenuOpen">
       <li><a (click)="onAiTuVanClick(); onNavLinkClick()">AI Tư vấn</a></li>
-      <li><a routerLink="/list-news" (click)="onNavLinkClick()">Tin tức</a></li>
-      <li><a routerLink="/ranking" (click)="onNavLinkClick()">Bảng xếp hạng</a></li>
-      <li><a routerLink="/report" (click)="onNavLinkClick()">Báo cáo</a></li>
-      <li><a routerLink="/transactions" (click)="onNavLinkClick()">Giao dịch</a></li>
-      <li><a routerLink="/partners" (click)="onNavLinkClick()">Đối tác</a></li>
+      <li><a routerLink="/list-news" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" (click)="onNavLinkClick()">Tin tức</a></li>
+      <li><a routerLink="/ranking" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" (click)="onNavLinkClick()">Bảng xếp hạng</a></li>
+      <li><a routerLink="/report" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" (click)="onNavLinkClick()">Báo cáo</a></li>
+      <li><a routerLink="/transactions" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" (click)="onNavLinkClick()">Giao dịch</a></li>
+      <li><a routerLink="/partners" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" (click)="onNavLinkClick()">Đối tác</a></li>
 
       <li *ngIf="isLoggedIn" class="mobile-auth-section">
         <div class="user-profile-mobile">
           <img class="avatar-img-mobile" [src]="userAvatarUrl" (error)="onImageError($event)" alt="User Avatar">
           <span class="user-email-mobile">{{ userEmail }}</span>
-          <!-- <a routerLink="/user/profile" (click)="onProfileClick(); onNavLinkClick()">Xem hồ sơ</a> -->
+          <a *ngIf="isAdminOrCollab" routerLink="/admin" class="admin-link-mobile" (click)="onNavLinkClick()">Trang quản trị</a>
           <a (click)="logout(); onNavLinkClick()">Đăng xuất</a>
         </div>
       </li>
       <li *ngIf="!isLoggedIn" class="mobile-auth-section">
-        <a class="mobile-login-btn" routerLink="/login" (click)="onNavLinkClick()">Đăng nhập</a>
+        <a class="mobile-login-btn" routerLink="/login" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" (click)="onNavLinkClick()">Đăng nhập</a>
       </li>
     </ul>
 
     <ul class="nav-links auth-nav desktop-only-auth">
       <li *ngIf="!isLoggedIn" class="login-button">
-        <a routerLink="/login" (click)="onNavLinkClick()">Đăng nhập</a>
+        <a routerLink="/login" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" (click)="onNavLinkClick()">Đăng nhập</a>
       </li>
       <li *ngIf="isLoggedIn" class="user-profile">
         <div class="user-avatar" (click)="toggleProfileDropdown()">
           <img [src]="userAvatarUrl" alt="User Avatar" class="avatar-img">
-          <span class="user-email desktop-only-email">{{ userEmail }}</span> 
+          <span class="user-email desktop-only-email">{{ userEmail }}</span>
           <i class="bi bi-chevron-down dropdown-arrow" [class.open]="isProfileDropdownOpen"></i>
         </div>
         <div class="profile-dropdown" [class.open]="isProfileDropdownOpen">
-          <!-- <a routerLink="/user/profile" (click)="onProfileClick()">Xem hồ sơ</a> -->
+          <a *ngIf="isAdminOrCollab" routerLink="/admin" (click)="onNavLinkClick()">Trang quản trị</a>
           <a (click)="logout()">Đăng xuất</a>
         </div>
       </li>

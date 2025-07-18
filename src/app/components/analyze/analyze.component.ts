@@ -47,7 +47,8 @@ interface ExternalCheckResponse {
     HeaderComponent,
     FooterComponent,
     RouterModule,
-    FormsModule
+    FormsModule,
+    ChatBoxComponent
 ],
   templateUrl: './analyze.component.html',
   styleUrls: ['./analyze.component.scss']
@@ -1157,7 +1158,7 @@ parseAIRecommendations(text: string): string {
 
   getImageDisplayInfo(imageUrl: string): string {
     if (this.isUrlScreenshot(imageUrl)) {
-      return 'Screenshot Website • Hiển thị full size';
+      return 'Screenshot Website • Hiển thị chỉ đọc';
     } else {
       return 'Bằng chứng hình ảnh • Click để phóng to';
     }
@@ -1200,396 +1201,320 @@ parseAIRecommendations(text: string): string {
   }
 
   onImageClick(imageUrl: string): void {
-    if (this.analysisResult?.type === 3) {
-      return; 
+    if (!imageUrl) return;
+    
+    // Không cho phép click vào ảnh URL screenshot
+    if (this.isUrlScreenshot(imageUrl)) {
+      return; // Thoát không làm gì
+    }
+    
+    // Tạo modal hiển thị ảnh phóng to (chỉ cho ảnh thường)
+    this.createImageModal(imageUrl);
+  }
+
+  createImageModal(imageUrl: string): void {
+    // Xóa modal cũ nếu tồn tại
+    const existingModal = document.querySelector('.image-modal-enhanced');
+    if (existingModal) {
+      existingModal.remove();
     }
 
-    const fullUrl = this.getFullImageUrl(imageUrl);
-
-    const modal = document.createElement('div');
-    modal.className = 'image-modal-enhanced';
-    modal.style.cssText = `
+    // Tạo modal container
+    const modalContainer = document.createElement('div');
+    modalContainer.className = 'image-modal-enhanced';
+    modalContainer.style.cssText = `
       position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
-      background-color: rgba(0, 0, 0, 0.95);
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
+      background: rgba(0, 0, 0, 0.95);
       z-index: 10000;
-      cursor: pointer;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       overflow: auto;
-      padding: 20px;
+      backdrop-filter: blur(5px);
+      cursor: zoom-out;
     `;
 
+    // Tạo container cho ảnh
     const imageContainer = document.createElement('div');
-    const isUrlImage = fullUrl.includes('/api/v1/check-scam');
-
-    imageContainer.style.cssText = `
-      position: relative;
-      width: ${isUrlImage ? '95vw' : '90vw'};
-      max-width: ${isUrlImage ? '1200px' : '800px'};
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      min-height: 100vh;
-      padding: 40px 0;
-    `;
-
-    const loadingSpinner = document.createElement('div');
-    loadingSpinner.innerHTML = `
-      <div style="
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        color: white;
-        font-size: 18px;
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-      ">
-        <i class="fas fa-spinner fa-spin" style="font-size: 2em; margin-bottom: 10px;"></i>
-        <span>Đang tải ảnh full HD...</span>
-      </div>
-    `;
-    imageContainer.appendChild(loadingSpinner);
-
-    const img = document.createElement('img');
-
-    img.style.cssText = `
-      width: ${isUrlImage ? '100%' : 'auto'};
-      max-width: ${isUrlImage ? '1200px' : '90vw'};
-      height: auto;
-      min-height: ${isUrlImage ? 'auto' : '300px'};
-      object-fit: ${isUrlImage ? 'contain' : 'contain'};
-      border-radius: 8px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
-      opacity: 0;
-      transition: opacity 0.5s ease;
-      cursor: ${isUrlImage ? 'grab' : 'zoom-in'};
-      background: white;
-      border: 2px solid rgba(255, 255, 255, 0.1);
-    `;
-
-    const closeButton = document.createElement('div');
-    closeButton.innerHTML = '×';
-    closeButton.style.cssText = `
-      position: fixed;
-      top: 30px;
-      right: 30px;
-      color: white;
-      font-size: 40px;
-      font-weight: bold;
-      cursor: pointer;
-      z-index: 10001;
-      width: 50px;
-      height: 50px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      background-color: rgba(220, 53, 69, 0.9);
-      transition: all 0.3s ease;
-      backdrop-filter: blur(10px);
-      border: 2px solid rgba(255, 255, 255, 0.3);
-    `;
-
-    const downloadButton = document.createElement('a');
-    downloadButton.href = fullUrl;
-    downloadButton.download = `screenshot-${Date.now()}.jpg`;
-    downloadButton.innerHTML = '<i class="fas fa-download"></i>';
-    downloadButton.style.cssText = `
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      color: white;
-      font-size: 18px;
-      cursor: pointer;
-      z-index: 10001;
-      width: 50px;
-      height: 50px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      background-color: rgba(40, 167, 69, 0.9);
-      transition: all 0.3s ease;
-      text-decoration: none;
-      backdrop-filter: blur(10px);
-      border: 2px solid rgba(255, 255, 255, 0.3);
-    `;
-
-    const fullscreenButton = document.createElement('div');
-    if (isUrlImage) {
-      fullscreenButton.innerHTML = '<i class="fas fa-expand"></i>';
-      fullscreenButton.style.cssText = `
-        position: fixed;
-        bottom: 90px;
-        right: 30px;
-        color: white;
-        font-size: 18px;
-        cursor: pointer;
-        z-index: 10001;
-        width: 50px;
-        height: 50px;
+    const isUrl = this.isUrlScreenshot(imageUrl);
+    
+    if (isUrl) {
+      // Style cho URL screenshot (hiển thị Full HD size nhưng responsive)
+      imageContainer.style.cssText = `
+        max-width: min(1920px, 95vw);
+        max-height: min(1080px, 95vh);
+        width: auto;
+        height: auto;
+        overflow: auto;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        position: relative;
+        margin: 20px;
+      `;
+    } else {
+      // Style cho ảnh thường (Full HD max nhưng responsive)
+      imageContainer.style.cssText = `
+        max-width: min(1920px, 90vw);
+        max-height: min(1080px, 90vh);
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 50%;
-        background-color: rgba(255, 193, 7, 0.9);
-        transition: all 0.3s ease;
-        backdrop-filter: blur(10px);
-        border: 2px solid rgba(255, 255, 255, 0.3);
+        position: relative;
       `;
     }
 
-    const infoPanel = document.createElement('div');
-    infoPanel.style.cssText = `
-      position: fixed;
-      bottom: 30px;
-      left: 30px;
-      color: white;
-      background-color: rgba(0, 0, 0, 0.8);
-      padding: 12px 16px;
-      border-radius: 12px;
-      font-size: 13px;
-      max-width: 280px;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    `;
-
-    const infoContent = isUrlImage
-      ? `<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-           <i class="fas fa-globe" style="color: #4CAF50;"></i>
-           <strong>Screenshot Website (Full HD)</strong>
-         </div>
-         <div style="opacity: 0.9; font-size: 12px; line-height: 1.4;">
-           • Cuộn để xem toàn bộ trang<br>
-           • Click kéo để di chuyển<br>
-           • ESC để đóng
-         </div>`
-      : `<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-           <i class="fas fa-image" style="color: #ff6b35;"></i>
-           <strong>Bằng chứng hình ảnh</strong>
-         </div>
-         <div style="opacity: 0.9; font-size: 12px;">Click để zoom, ESC để đóng</div>`;
-
-    infoPanel.innerHTML = infoContent;
-
-    let isDragging = false;
-    let startY = 0;
-    let scrollTop = 0;
-
-    img.onload = () => {
-      loadingSpinner.style.display = 'none';
-      img.style.opacity = '1';
-
-      const imageInfo = document.createElement('div');
-      imageInfo.style.cssText = `
-        position: fixed;
-        top: 30px;
-        left: 30px;
-        color: white;
-        background-color: rgba(0, 0, 0, 0.7);
-        padding: 8px 12px;
+    // Tạo ảnh
+    const img = document.createElement('img');
+    img.src = this.getFullImageUrl(imageUrl);
+    img.alt = 'Ảnh Full HD';
+    
+    if (isUrl) {
+      // Style cho URL screenshot - Full HD nhưng responsive
+      img.style.cssText = `
+        max-width: min(1920px, 95vw);
+        max-height: min(1080px, 95vh);
+        width: auto;
+        height: auto;
+        display: block;
         border-radius: 8px;
-        font-size: 12px;
-        z-index: 10002;
-        backdrop-filter: blur(10px);
+        object-fit: contain;
       `;
-      imageInfo.innerHTML = `
-        <i class="fas fa-info-circle" style="margin-right: 6px; color: #17a2b8;"></i>
-        ${img.naturalWidth} × ${img.naturalHeight}px
-      `;
-      modal.appendChild(imageInfo);
-    };
-
-    img.onerror = () => {
-      loadingSpinner.innerHTML = `
-        <div style="
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          color: #ff6b6b;
-          font-size: 18px;
-          position: fixed;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-        ">
-          <i class="fas fa-exclamation-triangle" style="font-size: 2em; margin-bottom: 10px;"></i>
-          <span>Không thể tải ảnh</span>
-          <small style="margin-top: 10px; opacity: 0.8;">Vui lòng thử lại sau</small>
-        </div>
-      `;
-    };
-
-    img.src = fullUrl;
-
-    if (isUrlImage) {
-      img.style.cursor = 'grab';
-
-      img.addEventListener('mousedown', (e) => {
-        e.preventDefault();
-        isDragging = true;
-        img.style.cursor = 'grabbing';
-        startY = e.pageY - modal.offsetTop;
-        scrollTop = modal.scrollTop;
-      });
-
-      document.addEventListener('mousemove', (e) => {
-        if (!isDragging) return;
-        e.preventDefault();
-        const y = e.pageY - modal.offsetTop;
-        const walk = (y - startY) * 2;
-        modal.scrollTop = scrollTop - walk;
-      });
-
-      document.addEventListener('mouseup', () => {
-        if (isDragging) {
-          isDragging = false;
-          img.style.cursor = 'grab';
-        }
-      });
-
-      img.addEventListener('touchstart', (e) => {
-        const touch = e.touches[0];
-        startY = touch.pageY - modal.offsetTop;
-        scrollTop = modal.scrollTop;
-      });
-
-      img.addEventListener('touchmove', (e) => {
-        const touch = e.touches[0];
-        const y = touch.pageY - modal.offsetTop;
-        const walk = (y - startY) * 2;
-        modal.scrollTop = scrollTop - walk;
-      });
-
-      if (fullscreenButton) {
-        fullscreenButton.addEventListener('click', (e) => {
-          e.stopPropagation();
-          if (!document.fullscreenElement) {
-            modal.requestFullscreen?.() ||
-            (modal as any).webkitRequestFullscreen?.() ||
-            (modal as any).msRequestFullscreen?.();
-            fullscreenButton.innerHTML = '<i class="fas fa-compress"></i>';
-          } else {
-            document.exitFullscreen?.() ||
-            (document as any).webkitExitFullscreen?.() ||
-            (document as any).msExitFullscreen?.();
-            fullscreenButton.innerHTML = '<i class="fas fa-expand"></i>';
-          }
-        });
-      }
     } else {
-      img.addEventListener('click', (e) => {
+      // Style cho ảnh thường - Full HD nhưng responsive
+      img.style.cssText = `
+        max-width: min(1920px, 90vw);
+        max-height: min(1080px, 90vh);
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        border-radius: 8px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      `;
+    }
+    img.style.cursor = 'default';
+
+    // Thêm sự kiện loading cho ảnh
+    img.onload = () => {
+      const loadingIndicator = modalContainer.querySelector('.loading-indicator');
+      if (loadingIndicator) {
+        loadingIndicator.remove();
+      }
+    };
+
+    // Tạo loading indicator
+    const loadingIndicator = document.createElement('div');
+    loadingIndicator.className = 'loading-indicator';
+    loadingIndicator.style.cssText = `
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 2rem;
+      z-index: 10001;
+    `;
+    loadingIndicator.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+    // Nút đóng
+    const closeBtn = document.createElement('button');
+    closeBtn.innerHTML = '&times;';
+    closeBtn.style.cssText = `
+      position: fixed;
+      top: 30px;
+      right: 30px;
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      font-size: 40px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 10002;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    `;
+    closeBtn.onmouseover = () => {
+      closeBtn.style.background = 'rgba(255, 255, 255, 0.3)';
+      closeBtn.style.transform = 'scale(1.1)';
+    };
+    closeBtn.onmouseout = () => {
+      closeBtn.style.background = 'rgba(255, 255, 255, 0.2)';
+      closeBtn.style.transform = 'scale(1)';
+    };
+
+    // Navigation buttons (ở 2 bên - nếu có nhiều ảnh)
+    const images = this.getEvidenceImages();
+    if (images.length > 1) {
+      // Previous button - Bên trái
+      const prevBtn = document.createElement('button');
+      prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+      prevBtn.style.cssText = `
+        position: fixed;
+        left: 30px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255, 107, 53, 0.9);
+        border: none;
+        color: white;
+        font-size: 24px;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        cursor: pointer;
+        z-index: 10002;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      `;
+      
+      prevBtn.onmouseover = () => {
+        prevBtn.style.background = 'rgba(255, 107, 53, 1)';
+        prevBtn.style.transform = 'translateY(-50%) scale(1.1)';
+        prevBtn.style.boxShadow = '0 6px 25px rgba(255, 107, 53, 0.4)';
+      };
+      
+      prevBtn.onmouseout = () => {
+        prevBtn.style.background = 'rgba(255, 107, 53, 0.9)';
+        prevBtn.style.transform = 'translateY(-50%) scale(1)';
+        prevBtn.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
+      };
+      
+      prevBtn.onclick = (e) => {
         e.stopPropagation();
-        if (img.style.transform === 'scale(1.5)') {
-          img.style.transform = 'scale(1)';
-          img.style.cursor = 'zoom-in';
-        } else {
-          img.style.transform = 'scale(1.5)';
-          img.style.cursor = 'zoom-out';
-        }
-      });
+        // Hiệu ứng click
+        prevBtn.style.transform = 'translateY(-50%) scale(0.95)';
+        setTimeout(() => {
+          prevBtn.style.transform = 'translateY(-50%) scale(1)';
+        }, 150);
+        
+        this.previousImage();
+        // Chuyển ảnh mượt không bị nhấp nháy
+        this.smoothImageTransition(img, this.getCurrentImage());
+      };
+
+      // Next button - Bên phải
+      const nextBtn = document.createElement('button');
+      nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+      nextBtn.style.cssText = `
+        position: fixed;
+        right: 30px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255, 107, 53, 0.9);
+        border: none;
+        color: white;
+        font-size: 24px;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        cursor: pointer;
+        z-index: 10002;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      `;
+      
+      nextBtn.onmouseover = () => {
+        nextBtn.style.background = 'rgba(255, 107, 53, 1)';
+        nextBtn.style.transform = 'translateY(-50%) scale(1.1)';
+        nextBtn.style.boxShadow = '0 6px 25px rgba(255, 107, 53, 0.4)';
+      };
+      
+      nextBtn.onmouseout = () => {
+        nextBtn.style.background = 'rgba(255, 107, 53, 0.9)';
+        nextBtn.style.transform = 'translateY(-50%) scale(1)';
+        nextBtn.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
+      };
+      
+      nextBtn.onclick = (e) => {
+        e.stopPropagation();
+        // Hiệu ứng click
+        nextBtn.style.transform = 'translateY(-50%) scale(0.95)';
+        setTimeout(() => {
+          nextBtn.style.transform = 'translateY(-50%) scale(1)';
+        }, 150);
+        
+        this.nextImage();
+        // Chuyển ảnh mượt không bị nhấp nháy
+        this.smoothImageTransition(img, this.getCurrentImage());
+      };
+
+      modalContainer.appendChild(prevBtn);
+      modalContainer.appendChild(nextBtn);
     }
 
-    if (isUrlImage) {
-      modal.addEventListener('wheel', (e) => {
-        if (e.ctrlKey) {
-          e.preventDefault();
-          const rect = img.getBoundingClientRect();
-          const x = e.clientX - rect.left;
-          const y = e.clientY - rect.top;
-
-          const delta = e.deltaY > 0 ? 0.9 : 1.1;
-          const currentScale = parseFloat(img.style.transform.replace(/[^0-9.]/g, '') || '1');
-          const newScale = Math.max(0.5, Math.min(3, currentScale * delta));
-
-          img.style.transformOrigin = `${x}px ${y}px`;
-          img.style.transform = `scale(${newScale})`;
-
-          if (newScale > 1) {
-            img.style.cursor = 'zoom-out';
-          } else {
-            img.style.cursor = 'grab';
-          }
-        }
-      });
-    }
-
-    closeButton.addEventListener('mouseenter', () => {
-      closeButton.style.backgroundColor = 'rgba(220, 53, 69, 1)';
-      closeButton.style.transform = 'scale(1.1)';
-    });
-
-    closeButton.addEventListener('mouseleave', () => {
-      closeButton.style.backgroundColor = 'rgba(220, 53, 69, 0.9)';
-      closeButton.style.transform = 'scale(1)';
-    });
-
-    downloadButton.addEventListener('mouseenter', () => {
-      downloadButton.style.backgroundColor = 'rgba(40, 167, 69, 1)';
-      downloadButton.style.transform = 'scale(1.1)';
-    });
-
-    downloadButton.addEventListener('mouseleave', () => {
-      downloadButton.style.backgroundColor = 'rgba(40, 167, 69, 0.9)';
-      downloadButton.style.transform = 'scale(1)';
-    });
-
+    // Thêm các elements vào modal (không bao gồm infoBox)
     imageContainer.appendChild(img);
-    modal.appendChild(imageContainer);
-    modal.appendChild(closeButton);
-    modal.appendChild(downloadButton);
-    if (isUrlImage && fullscreenButton) {
-      modal.appendChild(fullscreenButton);
-    }
-    modal.appendChild(infoPanel);
-    document.body.appendChild(modal);
+    modalContainer.appendChild(loadingIndicator);
+    modalContainer.appendChild(imageContainer);
+    modalContainer.appendChild(closeBtn);
+    // Bỏ infoBox - không hiển thị thông tin ảnh nữa
 
-    document.body.style.overflow = 'hidden';
-
+    // Sự kiện đóng modal
     const closeModal = () => {
-      modal.style.opacity = '0';
-      document.body.style.overflow = 'auto'; // Restore body scroll
-      setTimeout(() => {
-        if (document.body.contains(modal)) {
-          document.body.removeChild(modal);
-          document.removeEventListener('keydown', handleEscape);
-          document.removeEventListener('mousemove', () => {});
-          document.removeEventListener('mouseup', () => {});
-        }
-      }, 300);
+      modalContainer.remove();
+      document.body.style.overflow = '';
+      document.removeEventListener('keydown', handleKeydown);
     };
 
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
+    closeBtn.onclick = closeModal;
+    modalContainer.onclick = (e) => {
+      if (e.target === modalContainer) {
         closeModal();
       }
     };
 
-    modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        closeModal();
+    // Sự kiện keyboard với animation mượt
+    const handleKeydown = (e: KeyboardEvent) => {
+      switch (e.key) {
+        case 'Escape':
+          closeModal();
+          break;
+        case 'ArrowLeft':
+          if (images.length > 1) {
+            e.preventDefault();
+            this.previousImage();
+            // Chuyển ảnh mượt không bị nhấp nháy
+            this.smoothImageTransition(img, this.getCurrentImage());
+          }
+          break;
+        case 'ArrowRight':
+          if (images.length > 1) {
+            e.preventDefault();
+            this.nextImage();
+            // Chuyển ảnh mượt không bị nhấp nháy
+            this.smoothImageTransition(img, this.getCurrentImage());
+          }
+          break;
       }
-    });
+    };
 
-    closeButton.addEventListener('click', (e) => {
-      e.stopPropagation();
-      closeModal();
-    });
+    document.addEventListener('keydown', handleKeydown);
 
-    document.addEventListener('keydown', handleEscape);
+    // Thêm vào DOM
+    document.body.style.overflow = 'hidden';
+    document.body.appendChild(modalContainer);
 
+    // Animation
+    modalContainer.style.opacity = '0';
     setTimeout(() => {
-      modal.style.opacity = '1';
+      modalContainer.style.opacity = '1';
+      modalContainer.style.transition = 'opacity 0.3s ease';
     }, 10);
   }
 
@@ -1735,5 +1660,26 @@ parseAIRecommendations(text: string): string {
   closeChatbox(): void {
     debugger
     this.showChatbox = false;
+  }
+
+  smoothImageTransition(imgElement: HTMLImageElement, newImageUrl: string): void {
+    // Tạo ảnh mới để preload
+    const newImg = new Image();
+    
+    // Khi ảnh mới đã load xong
+    newImg.onload = () => {
+      // Fade out ảnh hiện tại
+      imgElement.style.transition = 'opacity 0.2s ease';
+      imgElement.style.opacity = '0';
+      
+      // Sau khi fade out xong, đổi src và fade in
+      setTimeout(() => {
+        imgElement.src = this.getFullImageUrl(newImageUrl);
+        imgElement.style.opacity = '1';
+      }, 200);
+    };
+    
+    // Bắt đầu preload ảnh mới
+    newImg.src = this.getFullImageUrl(newImageUrl);
   }
 }

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Title } from '@angular/platform-browser'; // Import Title service here
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
 import { HttpClient } from '@angular/common/http';
@@ -38,13 +39,13 @@ export class TransactionsComponent implements OnInit {
   error: string | null = null;
   showChatbox = false;
 
-  // Base URL for your backend
   private readonly BASE_URL = `${environment.apiUrl}`;
-  private readonly API_URL = `${this.BASE_URL}/api/v1/users`;
+  private readonly API_URL = `${this.BASE_URL}/api/v1/users/collaborators`; 
 
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(private http: HttpClient, private router: Router, private titleService: Title) { } 
 
   ngOnInit(): void {
+    this.titleService.setTitle('Giao dịch viên'); 
     this.loadAgents();
   }
 
@@ -65,7 +66,6 @@ export class TransactionsComponent implements OnInit {
       console.error('❌ Error loading agents:', error);
       this.error = 'Không thể tải danh sách giao dịch viên từ server. Vui lòng kiểm tra kết nối và thử lại.';
       this.isLoading = false;
-      // Không load demo data - chỉ hiển thị error
       this.allAgents = [];
         this.filteredAgents = [];
         }
@@ -73,21 +73,16 @@ export class TransactionsComponent implements OnInit {
   }
 
   private getDefaultAvatar(name: string): string {
-    // Generate a default avatar based on the user's name
     const initials = name.split(' ').map(word => word.charAt(0)).join('').slice(0, 2);
     return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&size=150&background=FF6B35&color=fff&bold=true`;
   }
 
-  // Handle image error
   onImageError(event: Event, agentName: string): void {
     const target = event.target as HTMLImageElement;
     if (target) {
       target.src = this.getDefaultAvatar(agentName);
     }
   }
-
-  // Removed loadDemoData method - no fallback data allowed
-  // All data must come from backend API only
 
   onSearch(): void {
     if (!this.searchQuery.trim()) {
@@ -104,7 +99,6 @@ export class TransactionsComponent implements OnInit {
 
   onAgentClick(agent: TransactionAgent): void {
     console.log('Selected agent:', agent);
-    // Navigate to agent detail page
     this.router.navigate(['/transactions/agent', agent.id]);
   }
 
@@ -121,7 +115,6 @@ export class TransactionsComponent implements OnInit {
     this.loadAgents();
   }
 
-   /* ===== Chat ===== */
   onAiTuVanClicked(): void {
     debugger
     this.showChatbox = true;

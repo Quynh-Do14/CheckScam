@@ -1,11 +1,8 @@
-// src/app/header/header.component.ts
-// Không cần thay đổi
-// (Nội dung file này giống hệt như bạn đã cung cấp ở phản hồi trước)
 import { Component, EventEmitter, HostListener, OnInit, Output, Input, OnDestroy } from '@angular/core';
-import { RouterLink, NavigationEnd, Router } from '@angular/router';
-import { CommonModule } from '@angular/common'; 
-import { UserService } from '../../services/user.service'; 
-import { Subscription } from 'rxjs'; 
+import { RouterLink, NavigationEnd, Router, RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { UserService } from '../../services/user.service';
+import { Subscription } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 @Component({
@@ -13,7 +10,8 @@ import { environment } from '../../environments/environment';
   standalone: true,
   imports: [
     RouterLink,
-    CommonModule
+    CommonModule,
+    RouterModule
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
@@ -21,27 +19,28 @@ import { environment } from '../../environments/environment';
 export class HeaderComponent implements OnInit, OnDestroy {
   @Input() isHeaderHidden: boolean = false;
 
-  isMenuOpen: boolean = false; 
-  isProfileDropdownOpen: boolean = false; 
-  isLoggedIn: boolean = false; 
-  userName: string = 'Người dùng'; 
-  userEmail: string = 'admin@gmail.com'; 
-  userAvatarUrl: string = '/assets/img/undraw_profile.svg'; 
+  isMenuOpen: boolean = false;
+  isProfileDropdownOpen: boolean = false;
+  isLoggedIn: boolean = false;
+  userName: string = 'Người dùng';
+  userEmail: string = 'admin@gmail.com';
+  userAvatarUrl: string = '/assets/img/undraw_profile.svg';
+  userRole: string[] = [];
 
   @Output() aiTuVanClicked = new EventEmitter<void>();
 
-  private authStatusSubscription!: Subscription; 
-  private userDataSubscription!: Subscription; 
+  private authStatusSubscription!: Subscription;
+  private userDataSubscription!: Subscription;
 
   constructor(
     private router: Router,
-    private userService: UserService 
-  ) { 
+    private userService: UserService
+  ) {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
-        this.isMenuOpen = false; 
-        document.body.classList.remove('no-scroll'); 
-        this.isProfileDropdownOpen = false; 
+        this.isMenuOpen = false;
+        document.body.classList.remove('no-scroll');
+        this.isProfileDropdownOpen = false;
       }
     });
   }
@@ -58,10 +57,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
         if (userData) {
           this.userName = userData.name || 'Người dùng';
           this.userEmail = userData.email || 'N/A';
-          
+          this.userRole = Array.isArray(userData.role) ? userData.role : [];
+
           if (userData.avatar) {
-            this.userAvatarUrl = userData.avatar.startsWith('http') || userData.avatar.startsWith('data:image/') ? 
-                                 userData.avatar : 
+            this.userAvatarUrl = userData.avatar.startsWith('http') || userData.avatar.startsWith('data:image/') ?
+                                 userData.avatar :
                                  `${environment.apiBaseUrl}/${userData.avatar.startsWith('/') ? userData.avatar.substring(1) : userData.avatar}`;
           } else {
             this.userAvatarUrl = '/assets/img/undraw_profile.svg';
@@ -70,6 +70,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
           this.userName = 'Người dùng';
           this.userEmail = 'N/A';
           this.userAvatarUrl = '/assets/img/undraw_profile.svg';
+          this.userRole = [];
         }
       }
     );
@@ -79,14 +80,18 @@ export class HeaderComponent implements OnInit, OnDestroy {
     if (this.authStatusSubscription) {
       this.authStatusSubscription.unsubscribe();
     }
-    if (this.userDataSubscription) { 
+    if (this.userDataSubscription) {
       this.userDataSubscription.unsubscribe();
     }
   }
 
+  get isAdminOrCollab(): boolean {
+    return this.userRole.includes('ADMIN') || this.userRole.includes('COLLAB');
+  }
+
   onImageError(event: Event): void {
     (event.target as HTMLImageElement).src = '/assets/img/undraw_profile.svg';
-    this.userAvatarUrl = '/assets/img/undraw_profile.svg'; 
+    this.userAvatarUrl = '/assets/img/undraw_profile.svg';
   }
 
   @HostListener('document:click', ['$event'])
@@ -100,7 +105,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.isMenuOpen = !this.isMenuOpen;
     if (this.isMenuOpen) {
       document.body.classList.add('no-scroll');
-      this.isProfileDropdownOpen = false; 
+      this.isProfileDropdownOpen = false;
     } else {
       document.body.classList.remove('no-scroll');
     }
@@ -116,27 +121,27 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   onAiTuVanClick() {
     this.isMenuOpen = false;
-    document.body.classList.remove('no-scroll'); 
-    this.aiTuVanClicked.emit(); 
+    document.body.classList.remove('no-scroll');
+    this.aiTuVanClicked.emit();
   }
 
   onNavLinkClick() {
-    this.isMenuOpen = false; 
-    document.body.classList.remove('no-scroll'); 
-    this.isProfileDropdownOpen = false; 
+    this.isMenuOpen = false;
+    document.body.classList.remove('no-scroll');
+    this.isProfileDropdownOpen = false;
   }
 
   onProfileClick() {
-    this.isProfileDropdownOpen = false; 
-    this.router.navigate(['/user/profile']); 
+    this.isProfileDropdownOpen = false;
+    this.router.navigate(['/user/profile']);
   }
 
   logout() {
     this.userService.logout().subscribe({
       next: () => {
         console.log('Đăng xuất thành công (Backend response).');
-        this.isProfileDropdownOpen = false; 
-        this.router.navigate(['/login']); 
+        this.isProfileDropdownOpen = false;
+        this.router.navigate(['/login']);
       },
       error: (err) => {
         console.error('Lỗi khi đăng xuất:', err);

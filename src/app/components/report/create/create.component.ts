@@ -5,6 +5,8 @@ import { Router, RouterModule } from '@angular/router';
 import { RecaptchaModule } from 'ng-recaptcha';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ReportService } from '../../../services/report.service';
+// Import Title và Meta services
+import { Title, Meta } from '@angular/platform-browser';
 
 import { CreateReportRequestDTO, ReportDetailItemDTO, ReportTypeOption } from '../../../dtos/create-report-request.dto';
 
@@ -75,11 +77,17 @@ export class CreateReportComponent implements OnInit {
 
   showNotification: boolean = false;
   notificationMessage: string = '';
-  notificationType: 'success' | 'error' | 'info' = 'info'; // 'success', 'error', 'info'
+  notificationType: 'success' | 'error' | 'info' = 'info';
   notificationTimeout: any;
 
-
-  constructor(private reportService: ReportService, private router: Router, private el: ElementRef) { }
+  // Inject Title và Meta services vào constructor
+  constructor(
+    private reportService: ReportService,
+    private router: Router,
+    private el: ElementRef,
+    private titleService: Title, // Thêm Title service
+    private metaService: Meta // Thêm Meta service
+  ) { }
 
   ngOnInit(): void {
     this.addReportDetailItem();
@@ -91,6 +99,15 @@ export class CreateReportComponent implements OnInit {
         this.selectedCategoryName = selected.name;
       }
     }
+
+    // Đặt Title Tag
+    this.titleService.setTitle('Báo Cáo AI6 - Săn Người Xấu, Diệt Kẻ Gian | Phân Tích Lừa Đảo');
+
+    // Đặt Meta Description
+    this.metaService.updateTag({
+      name: 'description',
+      content: 'Báo cáo lừa đảo cho AI6 - Săn Người Xấu, Diệt Kẻ Gian để phân tích qua số điện thoại, tài khoản, URL. Dữ liệu được xác minh từ Bộ Công An – cùng diệt kẻ gian và bảo vệ cộng đồng Việt Nam ngay hôm nay!'
+    });
   }
 
   showAppNotification(message: string, type: 'success' | 'error' | 'info' = 'info', duration: number = 5000): void {
@@ -122,7 +139,7 @@ export class CreateReportComponent implements OnInit {
   selectCategory(category: Category) {
     this.requestPayload.categoryId = category.id;
     this.selectedCategoryName = category.name;
-    this.isCategoryDropdownOpen = false; 
+    this.isCategoryDropdownOpen = false;
     if (this.reportForm && this.reportForm.controls['categoryId']) {
       this.reportForm.controls['categoryId'].setValue(category.id);
       this.reportForm.controls['categoryId'].markAsTouched();
@@ -141,7 +158,7 @@ export class CreateReportComponent implements OnInit {
   selectReportType(item: ReportDetailItemDTO, option: ReportTypeOption) {
     item.type = option.id;
     item.selectedTypeName = option.name;
-    item.isTypeDropdownOpen = false; 
+    item.isTypeDropdownOpen = false;
     this.resetInfoFields(this.requestPayload.reportDetails.indexOf(item));
   }
 
@@ -286,10 +303,34 @@ export class CreateReportComponent implements OnInit {
     this.requestPayload.reportDetails[index].info3 = undefined;
   }
 
+  formatMoney(value: number | null | undefined): string {
+    if (value === null || value === undefined) {
+      return '';
+    }
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  }
+
+  onMoneyScamInput(event: Event): void {
+    const inputElement = event.target as HTMLInputElement;
+    let rawValue = inputElement.value;
+
+    let numericValue = rawValue.replace(/\D/g, '');
+
+    this.requestPayload.moneyScam = numericValue ? parseInt(numericValue, 10) : null;
+
+    if (this.reportForm && this.reportForm.controls['scamAmount']) {
+      this.reportForm.controls['scamAmount'].markAsDirty();
+      this.reportForm.controls['scamAmount'].updateValueAndValidity();
+    }
+  }
+
   isFormInvalid(): boolean {
     if (!this.reportForm || !this.reportForm.form) {
       return true;
     }
+
+    const scamAmountControl = this.reportForm.controls['scamAmount'];
+    const moneyScamValue = scamAmountControl ? Number((scamAmountControl.value || '').toString().replace(/\./g, '')) : NaN;
 
     if (this.reportForm.invalid || !this.requestPayload.captchaToken) {
       return true;
@@ -299,10 +340,11 @@ export class CreateReportComponent implements OnInit {
         return true;
     }
 
-    const moneyScamValue = Number(this.requestPayload.moneyScam);
     if (isNaN(moneyScamValue) || moneyScamValue < 10000) {
         return true;
     }
+    this.requestPayload.moneyScam = moneyScamValue;
+
 
     if (this.requestPayload.reportDetails.length === 0) {
       return true;
@@ -345,20 +387,20 @@ export class CreateReportComponent implements OnInit {
 
     this.reportService.createReportUnified(finalPayload).subscribe({
       next: (res: any) => {
-        this.showAppNotification('Gửi thông tin báo cáo thành công! Bạn sẽ được chuyển hướng về trang chủ trong giây lát.', 'success', 5000); // 5 giây để đọc
+        this.showAppNotification('Gửi thông tin báo cáo thành công! Bạn sẽ được chuyển hướng về trang chủ trong giây lát.', 'success', 5000);
 
         const reportId = res.data?.id ?? res.id;
         if (!reportId) {
           this.showAppNotification('Không nhận được ID báo cáo từ server. Không thể tải tệp đính kèm.', 'info');
-          setTimeout(() => { 
+          setTimeout(() => {
             this.router.navigate(['/bao-cao-thanh-cong']);
-          }, 3000); 
+          }, 3000);
           return;
         }
         if (this.selectedFiles.length) {
           this.uploadFiles(reportId, this.selectedFiles);
         } else {
-          setTimeout(() => { 
+          setTimeout(() => {
             this.router.navigate(['/bao-cao-thanh-cong']);
           }, 3000);
         }
@@ -380,17 +422,15 @@ export class CreateReportComponent implements OnInit {
     this.reportService.uploadFiles(reportId, files).subscribe({
       next: () => {
         console.log('Tải tệp đính kèm thành công!');
-        // Thay thế alert bằng thông báo tùy chỉnh
-        this.showAppNotification('Tệp đính kèm đã được tải lên thành công! Bạn sẽ được chuyển hướng về trang chủ trong giây lát.', 'success', 5000); 
-        setTimeout(() => { 
+        this.showAppNotification('Tệp đính kèm đã được tải lên thành công! Bạn sẽ được chuyển hướng về trang chủ trong giây lát.', 'success', 5000);
+        setTimeout(() => {
           this.router.navigate(['/bao-cao-thanh-cong']);
         }, 3000);
       },
       error: (uploadErr: HttpErrorResponse) => {
         console.error('Lỗi khi tải tệp đính kèm:', uploadErr);
-        // Thay thế alert lỗi bằng thông báo tùy chỉnh
         this.showAppNotification('Đã tạo báo cáo thành công, nhưng không thể tải tệp đính kèm. Vui lòng liên hệ hỗ trợ nếu cần.', 'error');
-        setTimeout(() => { 
+        setTimeout(() => {
           this.router.navigate(['/bao-cao-thanh-cong']);
         }, 3000);
       }

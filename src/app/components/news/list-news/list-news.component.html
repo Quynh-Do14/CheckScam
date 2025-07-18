@@ -15,12 +15,14 @@
                 <img
                   [src]="getDisplayImage(mainNewsList[0])"
                   (error)="onImageError($event)"
+                  (click)="goToNewsDetail(mainNewsList[0], $event)"
                   alt="Ảnh tin chính"
+                  style="cursor: pointer;"
                 />
               </div>
               <div class="main-news-content">
                 <h3 class="main-news-title">
-                  <a [routerLink]="'/view-news/' + mainNewsList[0].id">{{ mainNewsList[0].name }}</a>
+                  <a [routerLink]="getNewsUrl(mainNewsList[0])">{{ mainNewsList[0].name }}</a>
                 </h3>
                 <p class="main-news-description">{{ mainNewsList[0].shortDescription }}</p>
                 <div class="main-news-meta">
@@ -42,12 +44,14 @@
                     <img
                       [src]="getDisplayImage(news)"
                       (error)="onImageError($event)"
+                      (click)="goToNewsDetail(news, $event)"
                       alt="Ảnh tin chính nhỏ"
+                      style="cursor: pointer;"
                     />
                   </div>
                   <div class="secondary-news-content">
                     <h4 class="secondary-news-title">
-                      <a [routerLink]="'/view-news/' + news.id">{{ news.name }}</a>
+                      <a [routerLink]="getNewsUrl(news)">{{ news.name }}</a>
                     </h4>
                     <div class="secondary-news-meta">
                       <div class="author-avatar-small">
@@ -72,12 +76,14 @@
                   <img
                     [src]="getDisplayImage(news)"
                     (error)="onImageError($event)"
+                    (click)="goToNewsDetail(news, $event)"
                     alt="Ảnh tin nhanh"
+                    style="cursor: pointer;"
                   />
                 </div>
                 <div class="quick-news-content">
                   <h5 class="quick-news-title">
-                    <a [routerLink]="'/view-news/' + news.id">{{ news.name }}</a>
+                    <a [routerLink]="getNewsUrl(news)">{{ news.name }}</a>
                   </h5>
                   <div class="quick-news-date" *ngIf="news.createdAt">
                     {{ news.createdAt | date:'dd/MM/yyyy' }}
@@ -132,13 +138,15 @@
               <img
                 [src]="getDisplayImage(post)"
                 (error)="onImageError($event)"
+                (click)="goToNewsDetail(post, $event)"
                 alt="Ảnh tin tức"
+                style="cursor: pointer;"
               />
             </div>
 
             <div class="card-content">
               <h3 class="card-title">
-                <a [routerLink]="'/view-news/' + post.id">{{ post.name }}</a>
+                <a [routerLink]="getNewsUrl(post)">{{ post.name }}</a>
               </h3>
               <p class="card-description">{{ post.shortDescription }}</p>
               <div class="card-meta">

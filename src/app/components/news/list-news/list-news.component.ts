@@ -229,4 +229,38 @@ export class ListNewsComponent implements OnInit {
   closeChatbox(): void {
     this.showChatbox = false;
   }
+
+  /* ===== Navigation ===== */
+  createSlug(title: string): string {
+    if (!title) return '';
+    
+    return title
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '') // Loại bỏ dấu
+      .replace(/đ/g, 'd')
+      .replace(/Đ/g, 'D')
+      .replace(/[^a-z0-9\s-]/g, '') // Chỉ giữ chữ, số, space, dấu gạch
+      .trim()
+      .replace(/\s+/g, '-') // Thay space bằng dấu gạch
+      .replace(/-+/g, '-'); // Loại bỏ dấu gạch trùng lặp
+  }
+
+  getNewsUrl(news: any): string {
+    const slug = this.createSlug(news.name);
+    return `/list-news/${slug}`;
+  }
+
+  goToNewsDetail(news: any, event?: Event): void {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    const slug = this.createSlug(news.name);
+    console.log('🔥 Clicking on news image');
+    console.log('🔥 Title:', news.name);
+    console.log('🔥 Slug:', slug);
+    console.log('🔥 Navigating to:', '/list-news/' + slug);
+    this.router.navigate(['/list-news', slug]);
+  }
 }

@@ -98,7 +98,8 @@ export const routes: Routes = [
     { path: 'login', component: LoginComponent, canActivate: [PublicGuard] },       
     { path: 'verify-email', component: EmailVerificationComponent, canActivate: [PublicGuard] }, // Đã thêm dòng này
     { path: 'list-news', component: ListNewsComponent },
-    { path: 'view-news/:id', component: ViewNewsComponent },
+    { path: 'list-news/:slug', component: ViewNewsComponent },
+    { path: 'view-news/:id', component: ViewNewsComponent }, // Keep for backward compatibility
     { path: 'chatbox', component: ChatBoxComponent },
     { path: 'analyze', component: AnalyzeComponent },
     { path: 'ranking', component: RankingComponent },

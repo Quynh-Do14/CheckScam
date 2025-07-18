@@ -134,4 +134,9 @@ export class NewsComponent implements OnInit {
     this.togglePopup();
     this.loadAllNews();
   }
+
+  /* ---------- navigation ---------- */
+  goToNewsDetail(id: number): void {
+    this.router.navigate(['/admin/detail-news', id]);
+  }
 }

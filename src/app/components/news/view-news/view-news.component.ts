@@ -79,12 +79,21 @@ export class ViewNewsComponent implements OnInit {
   ngOnInit(): void {
     console.log('ViewNewsComponent ngOnInit');
     
-    // Lắng nghe sự thay đổi của paramMap để tải lại nội dung khi chuyển đổi giữa các bài viết liên quan
+    // Lắng nghe sự thay đổi của paramMap để tải lại nội dung
     this.route.paramMap.subscribe(params => {
-      const postId = Number(params.get('id'));
-      console.log('Loading news ID:', postId);
-      if (postId) {
-        this.loadNewsById(postId);
+      const param = params.get('id') || params.get('slug');
+      console.log('URL param:', param);
+      
+      if (param) {
+        // Kiểm tra nếu là số thì là ID, nếu không thì là slug
+        if (this.isNumeric(param)) {
+          const postId = Number(param);
+          console.log('Loading news by ID:', postId);
+          this.loadNewsById(postId);
+        } else {
+          console.log('Loading news by slug:', param);
+          this.loadNewsBySlug(param);
+        }
       }
     });
 
@@ -93,6 +102,92 @@ export class ViewNewsComponent implements OnInit {
     
     // Thêm scroll listener cho mục lục active highlighting
     this.addScrollListener();
+  }
+
+  /**
+   * Kiểm tra chuỗi có phải là số không
+   */
+  private isNumeric(str: string): boolean {
+    return !isNaN(Number(str)) && !isNaN(parseFloat(str));
+  }
+
+  /**
+   * Tạo slug từ tiêu đề
+   */
+  private createSlug(title: string): string {
+    if (!title) return '';
+    
+    return title
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '') // Loại bỏ dấu
+      .replace(/đ/g, 'd')
+      .replace(/Đ/g, 'D')
+      .replace(/[^a-z0-9\s-]/g, '') // Chỉ giữ chữ, số, space, dấu gạch
+      .trim()
+      .replace(/\s+/g, '-') // Thay space bằng dấu gạch
+      .replace(/-+/g, '-'); // Loại bỏ dấu gạch trùng lặp
+  }
+
+  /**
+   * Lấy URL cho tin tức
+   */
+  getNewsUrl(news: any): string {
+    const slug = this.createSlug(news.name);
+    return `/list-news/${slug}`;
+  }
+
+  /**
+   * Load news khi click từ related news
+   */
+  loadNewsByTitle(news: any): void {
+    const slug = this.createSlug(news.name);
+    this.router.navigate(['/list-news', slug]);
+  }
+
+  /**
+   * Tải tin tức theo slug
+   */
+  loadNewsBySlug(slug: string): void {
+    console.log('Searching for news with slug:', slug);
+    
+    // Tạm thời sử dụng getAllNews để tìm theo slug
+    // Trong tương lai có thể tạo API riêng cho slug
+    this.newsService.getAllNews(0, 1000).subscribe({
+      next: (newsList: Post[]) => {
+        console.log('Received news list:', newsList.length);
+        
+        // Tìm news có slug khớp
+        const foundNews = newsList.find(news => {
+          const newsSlug = this.createSlug(news.name);
+          console.log('Comparing:', newsSlug, 'vs', slug);
+          return newsSlug === slug;
+        });
+        
+        if (foundNews) {
+          console.log('Found news:', foundNews.name);
+          this.post = foundNews;
+          this.attachmentDto = foundNews.attachments ?? [];
+          
+          // Generate table of contents after content is loaded
+          setTimeout(() => {
+            this.generateTableOfContents();
+          }, 100);
+          
+          // Cuộn lên đầu trang sau khi tải tin tức mới
+          window.scrollTo(0, 0);
+        } else {
+          console.error('News not found with slug:', slug);
+          alert('Không tìm thấy bài viết');
+          this.router.navigate(['/list-news']);
+        }
+      },
+      error: (err) => {
+        console.error('Lỗi khi tải danh sách tin tức:', err);
+        alert('Lỗi khi tải bài viết');
+        this.router.navigate(['/list-news']);
+      }
+    });
   }
 
   /**
@@ -272,8 +367,8 @@ export class ViewNewsComponent implements OnInit {
   }
 
   /* ---------- Navigation ---------- */
-  goBack(): void {
-    this.location.back();
+  goBackToList(): void {
+    this.router.navigate(['/list-news']);
   }
 
   /* ---------- Lightbox ---------- */

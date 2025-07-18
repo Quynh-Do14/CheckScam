@@ -10,7 +10,7 @@
                 </h3>
                 <ul class="related-news-list">
                     <li *ngFor="let relatedNewsItem of relatedNews; trackBy: trackById">
-                        <a [routerLink]="['/view-news', relatedNewsItem.id]" class="related-news-link" (click)="loadNewsById(relatedNewsItem.id)">
+                        <a [routerLink]="getNewsUrl(relatedNewsItem)" class="related-news-link" (click)="loadNewsByTitle(relatedNewsItem)">
                             <img [src]="getImageUrlForRelated(relatedNewsItem)" alt="{{ relatedNewsItem.name }}" class="related-news-thumbnail">
                             <div class="related-news-info">
                                 <h4 class="related-news-title">{{ relatedNewsItem.name }}</h4>
@@ -29,7 +29,7 @@
         <div class="news-main-column">
             <div class="card news-detail-card">
                 <div class="back-button-container">
-                    <button class="btn btn-back" (click)="goBack()">
+                    <button class="btn btn-back" (click)="goBackToList()">
                         <i class="fas fa-arrow-left"></i> Quay lại
                     </button>
                 </div>

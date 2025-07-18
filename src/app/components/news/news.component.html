@@ -17,11 +17,28 @@
           <table class="table modern-table" width="100%" cellspacing="0" role="grid">
             <thead>
               <tr role="row">
-                <th style="width: 5%;">ID</th> <th style="width: 30%;">Tiêu đề</th> <th style="width: 35%;">Mô tả ngắn</th> <th style="width: 10%;">Tin chính</th> <th class="action-column-header" style="width: 20%;">Hành động</th> </tr>
+                <th style="width: 5%;">ID</th>
+                <th style="width: 15%;">Ảnh</th> 
+                <th style="width: 25%;">Tiêu đề</th> 
+                <th style="width: 30%;">Mô tả ngắn</th> 
+                <th style="width: 10%;">Tin chính</th> 
+                <th class="action-column-header" style="width: 15%;">Hành động</th>
+              </tr>
             </thead>
             <tbody>
               <tr *ngFor="let post of posts">
                 <td>{{ post.id }}</td>
+                <td class="text-center">
+                  <div class="news-image-container" (click)="goToNewsDetail(post.id)" style="cursor: pointer;">
+                    <img 
+                      [src]="post.image || 'assets/images/default-news.jpg'" 
+                      [alt]="post.name"
+                      class="news-thumbnail"
+                      style="width: 60px; height: 40px; object-fit: cover; border-radius: 4px;"
+                      title="Click để xem chi tiết"
+                    />
+                  </div>
+                </td>
                 <td>
                   <div class="news-title-truncated" [title]="post.name">
                     {{ post.name }} 

@@ -1,0 +1,164 @@
+# Robots.txt for CheckScam News Platform
+# Generated for fe-checkscam project
+
+User-agent: *
+
+# Disallow private and admin areas
+Disallow: /admin/
+Disallow: /admin/*
+Disallow: /api/
+Disallow: /private/
+Disallow: /internal/
+Disallow: /temp/
+Disallow: /tmp/
+Disallow: /cache/
+Disallow: /backup/
+Disallow: /_next/
+Disallow: /node_modules/
+
+# Allow static assets and media files
+Allow: /*.js$
+Allow: /*.css$
+Allow: /*.png$
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.gif$
+Allow: /*.webp$
+Allow: /*.svg$
+Allow: /*.ico$
+Allow: /*.pdf$
+Allow: /*.doc$
+Allow: /*.docx$
+Allow: /*.txt$
+Allow: /*.xml$
+
+# Allow public content areas - Main Routes
+Allow: /
+Allow: /register
+Allow: /login
+
+# News and Content Routes
+Allow: /list-news
+Allow: /list-news/
+Allow: /list-news/*
+Allow: /view-news/
+Allow: /view-news/*
+
+# Interactive Features
+Allow: /chatbox
+Allow: /analyze
+Allow: /ranking
+
+# Report System
+Allow: /report
+Allow: /report/
+Allow: /report/create
+Allow: /report/mistake
+Allow: /create-report
+
+# Information Pages
+Allow: /about-us
+Allow: /partners
+Allow: /subject-detail/
+Allow: /subject-detail/*
+
+# Policy Pages
+Allow: /policy/
+Allow: /policy/privacy
+Allow: /policy/termsofservice
+Allow: /policy/refund
+Allow: /policy/standard
+Allow: /policy/payment
+
+# Transaction Information
+Allow: /transactions
+Allow: /transactions/
+Allow: /transactions/agent/
+Allow: /transactions/agent/*
+
+# Special permissions for search engines
+User-agent: Googlebot
+Allow: /
+Allow: /list-news
+Allow: /list-news/
+Allow: /list-news/*
+Allow: /view-news/
+Allow: /view-news/*
+Allow: /analyze
+Allow: /ranking
+Allow: /report
+Allow: /report/
+Allow: /about-us
+Allow: /partners
+Allow: /policy/
+Allow: /transactions
+Allow: /subject-detail/
+
+User-agent: Bingbot
+Allow: /
+Allow: /list-news
+Allow: /list-news/
+Allow: /list-news/*
+Allow: /view-news/
+Allow: /view-news/*
+Allow: /analyze
+Allow: /ranking
+Allow: /report
+Allow: /report/
+Allow: /about-us
+Allow: /partners
+Allow: /policy/
+Allow: /transactions
+Allow: /subject-detail/
+
+# Allow AI crawlers for content indexing
+User-agent: ChatGPT-User
+Allow: /
+Allow: /list-news
+Allow: /list-news/
+Allow: /list-news/*
+Allow: /view-news/
+Allow: /view-news/*
+Allow: /analyze
+Allow: /ranking
+Allow: /report
+Allow: /report/
+Allow: /about-us
+Allow: /policy/
+Allow: /partners
+Allow: /subject-detail/
+
+User-agent: GPTBot
+Allow: /
+Allow: /list-news
+Allow: /list-news/
+Allow: /list-news/*
+Allow: /view-news/
+Allow: /view-news/*
+Allow: /analyze
+Allow: /ranking
+Allow: /report
+Allow: /report/
+Allow: /about-us
+Allow: /policy/
+Allow: /partners
+Allow: /subject-detail/
+
+# Block potentially harmful bots
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+# Crawl delay for better server performance
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://ai6.vn/sitemap.xml

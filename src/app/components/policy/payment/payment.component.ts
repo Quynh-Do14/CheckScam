@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HeaderComponent } from "../../header/header.component";
 import { FooterComponent } from "../../footer/footer.component";
+import { Title } from '@angular/platform-browser'; 
 
 @Component({
   selector: 'app-payment',
@@ -10,10 +11,12 @@ import { FooterComponent } from "../../footer/footer.component";
 })
 export class PaymentComponent implements OnInit {
 
-  constructor() { }
+  constructor(private titleService: Title) { 
+    
+   }
 
   ngOnInit(): void {
-    // Logic khởi tạo nếu cần
+    this.titleService.setTitle('Chính Sách Thanh Toán'); 
   }
 
 }

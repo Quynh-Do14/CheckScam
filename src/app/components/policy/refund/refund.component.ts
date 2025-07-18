@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HeaderComponent } from "../../header/header.component";
 import { FooterComponent } from "../../footer/footer.component";
+import { Meta, Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-refund',
@@ -10,10 +11,10 @@ import { FooterComponent } from "../../footer/footer.component";
 })
 export class RefundComponent implements OnInit {
 
-  constructor() { }
+  constructor(private titleService: Title, private metaService: Meta) { }
 
   ngOnInit(): void {
-    // Logic khởi tạo nếu cần
+    this.titleService.setTitle('Chính Sách Hoàn Trả'); 
   }
 
 }

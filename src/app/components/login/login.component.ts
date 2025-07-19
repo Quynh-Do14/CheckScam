@@ -1,3 +1,4 @@
+// login.component.ts
 import { Component, ViewChild, OnInit, AfterViewInit, NgZone } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
@@ -7,6 +8,7 @@ import { TokenService } from '../../services/token.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { Title } from '@angular/platform-browser'; // Thêm import Title service
 
 
 declare var google: any;
@@ -27,7 +29,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
     @ViewChild('loginForm') loginForm!: NgForm;
     username = '';
     password = '';
-    showPassword: boolean = false; // Thêm biến này
+    showPassword: boolean = false; 
 
     showNotification: boolean = false;
     notificationMessage: string = '';
@@ -39,10 +41,12 @@ export class LoginComponent implements OnInit, AfterViewInit {
         private route: ActivatedRoute,
         private userService: UserService,
         private tokenService: TokenService,
-        private ngZone: NgZone
+        private ngZone: NgZone,
+        private titleService: Title // Inject Title service
     ) { }
 
     ngOnInit() {
+        this.titleService.setTitle('AI6 - Săn Người Xấu, Diệt Kẻ Gian'); // Đặt tiêu đề cho tab trình duyệt
         this.clearExistingUserData();
     }
 
@@ -130,7 +134,6 @@ export class LoginComponent implements OnInit, AfterViewInit {
         });
     }
 
-    // Hàm mới để bật/tắt hiển thị mật khẩu
     togglePasswordVisibility() {
         this.showPassword = !this.showPassword;
     }

@@ -437,7 +437,6 @@ body.no-scroll {
       }
 
       li a {
-        // padding: 12px 25px; // Reduced vertical padding from 18px to 12px
         padding: 0px 25px;
         width: 100%;
         justify-content: flex-start;
@@ -461,9 +460,9 @@ body.no-scroll {
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding: 20px 0; // Adjusted padding from 25px to 20px
+        padding: 20px 0;
         border-top: 1px solid rgba(255,255,255,0.15);
-        margin-top: 15px; // Adjusted margin-top from 20px to 15px
+        margin-top: 15px;
 
         .user-profile-mobile {
           display: flex;
@@ -487,7 +486,6 @@ body.no-scroll {
           margin-top: 8px;
           text-align: center;
           white-space: nowrap;
-          // overflow: hidden;
           text-overflow: ellipsis;
           max-width: 200px;
         }
@@ -502,6 +500,14 @@ body.no-scroll {
 
           &:hover {
             transform: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+          }
+        }
+        .admin-link-mobile {
+          background-color: #6a1b9a;
+          color: #fff;
+          &:hover {
+            background-color: #7b1fa2;
             box-shadow: 0 2px 8px rgba(0,0,0,0.2);
           }
         }

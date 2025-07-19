@@ -1,11 +1,9 @@
-@use 'sass:color';
 
-/* Notification Styles (được sao chép từ create.component.scss) */
 .app-notification {
   position: fixed;
   top: 20px;
   right: 20px;
-  background-color: #333; // Default background
+  background-color: #333; 
   color: white;
   padding: 15px 25px;
   border-radius: 8px;
@@ -18,19 +16,19 @@
   opacity: 0;
   transform: translateY(-20px);
   animation: fadeInDown 0.5s forwards;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; // Font hiện đại
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
 }
 
 .app-notification.success {
-  background-color: #4CAF50; /* Green for success */
+  background-color: #4CAF50; 
 }
 
 .app-notification.error {
-  background-color: #f44336; /* Red for error */
+  background-color: #f44336; 
 }
 
 .app-notification.info {
-  background-color: #2196F3; /* Blue for info */
+  background-color: #2196F3; 
 }
 
 .notification-content {
@@ -64,6 +62,17 @@
   }
 }
 
+@keyframes fadeOutUp { // Thêm keyframe fadeOutUp nếu chưa có
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
 /* Các biến màu và animation đã có */
 $primary-orange: #FF7B00;
 $primary-green: #4CAF50;
@@ -73,6 +82,7 @@ $background-page: #F0F2F5;
 $border-light: #E0E6ED;
 $white: #FFFFFF;
 $soft-yellow: #FFD23F;
+$secondary-blue: #007bff; // Màu xanh cho các yếu tố tương tác
 
 /* Keyframe Animations */
 @keyframes fadeInUp {
@@ -86,14 +96,23 @@ $soft-yellow: #FFD23F;
   }
 }
 
+
 .report-page-container {
   padding-top: 70px;
-  background-color: $background-page;
-  min-height: calc(100vh - 70px - 50px); 
+  background: linear-gradient(135deg, 
+    rgba(255, 248, 240, 0.4) 0%, 
+    rgba(255, 243, 224, 0.3) 25%,
+    rgba(254, 240, 138, 0.2) 50%,
+    rgba(252, 211, 77, 0.15) 75%,
+    rgba(245, 158, 11, 0.1) 100%
+  );
+  min-height: calc(100vh - 70px - 50px);
   display: flex;
   justify-content: center;
   align-items: flex-start;
   padding-bottom: 30px;
+  opacity: 0; /* Đảm bảo phần tử ẩn ban đầu trước khi animation chạy */
+  animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .two-column-layout {
@@ -138,24 +157,45 @@ $soft-yellow: #FFD23F;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
 }
 
-.report-form h3.info-box-title {
+// Bắt đầu phần CSS đã chỉnh sửa cho H1 và slogan
+.report-form h1.info-box-title { /* Đã đổi h3 thành h1 để khớp với HTML */
   text-align: center;
-  color: #d9534f; /* Thay đổi màu tiêu đề cho phù hợp với trang khiếu nại */
+  color: $secondary-blue; /* Màu xanh dương cho tiêu đề chính */
   margin-top: 0;
-  margin-bottom: 30px;
-  font-size: 1.8em;
-  font-weight: bold;
+  margin-bottom: 20px; /* Giảm margin bottom để slogan gần hơn */
+  font-size: 2.5em; /* Tăng kích thước chữ để làm tiêu đề chính */
+  font-weight: 800; /* Đậm hơn */
   position: relative;
+  line-height: 1.2; /* Tối ưu khoảng cách dòng */
+  text-transform: uppercase; /* Chữ hoa toàn bộ cho tiêu đề chính */
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1); /* Thêm bóng đổ nhẹ */
+  padding-bottom: 15px; /* Đẩy đường kẻ dưới ra xa hơn một chút */
+
   &::after {
     content: '';
     display: block;
-    width: 60px;
-    height: 3px;
-    background-color: #d9534f; /* Thay đổi màu đường kẻ dưới */
-    margin: 10px auto 0;
-    border-radius: 2px;
+    width: 100px; /* Chiều rộng đường kẻ dưới */
+    height: 5px; /* Độ dày đường kẻ dưới */
+    background: linear-gradient(to right, $secondary-blue, #6610f2); /* Gradient màu xanh và tím */
+    margin: 15px auto 0;
+    border-radius: 3px;
+    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3); /* Bóng đổ cho đường kẻ */
+  }
+
+  /* Style cho phần slogan nhỏ bên dưới */
+  .subtitle-slogan {
+    display: block; /* Đảm bảo nó xuống dòng */
+    font-size: 0.75em; /* Kích thước chữ nhỏ hơn so với H1 cha */
+    font-weight: 600; /* Đủ đậm để dễ đọc */
+    color: $text-light-grey; /* Màu xám nhạt hơn cho slogan */
+    margin-top: 10px; /* Khoảng cách từ tiêu đề chính */
+    letter-spacing: 0.5px; /* Thêm khoảng cách chữ một chút */
+    line-height: 1.5;
+    text-transform: none; /* Đảm bảo slogan không bị uppercase */
+    text-shadow: none; /* Bỏ bóng chữ nếu H1 có */
   }
 }
+// Kết thúc phần CSS đã chỉnh sửa cho H1 và slogan
 
 .form-group {
   margin-bottom: 20px;
@@ -166,12 +206,19 @@ $soft-yellow: #FFD23F;
     font-weight: 600;
     color: $text-dark;
   }
+  label.section-label { // Giữ nguyên cho các label phụ
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 15px;
+  }
 
   input[type="text"],
   input[type="email"],
-  textarea { /* Bỏ 'select' ở đây vì đã có custom select */
+  textarea,
+  input[type="number"].form-control-custom { // Thêm lại .form-control-custom cho input number
     width: 100%;
-    padding: 6px 15px;
+    padding: 12px 15px; // Tăng padding cho inputs
     border: 1px solid $border-light;
     border-radius: 6px;
     font-size: 1em;
@@ -179,8 +226,8 @@ $soft-yellow: #FFD23F;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 
     &:focus {
-      border-color: #007bff; /* Màu focus */
-      box-shadow: 0 0 0 3px rgba(#007bff, 0.25);
+      border-color: $secondary-blue; /* Màu focus */
+      box-shadow: 0 0 0 3px rgba($secondary-blue, 0.25);
       outline: none;
     }
   }
@@ -194,13 +241,34 @@ $soft-yellow: #FFD23F;
     }
   }
 
+  // Thêm lại style cho select nếu có sử dụng select HTML thông thường
+  select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid $border-light;
+    border-radius: 6px;
+    font-size: 1em;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    -webkit-appearance: menulist;
+    -moz-appearance: menulist;
+    appearance: menulist;
+
+    &:focus {
+      border-color: $secondary-blue;
+      box-shadow: 0 0 0 3px rgba($secondary-blue, 0.25);
+      outline: none;
+    }
+  }
+
+
   textarea {
     resize: vertical;
     min-height: 120px;
   }
 }
 
-.input-with-icon {
+.input-with-icon { // Đảm bảo giữ lại nếu bạn có phần tử này
   position: relative;
   display: flex;
   align-items: center;
@@ -218,34 +286,57 @@ $soft-yellow: #FFD23F;
   }
 }
 
-
 .report-type-selection {
   margin-bottom: 25px;
-  .radio-group {
+  .radio-group-modern { // Đổi tên class từ radio-group sang radio-group-modern để khớp với HTML
     display: flex;
     gap: 20px;
-    align-items: center;
+    flex-wrap: wrap; // Cho phép xuống dòng trên màn hình nhỏ
 
     input[type="radio"] {
-      margin-right: 5px;
-      transform: scale(1.2);
+      display: none;
     }
-    label {
+
+    .radio-button-label {
+      flex: 1;
+      text-align: center;
+      padding: 10px 20px; // Tăng padding
+      border: 2px solid $border-light;
+      border-radius: 8px;
       font-size: 1.1em;
-      font-weight: bold;
+      font-weight: 600;
       color: $text-dark;
       cursor: pointer;
-      display: flex;
-      align-items: center;
+      transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+      min-width: 140px; // Tăng min-width cho các button
+
+      &:hover {
+        background-color: lighten($secondary-blue, 45%); 
+        border-color: $secondary-blue;
+        color: $secondary-blue;
+      }
+    }
+
+    input[type="radio"]:checked + .radio-button-label {
+      background-color: $secondary-blue;
+      color: white;
+      border-color: $secondary-blue;
+      box-shadow: 0 4px 8px rgba($secondary-blue, 0.2);
+    }
+
+    input[type="radio"]:focus + .radio-button-label {
+      outline: 2px solid darken($secondary-blue, 10%);
+      outline-offset: 2px;
     }
   }
 }
+
 
 .submit-button {
   display: block;
   width: 100%;
   padding: 14px;
-  background-color: $primary-orange; /* Màu cam cho nút submit */
+  background-color: $primary-orange; 
   color: $white;
   border: none;
   border-radius: 5px;
@@ -256,7 +347,7 @@ $soft-yellow: #FFD23F;
   transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 
   &:hover {
-    background-color: color.scale($primary-orange, $lightness: -10%); /* Hiệu ứng hover */
+    background-color: darken($primary-orange, 10%); 
     transform: translateY(-3px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
   }
@@ -290,8 +381,9 @@ $soft-yellow: #FFD23F;
   flex-direction: column;
 
   &:hover, &.drag-over {
-    border-color: $primary-orange;
-    background-color: color.scale($primary-orange, $lightness: 40%); /* Màu nhẹ hơn khi hover/drag */
+
+    border-color: $secondary-blue; 
+    background-color: lighten($secondary-blue, 45%); 
   }
 }
 
@@ -329,6 +421,73 @@ $soft-yellow: #FFD23F;
   }
 }
 
+.group-report-item { 
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 25px;
+  background-color: #fcfcfc;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+  .item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    border-bottom: 1px dashed #eee;
+    padding-bottom: 10px;
+
+    h4 {
+      margin: 0;
+      color: #0056b3;
+      font-size: 1.2em;
+    }
+    .remove-item-btn {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        background-color: #c82333;
+      }
+    }
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+  }
+
+  textarea {
+    min-height: 80px;
+  }
+}
+
+.add-item-btn { 
+  display: block;
+  width: auto;
+  margin: 20px auto 30px auto;
+  padding: 10px 20px;
+  background-color: $secondary-blue;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: darken($secondary-blue, 10%);
+  }
+
+  i {
+    margin-right: 8px;
+  }
+}
+
 .info-box {
   background-color: $white;
   padding: 25px;
@@ -345,7 +504,7 @@ $soft-yellow: #FFD23F;
   }
 
   .section-title {
-    color: #007bff; /* Màu tiêu đề info box */
+    color: $secondary-blue;
     margin-top: 0;
     margin-bottom: 15px;
     font-size: 1.3em;
@@ -365,7 +524,7 @@ $soft-yellow: #FFD23F;
     }
 
     .info-icon.info {
-      color: #007bff; 
+      color: $secondary-blue;
     }
   }
 
@@ -376,7 +535,7 @@ $soft-yellow: #FFD23F;
     color: $text-dark;
 
     a {
-      color: $primary-orange; /* Màu link */
+      color: $secondary-blue; 
       text-decoration: none;
       &:hover {
         text-decoration: underline;
@@ -385,11 +544,11 @@ $soft-yellow: #FFD23F;
   }
 
   p.highlight-text {
-    color: #d9534f; 
+    color: #d9534f;
     font-weight: bold;
   }
 
-  .reference-links {
+  .reference-links { 
     list-style: none;
     padding: 0;
     margin: 0;
@@ -400,7 +559,7 @@ $soft-yellow: #FFD23F;
       align-items: center;
 
       a {
-        color: $primary-orange;
+        color: $secondary-blue;
         text-decoration: none;
         &:hover {
           text-decoration: underline;
@@ -416,7 +575,7 @@ $soft-yellow: #FFD23F;
   }
 }
 
-.info-section-bottom {
+.info-section-bottom { 
   margin-top: 30px;
   padding: 18px;
   background-color: #fff3cd;
@@ -462,7 +621,7 @@ $soft-yellow: #FFD23F;
     font-weight: normal;
     color: $text-dark;
     a {
-      color :#007bff;
+      color: $secondary-blue;
       text-decoration: none;
       &:hover {
         text-decoration: underline;
@@ -483,8 +642,8 @@ $soft-yellow: #FFD23F;
 .custom-select {
   position: relative;
   width: 100%;
-  padding: 8px 15px;
-  border: 1px solid $border-light;
+  padding: 12px 15px; /* Tăng padding để khớp với hình ảnh */
+  border: 1px solid $secondary-blue; /* Viền xanh mặc định */
   border-radius: 6px;
   background-color: $white;
   cursor: pointer;
@@ -494,26 +653,24 @@ $soft-yellow: #FFD23F;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
   font-size: 1em;
 
-  &:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+  &:focus, &.open { 
+    border-color: $secondary-blue;
+    box-shadow: 0 0 0 3px rgba($secondary-blue, 0.25);
     outline: none;
   }
 
-  &::after {
-    // content: '\f0d7'; /* FontAwesome angle-down icon */
-    font-family: 'Font Awesome 5 Free';
-    font-weight: 900;
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #555;
-    transition: transform 0.3s ease;
-  }
+  // &::after { // Giữ lại icon mũi tên cho custom select
+  //   content: '\f078'; /* FontAwesome angle-down icon */
+  //   font-family: 'Font Awesome 5 Free';
+  //   font-weight: 900;
+  //   font-size: 0.8em;
+  //   color: $secondary-blue; /* Mũi tên màu xanh */
+  //   margin-left: 10px;
+  //   transition: transform 0.3s ease;
+  // }
 
   &.open::after {
-    transform: translateY(-50%) rotate(180deg);
+    transform: rotate(180deg);
   }
 }
 
@@ -527,12 +684,12 @@ $soft-yellow: #FFD23F;
   top: 100%;
   left: 0;
   right: 0;
-  border: 1px solid $border-light;
+  border: 1px solid $secondary-blue; 
   border-top: none;
   border-radius: 0 0 6px 6px;
   background-color: $white;
   box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-  max-height: 200px;
+  max-height: 250px; 
   overflow-y: auto;
   z-index: 10;
   opacity: 0;
@@ -540,6 +697,7 @@ $soft-yellow: #FFD23F;
   transform: translateY(-10px);
   transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
   margin-top: 1px;
+  padding: 5px 0;
 
   &.show {
     opacity: 1;
@@ -549,18 +707,35 @@ $soft-yellow: #FFD23F;
 }
 
 .custom-option {
-  padding: 10px 15px;
+  padding: 12px 15px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
-  font-size: 1em; 
+  transition: background-color 0.2s ease, color 0.2s ease;
+  font-size: 1em;
+  color: #333; 
 
   &:hover {
-    background-color: #f0f0f0;
+    background-color: lighten($secondary-blue, 45%); 
+    color: $secondary-blue;
   }
 
   &.selected {
-    background-color: #e0e0e0;
-    font-weight: bold;
-    color: #007bff; /* Highlight màu xanh cho lựa chọn đã chọn */
+    background-color: $secondary-blue; 
+    color: white; 
+    font-weight: 600;
+  }
+}
+
+@media (max-width: 576px) {
+  .custom-select {
+    padding: 16px 20px;
+  }
+
+  .custom-option {
+    padding: 18px 20px;
+    font-size: 1em;
+  }
+
+  .custom-options {
+    max-height: 300px;
   }
 }

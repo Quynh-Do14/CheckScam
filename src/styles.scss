@@ -10,6 +10,9 @@
  * Copyright 2011-2021 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  */
+* {
+  font-family: Be Vietnam Pro, sans-serif;
+}
 
 .table-responsive {
   overflow-x: hidden !important;
@@ -122,11 +125,13 @@ section {
 }
 
 /* GLOBAL FULL HD FIXES */
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   width: 100%;
-  overflow-x: hidden; /* Prevent horizontal scroll */
+  overflow-x: hidden;
+  /* Prevent horizontal scroll */
 }
 
 /* GLOBAL IMAGE CONTAINMENT FIX FOR NEWS CONTENT - ENHANCED VERSION */
@@ -138,7 +143,7 @@ html, body {
   max-width: 100% !important;
   overflow: hidden !important;
   box-sizing: border-box !important;
-  
+
   /* Fix cho tất cả ảnh bên trong content */
   img {
     max-width: 100% !important;
@@ -150,21 +155,21 @@ html, body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
     object-fit: contain !important;
     box-sizing: border-box !important;
-    
+
     /* Đảm bảo ảnh không bao giờ vượt quá container */
     max-height: 500px !important;
   }
-  
+
   /* Fix cho figure elements nếu có */
   figure {
     max-width: 100% !important;
     margin: 1rem auto !important;
     text-align: center !important;
-    
+
     img {
       margin: 0 !important;
     }
-    
+
     figcaption {
       font-size: 0.9rem;
       color: #666;
@@ -172,7 +177,7 @@ html, body {
       font-style: italic;
     }
   }
-  
+
   /* Fix cho các thẻ có thể chứa ảnh */
   p img,
   div img,
@@ -193,6 +198,7 @@ html, body {
 
 /* FORCE OVERRIDE cho tất cả ảnh trong news content */
 img[src] {
+
   &.news-content img,
   &[class*="news-content"] img {
     max-width: 100% !important;
@@ -210,8 +216,10 @@ body {
   color: #858796;
   text-align: left;
   background-color: #fff;
-  width: 100vw; /* Full viewport width */
-  min-height: 100vh; /* Full viewport height */
+  width: 100vw;
+  /* Full viewport width */
+  min-height: 100vh;
+  /* Full viewport height */
 }
 
 [tabindex="-1"]:focus:not(:focus-visible) {
@@ -12724,7 +12732,8 @@ body.sidebar-toggled footer.sticky-footer {
 html,
 body {
   height: 100%;
-  overflow-x: hidden; /* Prevent horizontal scroll globally */
+  overflow-x: hidden;
+  /* Prevent horizontal scroll globally */
 }
 
 body {
@@ -12737,16 +12746,16 @@ body {
 /* ========================================= */
 
 /* FORCE ALL IMAGES IN NEWS CONTENT TO BE RESPONSIVE - SPECIFIC TARGETING */
-.news-content > img,
+.news-content>img,
 .news-content p img,
 .news-content div img,
-.content-wrapper > img,
+.content-wrapper>img,
 .content-wrapper p img,
 .content-wrapper div img,
-[class*="news-content"] > img,
+[class*="news-content"]>img,
 [class*="news-content"] p img,
 [class*="news-content"] div img,
-[class*="content-wrapper"] > img,
+[class*="content-wrapper"]>img,
 [class*="content-wrapper"] p img,
 [class*="content-wrapper"] div img {
   max-width: 100% !important;

@@ -1,4 +1,3 @@
-
 /* Root element smooth scroll */
 html {
     scroll-behavior: smooth;
@@ -6,61 +5,62 @@ html {
 
 .news-page-container {
     display: flex;
-    gap: 28px; // Tăng gap từ 24px lên 28px
+    gap: 28px;
     padding: 30px 20px;
     padding-top: 95px; // Điều chỉnh theo header height (75px + 20px spacing)
-    max-width: 1700px; // Tăng từ 1500px lên 1700px để tận dụng không gian
+    max-width: 1700px;
     margin: 0 auto;
     
     /* QUAN TRỌNG: Đảm bảo sticky hoạt động tốt */
-    overflow: visible; // KHÔNG được dùng hidden
+    overflow: visible; // KHÔNG được dùng hidden cho phần tử cha chứa sticky
     position: relative; // Đảm bảo có stacking context
     contain: none; // KHÔNG hạn chế containment cho sticky
     transform: none; // KHÔNG có transform để tránh cản trở sticky
     
     /* Đảm bảo tất cả cột có cùng baseline */
-    align-items: flex-start; // Tất cả bắt đầu từ trên cùng
+    align-items: flex-start;
+    background: linear-gradient(135deg, 
+    rgba(255, 248, 240, 0.4) 0%, 
+    rgba(255, 243, 224, 0.3) 25%,
+    rgba(254, 240, 138, 0.2) 50%,
+    rgba(252, 211, 77, 0.15) 75%,
+    rgba(245, 158, 11, 0.1) 100%
+  );    
 }
 
-/* Cột trái: Xem thêm */
+/* Cột trái: Xem thêm - SẼ CUỘN BÌNH THƯỜNG */
 .news-sidebar-left {
-    flex: 1.4; // Tăng từ 1.2 lên 1.4
-    min-width: 350px; // Tăng từ 300px lên 350px
-    max-width: 400px; // Tăng từ 350px lên 400px
+    flex: 1.4;
+    min-width: 350px;
+    max-width: 400px;
     
-    /* Đảm bảo ngang hàng */
-    align-self: flex-start; // Bắt đầu từ trên cùng
+    align-self: flex-start;
 }
 
-/* Cột giữa: Nội dung chính */
+/* Cột giữa: Nội dung chính - SẼ CUỘN BÌNH THƯỜNG */
 .news-main-column {
-    flex: 2.8; // Tăng từ 2.5 lên 2.8
+    flex: 2.8;
     min-width: 0;
     
-    /* Đảm bảo ngang hàng */
-    align-self: flex-start; // Bắt đầu từ trên cùng
+    align-self: flex-start;
     
-    /* Animation khi load - cùng lúc với sidebar trái */
-    animation: fadeInUp 0.5s ease-out both; // Bỏ delay để cùng lúc
+    animation: fadeInUp 0.5s ease-out both;
     
-    /* Đảm bảo ngang hàng */
     .news-detail-card {
-        margin-top: 0 !important; // Bắt buộc bỏ margin-top
+        margin-top: 0 !important;
     }
 }
 
 /* Cột phải: Mục lục */
 .news-sidebar-right {
-    flex: 1.5; // Tăng từ 1.3 lên 1.5
-    min-width: 370px; // Tăng từ 320px lên 370px
-    max-width: 420px; // Tăng từ 380px lên 420px
+    flex: 1.5;
+    min-width: 370px;
+    max-width: 420px;
     
-    /* Đảm bảo ngang hàng */
-    align-self: flex-start; // Bắt đầu từ trên cùng
+    align-self: flex-start;
     
-    /* QUAN TRỌNG: Đảm bảo height để sticky hoạt động */
     height: fit-content;
-    min-height: calc(100vh - 95px); // Đảm bảo có đủ chiều cao
+    min-height: calc(100vh - 95px); /* Đảm bảo đủ chiều cao cho sticky hoạt động */
 }
 
 /* Card cho nội dung chính */
@@ -73,19 +73,18 @@ html {
     margin-top: 0;
 }
 
-/* Đảm bảo sidebar cards luôn chiếm full chiều cao */
+/* Đảm bảo sidebar card luôn chiếm full chiều cao */
 .sidebar-card {
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); 
     padding: 20px; 
     margin-bottom: 20px;
-    margin-top: 0; // Bỏ margin-top 50px để ngang với tin tức
+    margin-top: 0;
     display: flex;
     flex-direction: column;
-    min-height: 600px; // Đảm bảo chiều cao tối thiểu
+    min-height: 600px;
     
-    /* Nội dung chính sẽ flex-grow để chiếm hết không gian */
     .table-of-contents,
     .related-news-list {
         flex-grow: 1;
@@ -106,9 +105,6 @@ html {
     
     /* Đảm bảo vị trí baseline */
     vertical-align: top;
-    
-    /* Debug border - xóa sau khi test */
-    /* border-top: 2px solid red; */
 }
 
 /* Đặc biệt cho cột giữa */
@@ -128,7 +124,7 @@ html {
 
 .back-button-container {
     margin-bottom: 25px;
-    margin-top: 0; // Bỏ margin-top để ngang với sidebar
+    margin-top: 0;
 }
 
 .btn-back {
@@ -408,17 +404,16 @@ html {
 
 /* --- Sidebar chung --- */
 .sidebar-card .sidebar-title {
-    font-size: 1.5em; // Tăng kích thước tiêu đề
+    font-size: 1.5em;
     color: #222;
     margin-bottom: 20px;
-    padding-bottom: 12px; // Tăng padding
+    padding-bottom: 12px;
     display: flex;
     align-items: center;
     gap: 10px;
-    font-weight: 600; // Tăng độ đậm
+    font-weight: 600;
     position: relative;
     
-    /* Gradient border bottom */
     &::after {
         content: '';
         position: absolute;
@@ -431,7 +426,7 @@ html {
     }
 
     i {
-        font-size: 1.2em; // Tăng kích thước icon
+        font-size: 1.2em;
         color: var(--title-color, #007bff);
         filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
     }
@@ -440,7 +435,7 @@ html {
 /* Màu sắc chung cho cả hai sidebar - Cùng màu xanh dương */
 .news-sidebar-left .sidebar-card .sidebar-title,
 .news-sidebar-right .sidebar-card .sidebar-title {
-    --title-color: #007bff; // Cùng màu xanh dương cho cả hai
+    --title-color: #007bff;
 }
 
 /* --- Mục lục tin tức (Sidebar phải) --- */
@@ -489,7 +484,6 @@ html {
 .table-of-contents {
     margin-bottom: 30px;
     
-    /* Animation cho việc load */
     animation: fadeInUp 0.5s ease-out;
 }
 
@@ -504,49 +498,37 @@ html {
     }
 }
 
-/* Sticky cho toàn bộ sidebar card - SIDEBAR PHẢI */
+/* Sticky cho toàn bộ sidebar card - SIDEBAR PHẢI (Mục lục) */
 .news-sidebar-right .sidebar-card {
-    /* STICKY POSITIONING - enhanced for better compatibility */
-    position: -webkit-sticky; /* Safari */
+    position: -webkit-sticky;
     position: sticky;
-    top: 80px; /* Điều chỉnh từ 85px xuống 80px cho mượt hơn */
+    top: 95px;
     
-    /* HEIGHT & OVERFLOW - Tăng chiều cao */
     height: fit-content;
-    min-height: 600px; /* Tăng từ 400px lên 600px */
-    max-height: calc(100vh - 90px); /* Điều chỉnh theo top mới */
-    overflow-y: auto; /* Thanh trượt dọc */
+    min-height: 600px;
+    max-height: calc(100vh - 95px); /* Điều chỉnh theo top mới */
+    overflow-y: auto; /* Thanh trượt dọc cho nội dung sidebar nếu dài */
     
-    /* Z-INDEX & STACKING */
-    z-index: 150; /* Tăng từ 100 lên 150 để đảm bảo trên các element khác */
+    z-index: 150;
     
-    /* BROWSER FIXES - Enhanced */
-    transform: translateZ(0); /* Force GPU acceleration */
-    backface-visibility: hidden; /* Smooth rendering */
-    contain: layout style paint; /* Modern containment for better performance */
+    /* Các thuộc tính tối ưu hiệu suất cho sticky */
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    contain: layout style paint;
+    will-change: transform;
     
-    /* Đảm bảo sticky luôn hoạt động */
-    will-change: transform; /* Tối ưu performance cho transform */
+    transition: all 0.2s ease;
     
-    /* SMOOTH TRANSITIONS */
-    transition: all 0.2s ease; /* Smooth shadow khi scroll */
-    
-    /* VISUAL ENHANCEMENT - thêm hiệu ứng đẹp hơn khi scroll */
     &:hover {
         box-shadow: 0 6px 25px rgba(0, 123, 255, 0.12);
         transform: translateY(-1px);
     }
     
-    /* DEBUGGING - uncomment to see sticky area */
-    /* background: rgba(255, 0, 0, 0.1) !important; */
-    /* border: 2px solid red !important; */
-    
-    /* Animation khi load - cùng lúc với 2 cột kia */
-    animation: slideInRight 0.6s ease-out both; /* Bỏ delay */
+    animation: slideInRight 0.6s ease-out both;
     
     /* Custom scrollbar cho mục lục */
     &::-webkit-scrollbar {
-        width: 8px; // Tăng độ rộng scrollbar
+        width: 8px;
     }
     
     &::-webkit-scrollbar-track {
@@ -570,7 +552,6 @@ html {
         }
     }
     
-    /* Firefox scrollbar */
     scrollbar-width: thin;
     scrollbar-color: #007bff #f8f9fa;
 }
@@ -587,12 +568,12 @@ html {
 }
 
 .toc-nav {
-    background-color: #ffffff; /* Đổi lại thành background trắng */
-    border: 1px solid #e9ecef; /* Thêm lại viền */
-    border-left: 4px solid #dc3545; /* Viền trái màu đỏ */
-    border-radius: 8px; /* Thêm lại border-radius */
-    padding: 16px; /* Tăng lại padding */
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Thêm shadow */
+    background-color: #ffffff;
+    border: 1px solid #e9ecef;
+    border-left: 4px solid #dc3545;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     min-height: 500px;
     max-height: none;
     overflow-y: visible;
@@ -602,14 +583,13 @@ html {
     list-style: none;
     padding: 0;
     margin: 0;
-    counter-reset: main-counter; /* Reset counter chính */
+    counter-reset: main-counter;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    min-height: 450px; // Đảm bảo danh sách chiếm đủ chiều cao
+    min-height: 450px;
     display: flex;
     flex-direction: column;
-    gap: 6px; // Tăng khoảng cách giữa các item
+    gap: 6px;
     
-    /* Thêm space ở cuối để push content lên */
     &::after {
         content: '';
         flex-grow: 1;
@@ -618,17 +598,16 @@ html {
 }
 
 .toc-item {
-    margin-bottom: 12px; /* Tăng từ 8px lên 12px */
+    margin-bottom: 12px;
     position: relative;
-    line-height: 1.6; /* Tăng từ 1.5 lên 1.6 */
+    line-height: 1.6;
     transition: all 0.2s ease;
-    padding: 6px 0; /* Tăng padding */
+    padding: 6px 0;
     
-    /* Hover effect cho toàn bộ item */
     &:hover {
-        background-color: rgba(220, 53, 69, 0.05); /* Đổi thành màu đỏ nhạt */
+        background-color: rgba(220, 53, 69, 0.05);
         border-radius: 6px;
-        padding: 8px 12px; /* Tăng padding khi hover */
+        padding: 8px 12px;
         margin: -2px -8px 10px -8px;
         transform: translateX(4px);
     }
@@ -821,18 +800,17 @@ html {
     text-decoration: none;
     line-height: 1.4;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    display: inline; /* Đổi từ block thành inline để nằm trên cùng một dòng */
-    padding: 0; /* Bỏ padding */
+    display: inline;
+    padding: 0;
     border-bottom: 1px solid transparent;
     word-wrap: break-word;
     overflow-wrap: break-word;
     cursor: pointer;
     
-    /* Active state - khi đang ở phần này trong bài viết */
     &.active {
         color: #007bff !important;
         background: linear-gradient(90deg, rgba(0, 123, 255, 0.1), rgba(0, 123, 255, 0.05));
-        padding: 2px 6px; /* Giảm padding cho inline */
+        padding: 2px 6px;
         border-radius: 4px;
         font-weight: 600;
         box-shadow: 0 1px 4px rgba(0, 123, 255, 0.15);
@@ -843,7 +821,7 @@ html {
         border-bottom-color: #007bff;
         text-decoration: none;
         background: linear-gradient(90deg, rgba(0, 123, 255, 0.08), rgba(0, 123, 255, 0.03));
-        padding: 2px 6px; /* Giảm padding cho inline */
+        padding: 2px 6px;
         border-radius: 4px;
         box-shadow: 0 2px 8px rgba(0, 123, 255, 0.12);
     }
@@ -867,76 +845,28 @@ html {
     }
 }
 
-/* --- Related news (Sidebar trái) --- */
+/* --- Related news (Sidebar trái) - SẼ CUỘN BÌNH THƯỜNG --- */
 .news-sidebar-left .sidebar-card {
-    /* STICKY POSITIONING - enhanced for better compatibility */
-    position: -webkit-sticky; /* Safari */
-    position: sticky;
-    top: 80px; /* Điều chỉnh từ 85px xuống 80px cho mượt hơn */
+    // Đặt lại thành static để nó cuộn bình thường
+    position: static; 
+    top: auto; 
+    height: auto;
+    max-height: none;
+    overflow-y: visible;
+    z-index: auto;
     
-    /* HEIGHT & OVERFLOW - Tăng chiều cao */
-    height: fit-content;
-    min-height: 600px; /* Tăng từ 400px lên 600px */
-    max-height: calc(100vh - 90px); /* Điều chỉnh theo top mới */
-    overflow-y: auto;
+    transition: box-shadow 0.2s ease;
     
-    /* Z-INDEX & STACKING */
-    z-index: 150; /* Tăng từ 100 lên 150 để đảm bảo trên các element khác */
+    animation: slideInLeft 0.6s ease-out both;
     
-    /* BROWSER FIXES - Enhanced */
-    transform: translateZ(0); /* Force GPU acceleration */
-    backface-visibility: hidden; /* Smooth rendering */
-    contain: layout style paint; /* Modern containment for better performance */
-    
-    /* Đảm bảo sticky luôn hoạt động */
-    will-change: transform; /* Tối ưu performance cho transform */
-    
-    /* SMOOTH TRANSITIONS */
-    transition: box-shadow 0.2s ease; /* Smooth shadow khi scroll */
-    
-    /* DEBUGGING - uncomment to see sticky area */
-    /* background: rgba(0, 255, 0, 0.1) !important; */
-    /* border: 2px solid green !important; */
-    
-    /* Animation khi load - cùng lúc với cột giữa */
-    animation: slideInLeft 0.6s ease-out both; /* Bỏ delay, cùng lúc với cột giữa */
-    
-    /* Custom scrollbar cho sidebar trái - Chung màu với sidebar phải */
+    // Tắt scrollbar nếu không muốn cuộn nội bộ cho sidebar này
     &::-webkit-scrollbar {
-        width: 8px;
+        display: none;
     }
-    
-    &::-webkit-scrollbar-track {
-        background: #f8f9fa;
-        border-radius: 4px;
-        margin: 4px 0;
-    }
-    
-    &::-webkit-scrollbar-thumb {
-        background: linear-gradient(180deg, #007bff, #0056b3); /* Đổi thành màu xanh dương */
-        border-radius: 4px;
-        border: 1px solid #f8f9fa;
-        
-        &:hover {
-            background: linear-gradient(180deg, #0056b3, #004085);
-            box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
-        }
-        
-        &:active {
-            background: #004085;
-        }
-    }
-    
-    /* Firefox scrollbar */
-    scrollbar-width: thin;
-    scrollbar-color: #007bff #f8f9fa; /* Đổi thành màu xanh dương */
+    scrollbar-width: none;
 }
 
 /* Animation cho sidebar trái */
-.news-sidebar-left .sidebar-card {
-    animation: slideInLeft 0.6s ease-out both; // Bỏ delay, cùng lúc với cột giữa
-}
-
 @keyframes slideInLeft {
     from {
         opacity: 0;
@@ -952,26 +882,25 @@ html {
     list-style: none;
     padding: 0;
     margin: 0;
-    min-height: 500px; // Đảm bảo chiều cao tối thiểu
-    max-height: none; // Bỏ giới hạn chiều cao
-    overflow-y: visible; // Bỏ scrollbar, để sidebar chính xử lý
+    min-height: 500px;
+    max-height: none;
+    overflow-y: visible;
 }
 
 .related-news-list li {
-    margin-bottom: 20px; // Tăng từ 18px lên 20px
-    opacity: 0; // Ẩn ban đầu cho animation
-    transform: translateX(-20px); // Di chuyển từ trái
-    animation: slideInFromLeft 0.5s ease-out forwards; // Animation slide in (tên khác)
-    padding: 2px 0; // Thêm padding để tăng chiều cao
+    margin-bottom: 20px;
+    opacity: 0;
+    transform: translateX(-20px);
+    animation: slideInFromLeft 0.5s ease-out forwards;
+    padding: 2px 0;
     
     &:last-child {
         margin-bottom: 0;
     }
     
-    // Animation delay cho từng item
     @for $i from 1 through 10 {
         &:nth-child(#{$i}) {
-            animation-delay: #{($i - 1) * 0.1s + 0.3s}; // Thêm 0.3s delay sau khi sidebar load xong
+            animation-delay: #{($i - 1) * 0.1s + 0.3s};
         }
     }
 }
@@ -989,14 +918,13 @@ html {
     gap: 15px;
     text-decoration: none;
     color: inherit;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); // Smooth transition
-    padding: 12px; // Tăng padding
-    border-radius: 10px; // Border radius lớn hơn
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 12px;
+    border-radius: 10px;
     border: 1px solid transparent;
     position: relative;
     overflow: hidden;
     
-    /* Gradient background effect - Chung màu với mục lục */
     &::before {
         content: '';
         position: absolute;
@@ -1004,19 +932,19 @@ html {
         left: -100%;
         width: 100%;
         height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(0, 123, 255, 0.1), transparent); /* Đổi thành màu xanh dương */
+        background: linear-gradient(90deg, transparent, rgba(0, 123, 255, 0.1), transparent);
         transition: left 0.5s ease;
         z-index: 0;
     }
     
     &:hover {
-        background: linear-gradient(135deg, rgba(0, 123, 255, 0.08), rgba(0, 123, 255, 0.03)); /* Đổi thành màu xanh dương */
+        background: linear-gradient(135deg, rgba(0, 123, 255, 0.08), rgba(0, 123, 255, 0.03));
         border-color: rgba(0, 123, 255, 0.2);
-        transform: translateY(-3px) scale(1.02); // Lift effect
-        box-shadow: 0 6px 20px rgba(0, 123, 255, 0.15); /* Đổi thành màu xanh dương */
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 6px 20px rgba(0, 123, 255, 0.15);
         
         &::before {
-            left: 100%; // Sweep effect
+            left: 100%;
         }
     }
     
@@ -1024,7 +952,6 @@ html {
         transform: translateY(-1px) scale(0.98);
     }
     
-    /* Content should be above the background effect */
     > * {
         position: relative;
         z-index: 1;
@@ -1060,12 +987,11 @@ html {
     text-overflow: ellipsis;
     transition: color 0.3s ease;
     
-    /* Thêm subtle text shadow */
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .related-news-link:hover .related-news-title {
-    color: #007bff; /* Đổi thành màu xanh dương cho phù hợp với theme chung */
+    color: #007bff;
     text-shadow: 0 1px 3px rgba(0, 123, 255, 0.2);
 }
 
@@ -1106,22 +1032,34 @@ html {
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.7);
 }
 
+  .news-sidebar-right {
+        position: sticky;
+        top: 80px;
+  }
 /* --- Responsive design --- */
 @media (max-width: 1200px) {
     .news-page-container {
-        gap: 24px; // Giảm gap trên màn hình nhỏ hơn
-        max-width: 1400px; // Giảm từ 1700px xuống 1400px
-        padding-top: 90px; // Điều chỉnh theo header height
+        gap: 24px;
+        max-width: 1400px;
+        padding-top: 90px;
     }
     
     .news-sidebar-left,
     .news-sidebar-right {
-        min-width: 320px; // Giảm xuống
+        // position: sticky;
+        // top: 80px;
+        min-width: 320px;
         max-width: 360px;
     }
     
     .news-main-column {
-        flex: 2.6; // Giảm một chút
+        flex: 2.6;
+    }
+
+    /* Điều chỉnh top cho sticky trên màn hình nhỏ hơn */
+    .news-sidebar-right .sidebar-card { // Chỉ sticky sidebar phải
+        top: 90px;
+        max-height: calc(100vh - 90px);
     }
 }
 
@@ -1129,7 +1067,7 @@ html {
     .news-page-container {
         flex-direction: column;
         padding: 20px 15px;
-        padding-top: 85px; // Điều chỉnh theo header height trên tablet
+        padding-top: 85px;
     }
 
     .news-sidebar-left,
@@ -1170,12 +1108,11 @@ html {
         height: 80px;
     }
     
-    /* Điều chỉnh padding-top cho mobile (header mobile height: 60px) */
     .news-page-container {
-        padding-top: 75px; // 60px header + 15px spacing
+        padding-top: 75px;
     }
     
-    /* Tắt sticky trên tablet và mobile */
+    /* TẮT STICKY TRÊN TABLET VÀ MOBILE cho cả 2 sidebar */
     .news-sidebar-left .sidebar-card,
     .news-sidebar-right .sidebar-card {
         position: static !important;
@@ -1211,25 +1148,23 @@ html {
     .toc-link {
         font-size: 0.85em;
         line-height: 1.3;
-        max-height: 3.9em; /* Giảm chiều cao trên mobile */
+        max-height: 3.9em;
         
-        /* Điều chỉnh hover effect cho mobile */
         &:hover {
             padding: 4px 6px;
             margin: -2px -4px;
         }
     }
     
-    /* Cắt ngắn text sớm hơn trên mobile */
     .toc-item[data-level="1"] .toc-link,
     .toc-item[data-level="2"] .toc-link {
-        max-height: 2.6em; /* 2 dòng trên mobile */
+        max-height: 2.6em;
     }
     
     .toc-item[data-level="3"] .toc-link,
     .toc-item[data-level="4"] .toc-link,
     .toc-item[data-level="5"] .toc-link {
-        max-height: 1.3em; /* 1 dòng cho heading cấp thấp */
+        max-height: 1.3em;
     }
 }
 
@@ -1325,12 +1260,12 @@ html {
         /* Reset mọi element con đầu tiên */
         > *:first-child {
             margin-top: 0 !important;
-            padding-top: 0 !important;
+            padding-top: 20px !important;
             
             /* Nếu là card thì cũng reset */
             &.card, &.sidebar-card, &.news-detail-card {
                 margin-top: 0 !important;
-                padding-top: 20px; // Chỉ giữ padding nội dung
+                padding-top: 20px;
                 
                 /* Element đầu tiên trong card */
                 > *:first-child {
@@ -1501,10 +1436,3 @@ html {
 h1, h2, h3, h4, h5, h6 {
     scroll-margin-top: 100px;
 }
-
-/* Debug mode - uncomment để kiểm tra alignment */
-/* 
-.news-page-container > * {
-    border-top: 2px solid red !important;
-}
-*/

@@ -1,3 +1,6 @@
+
+@use 'sass:color';
+
 .app-notification {
   position: fixed;
   top: 20px;
@@ -346,13 +349,13 @@ $secondary-blue: #007bff; // Màu xanh cho các yếu tố tương tác
   transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 
   &:hover {
-    background-color: darken($primary-orange, 10%); 
+    background-color: color.scale($primary-orange, $lightness: -10%); 
     transform: translateY(-3px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
   }
 
   &:active {
-    background-color: darken($primary-orange, 15%);
+    background-color: color.scale($primary-orange, $lightness: -15%);
     transform: translateY(0);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   }
@@ -380,6 +383,7 @@ $secondary-blue: #007bff; // Màu xanh cho các yếu tố tương tác
   flex-direction: column;
 
   &:hover, &.drag-over {
+
     border-color: $secondary-blue; 
     background-color: lighten($secondary-blue, 45%); 
   }
@@ -478,7 +482,7 @@ $secondary-blue: #007bff; // Màu xanh cho các yếu tố tương tác
   transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: darken($secondary-blue, 10%);
+    background-color: color.scale($secondary-blue, $lightness: -10%);
   }
 
   i {

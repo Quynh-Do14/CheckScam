@@ -39,7 +39,7 @@ body {
 }
 
 .news-page-container .page-content-area {
-  // padding: 20px 0;
+  /* padding: 20px 0; */
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -771,7 +771,7 @@ body {
   }
   .news-main-heading {
     font-size: 1.8em;
-    // margin-top: 25px; /* Điều chỉnh margin-top cho mobile */
+    /* margin-top: 25px; */ /* Điều chỉnh margin-top cho mobile */
     &::after {
       width: 60px;
       bottom: -10px;

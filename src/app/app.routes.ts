@@ -42,6 +42,12 @@ import { ReportDetailComponent } from './components/report/report-detail/report-
 import { MistakeDetailComponent } from './components/report/mistake-detail/mistake-detail.component';
 import { RegisterComponent } from './components/register/register.component';
 import { AccessDeniedComponent } from './components/access-denied/access-denied.component';
+import { ForumComponent } from './components/forum/forum.component';
+import { CreatePostComponent } from './components/forum/create-post/create-post.component';
+import { PostDetailComponent } from './components/forum/post-detail/post-detail.component';
+import { UserProfileComponent } from './components/forum/user-profile/user-profile.component';
+import { ForumTestComponent } from './components/forum/forum-test.component';
+import { ForumSimpleComponent } from './components/forum/forum-simple.component';
 import { EmailVerificationComponent } from './components/emailverification/emailverification.component';
 
 export const routes: Routes = [
@@ -92,7 +98,8 @@ export const routes: Routes = [
     { path: 'login', component: LoginComponent, canActivate: [PublicGuard] },       
     { path: 'verify-email', component: EmailVerificationComponent, canActivate: [PublicGuard] }, // Đã thêm dòng này
     { path: 'list-news', component: ListNewsComponent },
-    { path: 'view-news/:id', component: ViewNewsComponent },
+    { path: 'list-news/:slug', component: ViewNewsComponent },
+    { path: 'view-news/:id', component: ViewNewsComponent }, // Keep for backward compatibility
     { path: 'chatbox', component: ChatBoxComponent },
     { path: 'analyze', component: AnalyzeComponent },
     { path: 'ranking', component: RankingComponent },
@@ -110,6 +117,12 @@ export const routes: Routes = [
     { path: 'partners', component: PartnersComponent },
     { path: 'transactions', component: TransactionsComponent },
     { path: 'transactions/agent/:id', component: AgentDetailComponent },
+    { path: 'forum', component: ForumComponent },
+    { path: 'forum-test', component: ForumTestComponent },
+    { path: 'forum-full', component: ForumComponent },
+    { path: 'forum/create-post', component: CreatePostComponent },
+    { path: 'forum/post/:id', component: PostDetailComponent },
+    { path: 'forum/user/:id', component: UserProfileComponent },
     { path: 'access-denied', component: AccessDeniedComponent },
     { path: '**', redirectTo: '' },
 ];

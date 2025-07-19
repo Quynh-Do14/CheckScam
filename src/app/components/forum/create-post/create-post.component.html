@@ -1,0 +1,112 @@
+<div class="create-post-container">
+  <div class="create-post-header">
+    <h1>Tạo bài viết mới</h1>
+    <p>Chia sẻ kinh nghiệm, thắc mắc hoặc thông tin hữu ích với cộng đồng</p>
+  </div>
+
+  <div class="create-post-form">
+    <form (ngSubmit)="onSubmit()" #postForm="ngForm">
+      <!-- Error Message -->
+      <div class="error-alert" *ngIf="error">
+        <i class="bi bi-exclamation-triangle"></i>
+        {{ error }}
+      </div>
+
+      <!-- Title Input -->
+      <div class="form-group">
+        <label for="title" class="form-label">
+          Tiêu đề bài viết <span class="required">*</span>
+        </label>
+        <input 
+          type="text" 
+          id="title"
+          name="title"
+          class="form-input"
+          placeholder="Nhập tiêu đề bài viết..."
+          [(ngModel)]="post.title"
+          maxlength="200"
+          required>
+        <div class="character-count">
+          {{ post.title.length }}/200 ký tự
+        </div>
+      </div>
+
+      <!-- Content Input -->
+      <div class="form-group">
+        <label for="content" class="form-label">
+          Nội dung <span class="required">*</span>
+        </label>
+        <textarea 
+          id="content"
+          name="content"
+          class="form-textarea"
+          placeholder="Viết nội dung bài viết của bạn..."
+          [(ngModel)]="post.content"
+          maxlength="5000"
+          rows="12"
+          required></textarea>
+        <div class="character-count">
+          {{ post.content.length }}/5000 ký tự
+        </div>
+      </div>
+
+      <!-- Image Upload -->
+      <div class="form-group">
+        <label class="form-label">Hình ảnh (tuỳ chọn)</label>
+        
+        <div class="image-upload-area" *ngIf="!imagePreview">
+          <input 
+            type="file" 
+            id="imageFile"
+            accept="image/*"
+            (change)="onFileSelected($event)"
+            class="file-input">
+          <label for="imageFile" class="file-upload-label">
+            <i class="bi bi-cloud-upload"></i>
+            <span>Chọn hình ảnh</span>
+            <small>Định dạng: JPG, PNG, GIF (tối đa 5MB)</small>
+          </label>
+        </div>
+
+        <div class="image-preview" *ngIf="imagePreview">
+          <img [src]="imagePreview" alt="Preview" class="preview-image">
+          <button type="button" class="remove-image-btn" (click)="removeImage()">
+            <i class="bi bi-x-circle"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <button 
+          type="button" 
+          class="btn btn-secondary"
+          (click)="onCancel()"
+          [disabled]="isSubmitting">
+          Hủy bỏ
+        </button>
+        
+        <button 
+          type="submit" 
+          class="btn btn-primary"
+          [disabled]="isSubmitting || !postForm.valid">
+          <span *ngIf="isSubmitting" class="loading-spinner"></span>
+          <span *ngIf="!isSubmitting">Đăng bài</span>
+          <span *ngIf="isSubmitting">Đang đăng...</span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Guidelines -->
+  <div class="posting-guidelines">
+    <h3>Quy tắc đăng bài</h3>
+    <ul>
+      <li>Sử dụng ngôn từ lịch sự, tôn trọng</li>
+      <li>Nội dung phải liên quan đến chủ đề an toàn mạng</li>
+      <li>Không đăng thông tin cá nhân nhạy cảm</li>
+      <li>Không spam hoặc quảng cáo</li>
+      <li>Kiểm tra thông tin trước khi chia sẻ</li>
+    </ul>
+  </div>
+</div>

@@ -51,7 +51,7 @@ export class ListNewsComponent implements OnInit {
   showChatbox = false;
 
   /* URL ảnh */
-  readonly imageBaseUrl = `${environment.apiBaseUrl}/report/image/`;
+  readonly imageBaseUrl = `${environment.apiBaseUrl}/news/image/`;
 
   constructor(
     private newsService: NewsService,
@@ -115,12 +115,46 @@ export class ListNewsComponent implements OnInit {
   }
 
   /* ===== Ảnh ===== */
-  getImageUrl({ url }: AttachmentDto): string {
-    if (!url) return 'assets/img/placeholder.png';
+  getImageUrl(attachment: AttachmentDto): string {
+    if (!attachment?.url) return 'assets/img/placeholder.png';
 
-    return url.startsWith('http')
-      ? url
-      : `${this.imageBaseUrl}${encodeURIComponent(url)}`;
+    // Nếu đã là full URL
+    if (attachment.url.startsWith('http')) {
+      return attachment.url;
+    }
+
+    // Sử dụng NewsService để tạo URL chuẩn
+    return this.newsService.getImageUrl(attachment.url);
+  }
+
+  // Helper cho tin tức không có attachment nhưng có ảnh trong content
+  getNewsImageFromContent(news: any): string {
+    if (!news?.content) return 'assets/img/placeholder.png';
+    
+    // Tìm ảnh đầu tiên trong content HTML
+    const imgMatch = news.content.match(/<img[^>]+src="([^"]+)"/i);
+    if (imgMatch && imgMatch[1]) {
+      const src = imgMatch[1];
+      
+      // Nếu là URL đầy đủ
+      if (src.startsWith('http') || src.startsWith('/api/')) {
+        return src.startsWith('http') ? src : `${environment.apiBaseUrl}${src}`;
+      }
+    }
+    
+    return 'assets/img/placeholder.png';
+  }
+
+  // Lấy ảnh hiển thị cho tin tức (uu tiên attachment, sau đó là content)
+  getDisplayImage(news: any): string {
+    // 1. Kiểm tra attachments trước
+    if (news.attachments && news.attachments.length > 0) {
+      const firstAttachment = news.attachments[0];
+      return this.getImageUrl(firstAttachment);
+    }
+    
+    // 2. Kiểm tra ảnh trong content
+    return this.getNewsImageFromContent(news);
   }
 
   onImageError(ev: Event): void {
@@ -194,5 +228,39 @@ export class ListNewsComponent implements OnInit {
 
   closeChatbox(): void {
     this.showChatbox = false;
+  }
+
+  /* ===== Navigation ===== */
+  createSlug(title: string): string {
+    if (!title) return '';
+    
+    return title
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '') // Loại bỏ dấu
+      .replace(/đ/g, 'd')
+      .replace(/Đ/g, 'D')
+      .replace(/[^a-z0-9\s-]/g, '') // Chỉ giữ chữ, số, space, dấu gạch
+      .trim()
+      .replace(/\s+/g, '-') // Thay space bằng dấu gạch
+      .replace(/-+/g, '-'); // Loại bỏ dấu gạch trùng lặp
+  }
+
+  getNewsUrl(news: any): string {
+    const slug = this.createSlug(news.name);
+    return `/list-news/${slug}`;
+  }
+
+  goToNewsDetail(news: any, event?: Event): void {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    const slug = this.createSlug(news.name);
+    console.log('🔥 Clicking on news image');
+    console.log('🔥 Title:', news.name);
+    console.log('🔥 Slug:', slug);
+    console.log('🔥 Navigating to:', '/list-news/' + slug);
+    this.router.navigate(['/list-news', slug]);
   }
 }

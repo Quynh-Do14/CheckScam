@@ -1,20 +1,8 @@
 {
-  "/ws/*": {
-    "target": "https://api-v1.ai6.vn",
-    "secure": false,
-    "ws": true,
-    "changeOrigin": true,
-    "logLevel": "debug",
-    "withCredentials": false,
-    "headers": {
-      "Connection": "upgrade"
-    }
-  },
   "/api/*": {
-    "target": "https://api-v1.ai6.vn",
+    "target": "http://localhost:8080",
     "secure": false,
     "changeOrigin": true,
-    "logLevel": "debug",
-    "withCredentials": false
+    "logLevel": "debug"
   }
 }

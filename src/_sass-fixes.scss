@@ -1,0 +1,22 @@
+// Fix for deprecated SASS functions
+@use "sass:color";
+
+// Override deprecated lighten() function
+@function lighten($color, $amount: 10%) {
+  @return color.scale($color, $lightness: $amount);
+}
+
+// Override deprecated darken() function  
+@function darken($color, $amount: 10%) {
+  @return color.scale($color, $lightness: -$amount);
+}
+
+// Override deprecated saturate() function
+@function saturate($color, $amount: 10%) {
+  @return color.scale($color, $saturation: $amount);
+}
+
+// Override deprecated desaturate() function
+@function desaturate($color, $amount: 10%) {
+  @return color.scale($color, $saturation: -$amount);
+}

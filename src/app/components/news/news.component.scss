@@ -484,3 +484,52 @@ textarea.form-control {
 .text-warning {
   color: #f0ad4e !important;
 }
+
+/* News thumbnail styles */
+.news-image-container {
+  transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+  border-radius: 4px;
+  overflow: hidden;
+  display: inline-block;
+  
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: var(--shadow-md);
+  }
+  
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.news-thumbnail {
+  transition: opacity var(--transition-speed) ease;
+  
+  &:hover {
+    opacity: 0.9;
+  }
+  
+  &:not([src]), &[src=""], &[src="null"] {
+    opacity: 0.5;
+    background-color: #f8f9fa;
+    border: 1px dashed #dee2e6;
+  }
+}
+
+/* Truncated text styles */
+.news-title-truncated {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+  color: var(--text-dark);
+}
+
+.news-description-truncated {
+  max-width: 250px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-medium);
+}

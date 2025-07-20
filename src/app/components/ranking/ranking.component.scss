@@ -1008,7 +1008,7 @@
       background: linear-gradient(135deg, rgba(251, 146, 60, 0.1), transparent, rgba(234, 179, 8, 0.1));
       opacity: 0;
       transition: opacity 0.3s ease;
-      z-index: -1; // Đảm bảo lớp phủ nằm dưới nội dung
+      z-index: -1; 
     }
     
     &:hover {
@@ -1024,12 +1024,12 @@
       }
       
       .reward-icon {
-        transform: scale(1.05); // Phóng to nhẹ khung ảnh
-        box-shadow: 0 12px 32px rgba(251, 146, 60, 0.3); // Giữ hiệu ứng đổ bóng
+        transform: scale(1.05); 
+        box-shadow: 0 12px 32px rgba(251, 146, 60, 0.3); 
       }
 
       .reward-icon img {
-        transform: rotate(5deg); // Thêm hiệu ứng xoay cho ảnh bên trong khi hover
+        transform: rotate(5deg); 
       }
     }
     

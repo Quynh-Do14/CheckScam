@@ -743,7 +743,6 @@ body {
     transform: translateY(-2px);
   }
 
-  /* Áp dụng cho các màn hình nhỏ hơn hoặc bằng 992px (bao gồm cả tablet ngang và điện thoại) */
   @media (max-width: 992px) {
     min-height: 350px; /* Có thể điều chỉnh min-height cho tablet */
     padding: 15px; 
@@ -753,7 +752,7 @@ body {
   }
 
   @media (max-width: 768px) {
-    margin-top: 130px; 
+    margin-top: 170px; 
     min-height: 500px; 
     padding: 10px; 
     border-radius: 10px;
@@ -1767,8 +1766,8 @@ app-footer {
   }
   
   @media (max-width: 768px) {
-    height: 320px;
-    padding-top: 30px;
+    height: 380px;
+    padding-top: 40px;
   }
 }
 
@@ -1893,7 +1892,7 @@ app-footer {
 }
 
 .right-column .activity-log-widget ::ng-deep .widget-header {
-  margin-bottom: 15px;
+  margin-bottom: 0  px;
   flex-shrink: 0;
 }
 

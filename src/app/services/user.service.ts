@@ -1,4 +1,3 @@
-
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { HttpUtilService } from './http.util.service';
@@ -23,6 +22,8 @@ export class UserService {
   private apiDeleteProfile = `${environment.apiBaseUrl}/users/profiles`;
   private apiLogout = `${environment.apiBaseUrl}/auth/logout`;
   private apiGoogleLogin = `${environment.apiBaseUrl}/auth/google`;
+  private apiForgotPassword = `${environment.apiBaseUrl}/auth/forgot-password`;
+  private apiResetPassword = `${environment.apiBaseUrl}/auth/reset-password`;
 
   private _isLoggedIn = new BehaviorSubject<boolean>(this.hasToken());
   authStatus$: Observable<boolean> = this._isLoggedIn.asObservable();
@@ -155,7 +156,7 @@ export class UserService {
   
   private extractUserIdFromJWT(payload: any): number | null {
     const possibleIds = [
-      payload?.checkscam?.principal?.id, // Thử checkscam với c thường
+      payload?.checkscam?.principal?.id, 
       payload?.CheckScam?.principal?.id, 
       payload?.id,
       payload?.userId,
@@ -233,10 +234,9 @@ export class UserService {
             console.warn("Raw token không phải định dạng JWT. Không thể phân tích payload.");
         }
       } catch (e) {
-        console.error("Lỗi khi phân tích JWT payload:", e); // Đổi từ warn sang error để dễ debug
+        console.error("Lỗi khi phân tích JWT payload:", e); 
       }
       
-      // 3. Trích xuất Roles: Ưu tiên roles từ response object, sau đó mới đến payload
       let roles = response?.roles || payload?.roles || payload?.authorities || []; 
       if (Array.isArray(roles)) {
         roles = roles.map(role => {
@@ -305,5 +305,13 @@ export class UserService {
       this._currentUserData.next(updatedData); 
       console.log('User data in localStorage updated via updateUserInLocalStorage:', updatedData);
     }
+  }
+
+  requestPasswordReset(email: string): Observable<any> {
+    return this.http.post(`${this.apiForgotPassword}`, { email });
+  }
+
+  resetPassword(token: string, newPassword: string): Observable<any> {
+    return this.http.post(`${this.apiResetPassword}`, { token, newPassword });
   }
 }

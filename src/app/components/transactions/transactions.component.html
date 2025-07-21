@@ -16,17 +16,17 @@
       <div class="search-container">
         <div class="search-box">
           <i class="fas fa-search search-icon"></i>
-          <input 
-            type="text" 
-            class="search-input" 
+          <input
+            type="text"
+            class="search-input"
             placeholder="Tìm kiếm giao dịch viên theo tên hoặc email..."
             [(ngModel)]="searchQuery"
             (input)="onSearch()"
             (keydown.enter)="onSearch()"
             [disabled]="isLoading">
-          <button 
-            *ngIf="searchQuery" 
-            class="clear-search-btn" 
+          <button
+            *ngIf="searchQuery"
+            class="clear-search-btn"
             (click)="clearSearch()"
             title="Xóa tìm kiếm">
             <i class="fas fa-times"></i>
@@ -37,7 +37,7 @@
           Tìm kiếm
         </button>
       </div>
-      
+
       <div class="search-results-info" *ngIf="searchQuery && !isLoading">
         <p>Tìm thấy <strong>{{ filteredAgents.length }}</strong> giao dịch viên cho "{{ searchQuery }}"</p>
       </div>
@@ -51,7 +51,6 @@
         <p class="section-subtitle" *ngIf="!isLoading">{{ filteredAgents.length }} giao dịch viên có sẵn</p>
       </div>
 
-      <!-- Loading State -->
       <div class="loading-state" *ngIf="isLoading">
         <div class="loading-spinner">
           <div class="spinner"></div>
@@ -59,7 +58,6 @@
         <p>Đang tải danh sách giao dịch viên...</p>
       </div>
 
-      <!-- Error State -->
       <div class="error-state" *ngIf="error && !isLoading">
         <div class="error-icon">
           <i class="fas fa-exclamation-triangle"></i>
@@ -72,29 +70,38 @@
         </button>
       </div>
 
-      <!-- Agents Grid -->
       <div class="agents-grid" *ngIf="!isLoading && !error && filteredAgents.length > 0">
-        <div 
-          class="agent-card" 
+        <div
+          class="agent-card"
           *ngFor="let agent of filteredAgents; trackBy: trackByAgentId"
           (click)="onAgentClick(agent)">
-          
+
           <div class="agent-avatar-container">
-            <img 
-              [src]="agent.avatar" 
-              [alt]="agent.name" 
+            <img
+              [src]="agent.avatar"
+              [alt]="agent.name"
               class="agent-avatar"
               (error)="onImageError($event, agent.name)">
           </div>
 
           <div class="agent-name">{{ agent.name }}</div>
-          
-          <!-- Optional: Show email on hover or as subtitle -->
-          <div class="agent-email" *ngIf="agent.email">{{ agent.email }}</div>
-        </div>
+
+          <!-- <div class="agent-rating" *ngIf="agent.averageRating">
+            ⭐ {{ agent.averageRating | number:'1.1-1' }} sao
+          </div>
+
+          <div class="agent-stats" *ngIf="agent.completedTransactions">
+            Hoàn thành {{ agent.completedTransactions | number }} giao dịch
+          </div> -->
+
+          <div class="agent-status" [ngClass]="{'online': agent.isOnline}" *ngIf="agent.isOnline !== undefined">
+            <span class="status-indicator" [class.online]="agent.isOnline"></span>
+            {{ agent.isOnline ? 'Đang trực tuyến' : 'Ngoại tuyến' }}
+          </div>
+
+          </div>
       </div>
 
-      <!-- No Results -->
       <div class="no-results" *ngIf="!isLoading && !error && filteredAgents.length === 0 && searchQuery">
         <div class="no-results-icon">
           <i class="fas fa-search"></i>
@@ -106,7 +113,6 @@
         </button>
       </div>
 
-      <!-- Empty State (no agents at all) -->
       <div class="no-results" *ngIf="!isLoading && !error && allAgents.length === 0">
         <div class="no-results-icon">
           <i class="fas fa-users"></i>

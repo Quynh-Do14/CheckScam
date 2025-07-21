@@ -18,7 +18,7 @@ export class ReportComponent implements OnInit {
   constructor(private router: Router, private titleService: Title) { } // Inject Title service
 
   ngOnInit(): void {
-    this.titleService.setTitle('Báo cáo lừa đảo'); // Đặt tiêu đề cho tab trình duyệt
+    this.titleService.setTitle('Báo Cáo AI6 - Săn Người Xấu, Diệt Kẻ Gian | Phân Tích Lừa Đảo'); // Đặt tiêu đề cho tab trình duyệt
   }
 
   goBack(): void {

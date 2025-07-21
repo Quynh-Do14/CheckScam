@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Title } from '@angular/platform-browser'; // Import Title service here
+import { Title } from '@angular/platform-browser';
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
 import { HttpClient } from '@angular/common/http';
@@ -16,6 +16,10 @@ interface TransactionAgent {
   email: string;
   description?: string;
   profiles?: Profile[];
+  isOnline?: boolean;
+  role?: string;
+  specialty?: string;
+  experienceYears?: number;
 }
 
 interface Profile {
@@ -40,12 +44,12 @@ export class TransactionsComponent implements OnInit {
   showChatbox = false;
 
   private readonly BASE_URL = `${environment.apiUrl}`;
-  private readonly API_URL = `${this.BASE_URL}/api/v1/users/collaborators`; 
+  private readonly API_URL = `${this.BASE_URL}/api/v1/users/collaborators`;
 
-  constructor(private http: HttpClient, private router: Router, private titleService: Title) { } 
+  constructor(private http: HttpClient, private router: Router, private titleService: Title) { }
 
   ngOnInit(): void {
-    this.titleService.setTitle('Giao dịch viên'); 
+    this.titleService.setTitle('Giao dịch viên');
     this.loadAgents();
   }
 
@@ -57,19 +61,33 @@ export class TransactionsComponent implements OnInit {
       next: (data) => {
         this.allAgents = data.map(agent => ({
           ...agent,
-          avatar: agent.avatar ? `${this.BASE_URL}/${agent.avatar}` : this.getDefaultAvatar(agent.name)
+          avatar: agent.avatar ? `${this.BASE_URL}/${agent.avatar}` : this.getDefaultAvatar(agent.name),
+          isOnline: Math.random() > 0.5,
+          role: this.getRandomRole(),
+          specialty: this.getRandomSpecialty(),
+          experienceYears: Math.floor(Math.random() * 10) + 1
         }));
         this.filteredAgents = [...this.allAgents];
         this.isLoading = false;
       },
       error: (error) => {
-      console.error('❌ Error loading agents:', error);
-      this.error = 'Không thể tải danh sách giao dịch viên từ server. Vui lòng kiểm tra kết nối và thử lại.';
-      this.isLoading = false;
-      this.allAgents = [];
+        console.error('❌ Error loading agents:', error);
+        this.error = 'Không thể tải danh sách giao dịch viên từ server. Vui lòng kiểm tra kết nối và thử lại.';
+        this.isLoading = false;
+        this.allAgents = [];
         this.filteredAgents = [];
-        }
+      }
     });
+  }
+
+  private getRandomRole(): string {
+    const roles = ["Chuyên viên Tư vấn", "Quản lý Khách hàng", "Chuyên gia Giao dịch", "Hỗ trợ Kỹ thuật"];
+    return roles[Math.floor(Math.random() * roles.length)];
+  }
+
+  private getRandomSpecialty(): string {
+    const specialties = ["Đầu tư Chứng khoán", "Bất động sản", "Forex", "Tiền điện tử", "Quản lý Danh mục"];
+    return specialties[Math.floor(Math.random() * specialties.length)];
   }
 
   private getDefaultAvatar(name: string): string {
@@ -93,7 +111,8 @@ export class TransactionsComponent implements OnInit {
     const query = this.searchQuery.toLowerCase().trim();
     this.filteredAgents = this.allAgents.filter(agent =>
       agent.name.toLowerCase().includes(query) ||
-      agent.email.toLowerCase().includes(query)
+      (agent.role && agent.role.toLowerCase().includes(query)) ||
+      (agent.specialty && agent.specialty.toLowerCase().includes(query))
     );
   }
 
@@ -116,12 +135,10 @@ export class TransactionsComponent implements OnInit {
   }
 
   onAiTuVanClicked(): void {
-    debugger
     this.showChatbox = true;
   }
 
   closeChatbox(): void {
-    debugger
     this.showChatbox = false;
   }
 }

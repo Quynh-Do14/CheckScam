@@ -1,0 +1,74 @@
+/* ROBOT STATIC OVERRIDE - Ensure robot is completely still */
+
+/* Main robot image - completely static */
+.robot-image {
+  animation: none !important;
+}
+
+/* All robot pseudo elements - static */
+.robot-image::before,
+.robot-image::after {
+  animation: none !important;
+}
+
+/* Robot container - static */
+.robot-container {
+  animation: none !important;
+}
+
+/* All robot child elements - static */
+.eye,
+.eye::after,
+.antenna-light,
+.led-indicator,
+.arm,
+.robot-shadow {
+  animation: none !important;
+}
+
+/* Ensure all robot components are static */
+.robot-head,
+.robot-chest,
+.robot-body,
+.left-arm,
+.right-arm {
+  animation: none !important;
+}
+
+/* Remove any transform animations */
+.robot-image,
+.robot-container,
+.eye,
+.antenna-light,
+.led-indicator,
+.arm,
+.robot-shadow {
+  transform: none !important;
+}
+
+/* Keep only hover effect for robot image */
+.robot-image:hover {
+  transform: scale(1.05) !important;
+  transition: transform 0.3s ease;
+}
+
+/* Static opacity for all robot components */
+.antenna-light {
+  opacity: 0.8 !important;
+}
+
+.led-indicator {
+  opacity: 0.9 !important;
+}
+
+.robot-shadow {
+  opacity: 0.1 !important;
+}
+
+.robot-image::before {
+  opacity: 0.5 !important;
+}
+
+.robot-image::after {
+  opacity: 0.3 !important;
+}

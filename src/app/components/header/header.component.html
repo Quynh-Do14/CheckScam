@@ -6,7 +6,8 @@
 
     <ul class="nav-links main-nav" [class.menu-open]="isMenuOpen">
       <li><a (click)="onAiTuVanClick(); onNavLinkClick()">AI Tư vấn</a></li>
-      <li><a routerLink="/list-news" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" (click)="onNavLinkClick()">Tin tức</a></li>
+      <!-- <li><a routerLink="/list-news" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" (click)="onNavLinkClick()">Tin tức</a></li> -->
+       <li><a routerLink="/list-news" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: false}" (click)="onNavLinkClick()">Tin tức</a></li>
       <li><a routerLink="/forum" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" (click)="onNavLinkClick()">Diễn đàn</a></li>
       <li><a routerLink="/ranking" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" (click)="onNavLinkClick()">Bảng xếp hạng</a></li>
       <li><a routerLink="/report" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" (click)="onNavLinkClick()">Báo cáo</a></li>

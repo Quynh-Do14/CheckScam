@@ -1,48 +1,336 @@
 <app-header (aiTuVanClicked)="onAiTuVanClicked()"></app-header>
-<div class="partners-policy-container">
-  <div class="header-section">
-    <h1 class="main-heading">Trở Thành Đối Tác</h1>
-  </div>
 
-  <div class="policy-section">
-    <h2 class="section-title">1. Giới Thiệu Chung về Hợp Tác</h2>
-    <p>Chúng tôi luôn tìm kiếm những đối tác tiềm năng để cùng nhau phát triển, mở rộng giá trị và mang lại lợi ích bền vững cho cộng đồng.</p>
-    <p>Trang này trình bày các hình thức, lợi ích và quy trình hợp tác chi tiết với chúng tôi.</p>
-  </div>
+<div class="partners-container">
+  <main class="main-content">
+    <div class="page-wrapper">
+      <div class="page-container">
 
-  <div class="policy-section">
-    <h2 class="section-title">2. Lợi Ích Khi Trở Thành Đối Tác</h2>
-    <ul class="item-list">
-      <li><strong>Mở rộng tầm vóc:</strong> Tiếp cận mạng lưới khách hàng rộng lớn và đa dạng của chúng tôi.</li>
-      <li><strong>Tăng trưởng doanh thu:</strong> Khám phá các cơ hội kinh doanh mới và mô hình chia sẻ doanh thu hấp dẫn.</li>
-      <li><strong>Nâng cao thương hiệu:</strong> Liên kết với một nền tảng uy tín, tăng cường hình ảnh và nhận diện thương hiệu của bạn.</li>
-      <li><strong>Đổi mới sáng tạo:</strong> Cùng phát triển các giải pháp đột phá, khai thác tối đa tiềm năng công nghệ.</li>
-      <li><strong>Hỗ trợ toàn diện:</strong> Nhận được sự hỗ trợ tận tâm từ đội ngũ chuyên gia của chúng tôi trong suốt quá trình hợp tác.</li>
-    </ul>
-  </div>
+        
+        <!-- Hero Section -->
+        <section class="hero-section" id="about">
+          <div class="hero-container">
+            <div class="hero-content">
+              <h1 class="hero-title" #heroTitle>Kết nối & Phát triển cùng AI6</h1>
+              <p class="hero-description">{{ partnerInfo.description }}</p>
+              <div class="hero-actions">
+                <button class="btn btn-primary" (click)="openModal()">
+                  Trở thành đối tác
+                </button>
+                <button class="btn btn-secondary" (click)="downloadPartnerKit()">
+                  Tải tài liệu đối tác
+                </button>
+              </div>
+            </div>
+            <div class="hero-visual">
+              <div class="partnership-diagram">
+                <!-- Magical connection lines - 4 rays to 4 partners -->
+                <div class="connection-line"></div>
+                <div class="connection-line"></div>
+                <div class="connection-line"></div>
+                <div class="connection-line"></div>
+                
+                <!-- Center node with magical aura -->
+                <div class="center-node">AI6</div>
+                
+                <!-- Partner nodes with cosmic glow -->
+                <div class="partner-node partner-1">Ngân hàng</div>
+                <div class="partner-node partner-2">E-commerce</div>
+                <div class="partner-node partner-3">Fintech</div>
+                <div class="partner-node partner-4">Công nghệ</div>
+              </div>
+            </div>
+          </div>
+        </section>
 
-  <div class="policy-section">
-    <h2 class="section-title">3. Các Mô Hình Hợp Tác Chính</h2>
-    <p>Chúng tôi linh hoạt trong các hình thức hợp tác để phù hợp với năng lực và mục tiêu của từng đối tác:</p>
-    <ul class="item-list">
-      <li>Hợp tác Nội dung: Trao đổi, chia sẻ hoặc đồng sáng tạo nội dung giá trị (bài viết, video, khóa học, tài liệu chuyên ngành).</li>
-      <li>Hợp tác Công nghệ/Kỹ thuật: Tích hợp API, phát triển các tính năng bổ trợ, hoặc xây dựng giải pháp chung.</li>
-      <li>Hợp tác Marketing & Truyền thông: Tổ chức sự kiện đồng thương hiệu, chạy chiến dịch quảng cáo chung, hoặc cross-promotion.</li>
-      <li>Hợp tác Phát triển Kinh doanh: Phân phối sản phẩm/dịch vụ, giới thiệu khách hàng, hoặc các thỏa thuận chia sẻ lợi nhuận.</li>
-      <li>Hợp tác Đầu tư/Tài chính: Đối tác chiến lược, đầu tư vốn, hoặc tài trợ dự án.</li>
-    </ul>
-  </div>
+        <!-- Services Section -->
+        <section class="services-section" id="services">
+          <div class="section-container">
+            <h2 class="section-title animate-in">Dịch vụ của chúng tôi</h2>
+            
+            <!-- AI Robot Mascot -->
+            <div class="robot-mascot animate-in">
+              <img src="assets/img/robot.png" alt="AI Robot" class="robot-image">
+            </div>
+            
+            <div class="services-grid">
+              <div 
+                class="service-card animate-in" 
+                *ngFor="let service of partnerInfo.services; let i = index"
+                (mouseenter)="onServiceCardHover(i)"
+                [style.animation-delay.s]="i * 0.2">
+                <div class="service-icon">
+                  <div class="icon-placeholder">{{ i + 1 }}</div>
+                </div>
+                <h3 class="service-title">{{ service }}</h3>
+                <p class="service-description">
+                  Giải pháp chuyên nghiệp và tối ưu cho doanh nghiệp của bạn trong việc phòng chống lừa đảo
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
 
-  <div class="policy-section">
-    <h2 class="section-title">4. Quy Trình Hợp Tác Đơn Giản</h2>
-    <ul class="item-list">
-      <li>Bước 1: Liên Hệ Đề Xuất: Gửi email hoặc liên hệ trực tiếp với đội ngũ quản trị viên của chúng tôi để trình bày ý tưởng hợp tác sơ bộ của bạn.</li>
-      <li>Bước 2: Đánh Giá & Thảo Luận: Đội ngũ của chúng tôi sẽ xem xét đề xuất và liên hệ để thảo luận sâu hơn về tiềm năng và chi tiết hợp tác.</li>
-      <li>Bước 3: Thỏa Thuận & Ký Kết: Sau khi thống nhất các điều khoản, chúng ta sẽ tiến hành ký kết hợp đồng hợp tác chính thức.</li>
-      <li>Bước 4: Triển Khai & Cùng Phát Triển: Bắt đầu dự án hợp tác và cùng nhau hướng tới thành công bền vững.</li>
-    </ul>
+        <!-- Benefits Section -->
+        <section class="benefits-section" id="benefits">
+          <div class="section-container">
+            <h2 class="section-title animate-in">Lợi ích khi hợp tác</h2>
+            <div class="benefits-grid">
+              <div 
+                class="benefit-card animate-in" 
+                *ngFor="let benefit of partnerInfo.benefits; let i = index"
+                [style.animation-delay.s]="i * 0.3">
+                <div class="benefit-icon">✓</div>
+                <div class="benefit-content">
+                  <h3 class="benefit-title">{{ benefit }}</h3>
+                  <p class="benefit-description">
+                    Mang lại giá trị thực tế và lợi ích bền vững cho đối tác trong lĩnh vực bảo mật
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="stats-section">
+          <div class="section-container">
+            <div class="stats-grid">
+              <div 
+                class="stat-item animate-in" 
+                *ngFor="let stat of stats; let i = index"
+                (click)="onStatItemClick(stat)"
+                [style.animation-delay.s]="i * 0.2">
+                <div class="stat-number">{{ stat.number }}</div>
+                <div class="stat-label">{{ stat.label }}</div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <!-- Contact Modal -->
+  <div 
+    class="modal-backdrop" 
+    [class.active]="isModalOpen"
+    (click)="closeModal()">
+  </div>
+  
+  <div 
+    class="contact-modal" 
+    [class.active]="isModalOpen"
+    role="dialog">
+    
+    <!-- Contact Form Step -->
+    <div 
+      *ngIf="currentStep === 'contact'"
+      class="form-content">
+      <h2 class="form-title">Liên hệ hợp tác</h2>
+      <p class="form-body">
+        Hãy để lại thông tin để chúng tôi có thể tư vấn giải pháp bảo mật phù hợp nhất cho doanh nghiệp của bạn.
+      </p>
+      
+      <form class="contact-form" (ngSubmit)="submitContactForm()">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="name" class="form-label">Họ và tên *</label>
+            <input 
+              type="text" 
+              id="name" 
+              class="form-input"
+              [class.error]="getFieldValidationClass('name') === 'error'"
+              [class.valid]="getFieldValidationClass('name') === 'valid'"
+              [(ngModel)]="contactForm.name"
+              name="name"
+              placeholder="Nhập họ và tên của bạn"
+              required>
+          </div>
+          <div class="form-group">
+            <label for="email" class="form-label">Email *</label>
+            <input 
+              type="email" 
+              id="email" 
+              class="form-input"
+              [class.error]="getFieldValidationClass('email') === 'error'"
+              [class.valid]="getFieldValidationClass('email') === 'valid'"
+              [(ngModel)]="contactForm.email"
+              name="email"
+              placeholder="email@company.com"
+              required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="company" class="form-label">Công ty *</label>
+            <input 
+              type="text" 
+              id="company" 
+              class="form-input"
+              [class.error]="getFieldValidationClass('company') === 'error'"
+              [class.valid]="getFieldValidationClass('company') === 'valid'"
+              [(ngModel)]="contactForm.company"
+              name="company"
+              placeholder="Tên công ty của bạn"
+              required>
+          </div>
+          <div class="form-group">
+            <label for="phone" class="form-label">Số điện thoại</label>
+            <input 
+              type="tel" 
+              id="phone" 
+              class="form-input" 
+              [(ngModel)]="contactForm.phone"
+              name="phone"
+              placeholder="0123 456 789">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Loại hình hợp tác *</label>
+          <div class="radio-group">
+            <label class="form-radio-input" for="inquiry_partnership">
+              <input 
+                id="inquiry_partnership" 
+                class="radio-button-input" 
+                type="radio" 
+                name="inquiryType" 
+                value="partnership" 
+                [checked]="selectedInquiryType === 'partnership'"
+                (change)="onInquiryTypeChange('partnership')">
+              <span class="radio-button"></span>
+              <span class="form-radio-label">Đối tác chiến lược</span>
+            </label>
+            
+            <label class="form-radio-input" for="inquiry_technology">
+              <input 
+                id="inquiry_technology" 
+                class="radio-button-input" 
+                type="radio" 
+                name="inquiryType" 
+                value="technology"
+                [checked]="selectedInquiryType === 'technology'"
+                (change)="onInquiryTypeChange('technology')">
+              <span class="radio-button"></span>
+              <span class="form-radio-label">Hợp tác công nghệ AI</span>
+            </label>
+            
+            <label class="form-radio-input" for="inquiry_consulting">
+              <input 
+                id="inquiry_consulting" 
+                class="radio-button-input" 
+                type="radio" 
+                name="inquiryType" 
+                value="consulting"
+                [checked]="selectedInquiryType === 'consulting'"
+                (change)="onInquiryTypeChange('consulting')">
+              <span class="radio-button"></span>
+              <span class="form-radio-label">Tư vấn bảo mật</span>
+            </label>
+            
+            <label class="form-radio-input" for="inquiry_integration">
+              <input 
+                id="inquiry_integration" 
+                class="radio-button-input" 
+                type="radio" 
+                name="inquiryType" 
+                value="integration"
+                [checked]="selectedInquiryType === 'integration'"
+                (change)="onInquiryTypeChange('integration')">
+              <span class="radio-button"></span>
+              <span class="form-radio-label">Tích hợp API</span>
+            </label>
+
+            <label class="form-radio-input" for="inquiry_other">
+              <input 
+                id="inquiry_other" 
+                class="radio-button-input" 
+                type="radio" 
+                name="inquiryType" 
+                value="other"
+                [checked]="selectedInquiryType === 'other'"
+                (change)="onInquiryTypeChange('other')">
+              <span class="radio-button"></span>
+              <span class="form-radio-label">Khác</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="message" class="form-label">Nội dung *</label>
+          <textarea 
+            id="message" 
+            class="form-textarea"
+            [class.error]="getFieldValidationClass('message') === 'error'"
+            [class.valid]="getFieldValidationClass('message') === 'valid'"
+            [(ngModel)]="contactForm.message"
+            name="message"
+            rows="4"
+            placeholder="Mô tả chi tiết về nhu cầu hợp tác, loại dự án, quy mô, và kỳ vọng của bạn..."
+            required></textarea>
+        </div>
+      </form>
+      
+      <div class="form-buttons">
+        <button 
+          type="button" 
+          class="tertiary-button"
+          (click)="closeModal()">
+          <span class="button-text">Hủy</span>
+        </button>
+        <button 
+          type="button" 
+          class="submit-button"
+          [disabled]="isSubmitting"
+          (click)="submitContactForm()">
+          <span class="button-text">{{ getSubmitButtonText() }}</span>
+          <span class="loading-spinner" *ngIf="isSubmitting"></span>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Success Step -->
+    <div 
+      *ngIf="currentStep === 'success'"
+      class="form-content">
+      <h2 class="form-title">Cảm ơn bạn!</h2>
+      <p class="form-body">
+        Chúng tôi đã nhận được yêu cầu hợp tác của bạn. Đội ngũ AI6 sẽ liên hệ với bạn trong vòng 24 giờ để tư vấn chi tiết về giải pháp bảo mật.
+      </p>
+      <div class="success-info">
+        <div class="info-item">
+          <strong>Email xác nhận:</strong> Đã gửi tới {{ contactForm.email }}
+        </div>
+        <div class="info-item">
+          <strong>Mã tham chiếu:</strong> #AI6-{{ getCurrentReferenceCode() }}
+        </div>
+        <div class="info-item">
+          <strong>Loại hợp tác:</strong> {{ selectedInquiryType }}
+        </div>
+      </div>
+      <div class="form-buttons">
+        <button 
+          type="button" 
+          class="tertiary-button"
+          (click)="goToPartnerPortal()">
+          <span class="button-text">Portal đối tác</span>
+        </button>
+        <button 
+          type="button" 
+          class="submit-button"
+          (click)="closeModal()">
+          <span class="button-text">Đóng</span>
+        </button>
+      </div>
+    </div>
   </div>
 </div>
-<app-chat-box *ngIf="showChatbox" (close)="closeChatbox()"></app-chat-box>
+
+<!-- Chat Box Component -->
+<app-chat-box 
+  *ngIf="showChatbox" 
+  (closeChatbox)="closeChatbox()">
+</app-chat-box>
 
 <app-footer></app-footer>

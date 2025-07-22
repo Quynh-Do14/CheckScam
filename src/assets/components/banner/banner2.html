@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banner Hợp Tác Đối Tác Chiến Lược</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        .banner-container {
+            width: 160px;
+            height: 600px;
+            background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #fbbf24 100%);
+            position: relative;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .golden-opportunity {
+            background: linear-gradient(45deg, #fbbf24, #f59e0b, #fbbf24);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 18px;
+            font-weight: 900;
+            text-align: center;
+            padding: 12px 4px;
+            position: relative;
+            animation: shimmer 2s infinite;
+            letter-spacing: 0.5px;
+        }
+        
+        @keyframes shimmer {
+            0%, 100% { background-position: -200% 0; }
+            50% { background-position: 200% 0; }
+        }
+        
+        .handshake-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            position: relative;
+        }
+        
+        .handshake-glow {
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, rgba(251,191,36,0.3) 0%, rgba(59,130,246,0.2) 50%, transparent 70%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: glow 3s ease-in-out infinite;
+        }
+        
+        @keyframes glow {
+            0%, 100% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+        
+        .handshake-icon {
+            font-size: 24px;
+            color: #fbbf24;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+        
+        .main-title {
+            color: white;
+            font-size: 16px;
+            font-weight: 900;
+            text-align: center;
+            padding: 12px 6px;
+            line-height: 1.3;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.7);
+            letter-spacing: 0.3px;
+        }
+        
+        .services-section {
+            background: rgba(255,255,255,0.95);
+            margin: 12px 6px;
+            border-radius: 6px;
+            padding: 12px 8px;
+            text-align: center;
+        }
+        
+        .growth-icon {
+            font-size: 20px;
+            color: #1e40af;
+            margin-bottom: 4px;
+        }
+        
+        .service-text {
+            font-size: 13px;
+            font-weight: 800;
+            color: #1e40af;
+            line-height: 1.4;
+            margin-bottom: 8px;
+            letter-spacing: 0.2px;
+        }
+        
+        .trust-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            font-size: 11px;
+            color: #059669;
+            font-weight: 700;
+            letter-spacing: 0.1px;
+        }
+        
+        .badge-icon {
+            font-size: 12px;
+            color: #fbbf24;
+        }
+        
+        .cta-section {
+            position: absolute;
+            bottom: 45px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+        }
+        
+        .cta-button {
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            color: white;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 900;
+            cursor: pointer;
+            width: 100%;
+            animation: pulse 2s infinite;
+            box-shadow: 0 3px 8px rgba(30,64,175,0.4);
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 12px rgba(30,64,175,0.6);
+        }
+        
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 3px 8px rgba(30,64,175,0.4); }
+            50% { box-shadow: 0 3px 15px rgba(30,64,175,0.7); }
+        }
+        
+        .footer-text {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            color: white;
+            text-align: center;
+            width: 140px;
+            text-shadow: 0 2px 3px rgba(0,0,0,0.7);
+            font-weight: 600;
+            letter-spacing: 0.1px;
+        }
+        
+        .heart-icon {
+            color: #ef4444;
+            font-size: 8px;
+        }
+        
+        /* Popup Styles */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0,0,0,0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .popup-content {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: popupSlide 0.3s ease-out;
+        }
+        
+        @keyframes popupSlide {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .popup-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e40af;
+            margin-bottom: 16px;
+            line-height: 1.4;
+        }
+        
+        .popup-form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .popup-input {
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+        
+        .popup-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+        
+        .popup-submit {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .popup-submit:hover {
+            transform: translateY(-1px);
+        }
+        
+        .popup-close {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <div class="banner-container" onclick="openPopup()">
+        <div class="golden-opportunity">
+            CƠ HỘI VÀNG
+        </div>
+        
+        <div class="handshake-section">
+            <div class="handshake-glow">
+                <div class="handshake-icon">🤝</div>
+            </div>
+        </div>
+        
+        <div class="main-title">
+            TRỞ THÀNH<br>ĐỐI TÁC<br>CHIẾN LƯỢC
+        </div>
+        
+        <div class="services-section">
+            <div class="growth-icon">📈</div>
+            <div class="service-text">
+                LIÊN HỆ ĐẶT<br>BANNER QUẢNG CÁO
+            </div>
+            <div class="trust-badge">
+                <span class="badge-icon">🏆</span>
+                <span>UY TÍN HÀNG ĐẦU - HIỆU QUẢ CAO</span>
+            </div>
+        </div>
+        
+        <div class="cta-section">
+            <button class="cta-button">
+                HỢP TÁC NGAY
+            </button>
+        </div>
+        
+        <div class="footer-text">
+            Chúng tôi trân trọng từng đối tác! <span class="heart-icon">❤️</span>
+        </div>
+    </div>
+    
+    <!-- Popup -->
+    <div class="popup-overlay" id="popup">
+        <div class="popup-content">
+            <button class="popup-close" onclick="closePopup()">&times;</button>
+            <div class="popup-title">
+                Chào bạn mới! Để lại email để chúng mình gửi ưu đãi đặc biệt nhé! ❤️
+            </div>
+            <form class="popup-form" onsubmit="handleSubmit(event)">
+                <input type="email" class="popup-input" placeholder="Nhập email của bạn..." required>
+                <button type="submit" class="popup-submit">
+                    NHẬN ưu đãi ngay! 🎁
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        function openPopup() {
+            document.getElementById('popup').style.display = 'flex';
+        }
+        
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+        
+        function handleSubmit(event) {
+            event.preventDefault();
+            const email = event.target.querySelector('input').value;
+            alert(`Cảm ơn bạn! Chúng tôi sẽ gửi ưu đãi đặc biệt đến ${email} sớm nhất!`);
+            closePopup();
+        }
+        
+        // Close popup when clicking outside
+        document.getElementById('popup').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePopup();
+            }
+        });
+    </script>
+</body>
+</html>

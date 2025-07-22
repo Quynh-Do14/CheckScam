@@ -36,6 +36,7 @@ import { MistakeManagementComponent } from './components/report/mistake-manageme
 import { PartnersComponent } from './components/partners/partners.component';
 import { TransactionsComponent } from './components/transactions/transactions.component';
 import { AgentDetailComponent } from './components/transactions/agent-detail/agent-detail.component';
+import { CreateContractComponent } from './components/transactions/create-contract/create.component';
 
 import { ProfileComponent } from './components/profile/profile.component';
 import { ReportDetailComponent } from './components/report/report-detail/report-detail.component';
@@ -125,6 +126,7 @@ export const routes: Routes = [
     { path: 'partners', component: PartnersComponent },
     { path: 'transactions', component: TransactionsComponent },
     { path: 'transactions/agent/:id', component: AgentDetailComponent },
+    { path: 'transactions/create-contract/:agentId', component: CreateContractComponent },
     { path: 'forum', component: ForumComponent },
     { path: 'forum-test', component: ForumTestComponent },
     { path: 'forum-full', component: ForumComponent },

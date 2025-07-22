@@ -1,0 +1,114 @@
+<app-header></app-header>
+
+<div class="create-contract-page">
+  <div class="container">
+    <div class="back-navigation">
+      <button class="back-btn" (click)="goBack()">
+        <i class="fas fa-arrow-left"></i>
+        Quay lại
+      </button>
+    </div>
+
+    <div class="form-card">
+      <h2 class="form-title">
+        <i class="fas fa-file-signature"></i>
+        Tạo Phòng Giao Dịch
+      </h2>
+
+      <div class="form-section">
+        <h3 class="section-heading">Thông tin chung</h3>
+        <div class="form-group">
+          <label for="roomName">Tên phòng giao dịch</label>
+          <input type="text" id="roomName" placeholder="Nhập tên phòng giao dịch" [(ngModel)]="contract.roomName" name="roomName">
+        </div>
+        
+        <div class="form-group">
+          <label for="categoryIdCustom">Danh mục:<span class="required-asterisk">*</span></label>
+          <div class="custom-select-wrapper">
+            <div class="custom-select"
+                 [class.open]="isCategoryDropdownOpen"
+                 (click)="toggleCategoryDropdown()"
+                 tabindex="0"
+                 id="categoryIdCustom"
+                 (keydown.enter)="toggleCategoryDropdown()">
+              <div class="custom-select-trigger">{{ selectedCategoryName }}</div>
+              <div class="custom-options" [class.show]="isCategoryDropdownOpen">
+                <div class="custom-option"
+                     *ngFor="let category of categories"
+                     [class.selected]="contract.categoryId === category.id"
+                     (click)="selectCategory(category); $event.stopPropagation();"
+                     tabindex="0"
+                     (keydown.enter)="selectCategory(category)">
+                  {{ category.name }}
+                </div>
+              </div>
+            </div>
+          </div>
+          <input type="hidden" name="categoryId" [(ngModel)]="contract.categoryId" required #categoryIdNgModel="ngModel">
+          <div *ngIf="categoryIdNgModel?.invalid && (categoryIdNgModel?.dirty || formSubmitted)" class="text-danger">
+            Vui lòng chọn danh mục.
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3 class="section-heading">Thông tin các bên</h3>
+        <div class="form-group">
+          <label for="partyAName">Tên người tạo phòng</label>
+          <input type="text" id="partyAName" placeholder="Nhập tên của bạn" [(ngModel)]="contract.partyAName" name="partyAName" required #partyANameNgModel="ngModel">
+          <div *ngIf="partyANameNgModel?.invalid && (partyANameNgModel?.dirty || formSubmitted)" class="text-danger">
+            Vui lòng nhập tên người tạo phòng.
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="partyAPhone">Số điện thoại người tạo phòng</label>
+          <input type="tel" id="partyAPhone" placeholder="Nhập số điện thoại của bạn" [(ngModel)]="contract.partyAPhone" name="partyAPhone" required #partyAPhoneNgModel="ngModel">
+          <div *ngIf="partyAPhoneNgModel?.invalid && (partyAPhoneNgModel?.dirty || formSubmitted)" class="text-danger">
+            Vui lòng nhập số điện thoại người tạo phòng.
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="partyAEmail">Email người tạo phòng</label>
+          <input type="email" id="partyAEmail" placeholder="Nhập email của bạn" [(ngModel)]="contract.partyAEmail" name="partyAEmail" required #partyAEmailNgModel="ngModel">
+          <div *ngIf="partyAEmailNgModel?.invalid && (partyAEmailNgModel?.dirty || formSubmitted)" class="text-danger">
+            Vui lòng nhập email người tạo phòng.
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="agentNameDisplay">Giao dịch viên</label>
+          <input type="text" id="agentNameDisplay" [value]="agentName || 'Đang tải thông tin...'" name="agentNameDisplay" disabled>
+          <input type="hidden" [(ngModel)]="contract.partyBId" name="partyBIdHidden">
+          <span *ngIf="agentName" class="agent-prefill-info">Người này: **{{agentName}}**</span>
+          </div>
+      </div>
+
+      <div class="form-section">
+        <!-- <h3 class="section-heading">Bảo mật</h3>
+        <div class="form-group">
+          <label for="securityCode">Mã bảo mật</label>
+          <input type="password" id="securityCode" placeholder="Nhập mã bảo mật" [(ngModel)]="contract.securityCode" name="securityCode" required #securityCodeNgModel="ngModel">
+          <div *ngIf="securityCodeNgModel?.invalid && (securityCodeNgModel?.dirty || formSubmitted)" class="text-danger">
+            Vui lòng nhập mã bảo mật.
+          </div>
+        </div> -->
+        
+        <div class="form-group captcha-group">
+          <re-captcha [siteKey]="recaptchaSiteKey" (resolved)="handleCaptchaResponse($event)"></re-captcha>
+          <div *ngIf="!contract.captchaToken && formSubmitted" class="text-danger">
+            Vui lòng xác nhận bạn không phải người máy.
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="submit-button" (click)="createTransaction()" [disabled]="!isFormValid()">
+          <i class="fas fa-plus-circle"></i>
+          Tạo phòng
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>

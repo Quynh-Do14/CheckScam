@@ -23,9 +23,7 @@
       <div *ngFor="let activity of recentActivities"
            class="activity-item"
            [ngClass]="getRiskClass(activity)"
-           (click)="onActivityClick(activity)"
-           [style.cursor]="canNavigate(activity) ? 'pointer' : 'default'">
-        <div class="activity-item-top" style="display: flex; align-items: center; gap: 8px;">
+           [style.cursor]="'default'"> <div class="activity-item-top" style="display: flex; align-items: center; gap: 8px;">
           <div class="activity-avatar">
             <img [src]="activity.user.avatar" [alt]="activity.user.name">
           </div>

@@ -51,6 +51,10 @@ import { ForumSimpleComponent } from './components/forum/forum-simple.component'
 import { EmailVerificationComponent } from './components/emailverification/emailverification.component';
 import { PartnersComponent } from './components/partners/partners.component';
 
+import { ForgotPasswordComponent } from './components/forgotpassword/forgotpassword.component';
+import { ResetPasswordComponent } from './components/resetpassword/resetpassword.component';
+
+
 export const routes: Routes = [
     { path: '', component: HomeComponent, pathMatch: 'full' },
     {
@@ -97,10 +101,14 @@ export const routes: Routes = [
     },
     { path: 'register', component: RegisterComponent, canActivate: [PublicGuard] }, 
     { path: 'login', component: LoginComponent, canActivate: [PublicGuard] },       
-    { path: 'verify-email', component: EmailVerificationComponent, canActivate: [PublicGuard] }, // Đã thêm dòng này
+    { path: 'verify-email', component: EmailVerificationComponent, canActivate: [PublicGuard] }, 
+    
+    { path: 'forgot-password', component: ForgotPasswordComponent, canActivate: [PublicGuard] },
+    { path: 'reset-password', component: ResetPasswordComponent, canActivate: [PublicGuard] }, 
+
     { path: 'list-news', component: ListNewsComponent },
     { path: 'list-news/:slug', component: ViewNewsComponent },
-    { path: 'view-news/:id', component: ViewNewsComponent }, // Keep for backward compatibility
+    { path: 'view-news/:id', component: ViewNewsComponent }, 
     { path: 'chatbox', component: ChatBoxComponent },
     { path: 'analyze', component: AnalyzeComponent },
     { path: 'ranking', component: RankingComponent },

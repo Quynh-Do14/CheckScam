@@ -4,8 +4,7 @@ import { RouterModule, Router } from '@angular/router';
 import { ActivityService, Activity } from '../../services/activity.service';
 import { Subscription } from 'rxjs';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { IconName } from '@fortawesome/fontawesome-svg-core'; // Đã thêm import này để sửa lỗi Type 'string' is not assignable to type 'IconName'
-import { JsonpClientBackend } from '@angular/common/http';
+import { IconName } from '@fortawesome/fontawesome-svg-core';
 
 @Component({
   selector: 'app-activity-widget',
@@ -36,7 +35,7 @@ export class ActivityWidgetComponent implements OnInit, OnDestroy {
   }
 
   private initializeWidget() {
-    this.isConnected = false;
+    this.isConnected = false; 
     this.loadRecentActivities();
 
     const activitiesSub = this.activityService.getActivities().subscribe(
@@ -54,26 +53,26 @@ export class ActivityWidgetComponent implements OnInit, OnDestroy {
       activities => {
         this.recentActivities = activities;
         this.isLoading = false;
+        this.isConnected = true; 
       },
       error => {
         console.error('Error loading activities:', error);
         this.isLoading = false;
         this.recentActivities = [];
+        this.isConnected = false; 
       }
     );
   }
 
   getActionIcon(actionType: string): string {
     const icons: { [key: string]: string } = {
-    POST: '🔍', // Bạn có thể thay thế bằng Font Awesome icon tương ứng nếu muốn
-    UPLOAD: '📝',
-    REPORT: '📤',
-    JsonpClientBackendOIN: '👤'
-  };
-
-return icons[actionType] || '👤';
-
-}
+      POST: '🔍',
+      UPLOAD: '📝',
+      REPORT: '📤',
+      JOIN: '👤'
+    };
+    return icons[actionType] || '👤';
+  }
 
   getActionText(actionType: string): string {
     const actions: { [key: string]: string } = {
@@ -112,26 +111,24 @@ return icons[actionType] || '👤';
     return '';
   }
 
-  // ĐÃ SỬA: Phương thức canNavigate để không cho phép điều hướng với actionType 'REPORT'
   canNavigate(activity: Activity): boolean {
-    // Không thể điều hướng nếu actionType là 'REPORT'
     if (activity.actionType === 'REPORT' || activity.actionType === 'JOIN') {
       return false;
     }
-    // Cho phép điều hướng nếu có newsId hoặc reportId và không phải là 'REPORT'
     const metadata = activity.metadata || {};
-    return !!(metadata.newsId || metadata.reportId);
+    return !!(metadata.newsSlug || metadata.newsId || metadata.reportId);
   }
 
   onActivityClick(activity: Activity): void {
-    // Chỉ thực hiện điều hướng nếu canNavigate trả về true
     if (!this.canNavigate(activity)) {
-      return; // Không làm gì nếu không được phép điều hướng
+      return;
     }
 
     const metadata = activity.metadata || {};
 
-    if (metadata.newsId) {
+    if (metadata.newsSlug) {
+      this.router.navigate(['/list-news', metadata.newsSlug]);
+    } else if (metadata.newsId) {
       this.router.navigate(['/view-news', metadata.newsId]);
     } else if (metadata.reportId) {
       this.navigateToReport(metadata.reportId);

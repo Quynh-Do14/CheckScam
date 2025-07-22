@@ -126,7 +126,14 @@
   </div>
 
   <div class="top-searched-with-banners" *ngIf="!isLoading">
-    <app-vertical-banner position="left"></app-vertical-banner>
+    <!-- Banner 1 - Bên trái -->
+    <iframe src="/assets/components/banner/banner1.html" 
+            width="160" 
+            height="600" 
+            frameborder="0" 
+            scrolling="no"
+            class="left-banner">
+    </iframe>
     
     <div class="top-searched-section-new">
       <div class="section-header">
@@ -279,8 +286,15 @@
         <p class="update-note">📊 Dữ liệu được cập nhật liên tục hàng giờ| ⚠️ Thông tin chỉ mang tính chất tham khảo</p>
       </div>
     </div>
-
-    <app-vertical-banner position="right"></app-vertical-banner>
+    
+    <!-- Banner 2 - Bên phải -->
+    <iframe src="/assets/components/banner/banner2.html" 
+            width="160" 
+            height="600" 
+            frameborder="0" 
+            scrolling="no"
+            class="right-banner">
+    </iframe>
   </div>
 </div>
 

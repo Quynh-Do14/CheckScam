@@ -1,336 +1,335 @@
-<app-header (aiTuVanClicked)="onAiTuVanClicked()"></app-header>
+<!-- Particle Background -->
+<canvas id="particles-bg"></canvas>
 
-<div class="partners-container">
-  <main class="main-content">
-    <div class="page-wrapper">
-      <div class="page-container">
-
-        
-        <!-- Hero Section -->
-        <section class="hero-section" id="about">
-          <div class="hero-container">
-            <div class="hero-content">
-              <h1 class="hero-title" #heroTitle>Kết nối & Phát triển cùng AI6</h1>
-              <p class="hero-description">{{ partnerInfo.description }}</p>
-              <div class="hero-actions">
-                <button class="btn btn-primary" (click)="openModal()">
-                  Trở thành đối tác
-                </button>
-                <button class="btn btn-secondary" (click)="downloadPartnerKit()">
-                  Tải tài liệu đối tác
-                </button>
-              </div>
-            </div>
-            <div class="hero-visual">
-              <div class="partnership-diagram">
-                <!-- Magical connection lines - 4 rays to 4 partners -->
-                <div class="connection-line"></div>
-                <div class="connection-line"></div>
-                <div class="connection-line"></div>
-                <div class="connection-line"></div>
-                
-                <!-- Center node with magical aura -->
-                <div class="center-node">AI6</div>
-                
-                <!-- Partner nodes with cosmic glow -->
-                <div class="partner-node partner-1">Ngân hàng</div>
-                <div class="partner-node partner-2">E-commerce</div>
-                <div class="partner-node partner-3">Fintech</div>
-                <div class="partner-node partner-4">Công nghệ</div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Services Section -->
-        <section class="services-section" id="services">
-          <div class="section-container">
-            <h2 class="section-title animate-in">Dịch vụ của chúng tôi</h2>
-            
-            <!-- AI Robot Mascot -->
-            <div class="robot-mascot animate-in">
-              <img src="assets/img/robot.png" alt="AI Robot" class="robot-image">
-            </div>
-            
-            <div class="services-grid">
-              <div 
-                class="service-card animate-in" 
-                *ngFor="let service of partnerInfo.services; let i = index"
-                (mouseenter)="onServiceCardHover(i)"
-                [style.animation-delay.s]="i * 0.2">
-                <div class="service-icon">
-                  <div class="icon-placeholder">{{ i + 1 }}</div>
-                </div>
-                <h3 class="service-title">{{ service }}</h3>
-                <p class="service-description">
-                  Giải pháp chuyên nghiệp và tối ưu cho doanh nghiệp của bạn trong việc phòng chống lừa đảo
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Benefits Section -->
-        <section class="benefits-section" id="benefits">
-          <div class="section-container">
-            <h2 class="section-title animate-in">Lợi ích khi hợp tác</h2>
-            <div class="benefits-grid">
-              <div 
-                class="benefit-card animate-in" 
-                *ngFor="let benefit of partnerInfo.benefits; let i = index"
-                [style.animation-delay.s]="i * 0.3">
-                <div class="benefit-icon">✓</div>
-                <div class="benefit-content">
-                  <h3 class="benefit-title">{{ benefit }}</h3>
-                  <p class="benefit-description">
-                    Mang lại giá trị thực tế và lợi ích bền vững cho đối tác trong lĩnh vực bảo mật
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Stats Section -->
-        <section class="stats-section">
-          <div class="section-container">
-            <div class="stats-grid">
-              <div 
-                class="stat-item animate-in" 
-                *ngFor="let stat of stats; let i = index"
-                (click)="onStatItemClick(stat)"
-                [style.animation-delay.s]="i * 0.2">
-                <div class="stat-number">{{ stat.number }}</div>
-                <div class="stat-label">{{ stat.label }}</div>
-              </div>
-            </div>
-          </div>
-        </section>
-      </div>
-    </div>
-  </main>
-
-  <!-- Contact Modal -->
-  <div 
-    class="modal-backdrop" 
-    [class.active]="isModalOpen"
-    (click)="closeModal()">
-  </div>
-  
-  <div 
-    class="contact-modal" 
-    [class.active]="isModalOpen"
-    role="dialog">
-    
-    <!-- Contact Form Step -->
-    <div 
-      *ngIf="currentStep === 'contact'"
-      class="form-content">
-      <h2 class="form-title">Liên hệ hợp tác</h2>
-      <p class="form-body">
-        Hãy để lại thông tin để chúng tôi có thể tư vấn giải pháp bảo mật phù hợp nhất cho doanh nghiệp của bạn.
-      </p>
-      
-      <form class="contact-form" (ngSubmit)="submitContactForm()">
-        <div class="form-row">
-          <div class="form-group">
-            <label for="name" class="form-label">Họ và tên *</label>
-            <input 
-              type="text" 
-              id="name" 
-              class="form-input"
-              [class.error]="getFieldValidationClass('name') === 'error'"
-              [class.valid]="getFieldValidationClass('name') === 'valid'"
-              [(ngModel)]="contactForm.name"
-              name="name"
-              placeholder="Nhập họ và tên của bạn"
-              required>
-          </div>
-          <div class="form-group">
-            <label for="email" class="form-label">Email *</label>
-            <input 
-              type="email" 
-              id="email" 
-              class="form-input"
-              [class.error]="getFieldValidationClass('email') === 'error'"
-              [class.valid]="getFieldValidationClass('email') === 'valid'"
-              [(ngModel)]="contactForm.email"
-              name="email"
-              placeholder="email@company.com"
-              required>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label for="company" class="form-label">Công ty *</label>
-            <input 
-              type="text" 
-              id="company" 
-              class="form-input"
-              [class.error]="getFieldValidationClass('company') === 'error'"
-              [class.valid]="getFieldValidationClass('company') === 'valid'"
-              [(ngModel)]="contactForm.company"
-              name="company"
-              placeholder="Tên công ty của bạn"
-              required>
-          </div>
-          <div class="form-group">
-            <label for="phone" class="form-label">Số điện thoại</label>
-            <input 
-              type="tel" 
-              id="phone" 
-              class="form-input" 
-              [(ngModel)]="contactForm.phone"
-              name="phone"
-              placeholder="0123 456 789">
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Loại hình hợp tác *</label>
-          <div class="radio-group">
-            <label class="form-radio-input" for="inquiry_partnership">
-              <input 
-                id="inquiry_partnership" 
-                class="radio-button-input" 
-                type="radio" 
-                name="inquiryType" 
-                value="partnership" 
-                [checked]="selectedInquiryType === 'partnership'"
-                (change)="onInquiryTypeChange('partnership')">
-              <span class="radio-button"></span>
-              <span class="form-radio-label">Đối tác chiến lược</span>
-            </label>
-            
-            <label class="form-radio-input" for="inquiry_technology">
-              <input 
-                id="inquiry_technology" 
-                class="radio-button-input" 
-                type="radio" 
-                name="inquiryType" 
-                value="technology"
-                [checked]="selectedInquiryType === 'technology'"
-                (change)="onInquiryTypeChange('technology')">
-              <span class="radio-button"></span>
-              <span class="form-radio-label">Hợp tác công nghệ AI</span>
-            </label>
-            
-            <label class="form-radio-input" for="inquiry_consulting">
-              <input 
-                id="inquiry_consulting" 
-                class="radio-button-input" 
-                type="radio" 
-                name="inquiryType" 
-                value="consulting"
-                [checked]="selectedInquiryType === 'consulting'"
-                (change)="onInquiryTypeChange('consulting')">
-              <span class="radio-button"></span>
-              <span class="form-radio-label">Tư vấn bảo mật</span>
-            </label>
-            
-            <label class="form-radio-input" for="inquiry_integration">
-              <input 
-                id="inquiry_integration" 
-                class="radio-button-input" 
-                type="radio" 
-                name="inquiryType" 
-                value="integration"
-                [checked]="selectedInquiryType === 'integration'"
-                (change)="onInquiryTypeChange('integration')">
-              <span class="radio-button"></span>
-              <span class="form-radio-label">Tích hợp API</span>
-            </label>
-
-            <label class="form-radio-input" for="inquiry_other">
-              <input 
-                id="inquiry_other" 
-                class="radio-button-input" 
-                type="radio" 
-                name="inquiryType" 
-                value="other"
-                [checked]="selectedInquiryType === 'other'"
-                (change)="onInquiryTypeChange('other')">
-              <span class="radio-button"></span>
-              <span class="form-radio-label">Khác</span>
-            </label>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="message" class="form-label">Nội dung *</label>
-          <textarea 
-            id="message" 
-            class="form-textarea"
-            [class.error]="getFieldValidationClass('message') === 'error'"
-            [class.valid]="getFieldValidationClass('message') === 'valid'"
-            [(ngModel)]="contactForm.message"
-            name="message"
-            rows="4"
-            placeholder="Mô tả chi tiết về nhu cầu hợp tác, loại dự án, quy mô, và kỳ vọng của bạn..."
-            required></textarea>
-        </div>
-      </form>
-      
-      <div class="form-buttons">
-        <button 
-          type="button" 
-          class="tertiary-button"
-          (click)="closeModal()">
-          <span class="button-text">Hủy</span>
-        </button>
-        <button 
-          type="button" 
-          class="submit-button"
-          [disabled]="isSubmitting"
-          (click)="submitContactForm()">
-          <span class="button-text">{{ getSubmitButtonText() }}</span>
-          <span class="loading-spinner" *ngIf="isSubmitting"></span>
-        </button>
-      </div>
-    </div>
-    
-    <!-- Success Step -->
-    <div 
-      *ngIf="currentStep === 'success'"
-      class="form-content">
-      <h2 class="form-title">Cảm ơn bạn!</h2>
-      <p class="form-body">
-        Chúng tôi đã nhận được yêu cầu hợp tác của bạn. Đội ngũ AI6 sẽ liên hệ với bạn trong vòng 24 giờ để tư vấn chi tiết về giải pháp bảo mật.
-      </p>
-      <div class="success-info">
-        <div class="info-item">
-          <strong>Email xác nhận:</strong> Đã gửi tới {{ contactForm.email }}
-        </div>
-        <div class="info-item">
-          <strong>Mã tham chiếu:</strong> #AI6-{{ getCurrentReferenceCode() }}
-        </div>
-        <div class="info-item">
-          <strong>Loại hợp tác:</strong> {{ selectedInquiryType }}
-        </div>
-      </div>
-      <div class="form-buttons">
-        <button 
-          type="button" 
-          class="tertiary-button"
-          (click)="goToPartnerPortal()">
-          <span class="button-text">Portal đối tác</span>
-        </button>
-        <button 
-          type="button" 
-          class="submit-button"
-          (click)="closeModal()">
-          <span class="button-text">Đóng</span>
-        </button>
-      </div>
-    </div>
-  </div>
+<!-- 3D Robot Container -->
+<div id="robot-container">
+    <canvas id="robot-canvas"></canvas>
 </div>
 
-<!-- Chat Box Component -->
-<app-chat-box 
-  *ngIf="showChatbox" 
-  (closeChatbox)="closeChatbox()">
-</app-chat-box>
+<!-- Expression Indicator -->
+<div id="expression-indicator" class="expression-indicator">
+    Robot: Happy 😊
+</div>
 
-<app-footer></app-footer>
+<!-- Hero Section -->
+<section class="hero" id="hero">
+    <div class="hex-grid"></div>
+    <canvas id="particle-canvas"></canvas>
+    
+    <div class="hero-content">
+        <h1>Trở Thành Đối Tác AI6 – Săn Kẻ Xấu, Diệt Tội Phạm Cùng Nhau!</h1>
+        <p>Hợp tác trong việc phân tích lừa đảo bằng AI, mở rộng sự bảo vệ cho cộng đồng Việt Nam. Đối tác với hệ thống AI tiên tiến của chúng tôi và trở thành anh hùng an ninh mạng trong chiến trường số.</p>
+        <a href="#partnership" class="cta-button" id="cta-main">Liên Hệ Hợp Tác Ngay</a>
+    </div>
+
+    <!-- Floating Cyber Elements -->
+    <div class="floating-element">
+        <div class="cyber-icon">🛡️</div>
+    </div>
+    <div class="floating-element">
+        <div class="cyber-icon">🔍</div>
+    </div>
+    <div class="floating-element">
+        <div class="cyber-icon">⚡</div>
+    </div>
+
+    <!-- Scam Icons for Robot to Blast -->
+    <div class="scam-target" style="position: absolute; top: 30%; left: 20%; font-size: 24px;">🦠</div>
+    <div class="scam-target" style="position: absolute; top: 70%; left: 80%; font-size: 24px;">💀</div>
+    <div class="scam-target" style="position: absolute; top: 50%; left: 60%; font-size: 24px;">🕷️</div>
+
+    <!-- Laser Effects -->
+    <div class="laser-beam" style="top: 20%; left: 30%;"></div>
+    <div class="laser-beam" style="top: 60%; left: 70%; animation-delay: 1s;"></div>
+</section>
+
+<!-- Mission Section -->
+<section class="mission fade-in" id="mission">
+    <div class="mission-robot">
+        <canvas id="mission-robot-canvas" width="300" height="400"></canvas>
+        <div class="robot-speech-bubble" id="robot-speech">Hãy săn kẻ xấu cùng tôi!</div>
+    </div>
+    
+    <div class="mission-content">
+        <h2>Tham Gia Cuộc Săn Lừa Đảo – Diệt Tội Phạm Cùng Nhau</h2>
+        <p style="font-size: 18px; color: #333; margin-bottom: 30px;">
+            AI6 là hệ thống phát hiện lừa đảo được hỗ trợ bởi AI tiên tiến nhất Việt Nam, được phát triển với dữ liệu từ Bộ Công An. Chúng tôi đang xây dựng đội quân những người bảo vệ số để bảo vệ hàng triệu người khỏi gian lận trực tuyến.
+        </p>
+
+        <div class="timeline-infographic">
+            <h3 style="font-family: 'Orbitron', sans-serif; margin-bottom: 30px;">Từ Ý Tưởng Đến Diệt Tội Phạm</h3>
+            
+            <div class="timeline-step">
+                <div class="timeline-icon">💡</div>
+                <div>
+                    <h4>Phát Triển AI</h4>
+                    <p>Học máy tiên tiến với tích hợp dữ liệu chính phủ</p>
+                </div>
+            </div>
+            
+            <div class="timeline-step">
+                <div class="timeline-icon">🤝</div>
+                <div>
+                    <h4>Mở Rộng Đối Tác</h4>
+                    <p>Hợp tác với doanh nghiệp để tăng cường mạng lưới phát hiện</p>
+                </div>
+            </div>
+            
+            <div class="timeline-step">
+                <div class="timeline-icon">🛡️</div>
+                <div>
+                    <h4>Bảo Vệ Cộng Đồng</h4>
+                    <p>Ngăn chặn lừa đảo thời gian thực trên khắp cảnh quan số của Việt Nam</p>
+                </div>
+            </div>
+            
+            <div class="timeline-step">
+                <div class="timeline-icon">⚔️</div>
+                <div>
+                    <h4>Diệt Tội Phạm</h4>
+                    <p>Tích cực triệt phá các hoạt động lừa đảo và mạng lưới tội phạm</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Partnership Benefits -->
+<section class="benefits fade-in" id="partnership">
+    <h2>Lợi Ích Đối Tác</h2>
+    <div class="benefits-grid">
+        <div class="benefit-card" data-benefit="logo">
+            <div class="benefit-icon-3d">🏆</div>
+            <h4>Hiển Thị Logo</h4>
+            <p>Hiển thị thương hiệu nổi bật trên nền tảng và tài liệu tiếp thị của chúng tôi</p>
+        </div>
+        <div class="benefit-card" data-benefit="media">
+            <div class="benefit-icon-3d">📰</div>
+            <h4>Đưa Tin Báo Chí</h4>
+            <p>Bài viết nổi bật, thông cáo báo chí và đề cập trên mạng xã hội</p>
+        </div>
+        <div class="benefit-card" data-benefit="cybersecurity">
+            <div class="benefit-icon-3d">🛡️</div>
+            <h4>Hỗ Trợ An Ninh Mạng</h4>
+            <p>Bảo vệ tiên tiến và giám sát mối đe dọa cho doanh nghiệp của bạn</p>
+        </div>
+        <div class="benefit-card" data-benefit="training">
+            <div class="benefit-icon-3d">🎓</div>
+            <h4>Đào Tạo Bảo Mật</h4>
+            <p>Giáo dục và hội thảo an ninh mạng chuyên nghiệp</p>
+        </div>
+        <div class="benefit-card" data-benefit="api">
+            <div class="benefit-icon-3d">🔌</div>
+            <h4>Tích Hợp API</h4>
+            <p>Truy cập trực tiếp vào API phát hiện và phân tích lừa đảo của chúng tôi</p>
+        </div>
+        <div class="benefit-card" data-benefit="pentest">
+            <div class="benefit-icon-3d">🔍</div>
+            <h4>Kiểm Thử Thâm Nhập</h4>
+            <p>Đánh giá bảo mật thường xuyên và kiểm tra lỗ hổng</p>
+        </div>
+        <div class="benefit-card" data-benefit="events">
+            <div class="benefit-icon-3d">🎪</div>
+            <h4>Truy Cập Sự Kiện VIP</h4>
+            <p>Lời mời độc quyền tới các hội nghị và buổi gặp mặt an ninh mạng</p>
+        </div>
+        <div class="benefit-card" data-benefit="support">
+            <div class="benefit-icon-3d">⚡</div>
+            <h4>Hỗ Trợ Ưu Tiên</h4>
+            <p>Phản hồi khẩn cấp 24/7 và quản lý tài khoản chuyên biệt</p>
+        </div>
+        <div class="benefit-card" data-benefit="community">
+            <div class="benefit-icon-3d">🌟</div>
+            <h4>Tác Động Cộng Đồng</h4>
+            <p>Giúp bảo vệ hàng triệu người dùng Việt Nam khỏi lừa đảo trực tuyến</p>
+        </div>
+    </div>
+</section>
+
+<!-- Partnership Packages -->
+<section class="packages fade-in" id="packages">
+    <h2>Gói Hợp Tác</h2>
+    <div class="packages-container">
+        <div class="packages-accordion">
+            <div class="package-tab" data-package="basic">
+                <div class="package-header">
+                    <h3>Hợp Tác Cơ Bản</h3>
+                    <span class="package-price">&lt; 10M VND</span>
+                    <span class="accordion-arrow">▼</span>
+                </div>
+                <div class="package-content">
+                    <ul>
+                        <li>✓ Hiển thị logo trên website</li>
+                        <li>✓ Bài viết cảm ơn trên mạng xã hội</li>
+                        <li>✓ Truy cập đào tạo bảo mật trực tuyến</li>
+                        <li>✓ Báo cáo bảo mật hàng tháng</li>
+                        <li>✓ Công nhận cộng đồng</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="package-tab" data-package="companion">
+                <div class="package-header">
+                    <h3>Hợp Tác Đồng Hành</h3>
+                    <span class="package-price">10-20M VND</span>
+                    <span class="accordion-arrow">▼</span>
+                </div>
+                <div class="package-content">
+                    <ul>
+                        <li>✓ Tất cả lợi ích Cơ bản</li>
+                        <li>✓ Lời mời sự kiện VIP</li>
+                        <li>✓ Truy cập API cơ bản (1000 lần gọi/tháng)</li>
+                        <li>✓ Báo cáo bảo mật hàng quý</li>
+                        <li>✓ Hỗ trợ email ưu tiên</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="package-tab" data-package="collaboration">
+                <div class="package-header">
+                    <h3>Hợp Tác Thân Thiệt</h3>
+                    <span class="package-price">20-40M VND</span>
+                    <span class="accordion-arrow">▼</span>
+                </div>
+                <div class="package-content">
+                    <ul>
+                        <li>✓ Tất cả lợi ích Đồng Hành</li>
+                        <li>✓ Hội thảo đào tạo trực tiếp</li>
+                        <li>✓ Hỗ trợ bảo mật chuyên biệt</li>
+                        <li>✓ Truy cập API nâng cao (5000 lần gọi/tháng)</li>
+                        <li>✓ Cơ hội tiếp thị chung</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="package-tab" data-package="strategic">
+                <div class="package-header">
+                    <h3>Hợp Tác Chiến Lược</h3>
+                    <span class="package-price">40-80M VND</span>
+                    <span class="accordion-arrow">▼</span>
+                </div>
+                <div class="package-content">
+                    <ul>
+                        <li>✓ Tất cả lợi ích Thân Thiệt</li>
+                        <li>✓ Bài viết nổi bật trên báo chí</li>
+                        <li>✓ Dịch vụ kiểm thử thâm nhập</li>
+                        <li>✓ Truy cập API tiên tiến (20K lần gọi/tháng)</li>
+                        <li>✓ Thông cáo báo chí chung</li>
+                        <li>✓ Báo cáo cho lãnh đạo</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="package-tab gold" data-package="gold">
+                <div class="package-header">
+                    <h3>Hợp Tác Vàng</h3>
+                    <span class="package-price">&gt; 80M VND</span>
+                    <span class="accordion-arrow">▼</span>
+                </div>
+                <div class="package-content">
+                    <ul>
+                        <li>✓ Tất cả lợi ích Chiến Lược</li>
+                        <li>✓ Đẳng cấp Siêu VIP</li>
+                        <li>✓ Đặt logo ở vị trí đẹp nhất</li>
+                        <li>✓ Đào tạo kỹ thuật sâu</li>
+                        <li>✓ Hỗ trợ phản hồi khẩn cấp</li>
+                        <li>✓ Truy cập API không giới hạn</li>
+                        <li>✓ Hỗ trợ tích hợp tùy chỉnh</li>
+                        <li>✓ Sự kiện đối tác độc quyền</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="package-robot">
+            <canvas id="package-robot-canvas" width="300" height="400"></canvas>
+            <div class="robot-suggestion-bubble" id="package-suggestion">
+                Chọn gói Vàng để diệt tội phạm mạnh hơn! 💪
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Form -->
+<section class="contact fade-in" id="contact">
+    <div class="contact-container">
+        <div class="contact-content">
+            <h2>Sẵn Sàng Săn Tội Phạm Cùng Nhau?</h2>
+            <p class="contact-note">
+                <strong>Lưu ý:</strong> Hợp tác chỉ dành cho doanh nghiệp. 
+                Hóa đơn và hợp đồng chính thức sẽ được cung cấp sau khi thỏa thuận.
+            </p>
+            
+            <form id="contact-form" class="contact-form" (ngSubmit)="onContactFormSubmit($event)">
+                <div class="form-group">
+                    <input type="text" id="name" name="name" placeholder="Tên của bạn" required>
+                    <label for="name">Họ Tên Đầy Đủ</label>
+                </div>
+                
+                <div class="form-group">
+                    <input type="email" id="email" name="email" placeholder="email.doanh-nghiep@cong-ty.com" required>
+                    <label for="email">Email Doanh Nghiệp</label>
+                </div>
+                
+                <div class="form-group">
+                    <input type="text" id="organization" name="organization" placeholder="Tên Công Ty Của Bạn" required>
+                    <label for="organization">Tổ Chức</label>
+                </div>
+                
+                <div class="form-group">
+                    <select id="package" name="package" required>
+                        <option value="">Chọn Gói Hợp Tác</option>
+                        <option value="basic">Hợp Tác Cơ Bản (< 10M VND)</option>
+                        <option value="companion">Hợp Tác Đồng Hành (10-20M VND)</option>
+                        <option value="collaboration">Hợp Tác Thân Thiệt (20-40M VND)</option>
+                        <option value="strategic">Hợp Tác Chiến Lược (40-80M VND)</option>
+                        <option value="gold">Hợp Tác Vàng (> 80M VND)</option>
+                    </select>
+                    <label for="package">Gói Mong Muốn</label>
+                </div>
+                
+                <div class="form-group">
+                    <textarea id="message" name="message" placeholder="Nói cho chúng tôi biết về tổ chức và mục tiêu hợp tác của bạn..." rows="4"></textarea>
+                    <label for="message">Lời Nhắn</label>
+                </div>
+                
+                <button type="submit" class="cta-submit">
+                    Gửi Đề Xuất Hợp Tác
+                    <span class="button-glow"></span>
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- Footer with Robot Army -->
+<footer class="footer">
+    <div class="robot-army" id="robot-army">
+        <!-- 12 mini robots will be generated here -->
+    </div>
+    
+    <div class="footer-content">
+        <div class="footer-logo">
+            <h3>AI6</h3>
+            <p>Săn Người Xấu, Diệt Kẻ Gian</p>
+        </div>
+        
+        <div class="footer-contact">
+            <h4>Thông Tin Liên Hệ</h4>
+            <p>Email: info&#64;ai6.vn</p>
+            <p>Đối tác: partners&#64;ai6.vn</p>
+            <p>Hỗ trợ: support&#64;ai6.vn</p>
+        </div>
+        
+        <div class="footer-legal">
+            <h4>Pháp Lý</h4>
+            <a href="#privacy">Chính Sách Bảo Mật</a>
+            <a href="#cookies">Chính Sách Cookie</a>
+            <a href="#terms">Điều Khoản Dịch Vụ</a>
+        </div>
+    </div>
+    
+    <div class="footer-bottom">
+        <p>&copy; 2024 AI6. Tất cả quyền được bảo lưu. Bảo vệ Việt Nam khỏi lừa đảo trực tuyến.</p>
+    </div>
+</footer>

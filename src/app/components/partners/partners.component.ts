@@ -1,285 +1,826 @@
-import { Component, OnInit, OnDestroy, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { ToastrService } from 'ngx-toastr';
-import { Title } from '@angular/platform-browser';
+import { RouterModule } from '@angular/router';
 
-import { HeaderComponent } from '../header/header.component';
-import { FooterComponent } from '../footer/footer.component';
-import { ChatBoxComponent } from '../chat-box/chat-box.component';
-
-export interface PartnerInfo {
-  companyName: string;
-  description: string;
-  services: string[];
-  benefits: string[];
-}
-
-export interface ContactForm {
-  name: string;
-  email: string;
-  company: string;
-  phone: string;
-  inquiryType: string;
-  message: string;
-}
-
-export interface StatItem {
-  number: string;
-  label: string;
-}
+declare var THREE: any;
+declare var gsap: any;
 
 @Component({
   selector: 'app-partners',
-  standalone: true, 
-  imports: [
-    CommonModule,
-    FormsModule,
-    HeaderComponent,
-    FooterComponent,
-    ChatBoxComponent
-  ],
+  standalone: true,
+  imports: [CommonModule, RouterModule],
   templateUrl: './partners.component.html',
-  styleUrls: [
-    './partners.component.scss',
-    './robot-static.scss'  // Override to make robot completely static
-  ]
+  styleUrl: './partners.component.scss'
 })
-export class PartnersComponent implements OnInit, OnDestroy, AfterViewInit {
-  @ViewChild('heroTitle', { static: false }) heroTitle!: ElementRef;
-  
-  showChatbox = false;
-  isModalOpen = false;
-  currentStep = 'contact';
-  selectedInquiryType = 'partnership';
-  isSubmitting = false;
-  private intersectionObserver!: IntersectionObserver;
-  
-  // Partner data
-  partnerInfo: PartnerInfo = {
-    companyName: 'AI6 Partners',
-    description: 'Nền tảng kết nối đối tác chiến lược hàng đầu trong lĩnh vực AI và bảo mật thông tin',
-    services: [
-      'Phát triển giải pháp AI chống lừa đảo',
-      'Tích hợp hệ thống bảo mật thông minh',
-      'Tư vấn chuyển đổi số an toàn',
-      'Đào tạo nhận biết và phòng chống lừa đảo'
-    ],
-    benefits: [
-      'Tiếp cận công nghệ AI chống lừa đảo tiên tiến',
-      'Hỗ trợ kỹ thuật và bảo mật 24/7',
-      'Mô hình hợp tác linh hoạt và bền vững',
-      'ROI cao với giải pháp bảo mật toàn diện'
-    ]
-  };
+export class PartnersComponent implements OnInit, AfterViewInit, OnDestroy {
+  private ai6Robot: any;
+  private particleBackground: any;
+  private scrollAnimations: any;
 
-  // Contact form data
-  contactForm: ContactForm = {
-    name: '',
-    email: '',
-    company: '',
-    phone: '',
-    inquiryType: 'partnership',
-    message: ''
-  };
+  constructor() {}
 
-  // Statistics data
-  stats: StatItem[] = [
-    { number: '100+', label: 'Đối tác tin cậy' },
-    { number: '500+', label: 'Dự án bảo mật' },
-    { number: '99%', label: 'Độ chính xác AI' },
-    { number: '7+', label: 'Năm kinh nghiệm' }
-  ];
-
-  constructor(private toastr: ToastrService, private titleService: Title) { }
+  ngOnInit(): void {}
 
   ngAfterViewInit(): void {
-    this.initializeAnimations();
-    this.setupIntersectionObserver();
-  }
-
-  ngOnDestroy(): void {
-    if (this.intersectionObserver) {
-      this.intersectionObserver.disconnect();
-    }
-  }
-
-  ngOnInit(): void {
-  this.titleService.setTitle('Đối tác - AI6 Partnership Platform');
-  }
-
-  private initializeAnimations(): void {
-    // Trigger hero title underline animation after component loads
-    setTimeout(() => {
-      if (this.heroTitle?.nativeElement) {
-        this.heroTitle.nativeElement.classList.add('animate-underline');
-      }
-    }, 2000);
-  }
-
-  private setupIntersectionObserver(): void {
-    const options = {
-      root: null,
-      rootMargin: '0px',
-      threshold: 0.3
-    };
-
-    this.intersectionObserver = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-        }
-      });
-    }, options);
-
-    // Observe elements with animate-in class
-    setTimeout(() => {
-      const animatedElements = document.querySelectorAll('.animate-in');
-      animatedElements.forEach((el) => {
-        this.intersectionObserver.observe(el);
-      });
-    }, 100);
-  }
-
-  openModal(): void {
-    this.isModalOpen = true;
-    this.currentStep = 'contact';
-  }
-
-  closeModal(): void {
-    this.isModalOpen = false;
-    this.resetForm();
-    this.isSubmitting = false;
-  }
-
-  onInquiryTypeChange(value: string): void {
-    this.selectedInquiryType = value;
-    this.contactForm.inquiryType = value;
-  }
-
-  submitContactForm(): void {
-    if (this.isFormValid()) {
-      this.isSubmitting = true;
-      
-      // Simulate API call with loading state
-      setTimeout(() => {
-        // Add success animation to submit button
-        const submitBtn = document.querySelector('.submit-button');
-        if (submitBtn) {
-          submitBtn.classList.add('success-animation');
-        }
-        
-        // Show success message with enhanced styling
-        this.toastr.success(
-          'Cảm ơn bạn đã gửi yêu cầu hợp tác. Chúng tôi sẽ liên hệ với bạn trong vòng 24 giờ.',
-          'Thành công',
-          {
-            timeOut: 5000,
-            progressBar: true,
-            progressAnimation: 'increasing'
-          }
-        );
-        
-        this.isSubmitting = false;
-        this.currentStep = 'success';
-        
-        // Remove success animation after delay
-        setTimeout(() => {
-          if (submitBtn) {
-            submitBtn.classList.remove('success-animation');
-          }
-        }, 600);
-      }, 1500); // Simulate network delay
-    } else {
-      this.toastr.error('Vui lòng điền đầy đủ thông tin bắt buộc', 'Lỗi');
-    }
-  }
-
-  isFormValid(): boolean {
-    return !!(this.contactForm.name && 
-              this.contactForm.email && 
-              this.contactForm.company && 
-              this.contactForm.message);
-  }
-
-  resetForm(): void {
-    this.contactForm = {
-      name: '',
-      email: '',
-      company: '',
-      phone: '',
-      inquiryType: 'partnership',
-      message: ''
-    };
-    this.selectedInquiryType = 'partnership';
-    this.isSubmitting = false;
-  }
-
-  // Enhanced methods for better UX
-  onStatItemClick(stat: StatItem): void {
-    // Add click feedback for stats
-    const statsSection = document.querySelector('.stats-section');
-    if (statsSection) {
-      statsSection.scrollIntoView({ behavior: 'smooth' });
-    }
-  }
-
-  onServiceCardHover(index: number): void {
-    // Optional: Add hover effects or sound feedback
-    console.log(`Service card ${index + 1} hovered`);
-  }
-
-  addGradientTextEffect(elementClass: string): void {
-    const elements = document.querySelectorAll(`.${elementClass}`);
-    elements.forEach(el => {
-      el.classList.add('gradient-text');
+    // Load external scripts first
+    this.loadExternalScripts().then(() => {
+      this.initializeSystem();
     });
   }
 
-  triggerSuccessAnimation(element: HTMLElement): void {
-    element.classList.add('success-animation');
+  ngOnDestroy(): void {
+    // Cleanup any intervals or event listeners
+  }
+
+  private loadExternalScripts(): Promise<void[]> {
+    const scripts = [
+      'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js',
+      'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js'
+    ];
+
+    const promises = scripts.map(src => this.loadScript(src));
+    return Promise.all(promises);
+  }
+
+  private loadScript(src: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const existingScript = document.querySelector(`script[src="${src}"]`);
+      if (existingScript) {
+        resolve();
+        return;
+      }
+
+      const script = document.createElement('script');
+      script.src = src;
+      script.onload = () => resolve();
+      script.onerror = () => reject();
+      document.head.appendChild(script);
+    });
+  }
+
+  private initializeSystem(): void {
+    // Initialize all systems from the original HTML file
+    this.initializeAI6Robot();
+    this.initializeParticleBackground();
+    this.initializeScrollAnimations();
+    this.setupEventListeners();
+  }
+
+  private initializeAI6Robot(): void {
+    // AI6Robot class from original HTML
+    class AI6Robot {
+      expressions: any;
+      currentExpression: string;
+      missionRobot: any;
+      packageRobot: any;
+      robotArmy: any[];
+      expressionCycle: number;
+      flyingRobot: any;
+      canvas: any;
+      ctx: any;
+      robot: any;
+
+      constructor() {
+        this.expressions = {
+          happy: { eyes: '😊', color: '#FFD700', animation: 'bounce', message: 'Sẵn sàng săn tội phạm!' },
+          sad: { eyes: '😢', color: '#4169E1', animation: 'droop', message: 'Quá nhiều lừa đảo cần ngăn chặn...' },
+          angry: { eyes: '😠', color: '#FF0000', animation: 'shake', message: 'Đang nhắm mục tiêu kẻ xấu!' },
+          excited: { eyes: '🤩', color: '#FF69B4', animation: 'jump', message: 'Đến giờ hợp tác rồi!' },
+          fearful: { eyes: '😨', color: '#800080', animation: 'tremble', message: 'Phát hiện lừa đảo gần đây!' },
+          surprised: { eyes: '😲', color: '#00CED1', animation: 'expand', message: 'Wow, đối tác mới!' },
+          proud: { eyes: '😎', color: '#32CD32', animation: 'puff', message: 'Nhiệm vụ hoàn thành!' },
+          anxious: { eyes: '😰', color: '#FFA500', animation: 'fidget', message: 'Đang phân tích mối đe dọa...' },
+          determined: { eyes: '😤', color: '#DC143C', animation: 'clench', message: 'Tiêu diệt tội phạm!' },
+          relaxed: { eyes: '😌', color: '#98FB98', animation: 'sway', message: 'Tất cả hệ thống hoạt động tốt' },
+          curious: { eyes: '🤔', color: '#DDA0DD', animation: 'tilt', message: 'Đang điều tra...' },
+          thrilled: { eyes: '🥳', color: '#FF1493', animation: 'spin', message: 'Hãy săn kẻ xấu cùng tôi!' }
+        };
+        
+        this.currentExpression = 'excited';
+        this.missionRobot = null;
+        this.packageRobot = null;
+        this.robotArmy = [];
+        this.expressionCycle = 0;
+        this.flyingRobot = null;
+        this.init();
+      }
+
+      init() {
+        this.setupCanvas();
+        this.createRobot();
+        this.setupMissionRobot();
+        this.setupPackageRobot();
+        this.setupRobotArmy();
+        this.setupInteractions();
+        this.startAnimationLoop();
+        this.createParticles();
+        this.startExpressionCycle();
+        this.setupParticleExplosions();
+        this.setupBenefitCardInteractions();
+        this.setupPackageAccordion();
+        this.setupContactForm();
+      }
+
+      setupCanvas() {
+        this.canvas = document.getElementById('robot-canvas') as HTMLCanvasElement;
+        if (this.canvas) {
+          this.ctx = this.canvas.getContext('2d');
+          this.canvas.width = 300;
+          this.canvas.height = 400;
+        }
+      }
+
+      createRobot() {
+        this.robot = {
+          x: 150,
+          y: 200,
+          size: 80,
+          bodyColor: '#C0C0C0',
+          eyeColor: '#00BFFF',
+          animationOffset: 0,
+          shadowOffset: 0
+        };
+      }
+
+      setupMissionRobot() {
+        const missionCanvas = document.getElementById('mission-robot-canvas') as HTMLCanvasElement;
+        if (missionCanvas) {
+          this.missionRobot = {
+            canvas: missionCanvas,
+            ctx: missionCanvas.getContext('2d'),
+            x: 150,
+            y: 200,
+            size: 60,
+            animationOffset: 0,
+            currentExpression: 'curious'
+          };
+        }
+      }
+
+      setupPackageRobot() {
+        const packageCanvas = document.getElementById('package-robot-canvas') as HTMLCanvasElement;
+        if (packageCanvas) {
+          this.packageRobot = {
+            canvas: packageCanvas,
+            ctx: packageCanvas.getContext('2d'),
+            x: 150,
+            y: 200,
+            size: 70,
+            animationOffset: 0,
+            currentExpression: 'curious',
+            reflectiveColor: '#C0C0C0'
+          };
+        }
+      }
+
+      setupRobotArmy() {
+        const armyContainer = document.getElementById('robot-army');
+        if (armyContainer) {
+          const expressions = Object.keys(this.expressions);
+          for (let i = 0; i < 12; i++) {
+            const miniRobotDiv = document.createElement('div');
+            miniRobotDiv.className = 'mini-robot';
+            
+            const canvas = document.createElement('canvas') as HTMLCanvasElement;
+            canvas.width = 60;
+            canvas.height = 80;
+            miniRobotDiv.appendChild(canvas);
+            
+            const miniRobot = {
+              canvas: canvas,
+              ctx: canvas.getContext('2d'),
+              x: 30,
+              y: 40,
+              size: 20,
+              animationOffset: i * 0.5,
+              currentExpression: expressions[i],
+              huntingTarget: null
+            };
+            
+            this.robotArmy.push(miniRobot);
+            armyContainer.appendChild(miniRobotDiv);
+          }
+        }
+      }
+
+      drawRobot() {
+        if (!this.ctx || !this.canvas) return;
+
+        const ctx = this.ctx;
+        const r = this.robot;
+        const expr = this.expressions[this.currentExpression];
+
+        // Clear canvas
+        ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+        // Shadow  
+        ctx.save();
+        ctx.globalAlpha = 0.3;
+        ctx.fillStyle = '#000000';
+        ctx.beginPath();
+        // Use arc instead of ellipse for better browser compatibility
+        ctx.arc(r.x, r.y + r.size + 20 + r.shadowOffset, r.size * 0.8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
+        // Robot body with metallic gradient
+        const gradient = ctx.createLinearGradient(r.x - r.size, r.y - r.size, r.x + r.size, r.y + r.size);
+        gradient.addColorStop(0, '#E8E8E8');
+        gradient.addColorStop(0.5, r.bodyColor);
+        gradient.addColorStop(1, '#A0A0A0');
+        
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        // Use simple rect instead of roundRect for compatibility
+        ctx.rect(r.x - r.size/2, r.y - r.size/2, r.size, r.size * 1.2);
+        ctx.fill();
+
+        // Chest panel
+        ctx.fillStyle = expr.color;
+        ctx.beginPath();
+        ctx.rect(r.x - r.size/3, r.y - r.size/4, r.size/1.5, r.size/2);
+        ctx.fill();
+
+        // Head
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(r.x, r.y - r.size/2, r.size/2.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Eyes with expression
+        ctx.font = '24px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(expr.eyes, r.x, r.y - r.size/2 + 8);
+
+        // Arms
+        ctx.strokeStyle = '#C0C0C0';
+        ctx.lineWidth = 8;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(r.x - r.size/2, r.y);
+        ctx.lineTo(r.x - r.size, r.y + Math.sin(r.animationOffset) * 10);
+        ctx.moveTo(r.x + r.size/2, r.y);
+        ctx.lineTo(r.x + r.size, r.y + Math.sin(r.animationOffset + Math.PI) * 10);
+        ctx.stroke();
+
+        // Legs
+        ctx.beginPath();
+        ctx.moveTo(r.x - r.size/4, r.y + r.size/2);
+        ctx.lineTo(r.x - r.size/4, r.y + r.size);
+        ctx.moveTo(r.x + r.size/4, r.y + r.size/2);
+        ctx.lineTo(r.x + r.size/4, r.y + r.size);
+        ctx.stroke();
+      }
+
+      animateExpression() {
+        const expr = this.expressions[this.currentExpression];
+        const r = this.robot;
+
+        switch(expr.animation) {
+          case 'bounce':
+            r.y = 200 + Math.sin(r.animationOffset * 2) * 5;
+            break;
+          case 'shake':
+            r.x = 150 + Math.sin(r.animationOffset * 8) * 3;
+            break;
+          case 'jump':
+            r.y = 200 + Math.abs(Math.sin(r.animationOffset * 3)) * -20;
+            break;
+          case 'tremble':
+            r.x = 150 + (Math.random() - 0.5) * 2;
+            r.y = 200 + (Math.random() - 0.5) * 2;
+            break;
+          default:
+            r.y = 200 + Math.sin(r.animationOffset) * 3;
+        }
+
+        r.animationOffset += 0.1;
+        r.shadowOffset = Math.sin(r.animationOffset) * 2;
+      }
+
+      changeExpression(newExpression: string) {
+        if (this.expressions[newExpression]) {
+          this.currentExpression = newExpression;
+          const indicator = document.getElementById('expression-indicator');
+          if (indicator) {
+            indicator.textContent = `Robot: ${newExpression.charAt(0).toUpperCase() + newExpression.slice(1)} ${this.expressions[newExpression].eyes}`;
+          }
+        }
+      }
+
+      createFireworks() {
+        const colors = ['#FF6600', '#FFD700', '#FF1493', '#00BFFF', '#32CD32'];
+        
+        for (let i = 0; i < 50; i++) {
+          setTimeout(() => {
+            const firework = document.createElement('div');
+            firework.style.cssText = `
+              position: fixed;
+              left: ${Math.random() * window.innerWidth}px;
+              top: ${Math.random() * window.innerHeight}px;
+              width: 6px;
+              height: 6px;
+              background: ${colors[Math.floor(Math.random() * colors.length)]};
+              border-radius: 50%;
+              pointer-events: none;
+              z-index: 1000;
+              animation: fireworkExplode 2s ease-out forwards;
+            `;
+            document.body.appendChild(firework);
+            setTimeout(() => firework.remove(), 2000);
+          }, i * 50);
+        }
+      }
+
+      startExpressionCycle() {
+        const expressions = Object.keys(this.expressions);
+        setInterval(() => {
+          this.expressionCycle = (this.expressionCycle + 1) % expressions.length;
+          this.changeExpression(expressions[this.expressionCycle]);
+          
+          const speechBubble = document.getElementById('robot-speech');
+          if (speechBubble) {
+            speechBubble.textContent = this.expressions[expressions[this.expressionCycle]].message;
+          }
+        }, 5000);
+      }
+
+      setupInteractions() {
+        let expressionIndex = 0;
+        const expressionKeys = Object.keys(this.expressions);
+
+        // Click interactions
+        document.addEventListener('click', () => {
+          this.changeExpression('excited');
+          setTimeout(() => {
+            this.changeExpression('happy');
+          }, 2000);
+        });
+      }
+
+      setupParticleExplosions() {
+        const ctaButton = document.getElementById('cta-main');
+        if (ctaButton) {
+          ctaButton.addEventListener('mouseenter', () => {
+            this.createExplosion(ctaButton);
+            this.changeExpression('thrilled');
+          });
+        }
+      }
+
+      createExplosion(element: Element) {
+        const rect = element.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        for (let i = 0; i < 20; i++) {
+          const particle = document.createElement('div');
+          particle.className = 'particle-explosion';
+          
+          const angle = (Math.PI * 2 * i) / 20;
+          const velocity = 50 + Math.random() * 50;
+          const dx = Math.cos(angle) * velocity;
+          const dy = Math.sin(angle) * velocity;
+          
+          particle.style.cssText = `
+            position: fixed;
+            left: ${centerX}px;
+            top: ${centerY}px;
+            --dx: ${dx}px;
+            --dy: ${dy}px;
+            z-index: 1000;
+          `;
+          
+          document.body.appendChild(particle);
+          
+          setTimeout(() => {
+            particle.remove();
+          }, 1000);
+        }
+      }
+
+      setupBenefitCardInteractions() {
+        const benefitCards = document.querySelectorAll('.benefit-card');
+        benefitCards.forEach(card => {
+          card.addEventListener('mouseenter', () => {
+            const benefit = (card as HTMLElement).dataset['benefit'];
+            this.handleBenefitHover(benefit);
+          });
+        });
+      }
+
+      handleBenefitHover(benefit: string | undefined) {
+        switch(benefit) {
+          case 'cybersecurity':
+            this.changeExpression('angry');
+            break;
+          case 'training':
+            this.changeExpression('proud');
+            break;
+          case 'api':
+            this.changeExpression('excited');
+            break;
+          case 'pentest':
+            this.changeExpression('determined');
+            break;
+          case 'events':
+            this.changeExpression('thrilled');
+            break;
+          default:
+            this.changeExpression('curious');
+        }
+      }
+
+      setupPackageAccordion() {
+        const packageTabs = document.querySelectorAll('.package-tab');
+        packageTabs.forEach(tab => {
+          const header = tab.querySelector('.package-header');
+          if (header) {
+            header.addEventListener('click', () => {
+              // Close all other tabs
+              packageTabs.forEach(otherTab => {
+                if (otherTab !== tab) {
+                  otherTab.classList.remove('active');
+                }
+              });
+              
+              // Toggle current tab
+              tab.classList.toggle('active');
+            });
+          }
+        });
+      }
+
+      setupContactForm() {
+        const form = document.getElementById('contact-form');
+        if (form) {
+          const inputs = form.querySelectorAll('input, select, textarea');
+          inputs.forEach(input => {
+            input.addEventListener('focus', () => {
+              this.changeExpression('curious');
+            });
+          });
+        }
+      }
+
+      createParticles() {
+        for (let i = 0; i < 20; i++) {
+          setTimeout(() => {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + 'vw';
+            particle.style.animationDelay = Math.random() * 4 + 's';
+            document.body.appendChild(particle);
+
+            setTimeout(() => {
+              if (particle.parentNode) {
+                particle.remove();
+              }
+            }, 4000);
+          }, i * 200);
+        }
+      }
+
+      startAnimationLoop() {
+        const animate = () => {
+          this.animateExpression();
+          this.drawRobot();
+          this.drawMissionRobot();
+          this.drawPackageRobot();
+          this.drawRobotArmy();
+          requestAnimationFrame(animate);
+        };
+        animate();
+      }
+
+      drawMissionRobot() {
+        if (!this.missionRobot) return;
+        
+        const ctx = this.missionRobot.ctx;
+        const r = this.missionRobot;
+        const expr = this.expressions[r.currentExpression || 'curious'];
+
+        ctx.clearRect(0, 0, r.canvas.width, r.canvas.height);
+
+        // Simple robot drawing
+        ctx.fillStyle = '#C0C0C0';
+        ctx.fillRect(r.x - r.size/2, r.y - r.size/2, r.size, r.size * 1.2);
+        
+        ctx.fillStyle = expr.color;
+        ctx.fillRect(r.x - r.size/3, r.y - r.size/4, r.size/1.5, r.size/2);
+        
+        ctx.fillStyle = '#C0C0C0';
+        ctx.beginPath();
+        ctx.arc(r.x, r.y - r.size/2, r.size/3, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.font = '20px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(expr.eyes, r.x, r.y - r.size/2 + 6);
+
+        r.animationOffset += 0.1;
+      }
+
+      drawPackageRobot() {
+        if (!this.packageRobot) return;
+        
+        const ctx = this.packageRobot.ctx;
+        const r = this.packageRobot;
+        const expr = this.expressions[r.currentExpression || 'curious'];
+
+        ctx.clearRect(0, 0, r.canvas.width, r.canvas.height);
+
+        // Enhanced robot drawing
+        ctx.fillStyle = r.reflectiveColor;
+        ctx.fillRect(r.x - r.size/2, r.y - r.size/2, r.size, r.size * 1.2);
+        
+        ctx.fillStyle = expr.color;
+        ctx.fillRect(r.x - r.size/3, r.y - r.size/4, r.size/1.5, r.size/2);
+        
+        ctx.fillStyle = r.reflectiveColor;
+        ctx.beginPath();
+        ctx.arc(r.x, r.y - r.size/2, r.size/2.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.font = '24px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(expr.eyes, r.x, r.y - r.size/2 + 8);
+
+        r.animationOffset += 0.1;
+      }
+
+      drawRobotArmy() {
+        this.robotArmy.forEach((robot, index) => {
+          const ctx = robot.ctx;
+          const r = robot;
+          const expr = this.expressions[r.currentExpression];
+
+          ctx.clearRect(0, 0, r.canvas.width, r.canvas.height);
+
+          // Mini robot body
+          ctx.fillStyle = '#B0B0B0';
+          ctx.fillRect(r.x - r.size/2, r.y - r.size/2, r.size, r.size * 1.3);
+
+          ctx.fillStyle = expr.color;
+          ctx.fillRect(r.x - r.size/3, r.y - r.size/4, r.size/1.5, r.size/2);
+
+          ctx.fillStyle = '#B0B0B0';
+          ctx.beginPath();
+          ctx.arc(r.x, r.y - r.size/2, r.size/2.5, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.font = '12px Arial';
+          ctx.textAlign = 'center';
+          ctx.fillText(expr.eyes, r.x, r.y - r.size/2 + 4);
+
+          r.animationOffset += 0.08;
+        });
+      }
+    }
+
+    this.ai6Robot = new AI6Robot();
+  }
+
+  private initializeParticleBackground(): void {
+    // ParticleBackground class from original HTML
+    class ParticleBackground {
+      canvas: any;
+      heroCanvas: any;
+      ctx: any;
+      heroCtx: any;
+      particles: any[];
+      heroParticles: any[];
+
+      constructor() {
+        this.canvas = document.getElementById('particles-bg') as HTMLCanvasElement;
+        this.heroCanvas = document.getElementById('particle-canvas') as HTMLCanvasElement;
+        this.particles = [];
+        this.heroParticles = [];
+        
+        if (this.canvas) {
+          this.ctx = this.canvas.getContext('2d');
+        }
+        if (this.heroCanvas) {
+          this.heroCtx = this.heroCanvas.getContext('2d');
+        }
+        
+        this.init();
+      }
+
+      init() {
+        this.resize();
+        this.createParticles();
+        this.createHeroParticles();
+        this.animate();
+        window.addEventListener('resize', () => this.resize());
+      }
+
+      resize() {
+        if (this.canvas) {
+          this.canvas.width = window.innerWidth;
+          this.canvas.height = window.innerHeight;
+        }
+        
+        if (this.heroCanvas) {
+          this.heroCanvas.width = window.innerWidth;
+          this.heroCanvas.height = window.innerHeight;
+        }
+      }
+
+      createParticles() {
+        const canvasWidth = this.canvas ? this.canvas.width : window.innerWidth;
+        const canvasHeight = this.canvas ? this.canvas.height : window.innerHeight;
+        
+        for (let i = 0; i < 50; i++) {
+          this.particles.push({
+            x: Math.random() * canvasWidth,
+            y: Math.random() * canvasHeight,
+            vx: (Math.random() - 0.5) * 0.5,
+            vy: (Math.random() - 0.5) * 0.5,
+            size: Math.random() * 2 + 1,
+            opacity: Math.random() * 0.5 + 0.2
+          });
+        }
+      }
+
+      createHeroParticles() {
+        if (!this.heroCanvas) return;
+        
+        for (let i = 0; i < 1000; i++) {
+          this.heroParticles.push({
+            x: Math.random() * this.heroCanvas.width,
+            y: Math.random() * this.heroCanvas.height,
+            vx: (Math.random() - 0.5) * 2,
+            vy: (Math.random() - 0.5) * 2,
+            size: Math.random() * 3 + 1,
+            opacity: Math.random() * 0.3 + 0.1,
+            color: Math.random() > 0.5 ? '#FF6600' : '#FFEFD5',
+            life: Math.random() * 100 + 50
+          });
+        }
+      }
+
+      animate() {
+        if (this.ctx && this.canvas) {
+          this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+          
+          this.particles.forEach(particle => {
+            particle.x += particle.vx;
+            particle.y += particle.vy;
+
+            if (particle.x < 0 || particle.x > this.canvas.width) particle.vx *= -1;
+            if (particle.y < 0 || particle.y > this.canvas.height) particle.vy *= -1;
+
+            this.ctx.save();
+            this.ctx.globalAlpha = particle.opacity;
+            this.ctx.fillStyle = '#FF6600';
+            this.ctx.beginPath();
+            this.ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+            this.ctx.fill();
+            this.ctx.restore();
+          });
+        }
+
+        if (this.heroCtx && this.heroCanvas) {
+          this.heroCtx.clearRect(0, 0, this.heroCanvas.width, this.heroCanvas.height);
+          
+          this.heroParticles.forEach((particle, index) => {
+            particle.x += particle.vx;
+            particle.y += particle.vy;
+            particle.life--;
+
+            particle.vy += 0.02;
+            
+            if (particle.x < 0 || particle.x > this.heroCanvas.width) {
+              particle.vx *= -0.8;
+              particle.x = Math.max(0, Math.min(this.heroCanvas.width, particle.x));
+            }
+            if (particle.y < 0 || particle.y > this.heroCanvas.height) {
+              particle.vy *= -0.8;
+              particle.y = Math.max(0, Math.min(this.heroCanvas.height, particle.y));
+            }
+
+            this.heroCtx.save();
+            this.heroCtx.globalAlpha = particle.opacity * (particle.life / 100);
+            this.heroCtx.fillStyle = particle.color;
+            this.heroCtx.shadowColor = particle.color;
+            this.heroCtx.shadowBlur = particle.size * 2;
+            this.heroCtx.beginPath();
+            this.heroCtx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+            this.heroCtx.fill();
+            this.heroCtx.restore();
+
+            if (particle.life <= 0) {
+              particle.x = Math.random() * this.heroCanvas.width;
+              particle.y = Math.random() * this.heroCanvas.height;
+              particle.vx = (Math.random() - 0.5) * 2;
+              particle.vy = (Math.random() - 0.5) * 2;
+              particle.life = Math.random() * 100 + 50;
+            }
+          });
+        }
+
+        requestAnimationFrame(() => this.animate());
+      }
+    }
+
+    this.particleBackground = new ParticleBackground();
+  }
+
+  private initializeScrollAnimations(): void {
+    // ScrollAnimations class from original HTML
+    class ScrollAnimations {
+      constructor() {
+        this.init();
+      }
+
+      init() {
+        this.observeElements();
+        this.setupParallax();
+      }
+
+      observeElements() {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+            }
+          });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+          observer.observe(el);
+        });
+      }
+
+      setupParallax() {
+        window.addEventListener('scroll', () => {
+          const scrolled = window.pageYOffset;
+          const parallax = document.querySelector('.hero');
+          const speed = scrolled * 0.5;
+          
+          if (parallax) {
+            (parallax as HTMLElement).style.transform = `translateY(${speed}px)`;
+          }
+
+          const robot = document.getElementById('robot-container');
+          if (robot) {
+            const robotSpeed = scrolled * 0.1;
+            robot.style.transform = `translateY(calc(-50% + ${robotSpeed}px))`;
+          }
+        });
+      }
+    }
+
+    this.scrollAnimations = new ScrollAnimations();
+  }
+
+  private setupEventListeners(): void {
+    // Add laser effects periodically
+    setInterval(() => {
+      const laser = document.createElement('div');
+      laser.className = 'laser-beam';
+      laser.style.top = Math.random() * 80 + '%';
+      laser.style.left = Math.random() * 80 + '%';
+      document.body.appendChild(laser);
+
+      setTimeout(() => {
+        if (laser.parentNode) {
+          laser.remove();
+        }
+      }, 2000);
+    }, 3000);
+  }
+
+  // Contact form submission
+  onContactFormSubmit(event: Event): void {
+    event.preventDefault();
+    
+    const form = event.target as HTMLFormElement;
+    const formData = new FormData(form);
+    
+    console.log('Đề xuất hợp tác đã được gửi:', {
+      name: formData.get('name'),
+      email: formData.get('email'),
+      organization: formData.get('organization'),
+      package: formData.get('package'),
+      message: formData.get('message')
+    });
+
+    // Show success message with animation
+    this.showSuccessMessage();
+  }
+
+  private showSuccessMessage(): void {
+    // Change robot to happy and create fireworks
+    if (this.ai6Robot && this.ai6Robot.changeExpression) {
+      this.ai6Robot.changeExpression('happy');
+      this.ai6Robot.createFireworks();
+    }
+
+    // Show success alert
     setTimeout(() => {
-      element.classList.remove('success-animation');
-    }, 600);
-  }
-
-  goToPartnerPortal(): void {
-    window.open('https://partners.ai6.com', '_blank');
-  }
-
-  downloadPartnerKit(): void {
-    this.toastr.info('Tài liệu đối tác đang được tải xuống...', 'Thông báo');
-    // Implement actual download logic here
-  }
-
-
-
-  getCurrentReferenceCode(): string {
-    return Date.now().toString().slice(-6);
-  }
-
-  // Enhanced form validation with visual feedback
-  getFieldValidationClass(fieldName: keyof ContactForm): string {
-    const field = this.contactForm[fieldName];
-    if (!field && this.isSubmitting) {
-      return 'error';
-    }
-    if (field) {
-      return 'valid';
-    }
-    return '';
-  }
-
-  // Loading state helper
-  getSubmitButtonText(): string {
-    return this.isSubmitting ? 'Đang gửi...' : 'Gửi yêu cầu';
-  }
-
-  onAiTuVanClicked(): void {
-    this.showChatbox = true;
-  }
-
-  closeChatbox(): void {
-    this.showChatbox = false;
+      alert('Đề xuất hợp tác đã được gửi! Chúng tôi sẽ sớm liên hệ để cùng săn tội phạm! 🤖⚔️');
+    }, 1000);
   }
 }

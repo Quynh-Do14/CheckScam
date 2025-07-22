@@ -1,7 +1,6 @@
 <app-header></app-header>
 
 <div class="agent-detail-page">
-  <!-- Loading State -->
   <div class="loading-container" *ngIf="isLoading">
     <div class="loading-content">
       <div class="loading-spinner">
@@ -11,7 +10,6 @@
     </div>
   </div>
 
-  <!-- Error State -->
   <div class="error-container" *ngIf="error && !isLoading">
     <div class="error-content">
       <div class="error-icon">
@@ -32,10 +30,8 @@
     </div>
   </div>
 
-  <!-- Agent Detail Content -->
   <div class="detail-content" *ngIf="agent && !isLoading && !error">
     <div class="container">
-      <!-- Back Button -->
       <div class="back-navigation">
         <button class="back-btn" (click)="goBack()">
           <i class="fas fa-arrow-left"></i>
@@ -43,7 +39,6 @@
         </button>
       </div>
 
-      <!-- Agent Header -->
       <div class="agent-header">
         <div class="agent-avatar-section">
           <div class="avatar-container">
@@ -80,7 +75,6 @@
         </div>
       </div>
 
-      <!-- Agent Description -->
       <div class="agent-description" *ngIf="agent.description">
         <h2 class="section-title">
           <i class="fas fa-info-circle"></i>
@@ -91,7 +85,6 @@
         </div>
       </div>
 
-      <!-- Contact Profiles -->
       <div class="contact-profiles" *ngIf="agent.profiles && agent.profiles.length > 0">
         <h2 class="section-title">
           <i class="fas fa-address-book"></i>
@@ -116,7 +109,6 @@
         </div>
       </div>
 
-      <!-- No Contact Info -->
       <div class="no-contact" *ngIf="!agent.profiles || agent.profiles.length === 0">
         <div class="no-contact-content">
           <i class="fas fa-phone-slash"></i>
@@ -125,6 +117,18 @@
         </div>
       </div>
 
+      <div class="contact-actions" *ngIf="agent">
+        <h2 class="section-title">
+          <i class="fas fa-handshake"></i>
+          Hành động
+        </h2>
+        <div class="action-buttons">
+          <button class="action-btn primary" (click)="createContract()">
+            <i class="fas fa-file-signature"></i>
+            Tạo hợp đồng với người này
+          </button>
+        </div>
+      </div>
 
     </div>
   </div>

@@ -641,7 +641,7 @@
   }
 
   &::after {
-    // content: '\f078';
+    content: '\f078'; /* Font Awesome chevron-down icon */
     font-family: 'Font Awesome 5 Free';
     font-weight: 900;
     font-size: 0.8em;
@@ -707,5 +707,18 @@
 
   .custom-options {
     max-height: 300px;
+  }
+}
+
+.form-note {
+  margin-top: 8px;
+  font-size: 0.9em;
+  color: #d9534f; 
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
+  .fas.fa-lock {
+    color: #ff0000; /* Green color for lock icon, indicating security */
   }
 }

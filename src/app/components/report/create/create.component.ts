@@ -101,7 +101,7 @@ export class CreateReportComponent implements OnInit {
     }
 
     // Đặt Title Tag
-    this.titleService.setTitle('Báo Cáo AI6 - Săn Người Xấu, Diệt Kẻ Gian | Phân Tích Lừa Đảo');
+    this.titleService.setTitle('Báo Cáo Lừa Đảo');
 
     // Đặt Meta Description
     this.metaService.updateTag({

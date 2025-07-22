@@ -33,7 +33,7 @@ import { PublicGuard } from './guards/public.guard';
 import { ReportMangementComponent } from './components/report/report-management/report-management.component';
 import { MistakeManagementComponent } from './components/report/mistake-management/mistake-management.component';
 
-import { PartnersComponent } from './components/partners/partners.component';
+
 import { TransactionsComponent } from './components/transactions/transactions.component';
 import { AgentDetailComponent } from './components/transactions/agent-detail/agent-detail.component';
 
@@ -49,6 +49,7 @@ import { UserProfileComponent } from './components/forum/user-profile/user-profi
 import { ForumTestComponent } from './components/forum/forum-test.component';
 import { ForumSimpleComponent } from './components/forum/forum-simple.component';
 import { EmailVerificationComponent } from './components/emailverification/emailverification.component';
+import { PartnersComponent } from './components/partners/partners.component';
 
 import { ForgotPasswordComponent } from './components/forgotpassword/forgotpassword.component';
 import { ResetPasswordComponent } from './components/resetpassword/resetpassword.component';
@@ -122,7 +123,7 @@ export const routes: Routes = [
     { path: 'report/create', component: CreateReportComponent },
     { path: 'report/mistake', component: MistakeComponent },
     { path: 'subject-detail/:id', component: SubjectDetailComponent },
-    { path: 'partners', component: PartnersComponent },
+
     { path: 'transactions', component: TransactionsComponent },
     { path: 'transactions/agent/:id', component: AgentDetailComponent },
     { path: 'forum', component: ForumComponent },
@@ -131,6 +132,7 @@ export const routes: Routes = [
     { path: 'forum/create-post', component: CreatePostComponent },
     { path: 'forum/post/:id', component: PostDetailComponent },
     { path: 'forum/user/:id', component: UserProfileComponent },
+    { path: 'partners', component: PartnersComponent },
     { path: 'access-denied', component: AccessDeniedComponent },
     { path: '**', redirectTo: '' },
 ];

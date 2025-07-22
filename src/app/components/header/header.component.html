@@ -14,6 +14,7 @@
       <li><a routerLink="/transactions" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" (click)="onNavLinkClick()">Giao dịch</a></li>
       <li><a routerLink="/partners" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" (click)="onNavLinkClick()">Đối tác</a></li>
 
+
       <li *ngIf="isLoggedIn" class="mobile-auth-section">
         <div class="user-profile-mobile">
           <img class="avatar-img-mobile" [src]="userAvatarUrl" (error)="onImageError($event)" alt="User Avatar">

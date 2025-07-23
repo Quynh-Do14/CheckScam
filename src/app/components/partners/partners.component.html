@@ -1,3 +1,4 @@
+<app-header (aiTuVanClicked)="onAiTuVanClicked()"></app-header>
 <!-- Particle Background -->
 <canvas id="particles-bg"></canvas>
 
@@ -330,6 +331,7 @@
     </div>
     
     <div class="footer-bottom">
-        <p>&copy; 2024 AI6. Tất cả quyền được bảo lưu. Bảo vệ Việt Nam khỏi lừa đảo trực tuyến.</p>
+        <p>&copy; 2025 AI6. Tất cả quyền được bảo lưu. Bảo vệ Việt Nam khỏi lừa đảo trực tuyến.</p>
     </div>
+<app-chat-box *ngIf="showChatbox" (close)="closeChatbox()"></app-chat-box>
 </footer>

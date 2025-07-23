@@ -86,14 +86,6 @@
 
           <div class="agent-name">{{ agent.name }}</div>
 
-          <!-- <div class="agent-rating" *ngIf="agent.averageRating">
-            ⭐ {{ agent.averageRating | number:'1.1-1' }} sao
-          </div>
-
-          <div class="agent-stats" *ngIf="agent.completedTransactions">
-            Hoàn thành {{ agent.completedTransactions | number }} giao dịch
-          </div> -->
-
           <div class="agent-status" [ngClass]="{'online': agent.isOnline}" *ngIf="agent.isOnline !== undefined">
             <span class="status-indicator" [class.online]="agent.isOnline"></span>
             {{ agent.isOnline ? 'Đang trực tuyến' : 'Ngoại tuyến' }}

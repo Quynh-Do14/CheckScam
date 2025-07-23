@@ -6,7 +6,7 @@ import { FooterComponent } from '../footer/footer.component';
 import { RankingService, ReporterRanking, RankingStats } from '../../services/ranking.service';
 import { FormsModule } from '@angular/forms';
 import { ChatBoxComponent } from "../chat-box/chat-box.component";
-import { Title, Meta } from '@angular/platform-browser'; // Import Title và Meta service
+import { Title, Meta } from '@angular/platform-browser'; 
 
 @Component({
   selector: 'app-ranking',

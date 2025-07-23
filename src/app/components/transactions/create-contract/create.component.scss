@@ -1,3 +1,92 @@
+.notification-box {
+  position: relative;
+  width: 90%;
+  max-width: 500px;
+  margin: 0px auto 30px auto;
+  padding: 15px 25px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  transform: translateY(-10px);
+  opacity: 0;
+  animation: fadeInDown 0.5s forwards;
+
+  .notification-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .notification-icon {
+    font-size: 1.8rem;
+  }
+
+  p {
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .close-btn {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  &.success {
+    background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+    border: 1px solid #1e7e34;
+  }
+
+  &.error {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    border: 1px solid #bd2130;
+  }
+
+  &.warning {
+    background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+    color: #333;
+    border: 1px solid #d39e00;
+    .close-btn {
+      color: #333;
+    }
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOutUp {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+}
+
 .create-contract-page {
   min-height: 100vh;
   background: linear-gradient(135deg,
@@ -13,7 +102,7 @@
   justify-content: center;
   align-items: flex-start;
   padding-bottom: 60px;
-  overflow: hidden; /* Prevent background effects from spilling */
+  overflow: hidden;
 
   &::before {
     content: '';
@@ -28,7 +117,7 @@
       radial-gradient(circle at 50% 10%, rgba(254, 240, 138, 0.02) 0%, transparent 40%),
       radial-gradient(circle at 10% 80%, rgba(252, 211, 77, 0.03) 0%, transparent 40%);
     pointer-events: none;
-    z-index: 0; /* Ensure this is behind the form-card */
+    z-index: 0;
   }
 
   &::after {
@@ -50,7 +139,7 @@
 }
 
 .container {
-  max-width: 650px; /* Slightly wider container for better layout */
+  max-width: 650px;
   margin: 0 auto;
   padding: 0 20px;
   position: relative;
@@ -64,8 +153,8 @@
 
 .back-navigation {
   margin-bottom: 25px;
-  display: flex; /* Use flex to align items */
-  justify-content: flex-start; /* Align to start */
+  display: flex;
+  justify-content: flex-start;
 }
 
 .back-btn {
@@ -101,16 +190,16 @@
 }
 
 .form-card {
-  background: rgba(255, 255, 255, 0.95); /* Slightly less transparent */
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-radius: 25px; /* More rounded */
-  padding: 40px; /* Increased padding */
+  border-radius: 25px;
+  padding: 40px;
   box-shadow:
-    0 12px 30px rgba(255, 152, 0, 0.1), /* Stronger, softer shadow */
+    0 12px 30px rgba(255, 152, 0, 0.1),
     0 6px 15px rgba(255, 193, 7, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9); /* Brighter inner highlight */
-  border: 1px solid rgba(255, 193, 7, 0.2); /* Stronger border */
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 193, 7, 0.2);
   position: relative;
   z-index: 2;
 
@@ -121,10 +210,10 @@
 }
 
 .form-title {
-  font-size: 2rem; /* Larger title */
-  font-weight: 800; /* Bolder */
+  font-size: 2rem;
+  font-weight: 800;
   color: #1e293b;
-  margin: 0 0 35px 0; /* More margin */
+  margin: 0 0 35px 0;
   display: flex;
   align-items: center;
   gap: 15px;
@@ -134,7 +223,7 @@
 
   i {
     color: #FF6B35;
-    font-size: 2rem; /* Icon size matches title */
+    font-size: 2rem;
   }
 
   @media (max-width: 480px) {
@@ -147,21 +236,18 @@
 }
 
 .form-section {
-  margin-bottom: 35px; /* More space between sections */
-  &:last-of-type { /* Use last-of-type for the actual last form-section */
-    margin-bottom: 0;
-  }
+  margin-bottom: 35px;
 }
 
 .section-heading {
-  font-size: 1.3rem; /* Larger heading */
-  font-weight: 700; /* Bolder */
+  font-size: 1.3rem;
+  font-weight: 700;
   color: #334155;
-  margin-bottom: 20px; /* More margin */
+  margin-bottom: 20px;
   padding-bottom: 10px;
-  border-bottom: 2px solid rgba(255, 107, 53, 0.15); /* Thicker, more prominent border */
-  text-transform: uppercase; /* Uppercase for headings */
-  letter-spacing: 0.03em; /* Slight letter spacing */
+  border-bottom: 2px solid rgba(255, 107, 53, 0.15);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 
   @media (max-width: 480px) {
     font-size: 1.2rem;
@@ -170,19 +256,19 @@
 }
 
 .form-group {
-  margin-bottom: 25px; /* More space between form groups */
+  margin-bottom: 25px;
   &:last-child {
-    margin-bottom: 0; /* No bottom margin for the last group in a section */
+    margin-bottom: 0;
   }
 
   label {
     display: block;
-    font-size: 1rem; /* Slightly larger label font */
-    font-weight: 600; /* Bolder label */
+    font-size: 1rem;
+    font-weight: 600;
     color: #475569;
     margin-bottom: 8px;
     .required-asterisk {
-      color: #dc3545; /* Red asterisk for required fields */
+      color: #dc3545;
       margin-left: 4px;
     }
   }
@@ -191,22 +277,22 @@
   input[type="email"],
   input[type="password"],
   input[type="tel"],
-  .custom-select { /* Also apply to custom select trigger */
+  .custom-select {
     width: 100%;
-    padding: 14px 18px; /* More padding */
+    padding: 14px 18px;
     border: 1px solid #cbd5e1;
-    border-radius: 12px; /* More rounded inputs */
-    font-size: 1.05rem; /* Slightly larger input text */
+    border-radius: 12px;
+    font-size: 1.05rem;
     color: #334155;
     background-color: #f8fafc;
     transition: all 0.3s ease;
-    box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.08); /* Stronger inner shadow */
+    box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.08);
 
     &:focus {
       outline: none;
       border-color: #FF6B35;
-      box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.25); /* More prominent focus glow */
-      background-color: #fff; /* White background on focus */
+      box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.25);
+      background-color: #fff;
     }
 
     &:disabled {
@@ -214,15 +300,14 @@
       cursor: not-allowed;
       color: #64748b;
       opacity: 0.8;
-      box-shadow: none; /* No inner shadow for disabled */
+      box-shadow: none;
     }
   }
 
-  /* Specific styles for disabled display inputs */
   .code-display-input, .agent-display-input {
     font-weight: 600;
-    color: #0d6efd; /* Blue color for display-only codes/agent names */
-    background-color: #e6f3ff; /* Light blue background */
+    color: #0d6efd;
+    background-color: #e6f3ff;
     border-color: #b3d9ff;
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.03);
   }
@@ -237,23 +322,15 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-right: 20px; /* Space for arrow */
+    padding-right: 20px;
 
     .custom-select-trigger {
       flex-grow: 1;
-      padding: 0; /* Reset padding as it's handled by .custom-select */
+      padding: 0;
       background: none;
       border: none;
       font-size: 1.05rem;
       color: #334155;
-      // &::after {
-      //   content: '\f0d7'; /* FontAwesome caret-down */
-      //   font-family: 'Font Awesome 5 Free';
-      //   font-weight: 900;
-      //   margin-left: 10px;
-      //   color: #FF6B35;
-      //   transition: transform 0.3s ease;
-      // }
     }
     &.open .custom-select-trigger::after {
       transform: rotate(180deg);
@@ -268,13 +345,13 @@
     z-index: 1000;
     background-color: #fff;
     border: 1px solid #ddd;
-    border-radius: 12px; /* Consistent with inputs */
-    max-height: 250px; /* Increased height */
+    border-radius: 12px;
+    max-height: 250px;
     overflow-y: auto;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); /* Stronger shadow */
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
     display: none;
-    opacity: 0; /* For fade-in effect */
-    transform: translateY(-10px); /* For slide-in effect */
+    opacity: 0;
+    transform: translateY(-10px);
     transition: opacity 0.3s ease, transform 0.3s ease;
 
     &.show {
@@ -283,7 +360,7 @@
       transform: translateY(0);
     }
     .custom-option {
-      padding: 12px 18px; /* More padding */
+      padding: 12px 18px;
       cursor: pointer;
       font-size: 1rem;
       color: #334155;
@@ -298,7 +375,7 @@
         border-bottom-right-radius: 12px;
       }
       &:hover, &.selected {
-        background-color: #ffecc6; /* Lighter orange background on hover/selected */
+        background-color: #ffecc6;
         color: #FF6B35;
       }
     }
@@ -307,10 +384,10 @@
 
 .agent-prefill-info {
   display: block;
-  font-size: 0.9rem; /* Slightly larger info text */
+  font-size: 0.9rem;
   color: #64748b;
-  margin-top: 8px; /* More margin */
-  font-style: italic; /* Italicize */
+  margin-top: 8px;
+  font-style: italic;
 
   .highlight {
     font-weight: 700;
@@ -320,15 +397,14 @@
 
 .captcha-group {
   display: flex;
-  flex-direction: column; /* Stack reCAPTCHA and error message */
-  align-items: flex-start; /* Align items to the start */
-  margin-top: 30px; /* More margin */
+  flex-direction: column;
+  align-items: flex-start;
+  margin-top: 30px;
 
-  /* Styles for the reCAPTCHA component itself */
   re-captcha {
-    transform: scale(0.9); /* Scale down reCAPTCHA slightly for better fit */
-    transform-origin: 0 0; /* Scale from top-left corner */
-    margin-bottom: 10px; /* Space between captcha and error */
+    transform: scale(0.9);
+    transform-origin: 0 0;
+    margin-bottom: 10px;
     @media (max-width: 480px) {
       transform: scale(0.8);
     }
@@ -339,14 +415,14 @@
 }
 
 .text-danger {
-  color: #dc3545; /* Standard danger color */
+  color: #dc3545;
   font-size: 0.85rem;
-  margin-top: 5px; /* Space below input */
+  margin-top: 5px;
 }
 
 
 .form-actions {
-  margin-top: 40px; /* More margin */
+  margin-top: 40px;
   text-align: center;
 }
 
@@ -354,40 +430,85 @@
   background: linear-gradient(135deg, #FF6B35 0%, #FF5722 100%);
   color: white;
   border: none;
-  padding: 16px 35px; /* More padding */
-  border-radius: 15px; /* More rounded button */
-  font-size: 1.2rem; /* Larger font */
+  padding: 16px 35px;
+  border-radius: 15px;
+  font-size: 1.2rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
   display: inline-flex;
   align-items: center;
-  gap: 12px; /* More gap */
-  box-shadow: 0 8px 25px rgba(255, 107, 53, 0.35); /* Stronger shadow */
-  text-transform: uppercase; /* Uppercase text */
-  letter-spacing: 0.05em; /* Slight letter spacing */
+  gap: 12px;
+  box-shadow: 0 8px 25px rgba(255, 107, 53, 0.35);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 
   &:hover {
-    transform: translateY(-4px); /* More pronounced lift */
-    box-shadow: 0 12px 35px rgba(255, 107, 53, 0.5); /* Even stronger shadow on hover */
-    background: linear-gradient(135deg, #FF7E47 0%, #FF6B35 100%); /* Slightly brighter gradient on hover */
+    transform: translateY(-4px);
+    box-shadow: 0 12px 35px rgba(255, 107, 53, 0.5);
+    background: linear-gradient(135deg, #FF7E47 0%, #FF6B35 100%);
   }
 
   &:disabled {
     background: linear-gradient(135deg, #cccccc 0%, #b3b3b3 100%);
     cursor: not-allowed;
     box-shadow: none;
-    transform: none; /* No transform when disabled */
+    transform: none;
     opacity: 0.7;
   }
 
   i {
-    font-size: 1.2rem; /* Icon size matches button text */
+    font-size: 1.2rem;
   }
 
   @media (max-width: 480px) {
     width: 100%;
     padding: 14px 25px;
     font-size: 1.1rem;
+  }
+}
+
+.loader {
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-top: 4px solid #fff;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.form-columns-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  margin-bottom: 35px;
+
+  .form-column {
+    flex: 1;
+    min-width: 280px;
+
+    .form-section {
+      margin-bottom: 35px;
+      &:last-of-type {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 0;
+
+    .form-column {
+      min-width: unset;
+      width: 100%;
+    }
   }
 }

@@ -502,4 +502,18 @@ searchResult: any;
       minute: '2-digit'
     });
   }
+
+  openMmoLink(): void {
+    window.open('https://mmoidai.io.vn', '_blank');
+  }
+
+  openPartnerPopup(): void {
+    // Tạo popup đơn giản hoặc mở link liên hệ
+    const email = 'partner@ai6.vn';
+    const subject = 'Đăng ký đối tác quảng cáo';
+    const body = 'Xin chào,\n\nTôi muốn tìm hiểu về việc đặt banner quảng cáo trên ai6.vn.\n\nVui lòng liên hệ lại để trao đổi chi tiết.\n\nCảm ơn!';
+    
+    const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.open(mailtoLink, '_blank');
+  }
 }

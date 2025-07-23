@@ -127,13 +127,33 @@
 
   <div class="top-searched-with-banners" *ngIf="!isLoading">
     <!-- Banner 1 - Bên trái -->
-    <iframe src="assets/components/banner/banner1.html" 
-            width="160" 
-            height="600" 
-            frameborder="0" 
-            scrolling="no"
-            class="left-banner">
-    </iframe>
+    <div class="left-banner" style="width: 160px; height: 600px; background: linear-gradient(135deg, #000814 0%, #001d3d 50%, #003566 100%); border: 1px solid #00d4ff; border-radius: 8px; overflow: hidden; position: relative;">
+      <div style="position: relative; z-index: 10; padding: 12px 6px; text-align: center; color: #ffffff; background: rgba(0, 0, 0, 0.8); border: 2px solid #00d4ff; border-radius: 8px; margin: 5px; font-size: 11px; font-weight: 900; line-height: 1.2;">
+        BIẾT LẬP TRÌNH,<br>NHƯNG VẪN<br>THẤT NGHIỆP/<br>THU NHẬP THẤP?
+      </div>
+      <div style="position: relative; z-index: 10; margin: 8px auto; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; background: rgba(0, 0, 0, 0.6); border-radius: 50%; border: 2px solid #ff0080;">
+        <div style="font-size: 28px;">😞</div>
+      </div>
+      <div style="position: relative; z-index: 10; padding: 10px 6px; text-align: center; color: #ffffff; background: rgba(255, 0, 128, 0.2); border: 2px solid #ff0080; border-radius: 8px; margin: 8px 5px; font-size: 10px; font-weight: 900; line-height: 1.2;">
+        THIẾU KỸ NĂNG<br>BIẾN CODE<br>THÀNH TIỀN!
+      </div>
+      <div style="position: relative; z-index: 10; padding: 12px 6px; text-align: center; background: rgba(0, 0, 0, 0.7); border: 2px solid #8000ff; border-radius: 8px; margin: 8px 5px;">
+        <div style="color: #ffffff; font-size: 9px; font-weight: 900; margin-bottom: 8px; line-height: 1.2;">
+          Khóa học MMO 3A:<br>AI - Automation - Affiliate
+        </div>
+        <div style="display: flex; justify-content: space-around; margin: 4px 0;">
+          <div style="font-size: 16px;">🤖</div>
+          <div style="font-size: 16px;">⚙️</div>
+          <div style="font-size: 16px;">💰</div>
+        </div>
+      </div>
+      <button style="margin: 12px auto; width: 140px; height: 35px; background: linear-gradient(45deg, #ff6b00, #ffd700); border: 2px solid #ffd700; border-radius: 18px; color: #000; font-size: 9px; font-weight: 900; cursor: pointer; display: flex; align-items: center; justify-content: center;" (click)="openMmoLink()">
+        ĐĂNG KÝ NGAY!
+      </button>
+      <div style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); color: #ffffff; font-size: 8px; font-weight: 900; background: rgba(0, 0, 0, 0.9); padding: 4px 8px; border-radius: 6px;">
+        mmoidai.io.vn
+      </div>
+    </div>
     
     <div class="top-searched-section-new">
       <div class="section-header">
@@ -288,13 +308,37 @@
     </div>
     
     <!-- Banner 2 - Bên phải -->
-    <iframe src="assets/components/banner/banner2.html" 
-            width="160" 
-            height="600" 
-            frameborder="0" 
-            scrolling="no"
-            class="right-banner">
-    </iframe>
+    <div class="right-banner" style="width: 160px; height: 600px; background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #fbbf24 100%); border: 2px solid #e5e7eb; border-radius: 8px; overflow: hidden; position: relative; cursor: pointer;" (click)="openPartnerPopup()">
+      <div style="background: linear-gradient(45deg, #fbbf24, #f59e0b, #fbbf24); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 18px; font-weight: 900; text-align: center; padding: 12px 4px; letter-spacing: 0.5px;">
+        CƠ HỘI VÀNG
+      </div>
+      <div style="display: flex; justify-content: center; align-items: center; padding: 10px;">
+        <div style="width: 60px; height: 60px; background: radial-gradient(circle, rgba(251,191,36,0.3) 0%, rgba(59,130,246,0.2) 50%, transparent 70%); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+          <div style="font-size: 24px; color: #fbbf24;">🤝</div>
+        </div>
+      </div>
+      <div style="color: white; font-size: 16px; font-weight: 900; text-align: center; padding: 12px 6px; line-height: 1.3; letter-spacing: 0.3px;">
+        TRỞ THÀNH<br>ĐỐI TÁC<br>CHIẾN LƯỢC
+      </div>
+      <div style="background: rgba(255,255,255,0.95); margin: 12px 6px; border-radius: 6px; padding: 12px 8px; text-align: center;">
+        <div style="font-size: 20px; color: #1e40af; margin-bottom: 4px;">📈</div>
+        <div style="font-size: 13px; font-weight: 800; color: #1e40af; line-height: 1.4; margin-bottom: 8px;">
+          LIÊN HỆ ĐẶT<br>BANNER QUẢNG CÁO
+        </div>
+        <div style="display: flex; align-items: center; justify-content: center; gap: 4px; font-size: 11px; color: #059669; font-weight: 700;">
+          <span style="font-size: 12px; color: #fbbf24;">🏆</span>
+          <span>UY TÍN HÀNG ĐẦU</span>
+        </div>
+      </div>
+      <div style="position: absolute; bottom: 45px; left: 50%; transform: translateX(-50%); width: 140px;">
+        <button style="background: linear-gradient(135deg, #1e40af, #3b82f6); color: white; border: none; padding: 12px 16px; border-radius: 20px; font-size: 14px; font-weight: 900; cursor: pointer; width: 100%; letter-spacing: 0.5px;">
+          HỢP TÁC NGAY
+        </button>
+      </div>
+      <div style="position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); font-size: 10px; color: white; text-align: center; width: 140px; font-weight: 600;">
+        Chúng tôi trân trọng từng đối tác! ❤️
+      </div>
+    </div>
   </div>
 </div>
 

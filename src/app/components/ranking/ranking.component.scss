@@ -965,38 +965,50 @@
       }
     }
     
-    .rewards-grid {
+ .rewards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Adjusted min-width for better fit */
   gap: 40px;
-  padding: 50px 40px;
+  padding: 60px 40px; /* Increased padding */
+  justify-content: center; /* Center items in the grid */
+  align-items: flex-start; /* Align cards to the top */
 
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr; // Chuyển sang cột đơn trên màn hình nhỏ
-    padding: 30px 20px;
+  @media (max-width: 992px) { /* Tablet view */
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    padding: 50px 30px;
     gap: 30px;
   }
-  
+
+  @media (max-width: 768px) { /* Smaller tablet/mobile */
+    grid-template-columns: 1fr;
+    padding: 40px 20px;
+    gap: 25px;
+  }
+
   .reward-card {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border-radius: 24px;
+    background: #ffffff; /* Solid white background for base */
+    border-radius: 28px; /* Slightly larger border-radius */
     padding: 40px 30px;
     text-align: center;
-    border: 1px solid rgba(251, 146, 60, 0.08);
-    box-shadow: 
-      0 12px 32px rgba(0, 0, 0, 0.04),
-      0 4px 16px rgba(251, 146, 60, 0.06),
-      inset 0 1px 0 rgba(255, 255, 255, 0.8);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(0, 0, 0, 0.05); /* Lighter border for subtle effect */
+    box-shadow:
+      0 10px 30px rgba(0, 0, 0, 0.05), /* Base soft shadow */
+      0 4px 12px rgba(0, 0, 0, 0.03),   /* Smaller shadow */
+      inset 0 1px 0 rgba(255, 255, 255, 0.9); /* Inner top highlight */
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); /* Enhanced cubic-bezier for smoother feel */
     position: relative;
-    overflow: hidden;
-    
+    overflow: hidden; /* Ensures inner glows/shadows are contained */
+    display: flex; /* Flexbox for internal layout */
+    flex-direction: column;
+    justify-content: space-between; /* Distribute content nicely */
+    height: 100%; /* Ensure cards are same height */
+
     @media (max-width: 480px) {
       padding: 30px 20px;
+      border-radius: 20px;
     }
 
+    /* Gradient Border Effect on Hover */
     &::before {
       content: '';
       position: absolute;
@@ -1004,184 +1016,229 @@
       left: -2px;
       right: -2px;
       bottom: -2px;
-      border-radius: 26px;
-      background: linear-gradient(135deg, rgba(251, 146, 60, 0.1), transparent, rgba(234, 179, 8, 0.1));
+      border-radius: 30px; /* Match card border-radius + 2px */
+      background: linear-gradient(135deg, var(--main-gradient-start), var(--main-gradient-end)); /* Dynamic gradient */
       opacity: 0;
-      transition: opacity 0.3s ease;
-      z-index: -1; 
+      filter: blur(8px); /* Soften the glow */
+      z-index: -1;
+      transition: opacity 0.4s ease, filter 0.4s ease;
     }
-    
+
     &:hover {
-      transform: translateY(-12px) scale(1.02);
-      box-shadow: 
-        0 24px 48px rgba(0, 0, 0, 0.08),
-        0 8px 24px rgba(251, 146, 60, 0.12),
-        inset 0 1px 0 rgba(255, 255, 255, 1);
-      border-color: rgba(251, 146, 60, 0.15);
-      
+      transform: translateY(-15px) scale(1.03); /* More pronounced lift and scale */
+      box-shadow:
+        0 25px 50px rgba(0, 0, 0, 0.15), /* Deeper shadow on hover */
+        0 8px 24px var(--hover-shadow-color), /* Tinted shadow based on card type */
+        inset 0 1px 0 rgba(255, 255, 255, 1.2); /* Brighter inner highlight */
+      border-color: rgba(255, 255, 255, 0.8); /* Lighter border on hover */
+
       &::before {
         opacity: 1;
-      }
-      
-      .reward-icon {
-        transform: scale(1.05); 
-        box-shadow: 0 12px 32px rgba(251, 146, 60, 0.3); 
+        filter: blur(0); /* Sharpen the glow */
       }
 
-      .reward-icon img {
-        transform: rotate(5deg); 
+      .reward-icon {
+        transform: scale(1.1) rotate(3deg); /* Slightly more prominent rotation */
+        box-shadow: 0 15px 40px var(--icon-shadow-color); /* Tinted, larger icon shadow */
+        &::after {
+          opacity: 0.9; /* Make inner shine more prominent */
+          transform: translateY(0);
+        }
       }
     }
-    
+
     .reward-icon {
-      // Kích thước mặc định của khung chứa ảnh
-      width: 130px; 
-      height: 130px; 
-      border-radius: 24px; // Bo tròn vừa phải cho khung ảnh
+      width: 140px; /* Slightly larger icon container */
+      height: 140px;
+      border-radius: 28px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 30px;
-      overflow: hidden; // Đảm bảo ảnh không tràn ra ngoài khung bo tròn
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1); // Đổ bóng nhẹ cho khung
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      margin: 0 auto 35px; /* Increased bottom margin */
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08); /* Softer initial shadow */
+      transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
       position: relative;
-      background: #f0f0f0; // Màu nền nhẹ cho khung icon
+      background: linear-gradient(135deg, #f8f9fa, #e9ecef); /* Light subtle gradient background */
 
       @media (max-width: 768px) {
-        width: 110px; // Giảm kích thước khung trên tablet
-        height: 110px;
-        margin-bottom: 25px;
+        width: 120px;
+        height: 120px;
+        margin-bottom: 30px;
       }
 
       @media (max-width: 480px) {
-        width: 90px; // Giảm kích thước khung trên mobile
-        height: 90px;
-        margin-bottom: 20px;
+        width: 100px;
+        height: 100px;
+        margin-bottom: 25px;
       }
 
-      img { // Áp dụng style cho thẻ <img> bên trong .reward-icon
-        width: 100%; // Ảnh chiếm toàn bộ chiều rộng của khung
-        height: 100%; // Ảnh chiếm toàn bộ chiều cao của khung
-        object-fit: contain; // Đảm bảo ảnh hiển thị đầy đủ mà không bị cắt
-        border-radius: 20px; // Bo tròn ảnh bên trong, nhỏ hơn khung một chút
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); // Thêm transition cho ảnh
-        // Hiệu ứng lung linh nhẹ: tăng cường độ sáng và thêm một bóng mờ nhẹ
-        filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.6)) drop-shadow(0 0 15px rgba(255, 255, 255, 0.4)); 
+      img {
+        width: 90%; /* Image slightly smaller than container for padding effect */
+        height: 90%;
+        object-fit: contain;
+        border-radius: 20px;
+        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8)) drop-shadow(0 0 20px rgba(255, 255, 255, 0.6)); /* More pronounced glow */
       }
-      
-      &::after { // Lớp phủ tạo hiệu ứng ánh sáng bóng
+
+      /* Inner shine effect */
+      &::after {
         content: '';
         position: absolute;
-        inset: 0px;
-        border-radius: 24px; // Bo tròn lớp phủ khớp với khung
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent, rgba(255, 255, 255, 0.05));
+        inset: 5px; /* Inset to create a border-like shine */
+        border-radius: 24px; /* Slightly smaller than container for visual depth */
+        background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.7) 0%, transparent 70%);
         pointer-events: none;
-        opacity: 1;
+        opacity: 0; /* Hidden initially */
+        transform: translateY(-10px); /* Start slightly above */
+        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
       }
     }
-    
+
     .reward-title {
-      font-size: 2em;
-      font-weight: 700;
-      margin-bottom: 30px;
-      color: #1f2937;
-      letter-spacing: -0.01em;
+      font-size: 2.2em; /* Larger title */
+      font-weight: 800; /* Bolder */
+      margin-bottom: 35px; /* More space */
+      color: #212529; /* Darker text for contrast */
+      letter-spacing: -0.02em; /* Tighter letter spacing */
+      line-height: 1.2;
 
       @media (max-width: 768px) {
+        font-size: 2em;
+        margin-bottom: 30px;
+      }
+      @media (max-width: 480px) {
         font-size: 1.8em;
         margin-bottom: 25px;
       }
-      @media (max-width: 480px) {
-        font-size: 1.6em;
-        margin-bottom: 20px;
-      }
     }
-    
-    .reward-prizes {
-      .prize-item {
+
+    .prize-item {
+      display: flex;
+      align-items: center;
+      gap: 18px; /* Slightly reduced gap */
+      padding: 18px 0; /* Increased padding */
+      border-bottom: 1px dashed rgba(0, 0, 0, 0.08); /* Dashed border for softer separation */
+      font-weight: 600;
+      color: #495057; /* Slightly darker grey for better readability */
+      transition: all 0.25s ease-in-out; /* Smoother transition */
+      text-align: left; /* Align text to the left */
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      &:hover {
+        color: var(--prize-item-hover-color); /* Dynamic hover color */
+        transform: translateX(8px); /* More pronounced slide */
+      }
+
+      i {
+        width: 36px; /* Larger icon size */
+        height: 36px;
         display: flex;
         align-items: center;
-        gap: 20px;
-        padding: 16px 0;
-        border-bottom: 1px solid rgba(251, 146, 60, 0.04);
-        font-weight: 600;
-        color: #374151;
-        transition: all 0.2s ease;
-        
-        &:last-child {
-          border-bottom: none;
-        }
-        
-        &:hover {
-          color: #f59e0b;
-          transform: translateX(4px);
-        }
-        
-        i {
-          width: 32px;
-          height: 32px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 1.2em;
-          color: #f59e0b;
-          background: rgba(245, 158, 11, 0.1);
-          border-radius: 8px;
-          transition: all 0.2s ease;
-        }
-        
-        span {
-          font-size: 1.1em;
-          flex: 1;
+        justify-content: center;
+        font-size: 1.3em; /* Larger icon font size */
+        color: var(--icon-color); /* Dynamic icon color */
+        background: var(--icon-background); /* Dynamic icon background */
+        border-radius: 10px; /* Slightly larger border-radius for icons */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); /* Soft shadow for icons */
+        transition: all 0.25s ease-in-out;
+      }
 
-          @media (max-width: 480px) {
-            font-size: 1em;
-          }
+      span {
+        font-size: 1.15em; /* Slightly larger text */
+        flex: 1;
+        text-shadow: 0 1px 1px rgba(0, 0, 0, 0.02); /* Subtle text shadow */
+
+        @media (max-width: 480px) {
+          font-size: 1.05em;
         }
       }
     }
-    
-    // First place styling
+
+    /* First place styling */
     &.first-place {
-      border-color: rgba(255, 215, 0, 0.2); // Viền nhẹ màu vàng cho card Hạng 1
-      
-      .reward-icon {
-        background: linear-gradient(135deg, #ffd700, #ffb300); // Nền gradient vàng cho khung icon
-        box-shadow: 
-          0 0 0 4px rgba(255, 215, 0, 0.1), // Vòng sáng vàng bên ngoài khung
-          0 8px 24px rgba(255, 215, 0, 0.3); // Đổ bóng vàng cho khung
+      order: -1; 
+      grid-column: span 1; 
+      @media (min-width: 769px) {
+        grid-row: 1 / span 1; 
+        grid-column: 2 / 3; 
+        transform: translateY(-20px);
+        box-shadow:
+          20px 20px 60px rgba(255, 215, 0, 0.15), 
+          0 8px 20px rgba(255, 193, 7, 0.2),
+          inset 0 5px 0 rgba(255, 255, 255, 1);
+        border-color: rgba(255, 215, 0, 0.4);
       }
-      
+
+      --main-gradient-start: #ffeb3b;
+      --main-gradient-end: #ffa000;
+      --hover-shadow-color: rgba(255, 193, 7, 0.3);
+      --icon-shadow-color: rgba(255, 193, 7, 0.5);
+      --icon-color: #ffc107;
+      --icon-background: rgba(254, 245, 146, 0.989);
+      --prize-item-hover-color: #bb8d01;
+
+      .reward-icon {
+        background: linear-gradient(135deg, #ffd700, #ffc107);
+        box-shadow:
+          0 0 0 6px rgba(255, 215, 0, 0.2),
+          0 12px 30px rgba(255, 193, 7, 0.4);
+      }
+
       .reward-title {
-        background: linear-gradient(135deg, #f59e0b, #eab308);
+        background: linear-gradient(45deg, #ffeb3b, #ffa000);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        background-clip: text; // Tiêu đề màu gradient vàng
+        background-clip: text;
+        text-shadow: 0 2px 4px rgba(255, 193, 7, 0.2);
       }
     }
-    
-    // Second place styling
+
+    /* Second place styling */
     &.second-place {
-      border-color: rgba(229, 231, 235, 0.3); // Viền nhẹ màu bạc cho card Hạng 2
-      
+      --main-gradient-start: #e0e0e0;
+      --main-gradient-end: #bdbdbd;
+      --hover-shadow-color: rgba(189, 189, 189, 0.3);
+      --icon-shadow-color: rgba(189, 189, 189, 0.5);
+      --icon-color: #9e9e9e;
+      --icon-background: rgba(158, 158, 158, 0.15);
+      --prize-item-hover-color: #aeaeae;
+
       .reward-icon {
-        background: linear-gradient(135deg, #e5e7eb, #d1d5db); // Nền gradient bạc cho khung icon
-        box-shadow: 
-          0 0 0 4px rgba(229, 231, 235, 0.1), // Vòng sáng bạc bên ngoài khung
-          0 8px 24px rgba(229, 231, 235, 0.3); // Đổ bóng bạc cho khung
+        background: linear-gradient(135deg, #e0e0e0, #cfd8dc);
+        box-shadow:
+          6px rgba(189, 189, 189, 0.2),
+          0 12px 30px rgba(157, 157, 157, 0.4);
+      }
+
+      .reward-title {
+        color: #616161;
       }
     }
-    
-    // Third place styling
+
+    /* Third place styling */
     &.third-place {
-      border-color: rgba(217, 119, 6, 0.2); // Viền nhẹ màu đồng cho card Hạng 3
-      
+      --main-gradient-start: #d35400;
+      --main-gradient-end: #f39c12;
+      --hover-shadow-color: rgba(243, 156, 18, 0.3);
+      --icon-shadow-color: rgba(243, 156, 18, 0.5);
+      --icon-color: #f39c12;
+      --icon-background: rgba(243, 156, 18, 0.15);
+      --prize-item-hover-color: #7e4f03;
+
       .reward-icon {
-        background: linear-gradient(135deg, #d97706, #b45309); // Nền gradient đồng cho khung icon
-        box-shadow: 
-          0 0 0 4px rgba(217, 119, 6, 0.1), // Vòng sáng đồng bên ngoài khung
-          0 8px 24px rgba(217, 119, 6, 0.3); // Đổ bóng đồng cho khung
+        background: linear-gradient(135deg, #d35400, #e67e22);
+        box-shadow:
+          0 0 0 6px rgba(243, 156, 18, 0.2),
+          0 12px 30px rgba(243, 156, 18, 0.4);
+      }
+
+      .reward-title {
+        color: #e67e22;
       }
     }
   }
@@ -1421,7 +1478,7 @@
   -webkit-backdrop-filter: blur(20px);
   border-radius: 32px;
   border: 1px solid rgba(255, 193, 7, 0.15);
-  box-shadow: 
+  box-shadow:
     0 24px 48px rgba(255, 152, 0, 0.08),
     0 12px 24px rgba(255, 193, 7, 0.12),
     inset 0 1px 0 rgba(255, 255, 255, 0.8);
@@ -1429,6 +1486,11 @@
   margin-bottom: 60px;
   position: relative;
   z-index: 1;
+
+  @media (max-width: 768px) {
+    border-radius: 20px; /* Smaller border-radius on mobile */
+    margin-bottom: 40px;
+  }
 }
 
 .table-container {
@@ -1444,19 +1506,64 @@
     position: relative;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    
+    border-bottom: 1px solid rgba(251, 146, 60, 0.1); /* Stronger border for header */
+
     &::after {
       content: '';
       position: absolute;
       bottom: 0;
       left: 0;
       right: 0;
-      height: 2px;
+      height: 3px; /* Thicker accent line */
       background: linear-gradient(90deg, transparent, #f59e0b, transparent);
+      opacity: 0.8; /* Slightly less opaque */
+    }
+
+    .header-col {
+      display: flex; /* Use flexbox for header columns */
+      align-items: center;
+      justify-content: center; /* Center content in header columns */
+      &:nth-child(2) { /* Targeting "Người dùng" column in header */
+        justify-content: center; /* Center "Người dùng" text */
+      }
     }
   }
-  
+
   .table-body {
+    .loading-row, .error-row, .empty-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 50px 20px; /* Ample padding for messages */
+      font-size: 1.2em;
+      color: #6c757d;
+      text-align: center;
+      .fas {
+        margin-right: 10px;
+        font-size: 1.5em;
+      }
+      .loading-message, .error-message, .empty-message {
+        display: flex;
+        align-items: center;
+      }
+    }
+
+    .error-row .retry-btn {
+      margin-left: 20px;
+      padding: 10px 20px;
+      border-radius: 8px;
+      background-color: #f59e0b;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-size: 0.9em;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      &:hover {
+        background-color: #eab308;
+        transform: translateY(-2px);
+      }
+    }
+
     .table-row {
       display: grid;
       grid-template-columns: 120px 1fr 120px;
@@ -1468,7 +1575,7 @@
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
       position: relative;
       overflow: hidden;
-      
+
       &::before {
         content: '';
         position: absolute;
@@ -1479,7 +1586,7 @@
         background: linear-gradient(90deg, rgba(245, 158, 11, 0.03), transparent);
         transition: all 0.4s ease;
       }
-      
+
       &::after {
         content: '';
         position: absolute;
@@ -1489,40 +1596,41 @@
         height: 100%;
         background: linear-gradient(90deg, transparent, rgba(251, 146, 60, 0.02), transparent);
         transition: all 0.6s ease;
+        z-index: 0; /* Ensure this is behind content */
       }
-      
+
       &:hover {
         background: rgba(255, 255, 255, 0.8);
         transform: translateX(8px);
-        box-shadow: 
+        box-shadow:
           0 8px 24px rgba(0, 0, 0, 0.04),
           0 4px 12px rgba(251, 146, 60, 0.08);
         border-color: rgba(251, 146, 60, 0.08);
-        
+
         &::before {
           width: 4px;
           background: linear-gradient(180deg, #f59e0b, #eab308);
         }
-        
+
         &::after {
           left: 100%;
         }
-        
+
         .rank-col {
           transform: scale(1.1);
           color: #f59e0b;
         }
-        
+
         .score-col {
           transform: scale(1.05);
           color: #f59e0b;
         }
       }
-      
+
       &:last-child {
         border-bottom: none;
       }
-      
+
       .rank-col {
         font-weight: 700;
         display: flex;
@@ -1533,19 +1641,23 @@
         background: rgba(245, 158, 11, 0.05);
         border-radius: 12px;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 1; /* Ensure rank is above the pseudo-element glow */
       }
-      
+
       .name-col {
         display: flex;
         align-items: center;
+        justify-content: center; /* <<< THAY ĐỔI QUAN TRỌNG: CĂN GIỮA NỘI DUNG */
+        text-align: center; /* <<< THAY ĐỔI QUAN TRỌNG: CĂN GIỮA VĂN BẢN */
         font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
-        word-break: break-all;
+        word-break: break-word; /* Use break-word for long names */
         font-weight: 600;
         color: #374151;
         font-size: 1.05em;
-        padding: 0 20px;
+        padding: 0 10px; /* Reduced horizontal padding for better centering */
+        z-index: 1;
       }
-      
+
       .score-col {
         font-weight: 800;
         display: flex;
@@ -1558,10 +1670,11 @@
         -webkit-text-fill-color: transparent;
         background-clip: text;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 1;
       }
     }
   }
-  
+
   /* Table Responsive */
   @media (max-width: 1200px) {
     .table-header {
@@ -1570,7 +1683,7 @@
       padding: 28px 35px;
       font-size: 1.05em;
     }
-    
+
     .table-body .table-row {
       grid-template-columns: 110px 1fr 110px;
       gap: 25px;
@@ -1578,7 +1691,7 @@
       font-size: 0.95em;
     }
   }
-  
+
   @media (max-width: 992px) {
     .table-header {
       grid-template-columns: 100px 1fr 100px;
@@ -1586,7 +1699,7 @@
       padding: 25px 30px;
       font-size: 1em;
     }
-    
+
     .table-body .table-row {
       grid-template-columns: 100px 1fr 100px;
       gap: 22px;
@@ -1594,7 +1707,7 @@
       font-size: 0.9em;
     }
   }
-  
+
   @media (max-width: 768px) {
     .table-header {
       grid-template-columns: 80px 1fr 80px;
@@ -1602,19 +1715,23 @@
       padding: 22px 25px;
       font-size: 0.95em;
     }
-    
+
     .table-body .table-row {
       grid-template-columns: 80px 1fr 80px;
       gap: 20px;
       padding: 22px 25px;
       font-size: 0.85em;
-      
+
+      .name-col {
+        padding: 0 5px; /* Adjust padding for smaller screens */
+      }
+
       .score-col {
         font-size: 1.4em;
       }
     }
   }
-  
+
   @media (max-width: 576px) {
     .table-header {
       grid-template-columns: 70px 1fr 70px;
@@ -1622,19 +1739,19 @@
       padding: 18px 20px;
       font-size: 0.9em;
     }
-    
+
     .table-body .table-row {
       grid-template-columns: 70px 1fr 70px;
       gap: 15px;
       padding: 18px 20px;
       font-size: 0.8em;
-      
+
       .score-col {
         font-size: 1.3em;
       }
     }
   }
-  
+
   @media (max-width: 480px) {
     .table-header {
       grid-template-columns: 60px 1fr 60px;
@@ -1642,16 +1759,53 @@
       padding: 15px 15px;
       font-size: 0.85em;
     }
-    
+
     .table-body .table-row {
       grid-template-columns: 60px 1fr 60px;
       gap: 12px;
       padding: 15px 15px;
       font-size: 0.75em;
-      
+
       .score-col {
         font-size: 1.2em;
       }
+    }
+  }
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px 40px;
+  background: rgba(255, 255, 255, 0.6);
+  border-top: 1px solid rgba(251, 146, 60, 0.08);
+  border-bottom-left-radius: 32px; /* Match section border-radius */
+  border-bottom-right-radius: 32px;
+
+  .pagination-btn {
+    background-color: #f59e0b;
+    color: #fff;
+    border: none;
+    padding: 12px 20px;
+    margin: 0 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2);
+
+    &:hover:not(:disabled) {
+      background-color: #eab308;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(245, 158, 11, 0.3);
+    }
+
+    &:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+      box-shadow: none;
     }
   }
 }

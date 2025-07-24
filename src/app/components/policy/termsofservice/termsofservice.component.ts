@@ -15,7 +15,7 @@ export class TermsofserviceComponent implements OnInit {
   constructor(private titleService: Title, private metaService: Meta) { }
 
   ngOnInit(): void {
-    this.titleService.setTitle('Thảo Thuận Sử Dụng Dịch Vụ'); 
+    this.titleService.setTitle('Thỏa Thuận Sử Dụng Dịch Vụ'); 
   }
 
 }

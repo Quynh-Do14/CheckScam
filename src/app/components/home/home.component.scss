@@ -1914,6 +1914,8 @@ app-footer {
 }
 
 .right-column .activity-log-widget ::ng-deep .activity-item {
+  display: flex;
+  flex-direction: column; gap: 8px;
   padding: 10px; 
   margin-bottom: 8px;
   border-radius: 8px;

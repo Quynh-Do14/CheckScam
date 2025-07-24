@@ -1,13 +1,15 @@
+@use "sass:color";
+
 $primary-orange: #f25d00; 
 
-$primary-yellow-light: #FFECB3; // Vàng nhạt chính
-$secondary-yellow-accent: #FFD54F; // Vàng đậm hơn một chút làm điểm nhấn
-$text-dark: #333333; // Màu chữ tối để đọc rõ trên nền sáng
-$text-light: #666666; // Màu chữ nhạt hơn
-$background-light: #f4f3f3; // Nền siêu nhạt, gần như trắng kem
-$border-light: #E0E0E0; // Màu border nhạt
-$hover-color: #FFEB8F; // Màu khi hover cho các mục menu
-$shadow-color: rgba(0, 0, 0, 0.1); // Màu đổ bóng nhẹ
+$primary-yellow-light: #FFECB3;
+$secondary-yellow-accent: #FFD54F;
+$text-dark: #333333;
+$text-light: #666666;
+$background-light: #f4f3f3;
+$border-light: #E0E0E0;
+$hover-color: #FFEB8F;
+$shadow-color: rgba(0, 0, 0, 0.1);
 
 
 $font-family-base: 'Poppins', sans-serif;
@@ -121,13 +123,13 @@ body {
             }
 
             &.active {
-                color: $text-dark; // Màu chữ khi active
-                background-color: $secondary-yellow-accent; // Nền khi active
-                border-left: 5px solid $text-dark; // Thanh màu đậm bên trái
-                padding-left: calc(1.25rem - 5px); // Điều chỉnh padding để không bị dịch chuyển
-                font-weight: 600; // Đậm hơn
-                box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); // Đổ bóng nhẹ vào trong
-                border-radius: 0 8px 8px 0; // Chỉ bo tròn bên phải
+                color: $text-dark;
+                background-color: $secondary-yellow-accent;
+                border-left: 5px solid $text-dark;
+                padding-left: calc(1.25rem - 5px);
+                font-weight: 600;
+                box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+                border-radius: 0 8px 8px 0;
                 i {
                     color: $text-dark;
                 }
@@ -166,14 +168,14 @@ body {
     }
 
     .navbar-nav {
-        flex-direction: row; // Đảm bảo các mục nằm ngang
+        flex-direction: row;
 
         .nav-item {
             margin-left: 1rem;
         }
 
         .nav-link {
-            padding: 0; // Bỏ padding mặc định để tùy chỉnh
+            padding: 0;
 
             .user-info {
                 display: flex;
@@ -186,7 +188,7 @@ body {
                     color: #ffffff;
                     font-weight: 500;
                 }
-                .user-role { // Nếu bạn muốn thêm vai trò người dùng
+                .user-role {
                     font-size: 0.75rem;
                     color: $text-light;
                 }
@@ -194,15 +196,14 @@ body {
 
             .user-profile {
                 .img-profile {
-                    width: 2.5rem; // Kích thước avatar
+                    width: 2.5rem;
                     height: 2.5rem;
                     object-fit: cover;
-                    border: 2px solid $primary-yellow-light; // Border avatar
+                    border: 2px solid $primary-yellow-light;
                     box-shadow: 0 0 5px rgba(0,0,0,0.1);
                 }
             }
 
-            // Custom dropdown toggle
             &.dropdown-toggle {
                 cursor: pointer;
                 display: flex;
@@ -211,13 +212,12 @@ body {
         }
     }
 
-    // Dropdown menu for user information
     .dropdown-menu {
         border: none;
         box-shadow: 0 5px 15px $shadow-color;
         border-radius: 8px;
         padding: 0.5rem 0;
-        min-width: 10rem; // Đảm bảo đủ rộng
+        min-width: 10rem;
 
         .dropdown-item {
             color: $text-dark;
@@ -242,7 +242,7 @@ body {
 
 @media (max-width: 768px) {
     .sidebar {
-        width: 0 !important; // Ẩn sidebar trên di động 
+        width: 0 !important;
     }
 
     #content-wrapper {
@@ -250,7 +250,7 @@ body {
     }
 
     .topbar-brand {
-        display: none !important; // Ẩn logo AI6 trên màn hình nhỏ để tiết kiệm không gian
+        display: none !important;
     }
 }
 
@@ -260,20 +260,19 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .card {
-    border-radius: 12px; // Bo tròn card
+    border-radius: 12px;
     border: none;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); // Đổ bóng nhẹ hơn
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     margin-bottom: 1.5rem;
 }
 
 .btn-primary {
     background-color: $secondary-yellow-accent;
     border-color: $secondary-yellow-accent;
-    color: $text-dark; // Màu chữ cho nút chính
+    color: $text-dark;
     font-weight: 600;
     &:hover {
-        background-color: darken($secondary-yellow-accent, 5%);
-        border-color: darken($secondary-yellow-accent, 5%);
+        background-color: color.adjust($secondary-yellow-accent, $lightness: -5%);
+        border-color: color.adjust($secondary-yellow-accent, $lightness: -5%);
     }
 }
-

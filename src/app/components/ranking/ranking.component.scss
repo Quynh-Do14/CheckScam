@@ -846,6 +846,13 @@
         }
 
         &.first-place {
+          --main-gradient-start: #ffeb3b;
+          --main-gradient-end: #ffa000;
+          --hover-shadow-color: rgba(255, 193, 7, 0.3);
+          --icon-shadow-color: rgba(255, 193, 7, 0.5);
+          --icon-color: #ffc107;
+          --icon-background: rgba(254, 245, 146, 0.989);
+          --prize-item-hover-color: #bb8d01;
           order: -1; 
           grid-column: span 1; 
           @media (min-width: 769px) {
@@ -858,14 +865,6 @@
               inset 0 5px 0 rgba(255, 255, 255, 1);
             border-color: rgba(255, 215, 0, 0.4);
           }
-
-          --main-gradient-start: #ffeb3b;
-          --main-gradient-end: #ffa000;
-          --hover-shadow-color: rgba(255, 193, 7, 0.3);
-          --icon-shadow-color: rgba(255, 193, 7, 0.5);
-          --icon-color: #ffc107;
-          --icon-background: rgba(254, 245, 146, 0.989);
-          --prize-item-hover-color: #bb8d01;
 
           .reward-icon {
             background: linear-gradient(135deg, #ffd700, #ffc107);

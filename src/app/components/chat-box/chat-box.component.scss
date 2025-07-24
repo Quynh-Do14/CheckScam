@@ -1,8 +1,7 @@
-@use "sass:color"; // Add this line at the top
+@use "sass:color";
 
 $primary-green: #A8E6CF;
-// Sử dụng hàm color.adjust để làm tối màu
-$primary-green-dark: color.adjust($primary-green, $lightness: -8%); // Changed from darken
+$primary-green-dark: color.adjust($primary-green, $lightness: -8%);
 
 $header-bg-color: #A8E6CF;
 $header-text-color: #333333;
@@ -206,9 +205,7 @@ $suggestion-btn-hover: #BBDEFB;
     border-radius: 20px 20px 20px 5px;
   }
 
-  /* START: CSS cho nội dung được format (chỉ áp dụng cho bot) */
   .message-text {
-    // Đảm bảo không có padding/margin thừa từ class này
     padding: 0;
     margin: 0;
   }
@@ -226,13 +223,13 @@ $suggestion-btn-hover: #BBDEFB;
   }
 
   .message-text p.newline-block {
-    height: 0.8em; /* Tạo khoảng cách cho \n\n */
+    height: 0.8em;
     margin: 0;
     padding: 0;
   }
 
   .message-text p + p {
-    margin-top: 0.8em; /* Khoảng cách giữa các đoạn văn */
+    margin-top: 0.8em;
   }
 
   .message-text ul {
@@ -269,14 +266,12 @@ $suggestion-btn-hover: #BBDEFB;
   .message-text h1 { font-size: 1.5em; }
   .message-text h2 { font-size: 1.3em; }
 
-  /* Xử lý các <br> thừa nếu cần */
   .message-text strong + br,
   .message-text ul + br,
   .message-text li + br,
   .message-text p + br {
-    display: none; /* Ẩn <br> nếu nó đứng ngay sau một block element */
+    display: none;
   }
-  /* END: CSS cho nội dung được format */
 }
 
 .typing-indicator .message-content {
@@ -312,7 +307,6 @@ $suggestion-btn-hover: #BBDEFB;
   }
 }
 
-/* Các Keyframes mới cho chuyển động của AI Logo và tin nhắn Bot */
 @keyframes pulseGlow {
   0% {
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1), 0 0 0 0 rgba($primary-green, 0.4);
@@ -337,7 +331,6 @@ $suggestion-btn-hover: #BBDEFB;
   }
 }
 
-
 .chat-suggestions {
   padding: 10px 10px 10px 10px;
   display: flex;
@@ -351,7 +344,7 @@ $suggestion-btn-hover: #BBDEFB;
 .suggestion-button {
   background-color: $suggestion-btn-bg;
   color: #000000;
-  border: 1px solid darken($suggestion-btn-bg, 8%);
+  border: 1px solid color.adjust($suggestion-btn-bg, $lightness: -8%);
   border-radius: 20px;
   padding: 10px 15px;
   font-size: 0.9rem;
@@ -411,12 +404,12 @@ $suggestion-btn-hover: #BBDEFB;
     transition: background-color 0.2s ease, transform 0.1s ease;
 
     &:hover {
-      background-color: darken($header-bg-color, 8%);
+      background-color: color.adjust($header-bg-color, $lightness: -8%);
       transform: translateY(-1px);
     }
     &:active {
+      background-color: color.adjust($header-bg-color, $lightness: -12%);
       transform: translateY(0);
-      background-color: darken($header-bg-color, 12%);
     }
     &:disabled {
       background-color: #f0f4f8;

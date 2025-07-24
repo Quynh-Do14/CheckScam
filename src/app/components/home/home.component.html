@@ -1,4 +1,4 @@
-<app-header (aiTuVanClicked)="onAiTuVanClicked()"></app-header>
+<app-header (aiTuVanClicked)="onAiTuVanClicked()" [class.header-loading]="isLoading"></app-header>
 
 <div class="main-section">
   <div class="background-elements">
@@ -41,7 +41,7 @@
           <!-- <p class="secondary-title"></p> -->
           <p class="subtitle">Bảo vệ bạn khỏi số điện thoại, tài khoản ngân hàng và website độc hại.</p>
 
-          <div class="search-box-container" [class.loading]="isLoading">
+          <div class="search-box-container">
             <div class="search-robot" (click)="onRobotClick()" title="Chào bạn 👉👈">
               <div class="robot-eyes"></div>
               <div class="robot-legs"></div>
@@ -80,8 +80,20 @@
               <input class="search-input" type="text" [placeholder]="getSearchPlaceholder()"
                 [(ngModel)]="info" (keydown.enter)="sendMessage()" [disabled]="isLoading">
               <button class="search-button" type="submit" (click)="sendMessage()" [disabled]="!info.trim() || isLoading">
-                <i [class]="currentSearchIcon"></i>
+                <i *ngIf="!isLoading" [class]="currentSearchIcon"></i>
+                <i *ngIf="isLoading" class="fas fa-spinner fa-spin"></i>
               </button>
+            </div>
+            
+            <!-- Error Message Display -->
+            <div class="error-message-container" *ngIf="errorMessage">
+              <div class="error-message-card">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span class="error-text">{{ errorMessage }}</span>
+                <button class="close-error-btn" (click)="errorMessage = null">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -340,6 +352,23 @@
       </div>
     </div>
   </div>
+  
+  <!-- Loading Overlay -->
+  <div *ngIf="isLoading" class="loading-overlay">
+    <div class="loading-content">
+      <div class="loading-spinner-large">
+        <i class="fas fa-shield-alt fa-spin"></i>
+      </div>
+      <h3>Đang phân tích an toàn</h3>
+      <p>AI đang kiểm tra thông tin và phân tích mức độ rủi ro...</p>
+      <div class="loading-progress">
+        <div class="progress-bar animated"></div>
+      </div>
+      <div class="loading-tips">
+        <small>💡 Mẹo: Luôn kiểm tra kỹ trước khi chuyển tiền!</small>
+      </div>
+    </div>
+  </div>
 </div>
 
 
@@ -419,4 +448,5 @@
 </div>
 
 <app-chat-box *ngIf="showChatbox && !isLoading" (close)="closeChatbox()"></app-chat-box>
+
 <app-footer *ngIf="!isLoading"></app-footer>

@@ -161,6 +161,17 @@ html, body {
   text-align: center;
   max-width: 400px;
   padding: 40px;
+  
+  /* RESPONSIVE DESIGN */
+  @media (max-width: 768px) {
+    max-width: 90vw;
+    padding: 30px 20px;
+  }
+  
+  @media (max-width: 480px) {
+    max-width: 95vw;
+    padding: 25px 15px;
+  }
 }
 
 .loading-spinner-large {
@@ -168,6 +179,17 @@ html, body {
   color: #ff6b35;
   margin-bottom: 30px;
   animation: spinPulse 2s ease-in-out infinite;
+  
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    font-size: 3rem;
+    margin-bottom: 20px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+  }
 }
 
 .loading-content h3 {
@@ -175,6 +197,17 @@ html, body {
   margin: 0 0 15px 0;
   font-size: 1.5rem;
   font-weight: 700;
+  
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    font-size: 1.3rem;
+    margin-bottom: 12px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+  }
 }
 
 .loading-content p {
@@ -182,6 +215,19 @@ html, body {
   margin: 0 0 30px 0;
   font-size: 1rem;
   line-height: 1.5;
+  
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    font-size: 0.9rem;
+    margin-bottom: 25px;
+    line-height: 1.4;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+    line-height: 1.3;
+  }
 }
 
 .loading-progress {
@@ -2631,5 +2677,441 @@ app-footer {
   }
   75% {
     transform: scale(1.05) rotate(-2deg);
+  }
+}
+
+/* LOADING OVERLAY - CẢI THIỆN HIỆU SUẤT */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.98); /* Tăng độ đục */
+  backdrop-filter: blur(5px); /* Giảm blur */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  border-radius: 0;
+  
+  /* Tự động ẩn sau 30 giây để tránh stuck */
+  animation: autoHideLoading 30s forwards;
+}
+
+/* Animation tự động ẩn loading sau 30 giây */
+@keyframes autoHideLoading {
+  0% {
+    opacity: 1;
+    visibility: visible;
+  }
+  95% {
+    opacity: 1;
+    visibility: visible;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
+.loading-content {
+  text-align: center;
+  max-width: 400px;
+  padding: 40px;
+}
+
+.loading-spinner-large {
+  font-size: 4rem;
+  color: #ff6b35;
+  margin-bottom: 30px;
+  animation: spinPulse 2s ease-in-out infinite;
+}
+
+.loading-content h3 {
+  color: #2c3e50;
+  margin: 0 0 15px 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.loading-content p {
+  color: #6c757d;
+  margin: 0 0 30px 0;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.loading-progress {
+  width: 100%;
+  height: 6px;
+  background-color: #e9ecef;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #ff6b35, #ff8a65, #ff6b35);
+  border-radius: 10px;
+  position: relative;
+  
+  &.animated {
+    animation: progressSlide 2s ease-in-out infinite;
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: shimmer 1.5s infinite;
+  }
+}
+
+.loading-tips {
+  margin-top: 15px;
+  
+  small {
+    color: #6c757d;
+    font-size: 0.9rem;
+    font-style: italic;
+    
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      font-size: 0.8rem;
+    }
+    
+    @media (max-width: 480px) {
+      font-size: 0.75rem;
+    }
+  }
+}
+
+/* CONTENT LOADING - ĐÃ BỎ HIỆU ỨNG MỜ */
+.content-loading {
+  /* Bỏ hết hiệu ứng mờ */
+  filter: none !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  transition: all 0.3s ease;
+}
+
+/* SEARCH LOADING - ĐÃ BỎ HIỆU ỨNG MỜ */
+.search-box-container.loading {
+  /* Bỏ hết hiệu ứng mờ */
+  opacity: 1 !important;
+  
+  .search-input-group {
+    opacity: 1 !important;
+    
+    .search-input {
+      background-color: #fff !important;
+      cursor: text !important;
+    }
+    
+    .search-button {
+      animation: pulse 1.5s ease-in-out infinite;
+      
+      .fa-spinner {
+        color: white;
+      }
+    }
+  }
+  
+  .search-type-buttons .type-btn {
+    opacity: 1 !important;
+    cursor: pointer !important;
+  }
+}
+
+/* Animation keyframes */
+@keyframes spinPulse {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    transform: rotate(90deg) scale(1.1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1);
+  }
+  75% {
+    transform: rotate(270deg) scale(1.1);
+  }
+}
+
+@keyframes progressSlide {
+  0% {
+    width: 0%;
+    margin-left: 0%;
+  }
+  50% {
+    width: 70%;
+    margin-left: 15%;
+  }
+  100% {
+    width: 0%;
+    margin-left: 100%;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(255, 107, 53, 0.5);
+  }
+}
+
+/* Responsive loading */
+@media (max-width: 768px) {
+  .loading-overlay {
+    padding: 20px;
+  }
+  
+  .loading-content {
+    padding: 30px 20px;
+  }
+  
+  .loading-spinner-large {
+    font-size: 3rem;
+    margin-bottom: 20px;
+  }
+  
+  .loading-content h3 {
+    font-size: 1.3rem;
+  }
+  
+  .loading-content p {
+    font-size: 0.9rem;
+    margin-bottom: 25px;
+  }
+}
+
+/* HEADER LOADING - ẨN HOÀN TOÀN KHI LOADING */
+:host ::ng-deep app-header.header-loading {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  transform: translateY(-100%) !important;
+  transition: all 0.3s ease;
+  pointer-events: none !important;
+  position: absolute !important;
+  z-index: -1 !important;
+  
+  /* Tự động khôi phục sau 30 giây */
+  animation: autoRestoreHeader 30s forwards;
+}
+
+@keyframes autoRestoreHeader {
+  0% {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-100%);
+  }
+  95% {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-100%);
+  }
+  100% {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+}
+
+/* MAIN SECTION LOADING - ĐÃ BỎ HIỆU ỨNG MỜ */
+.main-section.loading {
+  /* Bỏ hết hiệu ứng mờ */
+  filter: none !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  transition: all 0.3s ease;
+}
+
+/* Đảm bảo loading overlay luôn ở trên cùng khi header bị ẩn */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  border-radius: 0;
+}
+
+/* BODY LOADING - KHÔI PHỤC NHƯNG VẪN CHO SCROLL */
+body.loading-active {
+  overflow: auto; /* Vẫn cho scroll */
+  height: auto;
+  
+  /* Tự động khôi phục sau 30 giây */
+  animation: autoRestoreBody 30s forwards;
+}
+
+@keyframes autoRestoreBody {
+  0% {
+    overflow: auto;
+  }
+  100% {
+    overflow: auto;
+  }
+}
+
+/* ERROR MESSAGE STYLING */
+.error-message-container {
+  margin-top: 16px;
+  animation: errorSlideDown 0.3s ease-out;
+}
+
+.error-message-card {
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 1px solid #fca5a5;
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+  position: relative;
+  overflow: hidden;
+  
+  /* Hiệu ứng ripple khi xuất hiện */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(239, 68, 68, 0.1), transparent);
+    animation: rippleEffect 1.5s ease-out;
+  }
+  
+  i.fa-exclamation-triangle {
+    color: #dc2626;
+    font-size: 18px;
+    flex-shrink: 0;
+    animation: pulse 2s infinite;
+  }
+  
+  .error-text {
+    color: #7f1d1d;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1.4;
+    flex: 1;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  .close-error-btn {
+    background: none;
+    border: none;
+    color: #dc2626;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    
+    &:hover {
+      background: rgba(239, 68, 68, 0.1);
+      transform: scale(1.1);
+    }
+    
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+}
+
+/* Error slide down animation */
+@keyframes errorSlideDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Ripple effect animation */
+@keyframes rippleEffect {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Pulse animation for warning icon */
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+/* Responsive design for error message */
+@media (max-width: 768px) {
+  .error-message-card {
+    padding: 14px 16px;
+    
+    .error-text {
+      font-size: 13px;
+    }
+    
+    i.fa-exclamation-triangle {
+      font-size: 16px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .error-message-card {
+    padding: 12px 14px;
+    gap: 10px;
+    
+    .error-text {
+      font-size: 12px;
+    }
+    
+    i.fa-exclamation-triangle {
+      font-size: 14px;
+    }
+    
+    .close-error-btn {
+      font-size: 14px;
+    }
   }
 }

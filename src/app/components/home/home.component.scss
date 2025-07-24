@@ -2511,3 +2511,125 @@ app-footer {
   order: 3;
   margin-left: 0;
 }
+
+
+
+
+/* Robot Animation Effects */
+.about-us-robot-image {
+  animation: 
+    robotFloat 4s ease-in-out infinite,
+    robotGlow 3s ease-in-out infinite alternate,
+    robotRotate 8s linear infinite;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  filter: drop-shadow(0 10px 30px rgba(255, 107, 53, 0.4));
+  position: relative;
+}
+
+.about-us-robot-image:hover {
+  animation-play-state: paused;
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 
+    0 15px 60px rgba(255, 107, 53, 0.6),
+    0 0 40px rgba(255, 107, 53, 0.4) !important;
+  filter: 
+    drop-shadow(0 15px 40px rgba(255, 107, 53, 0.5))
+    hue-rotate(10deg)
+    brightness(1.1);
+}
+
+/* Robot Floating Animation */
+@keyframes robotFloat {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+  }
+  25% {
+    transform: translateY(-15px) scale(1.02);
+  }
+  50% {
+    transform: translateY(-25px) scale(1.05);
+  }
+  75% {
+    transform: translateY(-15px) scale(1.02);
+  }
+}
+
+/* Robot Glowing Effect */
+@keyframes robotGlow {
+  0% {
+    box-shadow: 
+      0 8px 32px rgba(255, 107, 53, 0.3),
+      0 0 20px rgba(255, 107, 53, 0.2);
+  }
+  100% {
+    box-shadow: 
+      0 8px 32px rgba(255, 107, 53, 0.6),
+      0 0 40px rgba(255, 107, 53, 0.5),
+      0 0 60px rgba(255, 107, 53, 0.3);
+  }
+}
+
+/* Robot Gentle Rotation */
+@keyframes robotRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(2deg);
+  }
+  50% {
+    transform: rotate(0deg);
+  }
+  75% {
+    transform: rotate(-2deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+/* Pulse Effect */
+.about-us-robot-image::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  right: -20px;
+  bottom: -20px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 107, 53, 0.1) 0%, transparent 70%);
+  animation: robotPulse 2s ease-in-out infinite;
+  z-index: -1;
+}
+
+@keyframes robotPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.2;
+  }
+}
+
+/* Click Effect */
+.about-us-robot-image:active {
+  animation: robotExcited 0.6s ease-in-out;
+  transform: scale(0.95) rotate(10deg);
+}
+
+@keyframes robotExcited {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+  }
+  25% {
+    transform: scale(1.1) rotate(-5deg);
+  }
+  50% {
+    transform: scale(1.15) rotate(5deg);
+  }
+  75% {
+    transform: scale(1.05) rotate(-2deg);
+  }
+}

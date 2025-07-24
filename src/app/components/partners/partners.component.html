@@ -1,3 +1,4 @@
+<app-header (aiTuVanClicked)="onAiTuVanClicked()"></app-header>
 <!-- Particle Background -->
 <canvas id="particles-bg"></canvas>
 
@@ -53,7 +54,7 @@
     <div class="mission-content">
         <h2>Tham Gia Cuộc Săn Lừa Đảo – Diệt Tội Phạm Cùng Nhau</h2>
         <p style="font-size: 18px; color: #333; margin-bottom: 30px;">
-            AI6 là hệ thống phát hiện lừa đảo được hỗ trợ bởi AI tiên tiến nhất Việt Nam, được phát triển với dữ liệu từ Bộ Công An. Chúng tôi đang xây dựng đội quân những người bảo vệ số để bảo vệ hàng triệu người khỏi gian lận trực tuyến.
+            AI6 là hệ thống phát hiện lừa đảo được hỗ trợ bởi AI tiên tiến nhất Việt Nam, được phát triển và dựa trên dữ liệu cộng đồng. Chúng tôi đang xây dựng đội quân những người bảo vệ số để bảo vệ hàng triệu người khỏi gian lận trực tuyến.
         </p>
 
         <div class="timeline-infographic">
@@ -330,6 +331,7 @@
     </div>
     
     <div class="footer-bottom">
-        <p>&copy; 2024 AI6. Tất cả quyền được bảo lưu. Bảo vệ Việt Nam khỏi lừa đảo trực tuyến.</p>
+        <p>&copy; 2025 AI6. Tất cả quyền được bảo lưu. Bảo vệ Việt Nam khỏi lừa đảo trực tuyến.</p>
     </div>
+<app-chat-box *ngIf="showChatbox" (close)="closeChatbox()"></app-chat-box>
 </footer>

@@ -1,6 +1,9 @@
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { HeaderComponent } from "../header/header.component";
+import { ChatBoxComponent } from "../chat-box/chat-box.component";
+
 
 declare var THREE: any;
 declare var gsap: any;
@@ -8,7 +11,7 @@ declare var gsap: any;
 @Component({
   selector: 'app-partners',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, HeaderComponent, ChatBoxComponent],
   templateUrl: './partners.component.html',
   styleUrl: './partners.component.scss'
 })
@@ -16,6 +19,7 @@ export class PartnersComponent implements OnInit, AfterViewInit, OnDestroy {
   private ai6Robot: any;
   private particleBackground: any;
   private scrollAnimations: any;
+  showChatbox: boolean | undefined;
 
   constructor() {}
 
@@ -823,4 +827,16 @@ export class PartnersComponent implements OnInit, AfterViewInit, OnDestroy {
       alert('Đề xuất hợp tác đã được gửi! Chúng tôi sẽ sớm liên hệ để cùng săn tội phạm! 🤖⚔️');
     }, 1000);
   }
+
+  /* ===== Chat ===== */
+  onAiTuVanClicked(): void {
+    debugger
+    this.showChatbox = true;
+  }
+
+  closeChatbox(): void {
+    debugger
+    this.showChatbox = false;
+  }
 }
+

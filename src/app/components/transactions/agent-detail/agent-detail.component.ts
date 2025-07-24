@@ -102,12 +102,10 @@ export class AgentDetailComponent implements OnInit {
     return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&size=200&background=FF6B35&color=fff&bold=true`;
   }
 
-  // Public method for template use
   getDefaultAvatarForTemplate(name: string): string {
     return this.getDefaultAvatar(name);
   }
 
-  // Handle image error
   onImageError(event: Event, agentName: string): void {
     const target = event.target as HTMLImageElement;
     if (target) {
@@ -151,13 +149,9 @@ export class AgentDetailComponent implements OnInit {
 
   onContactClick(profile: Profile): void {
     console.log('Contact via:', profile);
-    // Here you can implement the contact functionality
-    // For example, open external links or show contact modal
     if (profile.nameInfo.toLowerCase().includes('facebook')) {
-      // Handle Facebook contact
       window.open(profile.info, '_blank');
     } else if (profile.nameInfo.toLowerCase().includes('zalo')) {
-      // Handle Zalo contact
       window.open(profile.info, '_blank');
     }
   }
@@ -171,5 +165,16 @@ export class AgentDetailComponent implements OnInit {
     if (name.includes('telegram')) return 'fab fa-telegram';
     if (name.includes('whatsapp')) return 'fab fa-whatsapp';
     return 'fas fa-link';
+  }
+
+  createContract(): void {
+    if (this.agent && this.agentId) {
+      this.router.navigate(['/transactions/create-contract', this.agentId], {
+        state: { agentName: this.agent.name, agentEmail: this.agent.email }
+      });
+    } else {
+      console.warn('Không thể tạo hợp đồng: Không có thông tin giao dịch viên hoặc ID.');
+      alert('Không thể tạo hợp đồng. Vui lòng thử lại sau.');
+    }
   }
 }

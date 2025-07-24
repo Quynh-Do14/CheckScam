@@ -6,41 +6,45 @@
       <span class="main-title">Top 10 Xếp Hạng Lừa Đảo Với AI6</span>
       <span class="slogan">Săn Người Xấu, Diệt Kẻ Gian</span>
     </h1>
-  <div class="stats-cards">
-    <div class="stat-card">
-      <div class="stat-icon">
-        <i class="fas fa-users"></i>
-      </div>
-      <div class="stat-content">
-        <div class="stat-number" *ngIf="!isLoadingStats">{{ getTotalReporters() }}</div>
-        <div class="stat-number loading" *ngIf="isLoadingStats">--</div>
-        <div class="stat-label">Tổng người báo cáo</div>
-      </div>
-    </div>
 
-    <div class="stat-card">
-      <div class="stat-icon">
-        <i class="fas fa-check-circle"></i>
+    <!-- STATS CARDS SECTION -->
+    <div class="stats-cards">
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-users"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-number" *ngIf="!isLoadingStats">{{ getTotalReporters() }}</div>
+          <div class="stat-number loading" *ngIf="isLoadingStats">--</div>
+          <div class="stat-label">Tổng người báo cáo</div>
+        </div>
       </div>
-      <div class="stat-content">
-        <div class="stat-number" *ngIf="!isLoadingStats">{{ getTotalApprovedReports() }}</div>
-        <div class="stat-number loading" *ngIf="isLoadingStats">--</div>
-        <div class="stat-label">Tổng báo cáo được duyệt</div>
-      </div>
-    </div>
 
-    <div class="stat-card">
-      <div class="stat-icon">
-        <i class="fas fa-percentage"></i>
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-number" *ngIf="!isLoadingStats">{{ getTotalApprovedReports() }}</div>
+          <div class="stat-number loading" *ngIf="isLoadingStats">--</div>
+          <div class="stat-label">Tổng báo cáo được duyệt</div>
+        </div>
       </div>
-      <div class="stat-content">
-        <div class="stat-number" *ngIf="!isLoadingStats">{{ getAverageSuccessRate() }}</div>
-        <div class="stat-number loading" *ngIf="isLoadingStats">--</div>
-        <div class="stat-label">Tỷ lệ thành công trung bình</div>
+
+      <div class="stat-card">
+        <div class="stat-icon">
+          <i class="fas fa-percentage"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-number" *ngIf="!isLoadingStats">{{ getAverageSuccessRate() }}</div>
+          <div class="stat-number loading" *ngIf="isLoadingStats">--</div>
+          <div class="stat-label">Tỷ lệ thành công trung bình</div>
+        </div>
       </div>
     </div>
   </div>
 
+  <!-- PODIUM SECTION (TOP 3) -->
   <div class="podium-section">
     <div class="podium-card second" *ngIf="topReporters.length >= 2">
       <div class="medal">
@@ -67,6 +71,7 @@
     </div>
   </div>
 
+  <!-- REWARDS SECTION -->
   <div class="rewards-section">
     <div class="rewards-container">
       <div class="rewards-header">
@@ -76,7 +81,6 @@
       </div>
 
       <div class="rewards-grid">
-
         <div class="reward-card second-place">
           <div class="reward-icon">
             <img src="../../../assets/img/hcb.png" alt="Huy chương Bạc">
@@ -138,69 +142,144 @@
           </div>
         </div>
       </div>
-
     </div>
   </div>
 
-  <div class="ranking-table-section">
-    <div class="table-container">
-      <div class="table-header">
-        <div class="header-col">Hạng</div>
-        <div class="header-col">Người dùng</div>
-        <div class="header-col">Điểm</div>
-      </div>
+  <!-- ===== LAYOUT 2 CỘT MỚI - WRAPPER CHỨA BẢNG RANKING VÀ BIỂU ĐỒ ===== -->
+  <div class="ranking-table-wrapper">
+    
+    <!-- CỘT TRÁI - CHỨA BẢNG RANKING -->
+    <div class="ranking-left-column">
+      <div class="ranking-table-section">
+        <div class="table-container">
+          
+          <!-- HEADER BẢNG -->
+          <div class="table-header">
+            <div class="header-col">Hạng</div>
+            <div class="header-col">Người dùng</div>
+            <div class="header-col">Điểm</div>
+          </div>
 
-      <div class="table-body">
-        <div class="loading-row" *ngIf="isLoading">
-          <div class="loading-message">
-            <i class="fas fa-spinner fa-spin"></i>
-            Đang tải dữ liệu...
+          <!-- NỘI DUNG BẢNG -->
+          <div class="table-body">
+            
+            <!-- LOADING STATE -->
+            <div class="loading-row" *ngIf="isLoading">
+              <div class="loading-message">
+                <i class="fas fa-spinner fa-spin"></i>
+                Đang tải dữ liệu...
+              </div>
+            </div>
+
+            <!-- ERROR STATE -->
+            <div class="error-row" *ngIf="error && !isLoading">
+              <div class="error-message">
+                <i class="fas fa-exclamation-triangle"></i>
+                {{ error }}
+                <button class="retry-btn" (click)="reloadData()">
+                  <i class="fas fa-redo"></i>
+                  Thử lại
+                </button>
+              </div>
+            </div>
+
+            <!-- CÁC HÀNG DỮ LIỆU -->
+            <div class="table-row" *ngFor="let reporter of getCurrentPageData(); let i = index"
+                 [style.display]="isLoading || error ? 'none' : 'grid'">
+              <div class="rank-col">{{ reporter.rank }}.</div>
+              <div class="name-col">{{ getDisplayName(reporter) }}</div>
+              <div class="score-col">{{ reporter.approvedReports }}</div>
+            </div>
+
+            <!-- EMPTY STATE -->
+            <div class="empty-row" *ngIf="!isLoading && !error && getCurrentPageData().length === 0">
+              <div class="empty-message">
+                <i class="fas fa-inbox"></i>
+                Không có dữ liệu
+              </div>
+            </div>
+            
           </div>
         </div>
 
-        <div class="error-row" *ngIf="error && !isLoading">
-          <div class="error-message">
-            <i class="fas fa-exclamation-triangle"></i>
-            {{ error }}
-            <button class="retry-btn" (click)="reloadData()">
-              <i class="fas fa-redo"></i>
-              Thử lại
-            </button>
-          </div>
-        </div>
+        <!-- PAGINATION -->
+        <div class="pagination" *ngIf="totalPages > 1 && !isLoading && !error">
+          <button
+            class="pagination-btn prev"
+            [disabled]="currentPage === 0"
+            (click)="previousPage()">
+            ←
+          </button>
 
-        <div class="table-row" *ngFor="let reporter of getCurrentPageData(); let i = index"
-             [style.display]="isLoading || error ? 'none' : 'grid'">
-          <div class="rank-col">{{ reporter.rank }}.</div>
-          <div class="name-col">{{ getDisplayName(reporter) }}</div>
-          <div class="score-col">{{ reporter.approvedReports }}</div>
+          <button
+            class="pagination-btn next"
+            [disabled]="currentPage >= totalPages - 1"
+            (click)="nextPage()">
+            →
+          </button>
         </div>
-
-        <div class="empty-row" *ngIf="!isLoading && !error && getCurrentPageData().length === 0">
-          <div class="empty-message">
-            <i class="fas fa-inbox"></i>
-            Không có dữ liệu
-          </div>
-        </div>
+        
       </div>
     </div>
 
-    <div class="pagination" *ngIf="totalPages > 1 && !isLoading && !error">
-      <button
-        class="pagination-btn prev"
-        [disabled]="currentPage === 0"
-        (click)="previousPage()">
-        ←
-      </button>
+    <!-- CỘT PHẢI - CHỨA BIỂU ĐỒ TỶ LỆ LỪA ĐẢO -->
+    <div class="ranking-right-column">
+      <div class="fraud-chart-container">
+        
+        <!-- Header Biểu Đồ -->
+        <div class="chart-header">
+          <h4>
+            <i class="fas fa-chart-bar"></i>
+            Tỷ lệ Lừa đảo
+          </h4>
+          <p>Thống kê 34 tỉnh thành Việt Nam</p>
+        </div>
 
-      <button
-        class="pagination-btn next"
-        [disabled]="currentPage >= totalPages - 1"
-        (click)="nextPage()">
-        →
-      </button>
+        <!-- Container Biểu Đồ -->
+        <div class="chart-container">
+          
+          <!-- Canvas cho Chart.js -->
+          <canvas #fraudChart 
+                  id="fraudChart">
+          </canvas>
+          
+          <!-- Loading overlay (hiển thị khi đang tải) -->
+          <div *ngIf="!fraudChart" class="chart-loading">
+            <div class="loading-content">
+              <i class="fas fa-spinner fa-spin"></i>
+              <p>Đang tải biểu đồ...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Legend và Note -->
+        <div class="chart-footer">
+          <!-- Legend -->
+          <div class="chart-legend">
+            <div class="legend-item">
+              <div class="legend-color high"></div>
+              <span>Cao (≥15%)</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color medium"></div>
+              <span>TB (7-15%)</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color low"></div>
+              <span>Thấp (<7%)</span>
+            </div>
+          </div>
+          
+          <!-- Note -->
+          <p class="chart-note">* Dữ liệu mang tính chất minh họa</p>
+        </div>
+      </div>
     </div>
+    
   </div>
+  <!-- ===== KẾT THÚC LAYOUT 2 CỘT ===== -->
+
 </div>
+
 <app-chat-box *ngIf="showChatbox" (close)="closeChatbox()"></app-chat-box>
 <app-footer></app-footer>

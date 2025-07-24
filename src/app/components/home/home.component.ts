@@ -10,7 +10,7 @@ import { ChatBoxComponent } from '../../components/chat-box/chat-box.component';
 import { TopScamService, TopScamItem } from '../../services/top-scam.service';
 import { VerticalBannerComponent } from './vertical-banner/vertical-banner.component';
 import { ActivityWidgetComponent } from '../activity-widget/activity-widget.component';
-import { Title, Meta } from '@angular/platform-browser'; // Import Title và Meta service
+import { Title, Meta } from '@angular/platform-browser'; 
 
 interface ScamDetail {
   id: number;
@@ -501,5 +501,19 @@ searchResult: any;
       hour: '2-digit',
       minute: '2-digit'
     });
+  }
+
+  openMmoLink(): void {
+    window.open('https://mmoidai.io.vn', '_blank');
+  }
+
+  openPartnerPopup(): void {
+    // Tạo popup đơn giản hoặc mở link liên hệ
+    const email = 'partner@ai6.vn';
+    const subject = 'Đăng ký đối tác quảng cáo';
+    const body = 'Xin chào,\n\nTôi muốn tìm hiểu về việc đặt banner quảng cáo trên ai6.vn.\n\nVui lòng liên hệ lại để trao đổi chi tiết.\n\nCảm ơn!';
+    
+    const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.open(mailtoLink, '_blank');
   }
 }

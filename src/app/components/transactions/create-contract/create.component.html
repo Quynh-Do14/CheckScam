@@ -1,0 +1,164 @@
+<app-header></app-header>
+
+<div class="create-contract-page">
+  <div class="container">
+    <div class="back-navigation">
+      <button class="back-btn" (click)="goBack()">
+        <i class="fas fa-arrow-left"></i>
+        Quay lại
+      </button>
+    </div>
+
+    <form #reportForm="ngForm" (ngSubmit)="createTransaction()">
+      <div class="form-card">
+        <h2 class="form-title">
+          <i class="fas fa-file-signature"></i>
+          Tạo Phòng Giao Dịch
+        </h2>
+
+        <div *ngIf="notification.message" class="notification-box" [ngClass]="notification.type">
+          <div class="notification-content">
+            <i class="notification-icon" [ngClass]="notification.icon"></i>
+            <p>{{ notification.message }}</p>
+          </div>
+          <button class="close-btn" (click)="clearNotification()">&times;</button>
+        </div>
+        <div class="form-columns-container">
+          <div class="form-column">
+            <div class="form-section">
+              <h3 class="section-heading">Thông tin chung</h3>
+              <div class="form-group">
+                <label for="transactionCode">Mã giao dịch:</label>
+                <input type="text" id="transactionCode" [value]="transactionCode" disabled class="code-display-input">
+              </div>
+              <div class="form-group">
+                <label for="roomName">Tên phòng giao dịch<span class="required-asterisk">*</span></label>
+                <input type="text" id="roomName" placeholder="Ví dụ: Giao dịch mua bán đồ điện tử" [(ngModel)]="contract.roomName" name="roomName" required #roomNameNgModel="ngModel">
+                <div *ngIf="roomNameNgModel?.invalid && (roomNameNgModel?.dirty || formSubmitted)" class="text-danger">
+                  Vui lòng nhập tên phòng giao dịch.
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="categoryIdCustom">Danh mục:<span class="required-asterisk">*</span></label>
+                <div class="custom-select-wrapper">
+                  <div class="custom-select"
+                       [class.open]="isCategoryDropdownOpen"
+                       (click)="toggleCategoryDropdown()"
+                       tabindex="0"
+                       id="categoryIdCustom"
+                       (keydown.enter)="toggleCategoryDropdown()">
+                    <div class="custom-select-trigger">{{ selectedCategoryName }}</div>
+                    <div class="custom-options" [class.show]="isCategoryDropdownOpen">
+                      <div class="custom-option"
+                           *ngFor="let category of categories"
+                           [class.selected]="contract.categoryId === category.id"
+                           (click)="selectCategory(category); $event.stopPropagation();"
+                           tabindex="0"
+                           (keydown.enter)="selectCategory(category)">
+                        {{ category.name }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <input type="hidden" name="categoryId" [(ngModel)]="contract.categoryId" #categoryIdNgModel="ngModel">
+                <div *ngIf="categoryIdNgModel?.invalid && (categoryIdNgModel?.dirty || formSubmitted)" class="text-danger">
+                  Vui lòng chọn danh mục.
+                </div>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <h3 class="section-heading">Thông tin Giao dịch viên phụ trách</h3>
+              <div class="form-group">
+                <label for="dealerName">Tên Giao dịch viên<span class="required-asterisk">*</span></label>
+                <input type="text" id="dealerName" placeholder="Ví dụ: Nguyễn Văn C" [(ngModel)]="contract.dealerName" name="dealerName" required #dealerNameNgModel="ngModel">
+                <div *ngIf="dealerNameNgModel?.invalid && (dealerNameNgModel?.dirty || formSubmitted)" class="text-danger">
+                  Vui lòng nhập tên giao dịch viên.
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="dealerEmail">Email Giao dịch viên<span class="required-asterisk">*</span></label>
+                <input type="email" id="dealerEmail" placeholder="Ví dụ: g.vien@example.com" [(ngModel)]="contract.dealerEmail" name="dealerEmail" required email #dealerEmailNgModel="ngModel">
+                <div *ngIf="dealerEmailNgModel?.invalid && (dealerEmailNgModel?.dirty || formSubmitted)" class="text-danger">
+                  Vui lòng nhập email giao dịch viên.
+                </div>
+                <div *ngIf="dealerEmailNgModel?.errors?.['email'] && (dealerEmailNgModel?.dirty || formSubmitted)" class="text-danger">
+                  Email giao dịch viên không hợp lệ.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-column">
+            <div class="form-section">
+              <h3 class="section-heading">Thông tin Bên A (Người tạo phòng)</h3>
+              <div class="form-group">
+                <label for="partyAName">Họ và tên Bên A<span class="required-asterisk">*</span></label>
+                <input type="text" id="partyAName" placeholder="Ví dụ: Nguyễn Văn A" [(ngModel)]="contract.partyAName" name="partyAName" required #partyANameNgModel="ngModel">
+                <div *ngIf="partyANameNgModel?.invalid && (partyANameNgModel?.dirty || formSubmitted)" class="text-danger">
+                  Vui lòng nhập họ và tên Bên A.
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="partyAPhone">Số điện thoại Bên A<span class="required-asterisk">*</span></label>
+                <input type="tel" id="partyAPhone" placeholder="Ví dụ: 09xx xxx xxx" [(ngModel)]="contract.partyAPhone" name="partyAPhone" required #partyAPhoneNgModel="ngModel">
+                <div *ngIf="partyAPhoneNgModel?.invalid && (partyAPhoneNgModel?.dirty || formSubmitted)" class="text-danger">
+                  Vui lòng nhập số điện thoại Bên A.
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="partyAEmail">Email Bên A</label>
+                <input type="email" id="partyAEmail" placeholder="Ví dụ: email@example.com" [(ngModel)]="contract.partyAEmail" name="partyAEmail" email #partyAEmailNgModel="ngModel">
+                <div *ngIf="partyAEmailNgModel?.errors?.['email'] && (partyAEmailNgModel?.dirty || formSubmitted)" class="text-danger">
+                  Email không hợp lệ.
+                </div>
+              </div>
+            </div>
+
+            <div class="form-section">
+              <h3 class="section-heading">Thông tin Bên B</h3>
+              <div class="form-group">
+                <label for="partyBName">Họ và tên Bên B<span class="required-asterisk">*</span></label>
+                <input type="text" id="partyBName" placeholder="Ví dụ: Trần Thị B" [(ngModel)]="contract.partyBName" name="partyBName" required #partyBNameNgModel="ngModel">
+                <div *ngIf="partyBNameNgModel?.invalid && (partyBNameNgModel?.dirty || formSubmitted)" class="text-danger">
+                  Vui lòng nhập họ và tên Bên B.
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="partyBPhone">Số điện thoại Bên B<span class="required-asterisk">*</span></label>
+                <input type="tel" id="partyBPhone" placeholder="Ví dụ: 08xx xxx xxx" [(ngModel)]="contract.partyBPhone" name="partyBPhone" required #partyBPhoneNgModel="ngModel">
+                <div *ngIf="partyBPhoneNgModel?.invalid && (partyBPhoneNgModel?.dirty || formSubmitted)" class="text-danger">
+                  Vui lòng nhập số điện thoại Bên B.
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="partyBEmail">Email Bên B</label>
+                <input type="email" id="partyBEmail" placeholder="Ví dụ: emailB@example.com" [(ngModel)]="contract.partyBEmail" name="partyBEmail" email #partyBEmailNgModel="ngModel">
+                <div *ngIf="partyBEmailNgModel?.errors?.['email'] && (partyBEmailNgModel?.dirty || formSubmitted)" class="text-danger">
+                  Email không hợp lệ.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="form-group captcha-group">
+            <re-captcha [siteKey]="recaptchaSiteKey" (resolved)="handleCaptchaResponse($event)"></re-captcha>
+            <div *ngIf="!contract.captchaToken && formSubmitted" class="text-danger">
+              Vui lòng xác nhận bạn không phải người máy.
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="submit-button" type="submit" [disabled]="isLoading"> <span *ngIf="!isLoading"><i class="fas fa-plus-circle"></i> Tạo phòng giao dịch</span>
+            <span *ngIf="isLoading" class="loader"></span>
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<app-footer></app-footer>

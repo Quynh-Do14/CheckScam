@@ -1,21 +1,23 @@
-$primary-orange: #FF7B00; 
-$primary-green: #4CAF50; 
-$text-dark: #343A40; 
-$text-light-grey: #6C757D; 
-$background-page: #F0F2F5; 
-$border-light: #E0E6ED; 
+@use "sass:color";
+
+$primary-orange: #FF7B00;
+$primary-green: #4CAF50;
+$text-dark: #020000;
+$text-light-grey: #6C757D;
+$background-page: #F0F2F5;
+$border-light: #E0E6ED;
 $white: #FFFFFF;
 
 .about-us-page {
   padding-top: 40px;
   padding-bottom: 40px;
-  background: linear-gradient(135deg, 
-    rgba(255, 248, 240, 0.4) 0%, 
+  background: linear-gradient(135deg,
+    rgba(255, 248, 240, 0.4) 0%,
     rgba(255, 243, 224, 0.3) 25%,
     rgba(254, 240, 138, 0.2) 50%,
     rgba(252, 211, 77, 0.15) 75%,
     rgba(245, 158, 11, 0.1) 100%
-  );  
+  );
   font-family: 'Arial', sans-serif;
   line-height: 1.7;
   color: $text-dark;
@@ -31,9 +33,9 @@ $white: #FFFFFF;
 }
 
 .container {
-  max-width: 1000px; 
-  margin: 0 auto; 
-  padding: 0 20px; 
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 20px;
 
   @media (max-width: 768px) {
     padding: 0 15px;
@@ -68,7 +70,7 @@ $white: #FFFFFF;
   }
 
   &:hover {
-    color: darken($primary-orange, 10%);
+    color: color.adjust($primary-orange, $lightness: -10%);
     transform: translateX(-5px);
 
     .back-arrow {
@@ -85,9 +87,9 @@ $white: #FFFFFF;
 .page-header {
   text-align: center;
   margin-bottom: 20px;
-  padding: 40px 0 20px; 
-  border-bottom: 1px solid $border-light; 
-  margin-top: 40px; 
+  padding: 40px 0 20px;
+  border-bottom: 1px solid $border-light;
+  margin-top: 40px;
 
   h1 {
     font-size: 3em;
@@ -118,12 +120,12 @@ $white: #FFFFFF;
 }
 
 .section-block {
-  padding: 30px 0; 
-  border-bottom: 1px solid $border-light; 
+  padding: 30px 0;
+  border-bottom: 1px solid $border-light;
 
   &:last-of-type {
     margin-bottom: 0;
-    border-bottom: none; 
+    border-bottom: none;
   }
 
   @media (max-width: 768px) {
@@ -193,128 +195,151 @@ p {
 }
 
 .team-circles-container {
-  display: flex;
-  justify-content: center;
-  margin-top: 60px;
-  margin-bottom: 60px;
-  gap: 30px; /* Điều chỉnh khoảng cách giữa các thẻ để cân đối hơn */
-  flex-wrap: wrap;
-  max-width: 960px; /* Chiều rộng tối đa cho 3 cột cân xứng */
-  margin-left: auto;
-  margin-right: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  margin-top: 40px;
+  margin-bottom: 40px;
   padding: 0 20px;
-}
 
-.team-circle {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  width: calc(33.333% - 20px); /* Tính toán chiều rộng để có 3 thẻ trên một hàng với gap */
-  min-width: 250px; /* Đảm bảo kích thước tối thiểu cho thẻ */
-  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-  padding: 30px;
-  border-radius: 15px;
-  background-color: $white; 
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-  cursor: default;
-}
-
-.team-circle:hover {
-  transform: translateY(-12px);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-}
-
-.circle-image {
-  width: 160px;
-  height: 200px;
-  overflow: hidden;
-  margin-bottom: 25px;
-  border-radius: 12px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  position: relative;
-}
-
-.circle-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.team-circle:hover .circle-image img {
-  transform: scale(1.08);
-}
-
-.member-name {
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: #212529;
-  margin-bottom: 10px;
-  letter-spacing: 0.5px;
-}
-
-.member-title {
-  font-size: 1rem;
-  color: #6c757d;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-@media (max-width: 992px) { /* Cho màn hình tablet */
-  .team-circles-container {
-    max-width: 600px; /* Điều chỉnh để có 2 thẻ trên một hàng */
-    gap: 30px;
+  @media (max-width: 992px) {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   }
-  .team-circle {
-    width: calc(50% - 15px); /* 2 thẻ trên một hàng */
-    padding: 25px 20px;
-  }
-  .circle-image {
-    width: 140px;
-    height: 180px;
-    margin-bottom: 20px;
-  }
-  .member-name {
-    font-size: 1.4rem;
-  }
-  .member-title {
-    font-size: 1rem;
-  }
-}
 
-@media (max-width: 700px) { /* Cho màn hình điện thoại */
-  .team-circles-container {
-    max-width: 320px; /* Điều chỉnh để có 1 thẻ trên một hàng */
-    gap: 30px 0;
-  }
-  .team-circle {
-    width: 100%; /* 1 thẻ trên một hàng */
-    max-width: 300px;
+  @media (max-width: 700px) {
+    grid-template-columns: 1fr;
+    max-width: 350px;
     margin-left: auto;
     margin-right: auto;
   }
-  .circle-image {
-    width: 160px;
-    height: 200px;
-  }
 }
 
-@media (max-width: 480px) {
-  .team-circles-container {
-    margin-top: 40px;
-    margin-bottom: 40px;
+.team-circle {
+  background-color: $white;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  position: relative;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  cursor: default;
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
   }
-  .team-circle {
+
+  .circle-image {
+    width: 100%;
+    height: 350px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    &::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 120px;
+      background: linear-gradient(0deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 100%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      mix-blend-mode: overlay;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+      z-index: 1;
+    }
+  }
+
+  &:hover .circle-image img {
+    transform: scale(1.05);
+  }
+
+  &:hover .circle-image::after {
+    opacity: 1;
+  }
+
+  .member-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
     padding: 20px;
+    color: $white;
+    z-index: 2;
+    text-align: left;
+    transform: translateY(0);
   }
+
   .member-name {
+    color: #dddddd;
     font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+    line-height: 1.2;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
   }
+
   .member-title {
+    color: #dddddd;
     font-size: 0.9rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    opacity: 0.9;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+  }
+
+  .social-icons {
+    position: absolute;
+    bottom: 15px;
+    right: 20px;
+    display: flex;
+    gap: 12px;
+    font-size: 1rem;
+    z-index: 2;
+    opacity: 0;
+    transform: translateX(10px);
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  }
+
+  &:hover .social-icons {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .social-icons a {
+    color: $white;
+    text-decoration: none;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: $primary-orange;
+    }
   }
 }
 
@@ -322,8 +347,7 @@ p {
   display: block;
   width: fit-content;
   margin: 20px auto 0;
-  background: linear-gradient(45deg, $primary-orange, darken($primary-orange, 10%));
-  color: white;
+  background: linear-gradient(45deg, $primary-orange, color.adjust($primary-orange, $lightness: -10%));  color: white;
   padding: 14px 30px;
   border-radius: 30px;
   text-decoration: none;
@@ -335,8 +359,7 @@ p {
   &:hover {
     transform: translateY(-3px);
     box-shadow: 0 9px 25px rgba(255, 123, 0, 0.5);
-    background: linear-gradient(45deg, darken($primary-orange, 5%), $primary-orange);
-  }
+    background: linear-gradient(45deg, color.adjust($primary-orange, $lightness: -5%), $primary-orange);  }
 
   @media (max-width: 480px) {
     font-size: 1em;
@@ -368,7 +391,7 @@ p {
   margin-top: 60px;
   padding-top: 25px;
   padding-bottom: 40px;
-  border-top: 1px solid $border-light; 
+  border-top: 1px solid $border-light;
   color: $text-light-grey;
   font-size: 0.9em;
 

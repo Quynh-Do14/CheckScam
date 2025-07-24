@@ -1274,7 +1274,7 @@ body {
   }
 }
 
-/* ADVANCED TRA CỨU NGAY BUTTON */
+/* GENTLE VERSION - Hiệu ứng nhẹ nhàng cho nút TRA CỨU NGAY */
 .quick-search-cta {
   margin-top: 16px;
   display: flex;
@@ -1284,323 +1284,216 @@ body {
 
 .tra-cuu-ngay-btn {
   position: relative;
-  background: linear-gradient(135deg, #ff6b35 0%, #f7931e 25%, #fbb040 50%, #ff8c42 75%, #ff6b35 100%);
+  background: linear-gradient(135deg, #ff6b35 0%, #ff8a65 100%);
   border: none;
-  border-radius: 20px;
-  padding: 0;
+  border-radius: 15px;
+  padding: 16px 32px;
   cursor: pointer;
   outline: none;
-  transition: all 0.4s ease;
+  transition: all 0.3s ease;
   overflow: hidden;
   box-shadow: 
-    0 0 20px rgba(255, 107, 53, 0.5),
-    0 8px 32px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
-  min-width: 320px;
-  height: 80px;
-  animation: 
-    buttonPulse 3s ease-in-out infinite,
-    buttonFloat 4s ease-in-out infinite,
-    buttonGradientShift 6s ease-in-out infinite;
+    0 4px 15px rgba(255, 107, 53, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  min-width: 280px;
+  height: 60px;
   
-  /* Magic shimmer effect */
+  /* Hiệu ứng nổi nhẹ */
+  animation: gentleFloat 4s ease-in-out infinite;
+  
+  /* Hiệu ứng shimmer nhẹ */
   &::before {
     content: '';
     position: absolute;
-    top: -2px;
+    top: 0;
     left: -100%;
     width: 100%;
-    height: calc(100% + 4px);
+    height: 100%;
     background: linear-gradient(
       90deg, 
       transparent, 
-      rgba(255, 255, 255, 0.4), 
+      rgba(255, 255, 255, 0.2), 
       transparent
     );
-    transform: skewX(-25deg);
-    animation: shimmerSweep 3s ease-in-out infinite;
-    z-index: 10;
-  }
-  
-  /* Breathing border */
-  &::after {
-    content: '';
-    position: absolute;
-    inset: -3px;
-    background: linear-gradient(
-      45deg, 
-      #ff6b35, 
-      #fbb040, 
-      #f7931e, 
-      #ff8c42, 
-      #ff6b35
-    );
-    background-size: 400% 400%;
-    border-radius: 23px;
-    z-index: -1;
-    animation: breathingBorder 2s ease-in-out infinite;
-    filter: blur(4px);
-    opacity: 0.7;
+    animation: gentleShimmer 3s ease-in-out infinite;
+    z-index: 2;
   }
   
   &:hover:not(:disabled) {
-    transform: translateY(-12px) scale(1.08) rotateX(5deg);
+    transform: translateY(-3px) scale(1.02);
     box-shadow: 
-      0 0 60px rgba(255, 107, 53, 1),
-      0 25px 80px rgba(0, 0, 0, 0.4),
-      inset 0 2px 0 rgba(255, 255, 255, 0.5);
-    animation-play-state: paused;
+      0 8px 25px rgba(255, 107, 53, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3);
     
-    /* Intensify shimmer on hover */
+    /* Tăng tốc shimmer khi hover */
     &::before {
-      animation: shimmerSweepFast 1s ease-in-out infinite;
-    }
-    
-    /* Intensify border on hover */
-    &::after {
-      animation: breathingBorderFast 1s ease-in-out infinite;
-      opacity: 1;
-      filter: blur(6px);
-    }
-    
-    .btn-particles .particle {
-      animation-play-state: running;
-    }
-    
-    .scanning-beam {
-      animation: scanningBeam 1s ease-in-out infinite;
-    }
-    
-    .electric-border {
-      opacity: 1;
-      animation: electricFlow 0.3s linear infinite;
-    }
-    
-    .btn-glow {
-      opacity: 1;
-      transform: scale(1.3);
-    }
-    
-    .text-char {
-      animation: charDance 0.5s ease-in-out infinite;
-      animation-delay: var(--delay);
-    }
-    
-    .btn-arrow,
-    .btn-arrow-2,
-    .btn-arrow-3 {
-      animation: arrowFlow 0.8s ease-in-out infinite;
-    }
-    
-    .btn-arrow-2 {
-      animation-delay: 0.15s;
-    }
-    
-    .btn-arrow-3 {
-      animation-delay: 0.3s;
-    }
-    
-    .icon-pulse {
-      animation: iconPulseEffect 0.8s ease-in-out infinite;
+      animation: gentleShimmerFast 1.5s ease-in-out infinite;
     }
     
     .btn-text {
-      text-shadow: 
-        0 0 10px rgba(255, 255, 255, 0.8),
-        0 0 20px rgba(255, 255, 255, 0.6),
-        0 0 30px rgba(255, 255, 255, 0.4);
+      text-shadow: 0 2px 8px rgba(255, 255, 255, 0.3);
+    }
+    
+    .btn-icon {
+      transform: scale(1.1);
+    }
+    
+    .btn-arrow {
+      transform: translateX(3px);
     }
   }
   
   &:active:not(:disabled) {
-    transform: translateY(-8px) scale(1.05);
+    transform: translateY(-1px) scale(1.01);
+    box-shadow: 
+      0 4px 15px rgba(255, 107, 53, 0.3),
+      inset 0 2px 4px rgba(0, 0, 0, 0.1);
   }
   
   &:disabled {
-    opacity: 0.5;
+    opacity: 0.6;
     cursor: not-allowed;
     transform: none;
     animation: none;
     
-    &::before,
-    &::after {
+    &::before {
       animation: none;
     }
-    
-    .btn-particles .particle {
-      animation-play-state: paused;
-    }
+  }
+  
+  @media (max-width: 768px) {
+    min-width: 240px;
+    height: 50px;
+    padding: 12px 24px;
+    border-radius: 12px;
+  }
+  
+  @media (max-width: 480px) {
+    min-width: 200px;
+    height: 45px;
+    padding: 10px 20px;
+    border-radius: 10px;
   }
 }
 
 .btn-content {
   position: relative;
-  z-index: 5;
+  z-index: 3;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
+  gap: 12px;
   height: 100%;
-  padding: 0 32px;
   color: white;
 }
 
-/* Background Particles */
-.btn-particles {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1;
-}
-
+/* Loại bỏ các hiệu ứng phức tạp */
+.btn-particles,
+.scanning-beam,
+.electric-border,
 .particle {
-  position: absolute;
-  width: 4px;
-  height: 4px;
-  background: radial-gradient(circle, #00ffff, #ff00ff);
-  border-radius: 50%;
-  animation: particleFloat 4s ease-in-out infinite;
-  animation-play-state: paused;
-  box-shadow: 0 0 6px currentColor;
+  display: none;
 }
 
-.particle-1 { top: 20%; left: 10%; animation-delay: 0s; }
-.particle-2 { top: 60%; left: 20%; animation-delay: 0.5s; }
-.particle-3 { top: 30%; right: 15%; animation-delay: 1s; }
-.particle-4 { top: 70%; right: 25%; animation-delay: 1.5s; }
-.particle-5 { top: 40%; left: 50%; animation-delay: 2s; }
-.particle-6 { top: 80%; left: 60%; animation-delay: 2.5s; }
-
-/* Scanning Beam */
-.scanning-beam {
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 50px;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.5), transparent);
-  z-index: 2;
-  animation: none;
-}
-
-/* Electric Border */
-.electric-border {
-  position: absolute;
-  inset: -2px;
-  border-radius: 22px;
-  background: linear-gradient(45deg, #ff6b35, #fbb040, #f7931e, #ff6b35);
-  background-size: 400% 400%;
-  opacity: 0;
-  z-index: 0;
-  transition: opacity 0.3s ease;
-}
-
-/* Icon Container */
 .btn-icon-container {
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .btn-icon {
-  font-size: 24px;
+  font-size: 20px;
   color: #ffffff;
-  z-index: 2;
   transition: all 0.3s ease;
+  
+  @media (max-width: 768px) {
+    font-size: 18px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 16px;
+  }
 }
 
-.icon-pulse {
-  position: absolute;
-  inset: -8px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(0, 255, 255, 0.3), transparent);
-  animation: none;
-}
-
-/* Text Animation */
 .btn-text {
   font-family: 'Inter', sans-serif;
-  font-weight: 900;
-  font-size: 20px;
-  letter-spacing: 2px;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 1px;
   text-transform: uppercase;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  transition: all 0.3s ease;
+  
+  @media (max-width: 768px) {
+    font-size: 14px;
+    letter-spacing: 0.5px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 13px;
+    letter-spacing: 0.3px;
+  }
+}
+
+.btn-arrow-container {
+  display: flex;
+  align-items: center;
+}
+
+.btn-arrow {
+  font-size: 16px;
+  color: #ffffff;
+  transition: all 0.3s ease;
+  
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 12px;
+  }
+}
+
+/* Loại bỏ các component không cần thiết */
+.icon-pulse,
+.btn-glow,
+.btn-arrow-2,
+.btn-arrow-3 {
+  display: none;
 }
 
 .text-char {
-  display: inline-block;
-  animation: none;
-  transition: all 0.3s ease;
+  display: inline;
 }
 
-/* Arrow Container */
-.btn-arrow-container {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  z-index: 10; /* Fix cho mũi tên không bị đè */
-}
-
-.btn-arrow,
-.btn-arrow-2,
-.btn-arrow-3 {
-  font-size: 20px;
-  color: #ffffff;
-  transition: all 0.3s ease;
-  animation: none;
-  z-index: 10;
-}
-
-.btn-arrow-2,
-.btn-arrow-3 {
-  position: absolute;
-  left: 0;
-  opacity: 0;
-}
-
-/* Glow Effect */
-.btn-glow {
-  position: absolute;
-  inset: -8px;
-  background: radial-gradient(circle, rgba(255, 107, 53, 0.5), transparent 70%);
-  border-radius: 28px;
-  opacity: 0;
-  transition: all 0.4s ease;
-  z-index: 0;
-  filter: blur(12px);
-}
-
-/* Animations */
-@keyframes buttonPulse {
+/* Animations nhẹ nhàng */
+@keyframes gentleFloat {
   0%, 100% { 
-    box-shadow: 
-      0 0 20px rgba(255, 107, 53, 0.5), 
-      0 8px 32px rgba(0, 0, 0, 0.2), 
-      inset 0 1px 0 rgba(255, 255, 255, 0.3); 
+    transform: translateY(0); 
   }
   50% { 
-    box-shadow: 
-      0 0 40px rgba(255, 107, 53, 0.8), 
-      0 12px 40px rgba(0, 0, 0, 0.3), 
-      inset 0 2px 0 rgba(255, 255, 255, 0.4); 
+    transform: translateY(-2px); 
   }
 }
 
-@keyframes buttonFloat {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  25% { transform: translateY(-2px) rotate(0.5deg); }
-  50% { transform: translateY(-4px) rotate(0deg); }
-  75% { transform: translateY(-2px) rotate(-0.5deg); }
+@keyframes gentleShimmer {
+  0% { 
+    left: -100%; 
+  }
+  50% {
+    left: -100%;
+  }
+  100% { 
+    left: 100%; 
+  }
 }
 
-@keyframes buttonGradientShift {
-  0% { background-position: 0% 50%; }
-  25% { background-position: 50% 25%; }
-  50% { background-position: 100% 50%; }
-  75% { background-position: 50% 75%; }
-  100% { background-position: 0% 50%; }
+@keyframes gentleShimmerFast {
+  0% { 
+    left: -100%; 
+  }
+  100% { 
+    left: 100%; 
+  }
 }
 
 @keyframes shimmerSweep {

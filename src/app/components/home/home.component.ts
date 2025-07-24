@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CheckScamService } from '../../services/check-scam.service';
@@ -62,7 +62,7 @@ interface Message {
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
 
   info: string = '';
   selectedType: number = 1;
@@ -70,6 +70,10 @@ export class HomeComponent implements OnInit {
   
   isLoading: boolean = false;
   errorMessage: string | null = null;
+
+  // 🔧 TIMEOUT để tránh loading vĩnh viễn
+  private loadingTimeout: any;
+  private readonly LOADING_TIMEOUT = 30000; // 30 seconds
 
   messages: Message[] = [];
   showChatbox: boolean = false;
@@ -163,9 +167,73 @@ searchResult: any;
   ) { }
 
   ngOnInit(): void {
+    // 🔧 FORCE RESET LOADING STATE khi component khởi tạo
+    this.forceResetLoadingState();
+    
     this.updateSearchIcon();
     this.loadTopScamData();
     this.setSeoTags(); // Gọi phương thức đặt SEO tags
+
+    // 🔧 DEBUG: Kiểm tra loading state
+    console.log('🔍 Component initialized. Loading state:', this.isLoading);
+  }
+
+  ngOnDestroy(): void {
+    // 🔧 CLEANUP: Đảm bảo clear timeout và reset state khi component bị destroy
+    this.clearLoadingTimeout();
+    this.forceResetLoadingState();
+  }
+
+  // 🔧 FORCE RESET LOADING STATE
+  private forceResetLoadingState(): void {
+    console.log('🔧 Force resetting loading state...');
+    this.isLoading = false;
+    this.clearLoadingTimeout();
+    
+    // Remove loading class from body nếu có
+    if (document.body.classList.contains('loading-active')) {
+      document.body.classList.remove('loading-active');
+      console.log('✅ Removed loading-active class from body');
+    }
+    
+    // Force change detection
+    setTimeout(() => {
+      this.isLoading = false;
+      console.log('🔍 Final loading state after reset:', this.isLoading);
+    }, 100); // Tăng từ 0 lên 100ms
+  }
+
+  // 🔧 SET LOADING TIMEOUT
+  private setLoadingTimeout(): void {
+    this.clearLoadingTimeout();
+    this.loadingTimeout = setTimeout(() => {
+      console.warn('⚠️ Loading timeout reached! Force stopping loading...');
+      this.forceStopLoading('Thời gian chờ quá lâu. Vui lòng thử lại.');
+    }, this.LOADING_TIMEOUT);
+  }
+
+  // 🔧 CLEAR LOADING TIMEOUT
+  private clearLoadingTimeout(): void {
+    if (this.loadingTimeout) {
+      clearTimeout(this.loadingTimeout);
+      this.loadingTimeout = null;
+    }
+  }
+
+  // 🔧 FORCE STOP LOADING
+  private forceStopLoading(errorMsg?: string): void {
+    console.log('🛑 Force stopping loading...');
+    this.isLoading = false;
+    this.clearLoadingTimeout();
+    
+    // Remove loading class from body
+    document.body.classList.remove('loading-active');
+    
+    if (errorMsg) {
+      this.errorMessage = errorMsg;
+    }
+    
+    console.log('✅ Loading stopped successfully');
   }
 
   // Phương thức mới để đặt Title và Meta Description
@@ -218,40 +286,68 @@ searchResult: any;
     }
   }
 
+  // 🔧 IMPROVED SEND MESSAGE WITH BETTER ERROR HANDLING
   sendMessage(): void {
     const value = this.info.trim();
     if (!value) {
-      this.errorMessage = 'Vui lòng nhập thông tin cần tra cứu.';
+      this.showValidationError('⚠️ Vui lòng nhập thông tin cần tra cứu.');
       return;
     }
 
+    // 🔧 ENHANCED VALIDATION WITH DETAILED MESSAGES
+    if (this.selectedType === 1) {
+      const phoneValidation = this.validatePhoneNumber(value);
+      if (!phoneValidation.isValid) {
+        this.showValidationError(phoneValidation.message);
+        return;
+      }
+    }
+    
+    if (this.selectedType === 2) {
+      const bankValidation = this.validateBankNumber(value);
+      if (!bankValidation.isValid) {
+        this.showValidationError(bankValidation.message);
+        return;
+      }
+    }
+    
+    if (this.selectedType === 3) {
+      const urlValidation = this.validateUrl(value);
+      if (!urlValidation.isValid) {
+        this.showValidationError(urlValidation.message);
+        return;
+      }
+    }
+
+    // 🔧 START LOADING WITH TIMEOUT
+    console.log('🚀 Starting search with improved error handling...');
     this.errorMessage = null;
     this.isLoading = true;
-
-    if (this.selectedType === 1 && !this.isPhoneNumber(value)) {
-      this.errorMessage = 'Số điện thoại phải bắt đầu bằng 0 và gồm 10 chữ số.';
-      this.isLoading = false;
-      return;
-    }
-    if (this.selectedType === 2 && !this.isBankNumber(value)) {
-      this.errorMessage = 'Số tài khoản chỉ được chứa ký tự số.';
-      this.isLoading = false;
-      return;
-    }
-    if (this.selectedType === 3 && !this.isUrl(value)) {
-      this.errorMessage = 'URL không hợp lệ (ví dụ hợp lệ: https://example.com hoặc example.vn).';
-      this.isLoading = false;
-      return;
-    }
+    
+    // Set timeout to prevent infinite loading
+    this.setLoadingTimeout();
+    
+    // Lock body scroll khi loading - NHẸ HẠN
+    document.body.classList.add('loading-active');
+    
+    // 🔧 DEBUG: Log loading state
+    console.log('🔍 Loading started. State:', {
+      isLoading: this.isLoading,
+      value: value,
+      type: this.selectedType
+    });
 
     const requestBody: CheckScamRequestDTO = {
       info: value,
       type: this.selectedType
     };
 
+    // 🔧 API CALL WITH IMPROVED ERROR HANDLING
     this.CheckScamService.CheckScam(requestBody).subscribe({
       next: (response) => {
-        this.isLoading = false;
+        console.log('✅ API call successful:', response);
+        this.forceStopLoading();
+        
         if (response && response.info) {
           this.router.navigate(['/analyze'], {
             state: {
@@ -261,14 +357,17 @@ searchResult: any;
             }
           });
         } else {
-          this.errorMessage = 'Cấu trúc phản hồi từ máy chủ không hợp lệ.';
+          this.showValidationError('❌ Cấu trúc phản hồi từ máy chủ không hợp lệ.');
         }
       },
       error: (error) => {
-        this.isLoading = false;
-        this.errorMessage = error?.error?.message || error?.message || 'Đã xảy ra lỗi khi tra cứu.';
+        console.error('❌ API call failed:', error);
+        this.forceStopLoading();
+        
+        this.showValidationError(error?.error?.message || error?.message || '❌ Đã xảy ra lỗi khi tra cứu.');
       }
     });
+    
     this.info = '';
   }
 
@@ -515,5 +614,151 @@ searchResult: any;
     
     const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     window.open(mailtoLink, '_blank');
+  }
+
+  // 🔧 VALIDATION METHODS
+  private showValidationError(message: string): void {
+    this.errorMessage = message;
+    // Tự động ẩn error sau 5 giây
+    setTimeout(() => {
+      if (this.errorMessage === message) {
+        this.errorMessage = null;
+      }
+    }, 5000);
+  }
+
+  private validatePhoneNumber(phone: string): { isValid: boolean; message: string } {
+    const cleanPhone = phone.trim();
+    
+    if (cleanPhone.length === 0) {
+      return { isValid: false, message: '📱 Vui lòng nhập số điện thoại.' };
+    }
+    
+    // Loại bỏ các ký tự không phải số
+    const phoneNumbers = cleanPhone.replace(/[^0-9]/g, '');
+    
+    // Kiểm tra độ dài
+    if (phoneNumbers.length < 10 || phoneNumbers.length > 11) {
+      return { isValid: false, message: '📱 Số điện thoại phải có 10-11 chữ số.' };
+    }
+    
+    // Kiểm tra định dạng Việt Nam cho số 10 chữ số (phải bắt đầu bằng 0)
+    if (phoneNumbers.length === 10 && !phoneNumbers.startsWith('0')) {
+      return { isValid: false, message: '📱 Số điện thoại 10 chữ số phải bắt đầu bằng số 0.' };
+    }
+    
+    // Kiểm tra định dạng Việt Nam cho số 11 chữ số (phải bắt đầu bằng +84 hoặc 84)
+    if (phoneNumbers.length === 11) {
+      if (!phoneNumbers.startsWith('84')) {
+        return { isValid: false, message: '📱 Số điện thoại 11 chữ số phải bắt đầu bằng 84.' };
+      }
+      // Chuyển đổi từ +84 format sang 0 format để kiểm tra đầu số
+      const convertedPhone = '0' + phoneNumbers.substring(2);
+      const prefix = convertedPhone.substring(0, 3);
+      
+      const validPrefixes = ['032', '033', '034', '035', '036', '037', '038', '039', // Viettel
+                            '070', '079', '077', '076', '078', // Mobifone
+                            '083', '084', '085', '081', '082', // Vinaphone
+                            '056', '058', // Vietnamobile
+                            '059', '099'] // Gmobile
+      
+      if (!validPrefixes.includes(prefix)) {
+        return { isValid: false, message: '📱 Đầu số điện thoại không hợp lệ (sau 84).' };
+      }
+    } else {
+      // Kiểm tra các đầu số hợp lệ cho số 10 chữ số
+      const validPrefixes = ['032', '033', '034', '035', '036', '037', '038', '039', // Viettel
+                            '070', '079', '077', '076', '078', // Mobifone
+                            '083', '084', '085', '081', '082', // Vinaphone
+                            '056', '058', // Vietnamobile
+                            '059', '099'] // Gmobile
+      
+      const prefix = phoneNumbers.substring(0, 3);
+      if (!validPrefixes.includes(prefix)) {
+        return { isValid: false, message: '📱 Đầu số điện thoại không hợp lệ.' };
+      }
+    }
+    
+    return { isValid: true, message: '' };
+  }
+
+  private validateBankNumber(bankNumber: string): { isValid: boolean; message: string } {
+    const cleanBankNumber = bankNumber.trim();
+    
+    if (cleanBankNumber.length === 0) {
+      return { isValid: false, message: '🏦 Vui lòng nhập số tài khoản ngân hàng.' };
+    }
+    
+    // Loại bỏ các ký tự không phải số
+    const numbers = cleanBankNumber.replace(/[^0-9]/g, '');
+    
+    // Kiểm tra độ dài (thông thường từ 8-19 chữ số)
+    if (numbers.length < 8 || numbers.length > 19) {
+      return { isValid: false, message: '🏦 Số tài khoản phải có từ 8-19 chữ số.' };
+    }
+    
+    // Kiểm tra không được toàn bộ là số 0
+    if (numbers === '0'.repeat(numbers.length)) {
+      return { isValid: false, message: '🏦 Số tài khoản không hợp lệ.' };
+    }
+    
+    return { isValid: true, message: '' };
+  }
+
+  private validateUrl(url: string): { isValid: boolean; message: string } {
+    const cleanUrl = url.trim();
+    
+    if (cleanUrl.length === 0) {
+      return { isValid: false, message: '🌐 Vui lòng nhập URL website.' };
+    }
+    
+    // Kiểm tra không được toàn bộ là số
+    if (/^\d+$/.test(cleanUrl)) {
+      return { isValid: false, message: '🌐 URL không được chỉ là số.' };
+    }
+    
+    try {
+      // Thêm protocol nếu thiếu
+      let testUrl = cleanUrl;
+      if (!testUrl.startsWith('http://') && !testUrl.startsWith('https://')) {
+        testUrl = 'https://' + testUrl;
+      }
+      
+      const urlObj = new URL(testUrl);
+      
+      // Kiểm tra hostname có hợp lệ không
+      if (!urlObj.hostname || urlObj.hostname.length < 3) {
+        return { isValid: false, message: '🌐 URL không hợp lệ.' };
+      }
+      
+      // Kiểm tra không được toàn bộ hostname là số
+      if (/^\d+$/.test(urlObj.hostname)) {
+        return { isValid: false, message: '🌐 Domain không được chỉ là số.' };
+      }
+      
+      // Kiểm tra có ít nhất một dấu chấm trong hostname
+      if (!urlObj.hostname.includes('.')) {
+        return { isValid: false, message: '🌐 URL phải có định dạng domain hợp lệ (VD: example.com).' };
+      }
+      
+      // Kiểm tra domain extension hợp lệ
+      const parts = urlObj.hostname.split('.');
+      const extension = parts[parts.length - 1];
+      
+      // Extension phải có ít nhất 2 ký tự và không được là số
+      if (extension.length < 2 || /^\d+$/.test(extension)) {
+        return { isValid: false, message: '🌐 Domain extension không hợp lệ (VD: .com, .vn).' };
+      }
+      
+      // Kiểm tra các ký tự hợp lệ trong domain
+      const domainRegex = /^[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?)*$/;
+      if (!domainRegex.test(urlObj.hostname)) {
+        return { isValid: false, message: '🌐 Domain chứa ký tự không hợp lệ.' };
+      }
+      
+      return { isValid: true, message: '' };
+    } catch (error) {
+      return { isValid: false, message: '🌐 URL không đúng định dạng.' };
+    }
   }
 }

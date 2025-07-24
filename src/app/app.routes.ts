@@ -54,6 +54,7 @@ import { PartnersComponent } from './components/partners/partners.component';
 
 import { ForgotPasswordComponent } from './components/forgotpassword/forgotpassword.component';
 import { ResetPasswordComponent } from './components/resetpassword/resetpassword.component';
+import { CommunityComponent } from './components/policy/community/community.component';
 
 
 export const routes: Routes = [
@@ -120,6 +121,7 @@ export const routes: Routes = [
     { path: 'policy/refund', component: RefundComponent },
     { path: 'policy/standard', component: StandardComponent },
     { path: 'policy/payment', component: PaymentComponent },
+    { path: 'policy/community', component: CommunityComponent },
     { path: 'report', component: ReportComponent },
     { path: 'report/create', component: CreateReportComponent },
     { path: 'report/mistake', component: MistakeComponent },

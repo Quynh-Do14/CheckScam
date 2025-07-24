@@ -25,7 +25,7 @@
            [ngClass]="getRiskClass(activity)"
            [style.cursor]="'default'"> <div class="activity-item-top" style="display: flex; align-items: center; gap: 8px;">
           <div class="activity-avatar">
-            <img [src]="activity.user.avatar" [alt]="activity.user.name">
+            <img [src]="activity.user.avatar" [alt]="activity.user.name" style="margin: 0px !important; border-radius: 50% !important;" >
           </div>
           <span class="user-name">{{ activity.user.name }}</span>
           <div class="activity-time-wrapper">

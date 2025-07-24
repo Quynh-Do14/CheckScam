@@ -95,6 +95,57 @@
                 </button>
               </div>
             </div>
+            
+            <!-- TRA CỨU NGAY Button -->
+            <div class="quick-search-cta">
+              <button class="tra-cuu-ngay-btn" (click)="sendMessage()" [disabled]="!info.trim() || isLoading">
+                <!-- Background particles -->
+                <div class="btn-particles">
+                  <div class="particle particle-1"></div>
+                  <div class="particle particle-2"></div>
+                  <div class="particle particle-3"></div>
+                  <div class="particle particle-4"></div>
+                  <div class="particle particle-5"></div>
+                  <div class="particle particle-6"></div>
+                </div>
+                
+                <!-- Scanning beam -->
+                <div class="scanning-beam"></div>
+                
+                <!-- Main content -->
+                <div class="btn-content">
+                  <div class="btn-icon-container">
+                    <i class="fas fa-search btn-icon"></i>
+                    <div class="icon-pulse"></div>
+                  </div>
+                  <span class="btn-text">
+                    <span class="text-char" style="--delay: 0s">T</span>
+                    <span class="text-char" style="--delay: 0.1s">R</span>
+                    <span class="text-char" style="--delay: 0.2s">A</span>
+                    <span class="text-char" style="--delay: 0.3s"> </span>
+                    <span class="text-char" style="--delay: 0.4s">C</span>
+                    <span class="text-char" style="--delay: 0.5s">Ứ</span>
+                    <span class="text-char" style="--delay: 0.6s">U</span>
+                    <span class="text-char" style="--delay: 0.7s"> </span>
+                    <span class="text-char" style="--delay: 0.8s">N</span>
+                    <span class="text-char" style="--delay: 0.9s">G</span>
+                    <span class="text-char" style="--delay: 1s">A</span>
+                    <span class="text-char" style="--delay: 1.1s">Y</span>
+                  </span>
+                  <div class="btn-arrow-container">
+                    <i class="fas fa-arrow-right btn-arrow"></i>
+                    <i class="fas fa-arrow-right btn-arrow-2"></i>
+                    <i class="fas fa-arrow-right btn-arrow-3"></i>
+                  </div>
+                </div>
+                
+                <!-- Electric border -->
+                <div class="electric-border"></div>
+                
+                <!-- Glow effect -->
+                <div class="btn-glow"></div>
+              </button>
+            </div>
           </div>
         </div>
       </div>

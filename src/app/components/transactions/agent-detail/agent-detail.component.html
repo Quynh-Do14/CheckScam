@@ -41,11 +41,11 @@
 
       <div class="agent-header">
         <div class="agent-avatar-section">
-          <div class="agent-image-display">
+          <div class="avatar-container">
             <img 
               [src]="agent.avatar" 
               [alt]="agent.name" 
-              class="agent-detail-image"
+              class="agent-avatar"
               (error)="onImageError($event, agent.name)">
           </div>
         </div>

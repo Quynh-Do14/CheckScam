@@ -76,22 +76,22 @@
           *ngFor="let agent of filteredAgents; trackBy: trackByAgentId"
           (click)="onAgentClick(agent)">
 
-          <div class="agent-image-wrapper">
+          <div class="agent-avatar-container">
             <img
               [src]="agent.avatar"
               [alt]="agent.name"
-              class="agent-image"
+              class="agent-avatar"
               (error)="onImageError($event, agent.name)">
-            <div class="agent-overlay">
-                <p class="agent-name-overlay">{{ agent.name }}</p>
-                <div class="agent-status-overlay" [ngClass]="{'online': agent.isOnline}" *ngIf="agent.isOnline !== undefined">
-                    <span class="status-indicator-overlay" [class.online]="agent.isOnline"></span>
-                    {{ agent.isOnline ? 'Đang trực tuyến' : 'Ngoại tuyến' }}
-                </div>
-            </div>
           </div>
 
-        </div>
+          <div class="agent-name">{{ agent.name }}</div>
+
+          <div class="agent-status" [ngClass]="{'online': agent.isOnline}" *ngIf="agent.isOnline !== undefined">
+            <span class="status-indicator" [class.online]="agent.isOnline"></span>
+            {{ agent.isOnline ? 'Đang trực tuyến' : 'Ngoại tuyến' }}
+          </div>
+
+          </div>
       </div>
 
       <div class="no-results" *ngIf="!isLoading && !error && filteredAgents.length === 0 && searchQuery">

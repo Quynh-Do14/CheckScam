@@ -10,6 +10,7 @@
   padding-top: 75px;
   position: relative;
   
+  /* Background effects như trang ranking */
   &::before {
     content: '';
     position: absolute;
@@ -55,6 +56,7 @@
   }
 }
 
+/* ========== LOADING STATE ========== */
 .loading-container {
   display: flex;
   justify-content: center;
@@ -88,6 +90,7 @@
   }
 }
 
+/* ========== ERROR STATE ========== */
 .error-container {
   display: flex;
   justify-content: center;
@@ -126,6 +129,7 @@
   }
 }
 
+/* ========== DETAIL CONTENT ========== */
 .detail-content {
   padding: 40px 0 60px;
 
@@ -134,6 +138,7 @@
   }
 }
 
+/* ========== BACK NAVIGATION ========== */
 .back-navigation {
   margin-bottom: 30px;
 }
@@ -169,6 +174,7 @@
   }
 }
 
+/* ========== AGENT HEADER ========== */
 .agent-header {
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(20px);
@@ -202,82 +208,42 @@
 
 .agent-avatar-section {
   flex-shrink: 0;
-  width: 250px;
-  height: 250px;
-  
-  @media (max-width: 768px) {
-    width: 200px;
-    height: 200px;
-    margin: 0 auto;
+
+  .avatar-container {
+    position: relative;
+    display: inline-block;
   }
 
-  @media (max-width: 480px) {
-    width: 180px;
-    height: 180px;
+  .agent-avatar {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 6px solid white;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: 0 12px 30px rgba(255, 107, 53, 0.3);
+    }
+
+    @media (max-width: 768px) {
+      width: 120px;
+      height: 120px;
+    }
+
+    @media (max-width: 480px) {
+      width: 100px;
+      height: 100px;
+      border-width: 4px;
+    }
   }
-}
-
-.agent-image-display {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  position: relative;
-  border-radius: 18px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-  transition: all 0.4s ease-in-out;
-  border: 4px solid white;
-  
-  &:hover {
-    transform: scale(1.03);
-    box-shadow: 0 15px 45px rgba(255, 107, 53, 0.25);
-  }
-
-  &::before {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 60%;
-    background: linear-gradient(0deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 100%);
-    z-index: 1;
-    pointer-events: none;
-  }
-
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.05);
-    mix-blend-mode: overlay;
-    opacity: 0;
-    transition: opacity 0.3s ease-in-out;
-    z-index: 2;
-  }
-
-  &:hover::after {
-    opacity: 1;
-  }
-}
-
-.agent-detail-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.agent-image-display:hover .agent-detail-image {
-  transform: scale(1.1);
 }
 
 .agent-info-section {
   flex: 1;
-  
+
   .agent-name {
     font-size: 2.2rem;
     font-weight: 800;
@@ -343,6 +309,7 @@
   }
 }
 
+/* ========== ROLE BADGES ========== */
 .role-badge {
   display: inline-flex;
   align-items: center;
@@ -372,6 +339,7 @@
   }
 }
 
+/* ========== SECTIONS ========== */
 .section-title {
   font-size: 1.4rem;
   font-weight: 700;
@@ -387,6 +355,7 @@
   }
 }
 
+/* ========== DESCRIPTION ========== */
 .agent-description {
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(20px);
@@ -416,6 +385,7 @@
   }
 }
 
+/* ========== CONTACT PROFILES ========== */
 .contact-profiles {
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(20px);
@@ -507,6 +477,7 @@
   }
 }
 
+/* ========== NO CONTACT ========== */
 .no-contact {
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(20px);
@@ -545,6 +516,7 @@
   }
 }
 
+/* ========== CONTACT ACTIONS ========== */
 .contact-actions {
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(20px);
@@ -633,6 +605,7 @@
   }
 }
 
+/* ========== SHARED BUTTONS ========== */
 .retry-button, .back-button {
   background: linear-gradient(135deg, #FF6B35 0%, #FF5722 100%);
   color: white;
@@ -665,11 +638,13 @@
   }
 }
 
+/* ========== ANIMATIONS ========== */
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
 
+/* ========== RESPONSIVE DESIGN ========== */
 @media (max-width: 480px) {
   .profiles-grid {
     grid-template-columns: 1fr;

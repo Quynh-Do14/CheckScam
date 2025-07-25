@@ -154,7 +154,6 @@
   </div>
 
   <div class="top-searched-with-banners" *ngIf="!isLoading">
-    <!-- Banner 1 - Bên trái -->
     <div class="left-banner" style="width: 160px; height: 600px; background: linear-gradient(135deg, #000814 0%, #001d3d 50%, #003566 100%); border: 1px solid #00d4ff; border-radius: 8px; overflow: hidden; position: relative;">
       <div style="position: relative; z-index: 10; padding: 12px 6px; text-align: center; color: #ffffff; background: rgba(0, 0, 0, 0.8); border: 2px solid #00d4ff; border-radius: 8px; margin: 5px; font-size: 11px; font-weight: 900; line-height: 1.2;">
         BIẾT LẬP TRÌNH,<br>NHƯNG VẪN<br>THẤT NGHIỆP/<br>THU NHẬP THẤP?
@@ -335,7 +334,6 @@
       </div>
     </div>
     
-    <!-- Banner 2 - Bên phải -->
     <div class="right-banner" style="width: 160px; height: 600px; background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #fbbf24 100%); border: 2px solid #e5e7eb; border-radius: 8px; overflow: hidden; position: relative; cursor: pointer;" (click)="openPartnerPopup()">
       <div style="background: linear-gradient(45deg, #fbbf24, #f59e0b, #fbbf24); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 18px; font-weight: 900; text-align: center; padding: 12px 4px; letter-spacing: 0.5px;">
         CƠ HỘI VÀNG
@@ -368,6 +366,33 @@
       </div>
     </div>
   </div>
+
+<div class="partner-modal-overlay" *ngIf="showPartnerModal">
+  <div class="partner-modal">
+    <div class="modal-header">
+      <h3>Đăng ký Đối tác Chiến lược</h3>
+      <button class="close-button" (click)="closePartnerModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p>Vui lòng điền thông tin của bạn, chúng tôi sẽ liên hệ lại sớm nhất!</p>
+      <form (ngSubmit)="submitPartnerForm()">
+        <div class="form-group">
+          <label for="partnerName">Tên của bạn:</label>
+          <input type="text" id="partnerName" [(ngModel)]="partnerForm.name" name="partnerName" required>
+        </div>
+        <div class="form-group">
+          <label for="partnerEmail">Email của bạn:</label>
+          <input type="email" id="partnerEmail" [(ngModel)]="partnerForm.email" name="partnerEmail" required>
+        </div>
+        <div class="form-group">
+          <label for="partnerPhone">Số điện thoại:</label>
+          <input type="tel" id="partnerPhone" [(ngModel)]="partnerForm.phone" name="partnerPhone" required>
+        </div>
+        <button type="submit" class="submit-button">Gửi đăng ký</button>
+      </form>
+    </div>
+  </div>
+</div>
   
   <!-- Loading Overlay -->
   <div *ngIf="isLoading" class="loading-overlay">

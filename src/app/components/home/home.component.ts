@@ -634,49 +634,15 @@ searchResult: any;
       return { isValid: false, message: '📱 Vui lòng nhập số điện thoại.' };
     }
     
-    // Loại bỏ các ký tự không phải số
-    const phoneNumbers = cleanPhone.replace(/[^0-9]/g, '');
+    // Regex pattern để validate số điện thoại Việt Nam
+    const phoneRegex = /^(1900|1800)[0-9]{4}$|(05|03|04|07|08|09|024|028)[0-9]{8}$|(\+84)[0-9]{9}$|(84)[0-9]{9}$|(\+84)[0-9]{8}$|(\+84)[0-9]{10}$|(021[012345689]|023[23456789]|020[3456789]|022[0123456789]|029[01234679]|025[123456789]|026[01239]|027[01234567]|037[01234567])[0-9]{7}$/;
     
-    // Kiểm tra độ dài
-    if (phoneNumbers.length < 10 || phoneNumbers.length > 11) {
-      return { isValid: false, message: '📱 Số điện thoại phải có 10-11 chữ số.' };
-    }
-    
-    // Kiểm tra định dạng Việt Nam cho số 10 chữ số (phải bắt đầu bằng 0)
-    if (phoneNumbers.length === 10 && !phoneNumbers.startsWith('0')) {
-      return { isValid: false, message: '📱 Số điện thoại 10 chữ số phải bắt đầu bằng số 0.' };
-    }
-    
-    // Kiểm tra định dạng Việt Nam cho số 11 chữ số (phải bắt đầu bằng +84 hoặc 84)
-    if (phoneNumbers.length === 11) {
-      if (!phoneNumbers.startsWith('84')) {
-        return { isValid: false, message: '📱 Số điện thoại 11 chữ số phải bắt đầu bằng 84.' };
-      }
-      // Chuyển đổi từ +84 format sang 0 format để kiểm tra đầu số
-      const convertedPhone = '0' + phoneNumbers.substring(2);
-      const prefix = convertedPhone.substring(0, 3);
-      
-      const validPrefixes = ['032', '033', '034', '035', '036', '037', '038', '039', // Viettel
-                            '070', '079', '077', '076', '078', // Mobifone
-                            '083', '084', '085', '081', '082', // Vinaphone
-                            '056', '058', // Vietnamobile
-                            '059', '099'] // Gmobile
-      
-      if (!validPrefixes.includes(prefix)) {
-        return { isValid: false, message: '📱 Đầu số điện thoại không hợp lệ (sau 84).' };
-      }
-    } else {
-      // Kiểm tra các đầu số hợp lệ cho số 10 chữ số
-      const validPrefixes = ['032', '033', '034', '035', '036', '037', '038', '039', // Viettel
-                            '070', '079', '077', '076', '078', // Mobifone
-                            '083', '084', '085', '081', '082', // Vinaphone
-                            '056', '058', // Vietnamobile
-                            '059', '099'] // Gmobile
-      
-      const prefix = phoneNumbers.substring(0, 3);
-      if (!validPrefixes.includes(prefix)) {
-        return { isValid: false, message: '📱 Đầu số điện thoại không hợp lệ.' };
-      }
+    // Kiểm tra với regex pattern
+    if (!phoneRegex.test(cleanPhone)) {
+      return { 
+        isValid: false, 
+        message: '📱 Số điện thoại không đúng định dạng. Vui lòng kiểm tra lại số điện thoại Việt Nam hợp lệ.' 
+      };
     }
     
     return { isValid: true, message: '' };

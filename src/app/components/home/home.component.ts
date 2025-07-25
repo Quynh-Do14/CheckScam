@@ -3,14 +3,17 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CheckScamService } from '../../services/check-scam.service';
 import { CheckScamRequestDTO } from '../../dtos/check-scam-request.dto';
-import { Router, RouterModule } from '@angular/router'; 
-import { HeaderComponent } from '../../components/header/header.component'; 
-import { FooterComponent } from '../../components/footer/footer.component'; 
-import { ChatBoxComponent } from '../../components/chat-box/chat-box.component'; 
+import { Router, RouterModule } from '@angular/router';
+import { HeaderComponent } from '../../components/header/header.component';
+import { FooterComponent } from '../../components/footer/footer.component';
+import { ChatBoxComponent } from '../../components/chat-box/chat-box.component';
 import { TopScamService, TopScamItem } from '../../services/top-scam.service';
 import { VerticalBannerComponent } from './vertical-banner/vertical-banner.component';
 import { ActivityWidgetComponent } from '../activity-widget/activity-widget.component';
-import { Title, Meta } from '@angular/platform-browser'; 
+import { Title, Meta } from '@angular/platform-browser';
+// Import CooperateService và các interface liên quan
+import { CooperateService, CooperateRegisterRequest, CooperateRegisterResponse } from '../../services/cooperate.service';
+
 
 interface ScamDetail {
   id: number;
@@ -34,9 +37,8 @@ interface SearchApiResponse {
   dateReport: string | null;
   verifiedCount: number;
   lastReportAt: string;
-  evidenceURLs: string[]; 
-  analysis: string; 
-
+  evidenceURLs: string[];
+  analysis: string;
 }
 
 interface Message {
@@ -57,7 +59,6 @@ interface Message {
     ChatBoxComponent,
     VerticalBannerComponent,
     ActivityWidgetComponent
-
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
@@ -67,13 +68,12 @@ export class HomeComponent implements OnInit, OnDestroy {
   info: string = '';
   selectedType: number = 1;
   currentSearchIcon: string = 'fas fa-mobile-alt';
-  
+
   isLoading: boolean = false;
   errorMessage: string | null = null;
 
-  // 🔧 TIMEOUT để tránh loading vĩnh viễn
   private loadingTimeout: any;
-  private readonly LOADING_TIMEOUT = 30000; // 30 seconds
+  private readonly LOADING_TIMEOUT = 30000;
 
   messages: Message[] = [];
   showChatbox: boolean = false;
@@ -87,6 +87,14 @@ export class HomeComponent implements OnInit, OnDestroy {
   showDetailModal: boolean = false;
   selectedScamDetail: ScamDetail | null = null;
   isLoadingDetail: boolean = false;
+
+  // Thuộc tính mới cho popup đối tác
+  showPartnerModal: boolean = false;
+  partnerForm = {
+    name: '',
+    email: '',
+    phone: ''
+  };
 
   mockScamDetails: { [key: string]: ScamDetail } = {
     '0346304549': {
@@ -143,7 +151,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       description: 'Website giả mạo các thương hiệu nổi tiếng, bán sản phẩm với giá rẻ bất thường. Sau khi nhận tiền sẽ không gửi hàng hoặc gửi hàng giả.',
       evidenceImages: [
         'https://via.placeholder.com/400x300?text=Giao+di%E1%BB%87n+website',
-        'https://via.placeholder.com/400x300?text=S%E1%BA%A3n+ph%E1%BA%A9m+gi%E1%BA%A3',
+        'https://via.placeholder.com/400x300?text=S%E1%BA%A3n+ph%E1%BA%A3m+gi%E1%BA%A3',
         'https://via.placeholder.com/400x300?text=Th%C3%B4ng+b%C3%A1o+c%E1%BA%A3nh+b%C3%A1o'
       ],
       totalScamAmount: 12300000,
@@ -156,63 +164,47 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   activeTab: string = 'phone';
 
-searchResult: any;
+  searchResult: any;
 
   constructor(
     private CheckScamService: CheckScamService,
-    private router: Router, 
+    private router: Router,
     private topScamService: TopScamService,
-    private titleService: Title, // Inject Title service
-    private metaService: Meta // Inject Meta service
+    private titleService: Title,
+    private metaService: Meta,
+    private cooperateService: CooperateService // Inject CooperateService
   ) { }
 
   ngOnInit(): void {
-    // 🔧 FORCE RESET LOADING STATE khi component khởi tạo
     this.forceResetLoadingState();
-    
     this.updateSearchIcon();
     this.loadTopScamData();
-    this.setSeoTags(); // Gọi phương thức đặt SEO tags
-
-    // 🔧 DEBUG: Kiểm tra loading state
-    console.log('🔍 Component initialized. Loading state:', this.isLoading);
+    this.setSeoTags();
   }
 
   ngOnDestroy(): void {
-    // 🔧 CLEANUP: Đảm bảo clear timeout và reset state khi component bị destroy
     this.clearLoadingTimeout();
     this.forceResetLoadingState();
   }
 
-  // 🔧 FORCE RESET LOADING STATE
   private forceResetLoadingState(): void {
-    console.log('🔧 Force resetting loading state...');
     this.isLoading = false;
     this.clearLoadingTimeout();
-    
-    // Remove loading class from body nếu có
     if (document.body.classList.contains('loading-active')) {
       document.body.classList.remove('loading-active');
-      console.log('✅ Removed loading-active class from body');
     }
-    
-    // Force change detection
     setTimeout(() => {
       this.isLoading = false;
-      console.log('🔍 Final loading state after reset:', this.isLoading);
-    }, 100); // Tăng từ 0 lên 100ms
+    }, 100);
   }
 
-  // 🔧 SET LOADING TIMEOUT
   private setLoadingTimeout(): void {
     this.clearLoadingTimeout();
     this.loadingTimeout = setTimeout(() => {
-      console.warn('⚠️ Loading timeout reached! Force stopping loading...');
       this.forceStopLoading('Thời gian chờ quá lâu. Vui lòng thử lại.');
     }, this.LOADING_TIMEOUT);
   }
 
-  // 🔧 CLEAR LOADING TIMEOUT
   private clearLoadingTimeout(): void {
     if (this.loadingTimeout) {
       clearTimeout(this.loadingTimeout);
@@ -220,23 +212,15 @@ searchResult: any;
     }
   }
 
-  // 🔧 FORCE STOP LOADING
   private forceStopLoading(errorMsg?: string): void {
-    console.log('🛑 Force stopping loading...');
     this.isLoading = false;
     this.clearLoadingTimeout();
-    
-    // Remove loading class from body
     document.body.classList.remove('loading-active');
-    
     if (errorMsg) {
       this.errorMessage = errorMsg;
     }
-    
-    console.log('✅ Loading stopped successfully');
   }
 
-  // Phương thức mới để đặt Title và Meta Description
   private setSeoTags(): void {
     this.titleService.setTitle('AI6 - Săn Người Xấu, Diệt Kẻ Gian | Phát Hiện Lừa Đảo AI');
     this.metaService.addTags([
@@ -244,9 +228,8 @@ searchResult: any;
       { name: 'keywords', content: 'AI6, săn người xấu, diệt kẻ gian, phát hiện lừa đảo, lừa đảo AI, số điện thoại lừa đảo, tài khoản ngân hàng lừa đảo, website lừa đảo, Bộ Công An, báo cáo lừa đảo, an toàn trực tuyến' },
       { property: 'og:title', content: 'AI6 - Săn Người Xấu, Diệt Kẻ Gian | Phát Hiện Lừa Đảo AI' },
       { property: 'og:description', content: 'AI6 - Săn Người Xấu, Diệt Kẻ Gian sử dụng AI phân tích lừa đảo qua số điện thoại, tài khoản, URL. Duyệt web an toàn, giao dịch minh bạch dữ liệu được lấy từ nguồn uy tín như Bộ Công An và các báo cáo có bằng chứng từ cộng đồng.' },
-      { property: 'og:url', content: 'https://your-domain.com/' }, // Thay thế bằng URL thực tế của trang Home
+      { property: 'og:url', content: 'https://your-domain.com/' },
       { property: 'og:type', content: 'website' },
-      // Thêm các meta tag khác nếu cần, ví dụ: og:image, twitter:card, etc.
     ]);
   }
 
@@ -259,13 +242,13 @@ searchResult: any;
 
   getSearchPlaceholder(): string {
     switch (this.selectedType) {
-      case 1: 
+      case 1:
         return 'Ví dụ: 0123456789';
-      case 2: 
+      case 2:
         return 'Ví dụ: 1234567890';
-      case 3: 
+      case 3:
         return 'Ví dụ: https://example.com';
-      default: 
+      default:
         return 'Nhập thông tin cần kiểm tra...';
     }
   }
@@ -286,7 +269,6 @@ searchResult: any;
     }
   }
 
-  // 🔧 IMPROVED SEND MESSAGE WITH BETTER ERROR HANDLING
   sendMessage(): void {
     const value = this.info.trim();
     if (!value) {
@@ -294,7 +276,6 @@ searchResult: any;
       return;
     }
 
-    // 🔧 ENHANCED VALIDATION WITH DETAILED MESSAGES
     if (this.selectedType === 1) {
       const phoneValidation = this.validatePhoneNumber(value);
       if (!phoneValidation.isValid) {
@@ -302,7 +283,7 @@ searchResult: any;
         return;
       }
     }
-    
+
     if (this.selectedType === 2) {
       const bankValidation = this.validateBankNumber(value);
       if (!bankValidation.isValid) {
@@ -310,7 +291,7 @@ searchResult: any;
         return;
       }
     }
-    
+
     if (this.selectedType === 3) {
       const urlValidation = this.validateUrl(value);
       if (!urlValidation.isValid) {
@@ -319,35 +300,19 @@ searchResult: any;
       }
     }
 
-    // 🔧 START LOADING WITH TIMEOUT
-    console.log('🚀 Starting search with improved error handling...');
     this.errorMessage = null;
     this.isLoading = true;
-    
-    // Set timeout to prevent infinite loading
     this.setLoadingTimeout();
-    
-    // Lock body scroll khi loading - NHẸ HẠN
     document.body.classList.add('loading-active');
-    
-    // 🔧 DEBUG: Log loading state
-    console.log('🔍 Loading started. State:', {
-      isLoading: this.isLoading,
-      value: value,
-      type: this.selectedType
-    });
 
     const requestBody: CheckScamRequestDTO = {
       info: value,
       type: this.selectedType
     };
 
-    // 🔧 API CALL WITH IMPROVED ERROR HANDLING
     this.CheckScamService.CheckScam(requestBody).subscribe({
       next: (response) => {
-        console.log('✅ API call successful:', response);
         this.forceStopLoading();
-        
         if (response && response.info) {
           this.router.navigate(['/analyze'], {
             state: {
@@ -361,13 +326,10 @@ searchResult: any;
         }
       },
       error: (error) => {
-        console.error('❌ API call failed:', error);
         this.forceStopLoading();
-        
         this.showValidationError(error?.error?.message || error?.message || '❌ Đã xảy ra lỗi khi tra cứu.');
       }
     });
-    
     this.info = '';
   }
 
@@ -404,7 +366,7 @@ searchResult: any;
       () => this.showRobotMessage('👁️ Tôi chớp mắt để giữ cho bạn thấy cute!'),
       () => this.speedUpRobot()
     ];
-    
+
     const randomAction = actions[Math.floor(Math.random() * actions.length)];
     randomAction();
   }
@@ -428,9 +390,9 @@ searchResult: any;
       max-width: 300px;
       text-align: center;
     `;
-    
+
     document.body.appendChild(messageElement);
-    
+
     setTimeout(() => {
       if (messageElement.parentNode) {
         messageElement.parentNode.removeChild(messageElement);
@@ -444,7 +406,7 @@ searchResult: any;
       robot.style.animationDuration = '3s';
       robot.classList.add('turbo');
       this.showRobotMessage('🚀 TURBO MODE ACTIVATED! Chân robot đang chạy siêu nhanh!');
-      
+
       setTimeout(() => {
         robot.style.animationDuration = '10s';
         robot.classList.remove('turbo');
@@ -479,76 +441,61 @@ searchResult: any;
     }
   }
 
-  // Tab management methods
   setActiveTab(tab: string): void {
     this.activeTab = tab;
   }
 
-  // Load data từ backend
   loadTopScamData(): void {
     this.isLoadingTopData = true;
     this.topDataError = null;
 
-    // Load tất cả dữ liệu từ backend
     this.topScamService.getTopAll().subscribe({
       next: (response) => {
         if (response && response.status === 'OK' && response.data) {
-          // Dựa vào cấu trúc API response từ document
           this.phoneNumbers = response.data.phones || [];
           this.bankAccounts = response.data.banks || [];
           this.websites = response.data.urls || [];
         } else {
-          this.loadIndividualData(); // Fallback to individual API calls
+          this.loadIndividualData();
         }
         this.isLoadingTopData = false;
       },
       error: (error) => {
-
-        this.loadIndividualData(); // Fallback to individual API calls
+        this.loadIndividualData();
       }
     });
   }
 
-  // Fallback method để load từng loại dữ liệu riêng
   private loadIndividualData(): void {
-    // Load phones
     this.topScamService.getTopPhones().subscribe({
       next: (response) => {
         if (response && response.status === 'OK') {
           this.phoneNumbers = response.data || [];
-
         }
       },
       error: (error) => {
-
         this.topDataError = 'Không thể tải dữ liệu số điện thoại';
       }
     });
 
-    // Load banks
     this.topScamService.getTopBanks().subscribe({
       next: (response) => {
         if (response && response.status === 'OK') {
           this.bankAccounts = response.data || [];
-
         }
       },
       error: (error) => {
-
         this.topDataError = 'Không thể tải dữ liệu tài khoản ngân hàng';
       }
     });
 
-    // Load URLs
     this.topScamService.getTopUrls().subscribe({
       next: (response) => {
         if (response && response.status === 'OK') {
           this.websites = response.data || [];
-
         }
       },
       error: (error) => {
-
         this.topDataError = 'Không thể tải dữ liệu website';
       }
     });
@@ -569,11 +516,11 @@ searchResult: any;
   }
 
   onItemClick(item: TopScamItem): void {
-    let type = 1; 
+    let type = 1;
     if (item.type === 'phone') type = 1;
     else if (item.type === 'bank') type = 2;
     else if (item.type === 'url') type = 3;
-    
+
     this.router.navigate(['/subject-detail', item.info], {
       queryParams: { type: type }
     });
@@ -606,20 +553,93 @@ searchResult: any;
     window.open('https://mmoidai.io.vn', '_blank');
   }
 
+  // Phương thức mở popup đối tác
   openPartnerPopup(): void {
-    // Tạo popup đơn giản hoặc mở link liên hệ
-    const email = 'partner@ai6.vn';
-    const subject = 'Đăng ký đối tác quảng cáo';
-    const body = 'Xin chào,\n\nTôi muốn tìm hiểu về việc đặt banner quảng cáo trên ai6.vn.\n\nVui lòng liên hệ lại để trao đổi chi tiết.\n\nCảm ơn!';
-    
-    const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    window.open(mailtoLink, '_blank');
+    this.showPartnerModal = true;
+    // Có thể reset form ở đây mỗi khi mở popup
+    this.partnerForm = {
+      name: '',
+      email: '',
+      phone: ''
+    };
+    this.errorMessage = null; // Clear previous error messages
   }
 
-  // 🔧 VALIDATION METHODS
+  // Phương thức đóng popup đối tác
+  closePartnerModal(): void {
+    this.showPartnerModal = false;
+    this.partnerForm = { // Reset form khi đóng
+      name: '',
+      email: '',
+      phone: ''
+    };
+    this.errorMessage = null; // Clear error messages
+  }
+
+  // Phương thức xử lý submit form đối tác
+  submitPartnerForm(): void {
+    if (!this.partnerForm.name || !this.partnerForm.email || !this.partnerForm.phone) {
+      this.showValidationError('Vui lòng điền đầy đủ tất cả các trường thông tin.');
+      return;
+    }
+    if (!this.isValidEmail(this.partnerForm.email)) {
+      this.showValidationError('Vui lòng nhập địa chỉ email hợp lệ.');
+      return;
+    }
+    // Sử dụng regex validation số điện thoại mà bạn đã có
+    if (!this.validatePhoneNumber(this.partnerForm.phone).isValid) {
+      this.showValidationError(this.validatePhoneNumber(this.partnerForm.phone).message);
+      return;
+    }
+
+    const cooperateDataForBackend: CooperateRegisterRequest = {
+      name: this.partnerForm.name,
+      email: this.partnerForm.email,
+      phoneNumber: this.partnerForm.phone
+    };
+
+    this.cooperateService.registerCooperate(cooperateDataForBackend).subscribe({
+      next: (response: CooperateRegisterResponse) => {
+        if (response.status === 'OK') {
+          alert('Đăng ký của bạn đã được gửi thành công! Chúng tôi sẽ liên hệ lại sớm.');
+          this.closePartnerModal(); // Đóng popup khi thành công
+        } else {
+          // Xử lý lỗi từ backend nếu status không phải OK
+          this.showValidationError(`Đăng ký không thành công: ${response.message || 'Lỗi không xác định từ máy chủ.'}`);
+        }
+      },
+      error: (error) => {
+        // Xử lý lỗi HTTP (mất kết nối, lỗi server 500, v.v.)
+        let displayMessage = 'Đã xảy ra lỗi khi gửi đăng ký. Vui lòng thử lại sau.';
+        if (error.error && error.error.message) {
+          // Lỗi từ backend trong trường hợp lỗi HTTP code
+          displayMessage = `Lỗi: ${error.error.message}`;
+        } else if (error.message) {
+          // Lỗi mạng hoặc lỗi client-side khác
+          displayMessage = `Lỗi kết nối: ${error.message}`;
+        }
+        this.showValidationError(displayMessage);
+      }
+    });
+  }
+
+  // Thêm phương thức validate email
+  private isValidEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
+  // Phương thức validate phone (có thể dùng lại validatePhoneNumber đã có)
+  // Tuy nhiên, để khớp với yêu cầu "isValidPhone" và tránh nhầm lẫn, tôi tạo riêng một cái đơn giản
+  // hoặc bạn có thể gọi lại validatePhoneNumber(phone).isValid
+  private isValidPhone(phone: string): boolean {
+    // Đây là regex đơn giản cho 10 chữ số bắt đầu bằng 0
+    return /^0\d{9}$/.test(phone);
+  }
+
+
   private showValidationError(message: string): void {
     this.errorMessage = message;
-    // Tự động ẩn error sau 5 giây
     setTimeout(() => {
       if (this.errorMessage === message) {
         this.errorMessage = null;
@@ -629,99 +649,86 @@ searchResult: any;
 
   private validatePhoneNumber(phone: string): { isValid: boolean; message: string } {
     const cleanPhone = phone.trim();
-    
+
     if (cleanPhone.length === 0) {
       return { isValid: false, message: '📱 Vui lòng nhập số điện thoại.' };
     }
-    
-    // Regex pattern để validate số điện thoại Việt Nam
+
     const phoneRegex = /^(1900|1800)[0-9]{4}$|(05|03|04|07|08|09|024|028)[0-9]{8}$|(\+84)[0-9]{9}$|(84)[0-9]{9}$|(\+84)[0-9]{8}$|(\+84)[0-9]{10}$|(021[012345689]|023[23456789]|020[3456789]|022[0123456789]|029[01234679]|025[123456789]|026[01239]|027[01234567]|037[01234567])[0-9]{7}$/;
-    
-    // Kiểm tra với regex pattern
+
     if (!phoneRegex.test(cleanPhone)) {
-      return { 
-        isValid: false, 
-        message: '📱 Số điện thoại không đúng định dạng. Vui lòng kiểm tra lại số điện thoại Việt Nam hợp lệ.' 
+      return {
+        isValid: false,
+        message: '📱 Số điện thoại không đúng định dạng. Vui lòng kiểm tra lại số điện thoại Việt Nam hợp lệ.'
       };
     }
-    
+
     return { isValid: true, message: '' };
   }
 
   private validateBankNumber(bankNumber: string): { isValid: boolean; message: string } {
     const cleanBankNumber = bankNumber.trim();
-    
+
     if (cleanBankNumber.length === 0) {
       return { isValid: false, message: '🏦 Vui lòng nhập số tài khoản ngân hàng.' };
     }
-    
-    // Loại bỏ các ký tự không phải số
+
     const numbers = cleanBankNumber.replace(/[^0-9]/g, '');
-    
-    // Kiểm tra độ dài (thông thường từ 8-19 chữ số)
+
     if (numbers.length < 8 || numbers.length > 19) {
       return { isValid: false, message: '🏦 Số tài khoản phải có từ 8-19 chữ số.' };
     }
-    
-    // Kiểm tra không được toàn bộ là số 0
+
     if (numbers === '0'.repeat(numbers.length)) {
       return { isValid: false, message: '🏦 Số tài khoản không hợp lệ.' };
     }
-    
+
     return { isValid: true, message: '' };
   }
 
   private validateUrl(url: string): { isValid: boolean; message: string } {
     const cleanUrl = url.trim();
-    
+
     if (cleanUrl.length === 0) {
       return { isValid: false, message: '🌐 Vui lòng nhập URL website.' };
     }
-    
-    // Kiểm tra không được toàn bộ là số
+
     if (/^\d+$/.test(cleanUrl)) {
       return { isValid: false, message: '🌐 URL không được chỉ là số.' };
     }
-    
+
     try {
-      // Thêm protocol nếu thiếu
       let testUrl = cleanUrl;
       if (!testUrl.startsWith('http://') && !testUrl.startsWith('https://')) {
         testUrl = 'https://' + testUrl;
       }
-      
+
       const urlObj = new URL(testUrl);
-      
-      // Kiểm tra hostname có hợp lệ không
+
       if (!urlObj.hostname || urlObj.hostname.length < 3) {
         return { isValid: false, message: '🌐 URL không hợp lệ.' };
       }
-      
-      // Kiểm tra không được toàn bộ hostname là số
+
       if (/^\d+$/.test(urlObj.hostname)) {
         return { isValid: false, message: '🌐 Domain không được chỉ là số.' };
       }
-      
-      // Kiểm tra có ít nhất một dấu chấm trong hostname
+
       if (!urlObj.hostname.includes('.')) {
         return { isValid: false, message: '🌐 URL phải có định dạng domain hợp lệ (VD: example.com).' };
       }
-      
-      // Kiểm tra domain extension hợp lệ
+
       const parts = urlObj.hostname.split('.');
       const extension = parts[parts.length - 1];
-      
-      // Extension phải có ít nhất 2 ký tự và không được là số
+
       if (extension.length < 2 || /^\d+$/.test(extension)) {
         return { isValid: false, message: '🌐 Domain extension không hợp lệ (VD: .com, .vn).' };
       }
-      
-      // Kiểm tra các ký tự hợp lệ trong domain
+
       const domainRegex = /^[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?)*$/;
       if (!domainRegex.test(urlObj.hostname)) {
         return { isValid: false, message: '🌐 Domain chứa ký tự không hợp lệ.' };
       }
-      
+
       return { isValid: true, message: '' };
     } catch (error) {
       return { isValid: false, message: '🌐 URL không đúng định dạng.' };

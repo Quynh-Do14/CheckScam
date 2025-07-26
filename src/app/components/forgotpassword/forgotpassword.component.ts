@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core'; // Thêm OnInit
+import { Component, OnInit } from '@angular/core'; 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../services/user.service';
 import { Router, RouterModule } from '@angular/router';
-import { Title } from '@angular/platform-browser'; // Thêm import Title service
+import { Title } from '@angular/platform-browser'; 
 
 @Component({
   selector: 'app-forgot-password',
@@ -12,12 +12,10 @@ import { Title } from '@angular/platform-browser'; // Thêm import Title service
   templateUrl: './forgotpassword.component.html',
   styleUrls: ['./forgotpassword.component.scss']
 })
-export class ForgotPasswordComponent implements OnInit { // Triển khai OnInit
+export class ForgotPasswordComponent implements OnInit { 
   email: string = '';
   isLoading: boolean = false;
-  // Loại bỏ successMessage và errorMessage ở đây để dùng chung notification
-  // successMessage: string | null = null;
-  // errorMessage: string | null = null;
+
 
   showNotification: boolean = false;
   notificationMessage: string = '';
@@ -27,11 +25,11 @@ export class ForgotPasswordComponent implements OnInit { // Triển khai OnInit
   constructor(
     private userService: UserService,
     private router: Router,
-    private titleService: Title // Inject Title service
+    private titleService: Title 
   ) { }
 
   ngOnInit(): void {
-    this.titleService.setTitle('AI6 - Quên mật khẩu'); // Đặt tiêu đề cho tab trình duyệt
+    this.titleService.setTitle('AI6 - Quên mật khẩu'); 
   }
 
   showAppNotification(message: string, type: 'success' | 'error' | 'info' = 'info', duration: number = 5000): void {

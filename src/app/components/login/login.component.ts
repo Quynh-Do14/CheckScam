@@ -1,4 +1,3 @@
-// login.component.ts
 import { Component, ViewChild, OnInit, AfterViewInit, NgZone } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';

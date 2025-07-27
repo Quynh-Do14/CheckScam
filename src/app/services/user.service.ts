@@ -302,7 +302,6 @@ export class UserService {
     this._isLoggedIn.next(false);
     this._currentUserData.next(null); 
     
-    // SYNC with UserStateService
     this.userStateService.clearUser();
     
     console.log('User data and token cleared from localStorage. BehaviorSubjects updated.');

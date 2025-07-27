@@ -20,6 +20,44 @@ export class UserStateService {
 
   constructor() {
     this.loadUserFromStorage();
+    this.setupStorageListener();
+  }
+
+  // NEW: Listen for localStorage changes
+  private setupStorageListener() {
+    // Listen for storage events (when localStorage changes in other tabs)
+    window.addEventListener('storage', (event) => {
+      if (event.key === 'user' || event.key === 'jwt_token') {
+        console.log('Storage changed, reloading user state...');
+        this.loadUserFromStorage();
+      }
+    });
+
+    // Also setup a periodic check for same-tab changes
+    setInterval(() => {
+      this.checkAndUpdateUserState();
+    }, 2000); // Check every 2 seconds
+  }
+
+  // NEW: Check if user state needs updating
+  private checkAndUpdateUserState() {
+    const currentUser = this.userSubject.value;
+    const userData = localStorage.getItem('user');
+    const token = localStorage.getItem('jwt_token');
+    
+    // If no token but we have a user, clear it
+    if (!token && currentUser) {
+      console.log('UserStateService: No token found, clearing user state');
+      this.userSubject.next(null);
+      return;
+    }
+    
+    // If we have token but no user, load from storage
+    if (token && !currentUser) {
+      console.log('UserStateService: Token found but no user, loading from storage');
+      this.loadUserFromStorage();
+      return;
+    }
   }
 
   loadUserFromStorage() {
@@ -109,6 +147,20 @@ export class UserStateService {
   }
 
   clearUser() {
+    console.log('UserStateService: Clearing user state');
     this.userSubject.next(null);
+  }
+
+  // NEW: Force refresh user state (can be called from other services)
+  refreshUserState() {
+    console.log('UserStateService: Force refreshing user state...');
+    this.loadUserFromStorage();
+  }
+
+  // NEW: Check if user is logged in
+  isUserLoggedIn(): boolean {
+    const user = this.userSubject.value;
+    const token = localStorage.getItem('jwt_token');
+    return !!(user && token);
   }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ElementRef, ViewChild, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -15,6 +15,8 @@ import { ForumPostDto, ForumCommentDto, CreateForumCommentDto } from '../../../d
   styleUrls: ['./post-detail.component.scss']
 })
 export class PostDetailComponent implements OnInit, OnDestroy {
+  @ViewChild('commentTextarea') commentTextarea!: ElementRef<HTMLTextAreaElement>;
+  
   post: ForumPostDto | null = null;
   comments: ForumCommentDto[] = [];
   newComment: CreateForumCommentDto = {
@@ -35,7 +37,11 @@ export class PostDetailComponent implements OnInit, OnDestroy {
     private router: Router,
     private forumService: ForumService,
     private userStateService: UserStateService
-  ) {}
+  ) {
+    // Ensure comments is always initialized as an empty array
+    this.comments = [];
+    console.log('PostDetailComponent: comments initialized as array:', Array.isArray(this.comments));
+  }
 
   ngOnInit() {
     this.checkAuthStatus();
@@ -89,12 +95,34 @@ export class PostDetailComponent implements OnInit, OnDestroy {
     this.forumService.getComments(postId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (comments) => {
+        next: (response) => {
+          console.log('Load comments API response:', response);
+          
+          let comments: ForumCommentDto[] = [];
+          
+          // Handle both wrapped and direct array responses
+          if (Array.isArray(response)) {
+            // Direct array response
+            comments = response;
+            console.log('Using direct array format');
+          } else if (response && (response as any).data && Array.isArray((response as any).data)) {
+            // Wrapped response
+            comments = (response as any).data;
+            console.log('Using wrapped response format');
+          } else {
+            console.warn('Unexpected comments response format:', response);
+            comments = [];
+          }
+          
+          // Ensure comments is always an array
           this.comments = comments;
           this.commentsLoading = false;
+          
+          console.log('Comments loaded successfully:', this.comments.length, 'comments');
         },
         error: (error) => {
           console.error('Error loading comments:', error);
+          this.comments = []; // Ensure it's still an array on error
           this.commentsLoading = false;
         }
       });
@@ -107,8 +135,8 @@ export class PostDetailComponent implements OnInit, OnDestroy {
     }
 
     const action = this.post.isLiked ? 
-      this.forumService.unlikePost(this.post.id) : 
-      this.forumService.likePost(this.post.id);
+      this.forumService.unlikePost(this.post.id.toString()) : 
+      this.forumService.likePost(this.post.id.toString());
 
     action.pipe(takeUntil(this.destroy$)).subscribe({
       next: () => {
@@ -159,24 +187,44 @@ export class PostDetailComponent implements OnInit, OnDestroy {
     this.forumService.createComment(this.newComment)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (comment) => {
+        next: (response) => {
+          console.log('Create comment API response:', response);
+          
+          // Extract comment data from wrapped response
+          const comment = response.data;
+          
+          // Ensure comments is array before pushing
+          if (!Array.isArray(this.comments)) {
+            console.warn('this.comments is not an array, initializing...');
+            this.comments = [];
+          }
+          
           this.comments.push(comment);
           this.newComment.content = '';
           this.submittingComment = false;
+          
           if (this.post) {
             this.post.commentsCount++;
           }
+          
+          console.log('Comment added successfully:', comment);
         },
         error: (error) => {
           console.error('Error creating comment:', error);
           this.submittingComment = false;
+          
+          // Show error message to user
+          alert('Không thể tạo bình luận. Vui lòng thử lại.');
         }
       });
   }
 
-  getTimeAgo(date: Date): string {
+  getTimeAgo(date: Date | string | null): string {
+    if (!date) return 'Không rõ';
+    
     const now = new Date();
-    const diffInMs = now.getTime() - new Date(date).getTime();
+    const targetDate = typeof date === 'string' ? new Date(date) : date;
+    const diffInMs = now.getTime() - targetDate.getTime();
     const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
     const diffInHours = Math.floor(diffInMinutes / 60);
     const diffInDays = Math.floor(diffInHours / 24);
@@ -216,10 +264,72 @@ export class PostDetailComponent implements OnInit, OnDestroy {
   }
 
   onImageError(event: any) {
-    event.target.src = 'assets/img/default-avatar.png';
+    // Thay vì load default-avatar.png, hiển thị text hoặc ẩn ảnh
+    event.target.style.display = 'none';
+    // Hoặc thêm class CSS cho placeholder
+    if (event.target.parentElement) {
+      event.target.parentElement.classList.add('no-avatar');
+    }
   }
 
   goBack() {
     this.router.navigate(['/forum']);
+  }
+
+  // Listen for ESC key globally
+  @HostListener('document:keydown.escape', ['$event'])
+  onEscapeKey(event: KeyboardEvent) {
+    this.goBack();
+  }
+
+  // Auto-resize textarea
+  onCommentInput(event: any) {
+    const textarea = event.target;
+    textarea.style.height = 'auto';
+    textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+  }
+
+  // Handle keyboard shortcuts
+  onCommentKeydown(event: KeyboardEvent) {
+    // Submit with Ctrl+Enter or Cmd+Enter
+    if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+      event.preventDefault();
+      this.onSubmitComment();
+    }
+    
+    // Close modal with Escape
+    if (event.key === 'Escape') {
+      this.goBack();
+    }
+  }
+
+  // Placeholder methods for future features
+  onEmojiClick() {
+    // TODO: Implement emoji picker
+    console.log('Emoji picker clicked');
+  }
+
+  onPhotoClick() {
+    // TODO: Implement photo upload
+    console.log('Photo upload clicked');
+  }
+
+  onGifClick() {
+    // TODO: Implement GIF picker
+    console.log('GIF picker clicked');
+  }
+
+  // Handle clicking outside modal to close
+  onModalBackdropClick(event: MouseEvent) {
+    if (event.target === event.currentTarget) {
+      this.goBack();
+    }
+  }
+
+  // Focus comment input
+  focusCommentInput() {
+    if (this.commentTextarea) {
+      this.commentTextarea.nativeElement.focus();
+    }
   }
 }

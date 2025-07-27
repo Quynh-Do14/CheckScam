@@ -17,22 +17,38 @@ import {
 export class ForumService {
   private apiUrl = environment.apiBaseUrl + '/forum';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    console.log('ForumService initialized with API URL:', environment.apiBaseUrl + '/forum');
+  }
 
   // Posts
-  getPosts(page: number = 1, limit: number = 10): Observable<{data: ForumPostDto[], total: number, page: number, limit: number}> {
+  getPosts(page: number = 0, size: number = 10): Observable<{message: string, status: string, data: {data: ForumPostDto[], total: number, page: number, size: number, totalPages: number}}> {
     const params = new HttpParams()
       .set('page', page.toString())
-      .set('limit', limit.toString());
-    return this.http.get<{data: ForumPostDto[], total: number, page: number, limit: number}>(`${this.apiUrl}/posts`, { params });
+      .set('size', size.toString());
+    return this.http.get<{message: string, status: string, data: {data: ForumPostDto[], total: number, page: number, size: number, totalPages: number}}>(`${this.apiUrl}/posts`, { params });
   }
 
   getPostById(id: string): Observable<ForumPostDto> {
     return this.http.get<ForumPostDto>(`${this.apiUrl}/posts/${id}`);
   }
 
-  createPost(post: CreateForumPostDto): Observable<ForumPostDto> {
-    return this.http.post<ForumPostDto>(`${this.apiUrl}/posts`, post);
+  createPost(post: CreateForumPostDto): Observable<{message: string, status: string, data: ForumPostDto}> {
+    // Add required fields to match API expected format from Postman collection
+    const postData: any = {
+      content: post.content,
+      type: 'DISCUSSION',  // Required by API
+      tags: ['forum', 'discussion'],  // Required by API
+      imageUrl: post.imageUrl || null  // Can be null if no image
+    };
+    
+    // Only include title if it exists
+    if (post.title) {
+      postData.title = post.title;
+    }
+    
+    console.log('ForumService: Sending post data to API:', postData);
+    return this.http.post<{message: string, status: string, data: ForumPostDto}>(`${this.apiUrl}/posts`, postData);
   }
 
   updatePost(id: string, post: UpdateForumPostDto): Observable<ForumPostDto> {
@@ -44,12 +60,12 @@ export class ForumService {
   }
 
   // Comments
-  getComments(postId: string): Observable<ForumCommentDto[]> {
-    return this.http.get<ForumCommentDto[]>(`${this.apiUrl}/posts/${postId}/comments`);
+  getComments(postId: string): Observable<{message?: string, status?: string, data?: ForumCommentDto[]} | ForumCommentDto[]> {
+    return this.http.get<{message?: string, status?: string, data?: ForumCommentDto[]} | ForumCommentDto[]>(`${this.apiUrl}/posts/${postId}/comments`);
   }
 
-  createComment(comment: CreateForumCommentDto): Observable<ForumCommentDto> {
-    return this.http.post<ForumCommentDto>(`${this.apiUrl}/comments`, comment);
+  createComment(comment: CreateForumCommentDto): Observable<{message: string, status: string, data: ForumCommentDto}> {
+    return this.http.post<{message: string, status: string, data: ForumCommentDto}>(`${this.apiUrl}/comments`, comment);
   }
 
   deleteComment(id: string): Observable<void> {
@@ -85,10 +101,11 @@ export class ForumService {
     return this.http.get<{data: ForumPostDto[], total: number}>(`${this.apiUrl}/users/${userId}/posts`, { params });
   }
 
-  // Upload image
-  uploadImage(file: File): Observable<{imageUrl: string}> {
+  uploadImage(file: File): Observable<{message: string, status: string, data: {imageUrl: string}}> {
     const formData = new FormData();
-    formData.append('image', file);
-    return this.http.post<{imageUrl: string}>(`${this.apiUrl}/upload`, formData);
+    formData.append('file', file);  // Backend expects 'file' not 'image'
+    
+    console.log('ForumService: Uploading file:', file.name, 'Size:', file.size);
+    return this.http.post<{message: string, status: string, data: {imageUrl: string}}>(`${this.apiUrl}/upload`, formData);
   }
 }

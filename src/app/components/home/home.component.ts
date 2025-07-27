@@ -8,7 +8,7 @@ import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
 import { ChatBoxComponent } from '../../components/chat-box/chat-box.component';
 import { TopScamService, TopScamItem } from '../../services/top-scam.service';
-import { VerticalBannerComponent } from './vertical-banner/vertical-banner.component';
+
 import { ActivityWidgetComponent } from '../activity-widget/activity-widget.component';
 import { Title, Meta } from '@angular/platform-browser';
 // Import CooperateService và các interface liên quan
@@ -57,7 +57,6 @@ interface Message {
     HeaderComponent,
     FooterComponent,
     ChatBoxComponent,
-    VerticalBannerComponent,
     ActivityWidgetComponent
   ],
   templateUrl: './home.component.html',

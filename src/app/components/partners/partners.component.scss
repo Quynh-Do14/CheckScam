@@ -700,6 +700,11 @@
     box-shadow: 0 10px 30px rgba(255, 102, 0, 0.3);
 }
 
+.cta-submit span:not(.button-glow) {
+    position: relative;
+    z-index: 2;
+}
+
 .cta-submit:hover {
     transform: translateY(-3px);
     box-shadow: 0 15px 40px rgba(255, 102, 0, 0.4);
@@ -713,10 +718,22 @@
     height: 100%;
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
     transition: left 0.5s;
+    z-index: 1;
 }
 
 .cta-submit:hover .button-glow {
     left: 100%;
+}
+
+.cta-submit:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.cta-submit:disabled:hover {
+    transform: none !important;
+    box-shadow: 0 10px 30px rgba(255, 102, 0, 0.3);
 }
 
 /* Footer */
@@ -911,6 +928,692 @@
 .fade-in.visible {
     opacity: 1;
     transform: translateY(0);
+}
+
+/* Success Modal */
+.success-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.success-modal {
+    background: linear-gradient(135deg, #ffffff 0%, #fefefe 100%);
+    border-radius: 20px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.2),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+    animation: modalSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.success-modal-header {
+    text-align: center;
+    padding: 40px 30px 20px;
+    background: linear-gradient(135deg, #ff6600 0%, #ff8533 100%);
+    border-radius: 20px 20px 0 0;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.success-modal-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="30" cy="20" r="0.5" fill="rgba(255,255,255,0.1)"/><circle cx="60" cy="30" r="1.5" fill="rgba(255,255,255,0.05)"/><circle cx="80" cy="40" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="20" cy="60" r="0.8" fill="rgba(255,255,255,0.08)"/><circle cx="70" cy="70" r="1.2" fill="rgba(255,255,255,0.06)"/><circle cx="40" cy="80" r="0.6" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
+}
+
+.success-icon {
+    position: relative;
+    z-index: 1;
+    margin-bottom: 20px;
+}
+
+.checkmark {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: inline-block;
+    stroke-width: 3;
+    stroke: #ffffff;
+    stroke-miterlimit: 10;
+    box-shadow: inset 0px 0px 0px #ffffff;
+    animation: fill 0.4s ease-in-out 0.4s forwards, scale 0.3s ease-in-out 0.9s both;
+    position: relative;
+    margin: 0 auto;
+}
+
+.checkmark-circle {
+    stroke-dasharray: 166;
+    stroke-dashoffset: 166;
+    stroke-width: 3;
+    stroke-miterlimit: 10;
+    stroke: #ffffff;
+    fill: none;
+    animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 3px solid #ffffff;
+}
+
+.checkmark-stem {
+    stroke-dasharray: 48;
+    stroke-dashoffset: 48;
+    stroke-width: 3;
+    stroke-miterlimit: 10;
+    stroke: #ffffff;
+    fill: none;
+    animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    transform: translate(-50%, -50%);
+}
+
+.checkmark-stem::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 12px;
+    width: 4px;
+    height: 10px;
+    border: solid #ffffff;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+}
+
+.checkmark-kick {
+    stroke-dasharray: 48;
+    stroke-dashoffset: 48;
+    stroke-width: 3;
+    stroke-miterlimit: 10;
+    stroke: #ffffff;
+    fill: none;
+    animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    transform: translate(-50%, -50%);
+}
+
+.checkmark-kick::before {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 12px;
+    width: 8px;
+    height: 4px;
+    border: solid #ffffff;
+    border-width: 0 0 3px 3px;
+    transform: rotate(-45deg);
+}
+
+@keyframes stroke {
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes scale {
+    0%, 100% {
+        transform: none;
+    }
+    50% {
+        transform: scale3d(1.1, 1.1, 1);
+    }
+}
+
+@keyframes fill {
+    100% {
+        box-shadow: inset 0px 0px 0px 30px #ffffff;
+    }
+}
+
+.success-modal-header h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0;
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.success-modal-content {
+    padding: 30px;
+}
+
+.success-message {
+    background: linear-gradient(135deg, #e8f5e8 0%, #f0f9f0 100%);
+    border: 2px solid #4caf50;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.success-message p {
+    margin: 0;
+    font-size: 16px;
+    color: #2e7d32;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+.submission-details {
+    background: #f8f9fa;
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 25px;
+    border: 1px solid #e9ecef;
+}
+
+.submission-details h3 {
+    font-family: 'Orbitron', sans-serif;
+    color: #ff6600;
+    margin: 0 0 20px 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: #495057;
+    flex: 0 0 40%;
+}
+
+.detail-value {
+    color: #212529;
+    flex: 1;
+    text-align: right;
+    font-weight: 500;
+}
+
+.next-steps {
+    background: linear-gradient(135deg, #fff3e0 0%, #ffefd5 100%);
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 25px;
+    border: 1px solid #ffcc80;
+}
+
+.next-steps h3 {
+    font-family: 'Orbitron', sans-serif;
+    color: #e65100;
+    margin: 0 0 15px 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.next-steps ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.next-steps li {
+    padding: 8px 0;
+    color: #bf360c;
+    font-weight: 500;
+    position: relative;
+    padding-left: 10px;
+}
+
+.contact-info {
+    background: linear-gradient(135deg, #e3f2fd 0%, #f0f8ff 100%);
+    border-radius: 15px;
+    padding: 25px;
+    border: 1px solid #90caf9;
+}
+
+.contact-info h3 {
+    font-family: 'Orbitron', sans-serif;
+    color: #1565c0;
+    margin: 0 0 15px 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.contact-details {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+    color: #1976d2;
+}
+
+.contact-icon {
+    width: 20px;
+    text-align: center;
+}
+
+.success-modal-footer {
+    padding: 20px 30px 30px;
+    text-align: center;
+}
+
+.close-modal-btn {
+    background: linear-gradient(45deg, #ff6600, #ff8533);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 15px 40px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(255, 102, 0, 0.3);
+}
+
+.close-modal-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(255, 102, 0, 0.4);
+}
+
+.modal-close-x {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 2;
+}
+
+.modal-close-x:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+/* Responsive modal */
+@media (max-width: 768px) {
+    .success-modal {
+        width: 95%;
+        margin: 20px;
+    }
+    
+    .success-modal-header {
+        padding: 30px 20px 15px;
+    }
+    
+    .success-modal-header h2 {
+        font-size: 24px;
+    }
+    
+    .success-modal-content {
+        padding: 20px;
+    }
+    
+    .checkmark {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .checkmark-circle {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .detail-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+    
+    .detail-value {
+        text-align: left;
+    }
+    
+    .contact-details {
+        gap: 15px;
+    }
+}
+
+/* Form Validation Styles */
+.form-group.error input,
+.form-group.error select,
+.form-group.error textarea {
+    border-color: #dc3545;
+    box-shadow: 0 0 20px rgba(220, 53, 69, 0.2);
+    background: rgba(220, 53, 69, 0.05);
+}
+
+.error-message {
+    color: #dc3545;
+    font-size: 12px;
+    font-weight: 500;
+    margin-top: 5px;
+    padding-left: 10px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.error-message::before {
+    content: "⚠️";
+    font-size: 10px;
+}
+
+/* Error Modal */
+.error-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    animation: modalFadeIn 0.3s ease;
+}
+
+.error-modal {
+    background: linear-gradient(135deg, #ffffff 0%, #fefefe 100%);
+    border-radius: 20px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.2),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+    animation: modalSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.error-modal-header {
+    text-align: center;
+    padding: 40px 30px 20px;
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    border-radius: 20px 20px 0 0;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.error-modal-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="errorGrain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="15" cy="15" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="35" cy="25" r="0.5" fill="rgba(255,255,255,0.1)"/><circle cx="65" cy="35" r="1.5" fill="rgba(255,255,255,0.05)"/><circle cx="85" cy="45" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23errorGrain)"/></svg>');
+    opacity: 0.3;
+}
+
+.error-icon {
+    position: relative;
+    z-index: 1;
+    margin-bottom: 20px;
+}
+
+.exclamation-mark {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: inline-block;
+    position: relative;
+    margin: 0 auto;
+    border: 3px solid #ffffff;
+    animation: errorPulse 2s infinite;
+}
+
+@keyframes errorPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.exclamation-circle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 3px solid #ffffff;
+    animation: drawCircle 0.6s ease-out forwards;
+}
+
+.exclamation-line {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 4px;
+    height: 30px;
+    background: #ffffff;
+    transform: translate(-50%, -70%);
+    border-radius: 2px;
+    opacity: 0;
+    animation: drawLine 0.3s ease-out 0.6s forwards;
+}
+
+.exclamation-dot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 6px;
+    height: 6px;
+    background: #ffffff;
+    border-radius: 50%;
+    transform: translate(-50%, 30%);
+    opacity: 0;
+    animation: drawDot 0.3s ease-out 0.9s forwards;
+}
+
+@keyframes drawCircle {
+    from { stroke-dasharray: 0, 300; }
+    to { stroke-dasharray: 300, 0; }
+}
+
+@keyframes drawLine {
+    from { opacity: 0; transform: translate(-50%, -70%) scaleY(0); }
+    to { opacity: 1; transform: translate(-50%, -70%) scaleY(1); }
+}
+
+@keyframes drawDot {
+    from { opacity: 0; transform: translate(-50%, 30%) scale(0); }
+    to { opacity: 1; transform: translate(-50%, 30%) scale(1); }
+}
+
+.error-modal-header h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    margin: 0;
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.error-modal-content {
+    padding: 30px;
+}
+
+.error-message {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    border: 2px solid #dc3545;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.error-message p {
+    margin: 0;
+    font-size: 16px;
+    color: #721c24;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+.error-list {
+    background: #fff5f5;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 25px;
+    border: 1px solid #fed7d7;
+}
+
+.error-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid #fed7d7;
+}
+
+.error-item:last-child {
+    border-bottom: none;
+}
+
+.error-bullet {
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.error-text {
+    color: #c53030;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.error-note {
+    background: linear-gradient(135deg, #e6f3ff 0%, #f0f8ff 100%);
+    border-radius: 15px;
+    padding: 15px;
+    border: 1px solid #bee5eb;
+}
+
+.error-note p {
+    margin: 0;
+    font-size: 13px;
+    color: #0c5460;
+    font-style: italic;
+}
+
+.error-modal-footer {
+    padding: 20px 30px 30px;
+    text-align: center;
+}
+
+.fix-errors-btn {
+    background: linear-gradient(45deg, #dc3545, #c82333);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 15px 40px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(220, 53, 69, 0.3);
+}
+
+.fix-errors-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
+}
+
+/* Responsive error modal */
+@media (max-width: 768px) {
+    .error-modal {
+        width: 95%;
+        margin: 20px;
+    }
+    
+    .error-modal-header {
+        padding: 30px 20px 15px;
+    }
+    
+    .error-modal-header h2 {
+        font-size: 22px;
+    }
+    
+    .error-modal-content {
+        padding: 20px;
+    }
+    
+    .exclamation-mark {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .exclamation-circle {
+        width: 60px;
+        height: 60px;
+    }
 }
 
 /* Expression Indicator */

@@ -4,6 +4,7 @@ import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { LoginDTO } from '../../dtos/login.dto';
 import { TokenService } from '../../services/token.service';
+import { UserStateService } from '../../services/user-state.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -40,6 +41,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
         private route: ActivatedRoute,
         private userService: UserService,
         private tokenService: TokenService,
+        private userStateService: UserStateService,
         private ngZone: NgZone,
         private titleService: Title // Inject Title service
     ) { }
@@ -103,6 +105,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
     private clearExistingUserData() {
         localStorage.removeItem('user');
         localStorage.removeItem('jwt_token');
+        this.userStateService.clearUser();
         console.log('Cleared existing user data on login page');
     }
 
@@ -165,6 +168,10 @@ export class LoginComponent implements OnInit, AfterViewInit {
 
         this.userService.saveUserData(response);
         console.log('User data and token saved via UserService.saveUserData');
+
+        // SYNC UserStateService after login success - THIS IS THE FIX!
+        this.userStateService.loadUserFromStorage();
+        console.log('UserStateService synced after login');
 
         const userData = this.userService.getUserData();
         let redirectToUrl: string;

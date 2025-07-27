@@ -7,6 +7,7 @@ import { environment } from '../environments/environment';
 import { UpdateProfileDTO, UserProfileDTO, ProfileResponseDTO, UpdateUserDTO } from '../dtos/profile.dto'; 
 import { UserDTO } from '../dtos/user.dto'; 
 import { RegisterDTO } from '../dtos/register.dto';
+import { UserStateService } from './user-state.service';
 
 @Injectable({
   providedIn: 'root'
@@ -33,7 +34,8 @@ export class UserService {
 
   constructor(
     private http: HttpClient,
-    private httpUtilService: HttpUtilService
+    private httpUtilService: HttpUtilService,
+    private userStateService: UserStateService
   ) {
     this._isLoggedIn.next(this.hasToken());
     this._currentUserData.next(this.getUserData());
@@ -270,6 +272,12 @@ export class UserService {
       localStorage.setItem('user', JSON.stringify(userData));
       this._isLoggedIn.next(true); 
       this._currentUserData.next(userData); 
+      
+      // SYNC with UserStateService
+      setTimeout(() => {
+        this.userStateService.refreshUserState();
+      }, 100);
+      
       console.log('UserData saved and BehaviorSubjects updated:', userData);
     } catch (error) {
       console.error("❌ Lỗi toàn bộ quá trình phân tích token và lưu dữ liệu người dùng:", error);
@@ -293,6 +301,10 @@ export class UserService {
     localStorage.removeItem('jwt_token');
     this._isLoggedIn.next(false);
     this._currentUserData.next(null); 
+    
+    // SYNC with UserStateService
+    this.userStateService.clearUser();
+    
     console.log('User data and token cleared from localStorage. BehaviorSubjects updated.');
   }
 
@@ -303,6 +315,12 @@ export class UserService {
       localStorage.setItem('user', JSON.stringify(updatedData));
       this._isLoggedIn.next(true); 
       this._currentUserData.next(updatedData); 
+      
+      // SYNC with UserStateService
+      setTimeout(() => {
+        this.userStateService.refreshUserState();
+      }, 100);
+      
       console.log('User data in localStorage updated via updateUserInLocalStorage:', updatedData);
     }
   }

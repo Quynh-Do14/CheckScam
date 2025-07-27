@@ -1,8 +1,11 @@
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 import { HeaderComponent } from "../header/header.component";
 import { ChatBoxComponent } from "../chat-box/chat-box.component";
+import { PartnershipService, PartnershipRequest } from '../../services/partnership.service';
 
 
 declare var THREE: any;
@@ -11,17 +14,23 @@ declare var gsap: any;
 @Component({
   selector: 'app-partners',
   standalone: true,
-  imports: [CommonModule, RouterModule, HeaderComponent, ChatBoxComponent],
+  imports: [CommonModule, RouterModule, HttpClientModule, FormsModule, HeaderComponent, ChatBoxComponent],
   templateUrl: './partners.component.html',
-  styleUrl: './partners.component.scss'
+  styleUrl: './partners.component.scss',
+  providers: [PartnershipService]
 })
 export class PartnersComponent implements OnInit, AfterViewInit, OnDestroy {
   private ai6Robot: any;
   private particleBackground: any;
   private scrollAnimations: any;
   showChatbox: boolean | undefined;
+  isSubmitting: boolean = false;
+  showSuccessModal: boolean = false;
+  submissionData: any = null;
+  formErrors: { [key: string]: string } = {};
+  showErrorModal: boolean = false;
 
-  constructor() {}
+  constructor(private partnershipService: PartnershipService) {}
 
   ngOnInit(): void {}
 
@@ -800,19 +809,90 @@ export class PartnersComponent implements OnInit, AfterViewInit, OnDestroy {
   onContactFormSubmit(event: Event): void {
     event.preventDefault();
     
+    if (this.isSubmitting) {
+      return;
+    }
+    
     const form = event.target as HTMLFormElement;
     const formData = new FormData(form);
     
-    console.log('Đề xuất hợp tác đã được gửi:', {
-      name: formData.get('name'),
-      email: formData.get('email'),
-      organization: formData.get('organization'),
-      package: formData.get('package'),
-      message: formData.get('message')
+    // Validate form
+    const name = formData.get('name') as string;
+    const email = formData.get('email') as string;
+    const organization = formData.get('organization') as string;
+    const packageType = formData.get('package') as string;
+    const message = formData.get('message') as string;
+    
+    // Clear previous errors
+    this.formErrors = {};
+    
+    // Validate required fields
+    if (!name?.trim()) {
+      this.formErrors['name'] = 'Vui lòng nhập họ tên đầy đủ';
+    }
+    
+    if (!email?.trim()) {
+      this.formErrors['email'] = 'Vui lòng nhập email doanh nghiệp';
+    } else if (!this.isValidEmail(email)) {
+      this.formErrors['email'] = 'Email không hợp lệ';
+    }
+    
+    if (!organization?.trim()) {
+      this.formErrors['organization'] = 'Vui lòng nhập tên tổ chức';
+    }
+    
+    if (!packageType) {
+      this.formErrors['package'] = 'Vui lòng chọn gói hợp tác';
+    }
+    
+    // Check if there are any errors
+    if (Object.keys(this.formErrors).length > 0) {
+      this.showErrorModal = true;
+      this.scrollToFirstError();
+      return;
+    }
+    
+    // Extract phone number from form if added
+    const phoneMatch = message?.match(/((\\+84|0)[0-9]{9,10})/);
+    const phoneNumber = phoneMatch ? phoneMatch[0] : undefined;
+    
+    const partnershipRequest: PartnershipRequest = {
+      name: name.trim(),
+      email: email.trim(),
+      organization: organization.trim(),
+      packageType: packageType,
+      phoneNumber: phoneNumber,
+      message: message?.trim()
+    };
+    
+    this.isSubmitting = true;
+    
+    // Gửi đăng ký hợp tác
+    this.partnershipService.registerPartnership(partnershipRequest).subscribe({
+      next: (response) => {
+        this.isSubmitting = false;
+        // Kiểm tra status của HTTP response
+        if (response.status === 'CREATED' || response.status === 'OK') {
+          form.reset();
+          this.submissionData = {
+            message: response.message,
+            data: response.data,
+            organization: partnershipRequest.organization,
+            packageType: partnershipRequest.packageType,
+            email: partnershipRequest.email
+          };
+          this.showSuccessModal = true;
+          this.showSuccessMessage();
+        } else {
+          alert(response.message || 'Có lỗi xảy ra. Vui lòng thử lại!');
+        }
+      },
+      error: (error) => {
+        this.isSubmitting = false;
+        console.error('Error submitting partnership:', error);
+        alert(error.error?.message || 'Có lỗi xảy ra khi gửi đề xuất. Vui lòng thử lại sau hoặc liên hệ trực tiếp qua email!');
+      }
     });
-
-    // Show success message with animation
-    this.showSuccessMessage();
   }
 
   private showSuccessMessage(): void {
@@ -821,11 +901,6 @@ export class PartnersComponent implements OnInit, AfterViewInit, OnDestroy {
       this.ai6Robot.changeExpression('happy');
       this.ai6Robot.createFireworks();
     }
-
-    // Show success alert
-    setTimeout(() => {
-      alert('Đề xuất hợp tác đã được gửi! Chúng tôi sẽ sớm liên hệ để cùng săn tội phạm! 🤖⚔️');
-    }, 1000);
   }
 
   /* ===== Chat ===== */
@@ -837,6 +912,47 @@ export class PartnersComponent implements OnInit, AfterViewInit, OnDestroy {
   closeChatbox(): void {
     debugger
     this.showChatbox = false;
+  }
+
+  closeSuccessModal(): void {
+    this.showSuccessModal = false;
+    this.submissionData = null;
+  }
+
+  getPackageDisplayName(packageType: string): string {
+    const packageNames: { [key: string]: string } = {
+      'basic': 'Hợp Tác Cơ Bản (< 10M VND)',
+      'companion': 'Hợp Tác Đồng Hành (10-20M VND)',
+      'collaboration': 'Hợp Tác Thân Thiệt (20-40M VND)',
+      'strategic': 'Hợp Tác Chiến Lược (40-80M VND)',
+      'gold': 'Hợp Tác Vàng (> 80M VND)'
+    };
+    return packageNames[packageType] || packageType;
+  }
+
+  closeErrorModal(): void {
+    this.showErrorModal = false;
+    this.formErrors = {};
+  }
+
+  private isValidEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
+  private scrollToFirstError(): void {
+    setTimeout(() => {
+      const firstErrorField = Object.keys(this.formErrors)[0];
+      const element = document.getElementById(firstErrorField);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        element.focus();
+      }
+    }, 100);
+  }
+
+  getErrorsArray(): string[] {
+    return Object.values(this.formErrors);
   }
 }
 

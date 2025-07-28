@@ -1,11 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { HttpUtilService } from './http.util.service';
-import { BehaviorSubject, Observable, tap, catchError, of } from 'rxjs'; 
+import { BehaviorSubject, Observable, tap, catchError, of } from 'rxjs';
 import { LoginDTO } from '../dtos/login.dto';
 import { environment } from '../environments/environment';
-import { UpdateProfileDTO, UserProfileDTO, ProfileResponseDTO, UpdateUserDTO } from '../dtos/profile.dto'; 
-import { UserDTO } from '../dtos/user.dto'; 
+import { UpdateProfileDTO, UserProfileDTO, ProfileResponseDTO, UpdateUserDTO } from '../dtos/profile.dto';
+import { UserDTO } from '../dtos/user.dto';
 import { RegisterDTO } from '../dtos/register.dto';
 import { UserStateService } from './user-state.service';
 
@@ -29,7 +29,7 @@ export class UserService {
   private _isLoggedIn = new BehaviorSubject<boolean>(this.hasToken());
   authStatus$: Observable<boolean> = this._isLoggedIn.asObservable();
 
-  private _currentUserData = new BehaviorSubject<any>(this.getUserData()); 
+  private _currentUserData = new BehaviorSubject<any>(this.getUserData());
   currentUserData$: Observable<any> = this._currentUserData.asObservable();
 
   constructor(
@@ -57,16 +57,16 @@ export class UserService {
     return !!localStorage.getItem('jwt_token');
   }
 
-  login(loginDTO: LoginDTO): Observable<any> {    
+  login(loginDTO: LoginDTO): Observable<any> {
     return this.http.post(this.apiLogin, loginDTO, this.getApiConfig()).pipe(
-      tap(response => this.saveUserData(response)), 
+      tap(response => this.saveUserData(response)),
       catchError(error => {
-        this.clearUserData(); 
+        this.clearUserData();
         throw error;
       })
     );
-  }  
-  
+  }
+
   register(registerDTO: RegisterDTO): Observable<any> {
     console.log('Attempting to register user:', registerDTO.email);
     return this.http.post(this.apiRegister, registerDTO, {
@@ -79,11 +79,11 @@ export class UserService {
 
   logout(): Observable<void> {
     return this.http.post<void>(this.apiLogout, {}, this.getApiConfig()).pipe(
-      tap(() => this.clearUserData()), 
+      tap(() => this.clearUserData()),
       catchError(error => {
         console.error('Logout API failed, but clearing local data:', error);
-        this.clearUserData(); 
-        return of(null as any); 
+        this.clearUserData();
+        return of(null as any);
       })
     );
   }
@@ -109,38 +109,38 @@ export class UserService {
     const formData = new FormData();
     if (userData.name !== undefined && userData.name !== null) formData.append('name', userData.name);
     if (userData.email !== undefined && userData.email !== null) formData.append('email', userData.email);
-    if (userData.password) formData.append('password', userData.password); 
+    if (userData.password) formData.append('password', userData.password);
     if (userData.description !== undefined && userData.description !== null) formData.append('description', userData.description);
     if (userData.avatar) formData.append('avatar', userData.avatar);
-    
+
     console.log(`Sending update for user ${userId} via FormData (updateUserInfo)`);
     return this.http.put(`${this.apiUpdateUserEndpoint}/${userId}`, formData, this.getApiConfigForFormData());
   }
-  
+
   getCurrentUser(): Observable<any> {
     const token = localStorage.getItem('jwt_token');
-    const userData = this.getUserData(); 
-    
+    const userData = this.getUserData();
+
     if (!token) {
-      this.clearUserData(); 
+      this.clearUserData();
       throw new Error('No JWT token found');
     }
-    
-    if (!userData || !userData.id || userData.id <= 0) { 
-      this.clearUserData(); 
+
+    if (!userData || !userData.id || userData.id <= 0) {
+      this.clearUserData();
       throw new Error('No user data or user ID found in localStorage');
     }
-    
+
     return this.getCurrentUserById(userData.id);
   }
-  
+
   debugJWTStructure(): void {
     const token = localStorage.getItem('jwt_token');
     if (!token) {
       console.log('❌ No JWT token found for debugging');
       return;
     }
-    
+
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
       const extractedId = this.extractUserIdFromJWT(payload);
@@ -150,36 +150,36 @@ export class UserService {
           email: payload?.email,
           picture: payload?.picture
       });
-      
+
     } catch (error) {
       console.error('❌ Error parsing JWT for debug:', error);
     }
   }
-  
+
   private extractUserIdFromJWT(payload: any): number | null {
     const possibleIds = [
-      payload?.checkscam?.principal?.id, 
-      payload?.CheckScam?.principal?.id, 
+      payload?.checkscam?.principal?.id,
+      payload?.CheckScam?.principal?.id,
       payload?.id,
       payload?.userId,
       payload?.user_id,
-      (typeof payload?.sub === 'string' && !isNaN(parseInt(payload.sub))) ? parseInt(payload.sub) : null 
+      (typeof payload?.sub === 'string' && !isNaN(parseInt(payload.sub))) ? parseInt(payload.sub) : null
     ];
-    
+
     console.log('🔍 Trying to extract user ID from JWT payload:', payload);
     console.log('🔍 Possible IDs found:', possibleIds);
-    
+
     for (const id of possibleIds) {
-      if (id !== null && !isNaN(id) && id > 0) { 
+      if (id !== null && !isNaN(id) && id > 0) {
         console.log('✅ Found valid user ID:', id);
         return parseInt(id.toString());
       }
     }
-    
+
     console.log('❌ No valid user ID found in JWT payload');
     return null;
   }
-  
+
   getCurrentUserById(userId: number): Observable<any> {
     return this.http.get(`${environment.apiBaseUrl}/users/${userId}`, this.getApiConfig());
   }
@@ -208,9 +208,9 @@ export class UserService {
         'Accept-Language': 'vi'
       }
     }).pipe(
-      tap(response => this.saveUserData(response)), 
+      tap(response => this.saveUserData(response)),
       catchError(error => {
-        this.clearUserData(); 
+        this.clearUserData();
         throw error;
       })
     );
@@ -219,7 +219,7 @@ export class UserService {
   saveUserData(response: any): void {
     try {
       const rawToken = typeof response === 'string' ? response : response?.token || response?.access_token;
-      
+
       if (!rawToken || typeof rawToken !== 'string') {
         console.warn("Không nhận được token hợp lệ để lưu. Xóa dữ liệu.");
         this.clearUserData();
@@ -236,10 +236,10 @@ export class UserService {
             console.warn("Raw token không phải định dạng JWT. Không thể phân tích payload.");
         }
       } catch (e) {
-        console.error("Lỗi khi phân tích JWT payload:", e); 
+        console.error("Lỗi khi phân tích JWT payload:", e);
       }
-      
-      let roles = response?.roles || payload?.roles || payload?.authorities || []; 
+
+      let roles = response?.roles || payload?.roles || payload?.authorities || [];
       if (Array.isArray(roles)) {
         roles = roles.map(role => {
           if (typeof role === 'object' && role.role) {
@@ -254,30 +254,30 @@ export class UserService {
           roles = [];
       }
 
-      const userId = response?.user?.id || response?.id || this.extractUserIdFromJWT(payload); 
-      
+      const userId = response?.user?.id || response?.id || this.extractUserIdFromJWT(payload);
+
       const userName = response?.user?.name || response?.name || payload?.name || payload?.checkscam?.principal?.username || payload?.CheckScam?.principal?.username || payload?.username || payload?.sub;
-      const userEmail = response?.user?.email || response?.email || payload?.email || payload?.sub; 
-      const userAvatar = response?.user?.avatar || response?.avatar || response?.picture || payload?.picture || payload?.checkscam?.principal?.avatar || payload?.CheckScam?.principal?.avatar; 
+      const userEmail = response?.user?.email || response?.email || payload?.email || payload?.sub;
+      const userAvatar = response?.user?.avatar || response?.avatar || response?.picture || payload?.picture || payload?.checkscam?.principal?.avatar || payload?.CheckScam?.principal?.avatar;
 
       const userData = {
         id: userId || 0,
         name: userName,
         email: userEmail,
         role: roles,
-        avatar: userAvatar, 
-        description: undefined 
+        avatar: userAvatar,
+        description: undefined
       };
 
       localStorage.setItem('user', JSON.stringify(userData));
-      this._isLoggedIn.next(true); 
-      this._currentUserData.next(userData); 
-      
+      this._isLoggedIn.next(true);
+      this._currentUserData.next(userData);
+
       // SYNC with UserStateService
       setTimeout(() => {
         this.userStateService.refreshUserState();
       }, 100);
-      
+
       console.log('UserData saved and BehaviorSubjects updated:', userData);
     } catch (error) {
       console.error("❌ Lỗi toàn bộ quá trình phân tích token và lưu dữ liệu người dùng:", error);
@@ -285,10 +285,10 @@ export class UserService {
     }
   }
 
-  getUserData(): any { 
+  getUserData(): any {
     const userData = localStorage.getItem('user');
     const parsedData = userData ? JSON.parse(userData) : null;
-    console.log('User data read from localStorage:', parsedData); 
+    console.log('User data read from localStorage:', parsedData);
     return parsedData;
   }
 
@@ -300,10 +300,10 @@ export class UserService {
     localStorage.removeItem('user');
     localStorage.removeItem('jwt_token');
     this._isLoggedIn.next(false);
-    this._currentUserData.next(null); 
-    
+    this._currentUserData.next(null);
+
     this.userStateService.clearUser();
-    
+
     console.log('User data and token cleared from localStorage. BehaviorSubjects updated.');
   }
 
@@ -312,20 +312,20 @@ export class UserService {
     if (existingUserData) {
       const updatedData = { ...existingUserData, ...userData };
       localStorage.setItem('user', JSON.stringify(updatedData));
-      this._isLoggedIn.next(true); 
-      this._currentUserData.next(updatedData); 
-      
+      this._isLoggedIn.next(true);
+      this._currentUserData.next(updatedData);
+
       // SYNC with UserStateService
       setTimeout(() => {
         this.userStateService.refreshUserState();
       }, 100);
-      
+
       console.log('User data in localStorage updated via updateUserInLocalStorage:', updatedData);
     }
   }
 
   requestPasswordReset(email: string): Observable<any> {
-    return this.http.post(`${this.apiForgotPassword}`, { email });
+    return this.http.post(`${this.apiForgotPassword}`, { email }, { responseType: 'text' });
   }
 
   resetPassword(token: string, newPassword: string): Observable<any> {

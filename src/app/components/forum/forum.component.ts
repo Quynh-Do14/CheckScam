@@ -357,7 +357,7 @@ export class ForumComponent implements OnInit, OnDestroy {
   }
 
   getTimeAgo(date: Date | string | null): string {
-    if (!date) return 'Không rõ';
+    if (!date) return '';
     
     const now = new Date();
     const targetDate = typeof date === 'string' ? new Date(date) : date;
@@ -452,5 +452,36 @@ export class ForumComponent implements OnInit, OnDestroy {
     // Build full URL with environment.apiUrl
     const cleanPath = imageUrl.startsWith('/') ? imageUrl.substring(1) : imageUrl;
     return `${environment.apiUrl}/${cleanPath}`;
+  }
+
+  // Format post content with line breaks and links
+  formatPostContent(content: string): string {
+    if (!content) return '';
+    
+    // Convert line breaks to <br>
+    let formatted = content.replace(/\n/g, '<br>');
+    
+    // Convert URLs to links (basic implementation)
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    formatted = formatted.replace(urlRegex, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+    
+    // Truncate if too long (for preview)
+    if (formatted.length > 300) {
+      formatted = formatted.substring(0, 300) + '... <span class="read-more">Đọc thêm</span>';
+    }
+    
+    return formatted;
+  }
+
+  // Get post type label
+  getPostTypeLabel(postType: string): string {
+    const labels: {[key: string]: string} = {
+      'news': 'Tin tức',
+      'warning': 'Cảnh báo',
+      'tip': 'Mẹo hay',
+      'question': 'Hỏi đáp',
+      'discussion': 'Thảo luận'
+    };
+    return labels[postType] || 'Thảo luận';
   }
 }

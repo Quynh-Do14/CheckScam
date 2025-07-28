@@ -38,6 +38,8 @@ export interface ForumCommentDto {
   authorName: string;
   authorEmail: string;
   authorAvatarUrl?: string;
+  parentCommentId?: string | null;
+  replies?: ForumCommentDto[];
   createdAt: Date;
   updatedAt: Date;
   likesCount: number;
@@ -47,6 +49,7 @@ export interface ForumCommentDto {
 export interface CreateForumCommentDto {
   postId: string;
   content: string;
+  parentCommentId?: string | null;
 }
 
 export interface ForumLikeDto {

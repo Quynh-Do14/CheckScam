@@ -19,6 +19,7 @@
         <div class="user-profile-mobile">
           <img class="avatar-img-mobile" [src]="userAvatarUrl" (error)="onImageError($event)" alt="User Avatar">
           <span class="user-email-mobile">{{ userEmail }}</span>
+          <a routerLink="/user/profile" class="profile-link-mobile" (click)="onNavLinkClick()">Trang cá nhân</a>
           <a *ngIf="isAdminOrCollab" routerLink="/admin" class="admin-link-mobile" (click)="onNavLinkClick()">Trang quản trị</a>
           <a (click)="logout(); onNavLinkClick()">Đăng xuất</a>
         </div>
@@ -39,6 +40,7 @@
           <i class="bi bi-chevron-down dropdown-arrow" [class.open]="isProfileDropdownOpen"></i>
         </div>
         <div class="profile-dropdown" [class.open]="isProfileDropdownOpen">
+          <a routerLink="/user/profile" (click)="onNavLinkClick()">Trang cá nhân</a>
           <a *ngIf="isAdminOrCollab" routerLink="/admin" (click)="onNavLinkClick()">Trang quản trị</a>
           <a (click)="logout()">Đăng xuất</a>
         </div>

@@ -221,6 +221,30 @@
   align-items: center;
   gap: -2px;
 
+  .reaction-emoji {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    margin-left: -2px;
+    border: 2px solid white;
+    background: white;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+    
+    &:hover {
+      transform: scale(1.2);
+      z-index: 1;
+    }
+    
+    &:first-child {
+      margin-left: 0;
+    }
+  }
+
   .reaction-icon {
     width: 18px;
     height: 18px;
@@ -278,20 +302,52 @@
   justify-content: center;
   gap: 8px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
   border-radius: 6px;
   margin: 4px;
+  position: relative;
 
   &:hover {
     background: #f2f3f4;
+    transform: translateY(-1px);
   }
 
   &.active {
     color: #1877f2;
   }
 
+  &.like-action {
+    &.active {
+      color: #e91e63;
+      
+      .reaction-icon.liked {
+        color: #e91e63;
+        animation: likeAnimation 0.4s ease;
+      }
+    }
+  }
+
   i {
     font-size: 20px;
+    transition: all 0.2s ease;
+  }
+
+  .reaction-icon {
+    &.liked {
+      color: #e91e63;
+    }
+  }
+}
+
+@keyframes likeAnimation {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.3);
+  }
+  100% {
+    transform: scale(1);
   }
 }
 
@@ -475,19 +531,22 @@
   .comment-input-wrapper {
     flex: 1;
     position: relative;
+    display: flex;
+    align-items: stretch;
   }
 
   .comment-input {
     width: 100%;
     border: 1px solid #e4e6ea;
     border-radius: 20px;
-    padding: 8px 48px 8px 12px;
+    padding: 8px 120px 8px 12px;
     font-size: 15px;
     line-height: 1.3;
     resize: none;
     outline: none;
     background: #f0f2f5;
     transition: border-color 0.2s;
+    min-height: 36px;
 
     &:focus {
       border-color: #1877f2;
@@ -507,6 +566,7 @@
     display: flex;
     align-items: center;
     gap: 4px;
+    height: 100%;
 
     button {
       width: 28px;
@@ -520,15 +580,24 @@
       justify-content: center;
       cursor: pointer;
       transition: background-color 0.2s;
+      flex-shrink: 0;
 
       &:hover {
         background: #e4e6ea;
       }
 
       &.send-btn {
-        color: #1877f2;
+        background: #1877f2;
+        color: white;
+        border: none;
+        font-weight: 600;
+
+        &:hover:not(:disabled) {
+          background: #166fe5;
+        }
 
         &:disabled {
+          background: #e4e6ea;
           color: #bcc0c4;
           cursor: not-allowed;
         }
@@ -536,6 +605,14 @@
 
       i {
         font-size: 16px;
+      }
+      
+      &.always-visible {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        align-items: center !important;
+        justify-content: center !important;
       }
     }
   }
@@ -721,4 +798,189 @@
 
 .ms-1 {
   margin-left: 4px;
+}
+
+/* Reply Form */
+.reply-form {
+  margin-top: 12px;
+  margin-left: 20px;
+  
+  .reply-input-container {
+    background: #f0f2f5;
+    border-radius: 20px;
+    padding: 8px 12px;
+    
+    .reply-input {
+      width: 100%;
+      border: none;
+      background: transparent;
+      font-size: 14px;
+      line-height: 1.4;
+      resize: none;
+      outline: none;
+      font-family: inherit;
+      
+      &::placeholder {
+        color: #65676b;
+      }
+    }
+    
+    .reply-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 8px;
+      
+      .cancel-btn {
+        background: transparent;
+        border: none;
+        color: #65676b;
+        font-size: 13px;
+        padding: 4px 8px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        
+        &:hover {
+          background: #e4e6ea;
+        }
+      }
+      
+      .submit-btn {
+        background: #1877f2;
+        color: white;
+        border: none;
+        font-size: 13px;
+        font-weight: 600;
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        
+        &:hover:not(:disabled) {
+          background: #166fe5;
+        }
+        
+        &:disabled {
+          background: #e4e6ea;
+          color: #bcc0c4;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+}
+
+/* Nested Replies */
+.replies-list {
+  margin-left: 20px;
+  margin-top: 12px;
+  border-left: 2px solid #e4e6ea;
+  padding-left: 16px;
+}
+
+.reply-item {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  
+  .reply-avatar {
+    img {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    
+    .avatar-placeholder {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #bcc0c4;
+      
+      i {
+        font-size: 28px;
+      }
+    }
+  }
+  
+  .reply-content {
+    flex: 1;
+    
+    .reply-bubble {
+      background: #f0f2f5;
+      border-radius: 16px;
+      padding: 8px 12px;
+      display: inline-block;
+      max-width: 100%;
+      
+      .reply-author {
+        font-weight: 600;
+        font-size: 13px;
+        color: #050505;
+        margin: 0 0 2px 0;
+      }
+      
+      .reply-text {
+        font-size: 14px;
+        line-height: 1.4;
+        color: #050505;
+        margin: 0;
+        word-wrap: break-word;
+      }
+    }
+    
+    .reply-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 4px;
+      font-size: 13px;
+      
+      .reply-like-btn {
+        background: none;
+        border: none;
+        color: #65676b;
+        font-weight: 600;
+        cursor: pointer;
+        padding: 0;
+        transition: color 0.2s;
+        
+        &:hover {
+          text-decoration: underline;
+        }
+        
+        &.liked {
+          color: #1877f2;
+        }
+        
+        &:disabled {
+          color: #bcc0c4;
+          cursor: not-allowed;
+          
+          &:hover {
+            text-decoration: none;
+          }
+        }
+      }
+      
+      .reply-time {
+        color: #65676b;
+      }
+      
+      .reply-likes {
+        color: #65676b;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        
+        i {
+          font-size: 12px;
+          color: #1877f2;
+        }
+      }
+    }
+  }
 }

@@ -388,10 +388,30 @@
           <label for="partnerPhone">Số điện thoại:</label>
           <input type="tel" id="partnerPhone" [(ngModel)]="partnerForm.phone" name="partnerPhone" required>
         </div>
-        <button type="submit" class="submit-button">Gửi đăng ký</button>
+        <button type="submit" class="submit-button" [disabled]="isSubmittingCooperate">
+          <span *ngIf="!isSubmittingCooperate">Gửi đăng ký</span>
+          <span *ngIf="isSubmittingCooperate">Đang gửi...</span>
+        </button>
       </form>
     </div>
   </div>
+</div>
+
+<!-- Toast Notification -->
+<div class="toast-notification" 
+     [class.show]="showToast" 
+     [class.success]="toastType === 'success'"
+     [class.error]="toastType === 'error'"
+     [class.loading]="toastType === 'loading'">
+    <div class="toast-content">
+        <div class="toast-icon">
+            <div *ngIf="toastType === 'loading'" class="loading-spinner"></div>
+            <span *ngIf="toastType === 'success'">✅</span>
+            <span *ngIf="toastType === 'error'">❌</span>
+        </div>
+        <div class="toast-message">{{ toastMessage }}</div>
+        <button *ngIf="toastType !== 'loading'" class="toast-close" (click)="hideToast()">×</button>
+    </div>
 </div>
   
   <!-- Loading Overlay -->

@@ -52,15 +52,16 @@
         <div class="stats-left">
           <div class="reaction-summary" *ngIf="post.likesCount > 0">
             <div class="reaction-icons">
-              <span class="reaction-icon like-icon">👍</span>
-              <span class="reaction-icon heart-icon">❤️</span>
+              <span class="reaction-emoji">❤️</span>
+              <span class="reaction-emoji">👍</span>
+              <span class="reaction-emoji">😊</span>
             </div>
-            <span class="reaction-count">{{ post.likesCount }}</span>
+            <span class="reaction-count">{{ post.likesCount }} lượt thích</span>
           </div>
         </div>
         <div class="stats-right">
           <span class="comment-count" *ngIf="post.commentsCount > 0">
-            {{ post.commentsCount }} lượt chia sẻ
+            {{ post.commentsCount }} bình luận
           </span>
         </div>
       </div>
@@ -72,22 +73,22 @@
           [class.active]="post.isLiked"
           (click)="onLikePost()"
           [disabled]="!isLoggedIn">
-          <i class="bi bi-hand-thumbs-up"></i>
-          <span>Thích</span>
+          <i class="reaction-icon" [ngClass]="post.isLiked ? 'bi bi-heart-fill liked' : 'bi bi-heart'"></i>
+          <span>{{ post.isLiked ? 'Đã thích' : 'Thích' }}</span>
         </button>
         
-        <button class="action-btn comment-action">
-          <i class="bi bi-chat"></i>
+        <button class="action-btn comment-action" (click)="focusCommentInput()">
+          <i class="bi bi-chat-dots"></i>
           <span>Bình luận</span>
         </button>
         
         <button class="action-btn send-action">
-          <i class="bi bi-send"></i>
+          <i class="bi bi-arrow-up-right-circle"></i>
           <span>Gửi</span>
         </button>
         
         <button class="action-btn share-action">
-          <i class="bi bi-share"></i>
+          <i class="bi bi-share-fill"></i>
           <span>Chia sẻ</span>
         </button>
       </div>
@@ -121,11 +122,72 @@
                   [disabled]="!isLoggedIn">
                   Thích
                 </button>
-                <button class="comment-reply-btn">Phả hồi</button>
-                <span class="comment-time">{{ getTimeAgo(comment.createdAt) }}</span>
+                <button class="comment-reply-btn" (click)="onReplyComment(comment)" [disabled]="!isLoggedIn">Phản hồi</button>
+                <span class="comment-time" *ngIf="getTimeAgo(comment.createdAt)">{{ getTimeAgo(comment.createdAt) }}</span>
                 <span class="comment-likes" *ngIf="comment.likesCount > 0">
                   <i class="bi bi-hand-thumbs-up"></i> {{ comment.likesCount }}
                 </span>
+              </div>
+              
+              <!-- Reply Form -->
+              <div class="reply-form" *ngIf="replyingTo === comment.id && isLoggedIn">
+                <div class="reply-input-container">
+                  <textarea 
+                    [(ngModel)]="replyContent"
+                    placeholder="Viết phản hồi..."
+                    class="reply-input"
+                    rows="1"
+                    maxlength="1000"
+                    (keydown)="onReplyKeydown($event)">
+                  </textarea>
+                  <div class="reply-actions">
+                    <button class="cancel-btn" (click)="cancelReply()">Hủy</button>
+                    <button 
+                      class="submit-btn" 
+                      (click)="submitReply(comment)"
+                      [disabled]="!replyContent.trim() || submittingReply">
+                      <span *ngIf="!submittingReply">Phản hồi</span>
+                      <span *ngIf="submittingReply">
+                        <i class="bi bi-arrow-repeat spin"></i> Đang gửi...
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Nested Replies -->
+              <div class="replies-list" *ngIf="comment.replies && comment.replies.length > 0">
+                <div class="reply-item" *ngFor="let reply of comment.replies">
+                  <div class="reply-avatar">
+                    <img 
+                      [src]="reply.authorAvatarUrl" 
+                      [alt]="reply.authorName"
+                      *ngIf="reply.authorAvatarUrl"
+                      (error)="onImageError($event)">
+                    <div class="avatar-placeholder" *ngIf="!reply.authorAvatarUrl">
+                      <i class="bi bi-person-circle"></i>
+                    </div>
+                  </div>
+                  <div class="reply-content">
+                    <div class="reply-bubble">
+                      <h6 class="reply-author">{{ reply.authorName || getMaskedEmail(reply.authorEmail) }}</h6>
+                      <p class="reply-text">{{ reply.content }}</p>
+                    </div>
+                    <div class="reply-meta">
+                      <button 
+                        class="reply-like-btn"
+                        [class.liked]="reply.isLiked"
+                        (click)="onLikeComment(reply)"
+                        [disabled]="!isLoggedIn">
+                        Thích
+                      </button>
+                      <span class="reply-time" *ngIf="getTimeAgo(reply.createdAt)">{{ getTimeAgo(reply.createdAt) }}</span>
+                      <span class="reply-likes" *ngIf="reply.likesCount > 0">
+                        <i class="bi bi-hand-thumbs-up"></i> {{ reply.likesCount }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -180,12 +242,14 @@
                   <i class="bi bi-file-image"></i>
                 </button>
                 <button 
-                  class="send-btn"
+                  class="send-btn always-visible"
                   type="button"
                   (click)="onSubmitComment()"
-                  [disabled]="!newComment.content.trim() || submittingComment">
+                  [disabled]="!newComment.content.trim() || submittingComment"
+                  title="Gửi bình luận">
                   <i class="bi bi-send-fill" *ngIf="!submittingComment"></i>
                   <i class="bi bi-arrow-repeat spin" *ngIf="submittingComment"></i>
+                  <span class="sr-only">Gửi</span>
                 </button>
               </div>
             </div>

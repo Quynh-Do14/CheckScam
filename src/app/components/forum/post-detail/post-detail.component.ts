@@ -26,9 +26,12 @@ export class PostDetailComponent implements OnInit, OnDestroy {
   loading = false;
   commentsLoading = false;
   submittingComment = false;
+  submittingReply = false;
   error = '';
   isLoggedIn = false;
   currentUser: any = null;
+  replyingTo: string | null = null;
+  replyContent = '';
 
   private destroy$ = new Subject<void>();
 
@@ -173,12 +176,20 @@ export class PostDetailComponent implements OnInit, OnDestroy {
   }
 
   onSubmitComment() {
+    console.log('Submit comment clicked', {
+      isLoggedIn: this.isLoggedIn,
+      content: this.newComment.content,
+      contentTrim: this.newComment.content.trim(),
+      submittingComment: this.submittingComment
+    });
+
     if (!this.isLoggedIn) {
       alert('Vui lòng đăng nhập để bình luận');
       return;
     }
 
     if (!this.newComment.content.trim()) {
+      console.log('No content to submit');
       return;
     }
 
@@ -220,7 +231,7 @@ export class PostDetailComponent implements OnInit, OnDestroy {
   }
 
   getTimeAgo(date: Date | string | null): string {
-    if (!date) return 'Không rõ';
+    if (!date) return '';
     
     const now = new Date();
     const targetDate = typeof date === 'string' ? new Date(date) : date;
@@ -330,6 +341,95 @@ export class PostDetailComponent implements OnInit, OnDestroy {
   focusCommentInput() {
     if (this.commentTextarea) {
       this.commentTextarea.nativeElement.focus();
+    }
+  }
+
+  // Reply functionality
+  onReplyComment(comment: ForumCommentDto) {
+    if (!this.isLoggedIn) {
+      alert('Vui lòng đăng nhập để phản hồi bình luận');
+      return;
+    }
+
+    this.replyingTo = comment.id;
+    this.replyContent = '';
+    
+    // Focus on reply input after a short delay
+    setTimeout(() => {
+      const replyInput = document.querySelector('.reply-input') as HTMLTextAreaElement;
+      if (replyInput) {
+        replyInput.focus();
+      }
+    }, 100);
+  }
+
+  cancelReply() {
+    this.replyingTo = null;
+    this.replyContent = '';
+  }
+
+  submitReply(parentComment: ForumCommentDto) {
+    if (!this.isLoggedIn || !this.replyContent.trim()) {
+      return;
+    }
+
+    this.submittingReply = true;
+
+    const replyData: CreateForumCommentDto = {
+      postId: this.newComment.postId,
+      content: this.replyContent,
+      parentCommentId: parentComment.id
+    };
+
+    this.forumService.createComment(replyData)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          console.log('Create reply API response:', response);
+          
+          const reply = response.data;
+          
+          // Add reply to parent comment's replies array
+          if (!parentComment.replies) {
+            parentComment.replies = [];
+          }
+          parentComment.replies.push(reply);
+          
+          // Update post comment count
+          if (this.post) {
+            this.post.commentsCount++;
+          }
+          
+          // Reset reply form
+          this.replyingTo = null;
+          this.replyContent = '';
+          this.submittingReply = false;
+          
+          console.log('Reply added successfully:', reply);
+        },
+        error: (error) => {
+          console.error('Error creating reply:', error);
+          this.submittingReply = false;
+          alert('Không thể tạo phản hồi. Vui lòng thử lại.');
+        }
+      });
+  }
+
+  onReplyKeydown(event: KeyboardEvent) {
+    // Submit with Ctrl+Enter or Cmd+Enter
+    if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+      event.preventDefault();
+      if (this.replyingTo) {
+        const parentComment = this.comments.find(c => c.id === this.replyingTo);
+        if (parentComment) {
+          this.submitReply(parentComment);
+        }
+      }
+    }
+    
+    // Cancel with Escape
+    if (event.key === 'Escape') {
+      this.cancelReply();
     }
   }
 }

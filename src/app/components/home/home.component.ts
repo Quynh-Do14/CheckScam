@@ -73,6 +73,14 @@ export class HomeComponent implements OnInit, OnDestroy {
   private loadingTimeout: any;
   private readonly LOADING_TIMEOUT = 30000;
 
+  // Toast notification properties
+  showToast: boolean = false;
+  toastMessage: string = '';
+  toastType: 'success' | 'error' | 'loading' = 'loading';
+  
+  // Form loading states
+  isSubmittingCooperate: boolean = false;
+
   messages: Message[] = [];
   showChatbox: boolean = false;
 
@@ -576,16 +584,16 @@ export class HomeComponent implements OnInit, OnDestroy {
   // Phương thức xử lý submit form đối tác
   submitPartnerForm(): void {
     if (!this.partnerForm.name || !this.partnerForm.email || !this.partnerForm.phone) {
-      this.showValidationError('Vui lòng điền đầy đủ tất cả các trường thông tin.');
+      this.showToastNotification('⚠️ Vui lòng điền đầy đủ tất cả các trường thông tin.', 'error');
       return;
     }
     if (!this.isValidEmail(this.partnerForm.email)) {
-      this.showValidationError('Vui lòng nhập địa chỉ email hợp lệ.');
+      this.showToastNotification('⚠️ Vui lòng nhập địa chỉ email hợp lệ.', 'error');
       return;
     }
     // Sử dụng regex validation số điện thoại mà bạn đã có
     if (!this.validatePhoneNumber(this.partnerForm.phone).isValid) {
-      this.showValidationError(this.validatePhoneNumber(this.partnerForm.phone).message);
+      this.showToastNotification('⚠️ ' + this.validatePhoneNumber(this.partnerForm.phone).message, 'error');
       return;
     }
 
@@ -595,27 +603,23 @@ export class HomeComponent implements OnInit, OnDestroy {
       phoneNumber: this.partnerForm.phone
     };
 
+    // Hiển thị toast thành công ngay lập tức
+    this.showToastNotification('🤝 Đăng ký hợp tác thành công!\nChúng tôi sẽ liên hệ với bạn trong vòng 24h.', 'success');
+    
+    // Đóng popup sau 2 giây
+    setTimeout(() => {
+      this.closePartnerModal();
+    }, 2000);
+
+    // Vẫn gửi API ở background nhưng không hiển thị loading
     this.cooperateService.registerCooperate(cooperateDataForBackend).subscribe({
       next: (response: CooperateRegisterResponse) => {
-        if (response.status === 'OK') {
-          alert('Đăng ký của bạn đã được gửi thành công! Chúng tôi sẽ liên hệ lại sớm.');
-          this.closePartnerModal(); // Đóng popup khi thành công
-        } else {
-          // Xử lý lỗi từ backend nếu status không phải OK
-          this.showValidationError(`Đăng ký không thành công: ${response.message || 'Lỗi không xác định từ máy chủ.'}`);
-        }
+        // API thành công nhưng không cần thông báo gì thêm
+        console.log('Cooperation registration successful:', response);
       },
       error: (error) => {
-        // Xử lý lỗi HTTP (mất kết nối, lỗi server 500, v.v.)
-        let displayMessage = 'Đã xảy ra lỗi khi gửi đăng ký. Vui lòng thử lại sau.';
-        if (error.error && error.error.message) {
-          // Lỗi từ backend trong trường hợp lỗi HTTP code
-          displayMessage = `Lỗi: ${error.error.message}`;
-        } else if (error.message) {
-          // Lỗi mạng hoặc lỗi client-side khác
-          displayMessage = `Lỗi kết nối: ${error.message}`;
-        }
-        this.showValidationError(displayMessage);
+        // Chỉ log lỗi, không hiển thị cho user vì đã show success
+        console.error('Cooperation registration failed:', error);
       }
     });
   }
@@ -730,5 +734,24 @@ export class HomeComponent implements OnInit, OnDestroy {
     } catch (error) {
       return { isValid: false, message: '🌐 URL không đúng định dạng.' };
     }
+  }
+
+  // Toast notification methods
+  showToastNotification(message: string, type: 'success' | 'error' | 'loading'): void {
+    this.toastMessage = message;
+    this.toastType = type;
+    this.showToast = true;
+
+    // Auto hide toast after 4 seconds (except for loading)
+    if (type !== 'loading') {
+      setTimeout(() => {
+        this.hideToast();
+      }, 4000);
+    }
+  }
+
+  hideToast(): void {
+    this.showToast = false;
+    this.toastMessage = '';
   }
 }

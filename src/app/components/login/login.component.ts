@@ -1,4 +1,3 @@
-// login.component.ts
 import { Component, ViewChild, OnInit, AfterViewInit, NgZone } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
@@ -9,7 +8,7 @@ import { UserStateService } from '../../services/user-state.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { Title } from '@angular/platform-browser'; // Thêm import Title service
+import { Title } from '@angular/platform-browser';
 
 
 declare var google: any;
@@ -30,7 +29,9 @@ export class LoginComponent implements OnInit, AfterViewInit {
     @ViewChild('loginForm') loginForm!: NgForm;
     username = '';
     password = '';
-    showPassword: boolean = false; 
+    showPassword: boolean = false;
+    isLoading: boolean = false;
+
 
     showNotification: boolean = false;
     notificationMessage: string = '';
@@ -44,11 +45,11 @@ export class LoginComponent implements OnInit, AfterViewInit {
         private tokenService: TokenService,
         private userStateService: UserStateService,
         private ngZone: NgZone,
-        private titleService: Title // Inject Title service
+        private titleService: Title
     ) { }
 
     ngOnInit() {
-        this.titleService.setTitle('AI6 - Săn Người Xấu, Diệt Kẻ Gian'); // Đặt tiêu đề cho tab trình duyệt
+        this.titleService.setTitle('AI6 - Săn Người Xấu, Diệt Kẻ Gian');
         this.clearExistingUserData();
     }
 
@@ -116,6 +117,9 @@ export class LoginComponent implements OnInit, AfterViewInit {
             return;
         }
 
+        this.isLoading = true;
+        this.closeNotification();
+
         this.tokenService.clearToken();
         const loginDTO: LoginDTO = {
             username: this.username,
@@ -134,6 +138,8 @@ export class LoginComponent implements OnInit, AfterViewInit {
                 console.error('Login error:', error);
                 this.showAppNotification(error?.error?.message || 'Đăng nhập thất bại', 'error');
             }
+        }).add(() => {
+          this.isLoading = false;
         });
     }
 
@@ -145,6 +151,9 @@ export class LoginComponent implements OnInit, AfterViewInit {
         console.log('Google Credential Response:', response);
 
         if (response.credential) {
+            this.isLoading = true;
+            this.closeNotification();
+
             const idToken = response.credential;
             console.log('ID Token from Google:', idToken);
 
@@ -157,6 +166,8 @@ export class LoginComponent implements OnInit, AfterViewInit {
                     console.error('Error sending ID token to backend:', error);
                     this.showAppNotification('Đăng nhập với Google thất bại: ' + (error?.error?.message || 'Lỗi server.'), 'error');
                 }
+            }).add(() => {
+                this.isLoading = false;
             });
         } else {
             console.error('No credential found in Google Sign-In response.');
@@ -170,7 +181,6 @@ export class LoginComponent implements OnInit, AfterViewInit {
         this.userService.saveUserData(response);
         console.log('User data and token saved via UserService.saveUserData');
 
-        // SYNC UserStateService after login success - THIS IS THE FIX!
         this.userStateService.loadUserFromStorage();
         console.log('UserStateService synced after login');
 

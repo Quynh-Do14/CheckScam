@@ -1,14 +1,12 @@
-/* Import Google Fonts - Customize if needed for your brand */
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;600&display=swap');
 body {
-  // Đảm bảo không có margin/padding mặc định của body để container có thể tràn viền
   margin: 0;
   padding: 0;
   background-color: #f0f2f5; // Màu nền tổng thể cho trang
 }
 
 .privacy-policy-container {
-  width: 100%; // Đảm bảo container chiếm 100% chiều rộng
+  width: 100%; 
   min-height: 100vh; // Đảm bảo container chiếm toàn bộ chiều cao viewport
   padding: 80px 0; // Padding trên dưới lớn hơn
   background: linear-gradient(135deg, 

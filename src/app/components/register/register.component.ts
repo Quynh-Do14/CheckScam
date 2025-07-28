@@ -20,6 +20,7 @@ export class RegisterComponent implements OnInit {
   confirmPassword: string = '';
   errorMessage: string = '';
   successMessage: string = '';
+  isLoading: boolean = false; // Thêm biến isLoading
 
   constructor(
     private router: Router,
@@ -29,18 +30,20 @@ export class RegisterComponent implements OnInit {
   ngOnInit() { }
 
   register() {
-    this.errorMessage = ''; 
-    this.successMessage = ''; 
+    this.errorMessage = '';
+    this.successMessage = '';
 
     if (this.password !== this.confirmPassword) {
       this.errorMessage = 'Mật khẩu và xác nhận mật khẩu không khớp.';
-      return; 
+      return;
     }
 
     if (this.registerForm.invalid) {
       this.errorMessage = 'Vui lòng điền đầy đủ và chính xác các thông tin.';
-      return; 
+      return;
     }
+
+    this.isLoading = true; // Bắt đầu loading
 
     const registerDTO: RegisterDTO = {
       name: this.name,
@@ -53,7 +56,7 @@ export class RegisterComponent implements OnInit {
         this.successMessage = 'Đăng ký tài khoản thành công! Vui lòng xác minh email để kích hoạt tài khoản của bạn.';
         setTimeout(() => {
           this.router.navigate(['/login']);
-        }, 3000); 
+        }, 3000);
       },
       error: (error) => {
         console.error('Registration error:', error);
@@ -65,6 +68,8 @@ export class RegisterComponent implements OnInit {
           this.errorMessage = 'Đăng ký thất bại. Vui lòng thử lại.';
         }
       }
+    }).add(() => {
+      this.isLoading = false;
     });
   }
 }

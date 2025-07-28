@@ -262,22 +262,25 @@
             </p>
             
             <form id="contact-form" class="contact-form" (ngSubmit)="onContactFormSubmit($event)">
-                <div class="form-group">
+                <div class="form-group" [class.error]="formErrors['name']">
                     <input type="text" id="name" name="name" placeholder="Tên của bạn" required>
                     <label for="name">Họ Tên Đầy Đủ</label>
+                    <div class="error-message" *ngIf="formErrors['name']">{{ formErrors['name'] }}</div>
                 </div>
                 
-                <div class="form-group">
-                    <input type="email" id="email" name="email" placeholder="email.doanh-nghiep@cong-ty.com" required>
+                <div class="form-group" [class.error]="formErrors['email']">
+                    <input type="email" id="email" name="email" placeholder="email.doanh-nghiep&#64;cong-ty.com" required>
                     <label for="email">Email Doanh Nghiệp</label>
+                    <div class="error-message" *ngIf="formErrors['email']">{{ formErrors['email'] }}</div>
                 </div>
                 
-                <div class="form-group">
+                <div class="form-group" [class.error]="formErrors['organization']">
                     <input type="text" id="organization" name="organization" placeholder="Tên Công Ty Của Bạn" required>
                     <label for="organization">Tổ Chức</label>
+                    <div class="error-message" *ngIf="formErrors['organization']">{{ formErrors['organization'] }}</div>
                 </div>
                 
-                <div class="form-group">
+                <div class="form-group" [class.error]="formErrors['package']">
                     <select id="package" name="package" required>
                         <option value="">Chọn Gói Hợp Tác</option>
                         <option value="basic">Hợp Tác Cơ Bản (< 10M VND)</option>
@@ -287,6 +290,7 @@
                         <option value="gold">Hợp Tác Vàng (> 80M VND)</option>
                     </select>
                     <label for="package">Gói Mong Muốn</label>
+                    <div class="error-message" *ngIf="formErrors['package']">{{ formErrors['package'] }}</div>
                 </div>
                 
                 <div class="form-group">
@@ -294,8 +298,9 @@
                     <label for="message">Lời Nhắn</label>
                 </div>
                 
-                <button type="submit" class="cta-submit">
-                    Gửi Đề Xuất Hợp Tác
+                <button type="submit" class="cta-submit" [disabled]="isSubmitting">
+                    <span *ngIf="!isSubmitting">Gửi Đề Xuất Hợp Tác</span>
+                    <span *ngIf="isSubmitting">Đang gửi...</span>
                     <span class="button-glow"></span>
                 </button>
             </form>
@@ -334,4 +339,128 @@
         <p>&copy; 2025 AI6. Tất cả quyền được bảo lưu. Bảo vệ Việt Nam khỏi lừa đảo trực tuyến.</p>
     </div>
 <app-chat-box *ngIf="showChatbox" (close)="closeChatbox()"></app-chat-box>
+
+<!-- Success Modal -->
+<div class="success-modal-overlay" *ngIf="showSuccessModal" (click)="closeSuccessModal()">
+    <div class="success-modal" (click)="$event.stopPropagation()">
+        <div class="success-modal-header">
+            <div class="success-icon">
+                <div class="checkmark">
+                    <div class="checkmark-circle"></div>
+                    <div class="checkmark-stem"></div>
+                    <div class="checkmark-kick"></div>
+                </div>
+            </div>
+            <h2>Đăng Ký Hợp Tác Thành Công!</h2>
+        </div>
+        
+        <div class="success-modal-content">
+            <div class="success-message">
+                <p>{{ submissionData?.message }}</p>
+            </div>
+            
+            <div class="submission-details" *ngIf="submissionData">
+                <h3>Thông Tin Đăng Ký</h3>
+                <div class="detail-item">
+                    <span class="detail-label">Tổ chức:</span>
+                    <span class="detail-value">{{ submissionData.organization }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Gói hợp tác:</span>
+                    <span class="detail-value">{{ getPackageDisplayName(submissionData.packageType) }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Email liên hệ:</span>
+                    <span class="detail-value">{{ submissionData.email }}</span>
+                </div>
+                <div class="detail-item" *ngIf="submissionData.data?.registrationTime">
+                    <span class="detail-label">Thời gian đăng ký:</span>
+                    <span class="detail-value">{{ submissionData.data.registrationTime }}</span>
+                </div>
+            </div>
+            
+            <div class="next-steps">
+                <h3>🚀 Bước Tiếp Theo</h3>
+                <ul>
+                    <li>✅ Chúng tôi đã gửi email xác nhận đến địa chỉ của bạn</li>
+                    <li>📞 Đội ngũ AI6 sẽ liên hệ trong vòng 24-48 giờ làm việc</li>
+                    <li>📋 Chuẩn bị tài liệu cần thiết cho buổi thảo luận</li>
+                    <li>🤝 Thỏa thuận điều khoản và ký hợp đồng chính thức</li>
+                </ul>
+            </div>
+            
+            <div class="contact-info">
+                <h3>📞 Liên Hệ Khẩn Cấp</h3>
+                <div class="contact-details">
+                    <div class="contact-item">
+                        <span class="contact-icon">📧</span>
+                        <span>ai&#64;idai.vn</span>
+                    </div>
+                    <div class="contact-item">
+                        <span class="contact-icon">📱</span>
+                        <span>0973.454.140</span>
+                    </div>
+                    <div class="contact-item">
+                        <span class="contact-icon">🌐</span>
+                        <span>https://idai.vn</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="success-modal-footer">
+            <button class="close-modal-btn" (click)="closeSuccessModal()">
+                Đóng
+            </button>
+        </div>
+        
+        <button class="modal-close-x" (click)="closeSuccessModal()" aria-label="Close">
+            ×
+        </button>
+    </div>
+</div>
+
+<!-- Error Modal -->
+<div class="error-modal-overlay" *ngIf="showErrorModal" (click)="closeErrorModal()">
+    <div class="error-modal" (click)="$event.stopPropagation()">
+        <div class="error-modal-header">
+            <div class="error-icon">
+                <div class="exclamation-mark">
+                    <div class="exclamation-circle"></div>
+                    <div class="exclamation-line"></div>
+                    <div class="exclamation-dot"></div>
+                </div>
+            </div>
+            <h2>Thông Tin Chưa Đầy Đủ</h2>
+        </div>
+        
+        <div class="error-modal-content">
+            <div class="error-message">
+                <p>Vui lòng kiểm tra và điền đầy đủ các thông tin bắt buộc bên dưới:</p>
+            </div>
+            
+            <div class="error-list">
+                <div class="error-item" *ngFor="let error of getErrorsArray()">
+                    <span class="error-bullet">⚠️</span>
+                    <span class="error-text">{{ error }}</span>
+                </div>
+            </div>
+            
+            <div class="error-note">
+                <p><strong>Lưu ý:</strong> Tất cả thông tin sẽ được bảo mật và chỉ sử dụng cho mục đích liên hệ hợp tác.</p>
+            </div>
+        </div>
+        
+        <div class="error-modal-footer">
+            <button class="fix-errors-btn" (click)="closeErrorModal()">
+                Điền Thông Tin
+            </button>
+        </div>
+        
+        <button class="modal-close-x" (click)="closeErrorModal()" aria-label="Close">
+            ×
+        </button>
+    </div>
+</div>
+
 </footer>

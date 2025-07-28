@@ -241,9 +241,12 @@ export class ForumSimpleComponent implements OnInit {
     });
   }
 
-  getTimeAgo(date: Date): string {
+  getTimeAgo(date: Date | string | null): string {
+    if (!date) return 'Không rõ';
+    
     const now = new Date();
-    const diffInMs = now.getTime() - new Date(date).getTime();
+    const targetDate = typeof date === 'string' ? new Date(date) : date;
+    const diffInMs = now.getTime() - targetDate.getTime();
     const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
     const diffInHours = Math.floor(diffInMinutes / 60);
     const diffInDays = Math.floor(diffInHours / 24);

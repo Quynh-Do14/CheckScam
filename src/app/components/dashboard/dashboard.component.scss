@@ -1,10 +1,255 @@
+.dashboard-container {
+  padding: 2rem;
+  background-color: #f0f2f5;
+  min-height: calc(100vh - 56px); /* Giả sử có navbar cao 56px */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.dashboard-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 0.5rem;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+  background: linear-gradient(90deg, #f59e0b, #d97706);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.dashboard-subtitle {
+  font-size: 1.1rem;
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+/* Base Card Styles */
 .card {
   border: none;
-  .card-header {
-    background-color: #f8f9fc;
-    border-bottom: 1px solid #e3e6f0;
+  border-radius: 15px;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  background-color: #ffffff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
   }
+
+  .card-header {
+    background: linear-gradient(135deg, #f8f9fc, #e9ecef);
+    border-bottom: 1px solid #e3e6f0;
+    padding: 1.25rem 1.5rem;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
   .card-body {
+    padding: 1.5rem;
     background-color: #fff;
   }
+
+  .card-subtitle {
+    font-size: 0.9rem;
+    color: #888;
+    margin-top: 0.25rem;
+  }
+
+  h6.font-weight-bold {
+    font-size: 1.1rem;
+    font-weight: 700 !important;
+    color: #4a5568; /* Darker text for better contrast */
+  }
+}
+
+/* Chart Card Specifics */
+.chart-card {
+  .card-body.chart-body {
+    position: relative;
+    height: 350px; /* Tăng chiều cao biểu đồ */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  canvas {
+    width: 100% !important;
+    height: 100% !important;
+  }
+}
+
+/* Custom Select for Year */
+.custom-select {
+  border: 1px solid #ced4da;
+  border-radius: 10px;
+  padding: 0.4rem 1rem;
+  font-size: 0.9rem;
+  background-color: #f8f9fc;
+  color: #495057;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  
+
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23A0AEC0'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 15px center; /* Ví dụ: cách lề phải 15px */
+  background-size: 20px; /* Kích thước icon mũi tên */
+  padding-right: 45px; /* Tăng padding-right để nhường chỗ cho icon. (15px vị trí + 20px kích thước icon + 10px khoảng trống) */
+
+  &:focus {
+    border-color: #f59e0b;
+    box-shadow: 0 0 0 0.2rem rgba(245, 158, 11, 0.25);
+    outline: none;
+  }
+
+  option {
+    padding: 0.5rem;
+  }
+}
+
+/* Summary Cards */
+.summary-card {
+  border-left: 5px solid transparent;
+  .card-body {
+    padding: 1rem 1.25rem;
+  }
+  .text-xs {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    margin-bottom: 0.2rem;
+    letter-spacing: 0.5px;
+  }
+  .h5 {
+    font-size: 1.5rem;
+  }
+  .col-auto i {
+    font-size: 2.5rem; /* Increased icon size */
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+  }
+
+  &.shadow {
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08) !important;
+  }
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.12) !important;
+    .col-auto i {
+      opacity: 1;
+    }
+  }
+}
+
+.summary-card:nth-child(1) {
+  border-color: #38bdf8; /* Blue */
+  .text-primary { color: #38bdf8 !important; }
+  .text-primary-light { color: #90cdf4 !important; }
+}
+
+.summary-card:nth-child(2) {
+  border-color: #10b981; /* Green */
+  .text-success { color: #10b981 !important; }
+  .text-success-light { color: #6ee7b7 !important; }
+}
+
+.summary-card:nth-child(3) {
+  border-color: #6366f1; /* Indigo */
+  .text-info { color: #6366f1 !important; }
+  .text-info-light { color: #a5b4fc !important; }
+}
+
+/* Dynamic Info Card */
+.dynamic-info-card {
+  background: linear-gradient(45deg, #fef3c7, #fed7aa);
+  border: 1px solid #fcd34d;
+  color: #92400e;
+  padding: 1.5rem;
+  font-weight: 500;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(245, 158, 11, 0.2);
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: scale(1.01);
+    box-shadow: 0 10px 25px rgba(245, 158, 11, 0.3);
+  }
+}
+
+/* Chart.js Specific Overrides for Modern Look */
+/* This might require direct manipulation of Chart.js options for gradients */
+/* Example: setting a gradient background for bars/lines in TS */
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 1rem;
+  }
+  .dashboard-title {
+    font-size: 2rem;
+  }
+  .dashboard-subtitle {
+    font-size: 1rem;
+  }
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+  }
+  .custom-select {
+    width: 100% !important;
+    margin-top: 0.5rem;
+  }
+  .summary-card .h5 {
+    font-size: 1.3rem;
+  }
+  .summary-card .col-auto i {
+    font-size: 2rem;
+  }
+  .chart-card .card-body.chart-body {
+    height: 300px;
+  }
+}
+
+
+/* ======================================================= */
+/* Đẳng cấp, đẹp đẽ, lung linh và hiện đại Loading Overlay */
+/* ======================================================= */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* Nền mờ hơn */
+  backdrop-filter: blur(5px); /* Hiệu ứng làm mờ nền phía sau */
+  z-index: 9999; /* Đảm bảo nó nằm trên cùng */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  animation: fadeInOverlay 0.3s forwards; /* Hiệu ứng mờ dần khi xuất hiện */
+}
+
+@keyframes fadeInOverlay {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.loading-spinner {
+  width: 60px; /* Kích thước lớn hơn */
+  height: 60px;
+  border: 6px solid rgba(255, 255, 255, 0.2); /* Vòng ngoài mờ */
+  border-top: 6px solid #f59e0b; /* Phần xoay màu primary của bạn */
+  border-radius: 50%;
+  animation: spin 1s linear infinite; /* Tốc độ và kiểu xoay */
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.6), /* Đổ bóng lung linh */
+              0 0 30px rgba(245, 158, 11, 0.3);
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

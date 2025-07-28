@@ -6,7 +6,7 @@ import { environment } from '../environments/environment';
 
 export interface ReporterRanking {
   rank: number;
-  name: string;      // ✅ Thêm name field
+  name: string;      
   email: string;
   approvedReports: number;
   totalReports: number;

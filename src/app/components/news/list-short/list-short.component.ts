@@ -359,15 +359,6 @@ export class ListShortComponent implements OnInit, OnDestroy {
     
     // Thêm slideOffset cho drag effect
     translateX += this.slideOffset;
-    
-    console.log('Transform debug:', {
-      currentIndex: this.currentIndex,
-      totalShorts: this.shorts.length,
-      translateX,
-      containerWidth,
-      cardWidth: this.cardWidth
-    });
-    
     return `translateX(${translateX}px)`;
   }
 }

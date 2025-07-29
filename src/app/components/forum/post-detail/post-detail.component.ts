@@ -612,28 +612,28 @@ export class PostDetailComponent implements OnInit, OnDestroy {
   private createCommentNotification(post: ForumPostDto, comment: ForumCommentDto) {
     if (!this.currentUser || comment.isAnonymous) return;
 
-    // Create notification for post author
-    const notification = {
-      type: 'COMMENT' as const,
-      title: 'Bình luận mới',
-      message: `${this.currentUser.name || this.currentUser.username} đã bình luận về bài viết của bạn: "${comment.content.substring(0, 50)}${comment.content.length > 50 ? '...' : ''}"`,
-      actionUrl: `/forum/posts/${post.id}`,
-      actorName: this.currentUser.name || this.currentUser.username || 'Người dùng',
-      actorAvatar: this.currentUser.avatar
-    };
+    // // Create notification for post author
+    // const notification = {
+    //   type: 'COMMENT' as const,
+    //   title: 'Bình luận mới',
+    //   message: `${this.currentUser.name || this.currentUser.username} đã bình luận về bài viết của bạn: "${comment.content.substring(0, 50)}${comment.content.length > 50 ? '...' : ''}"`,
+    //   actionUrl: `/forum/posts/${post.id}`,
+    //   actorName: this.currentUser.name || this.currentUser.username || 'Người dùng',
+    //   actorAvatar: this.currentUser.avatar
+    // };
 
     // Show toast notification (in real app, this would be sent via WebSocket/SSE)
-    this.notificationService.showToastNotification({
-      id: Math.random().toString(36),
-      ...notification,
-      actorId: this.currentUser.id?.toString() || '',
-      targetType: 'POST',
-      targetId: post.id.toString(),
-      targetTitle: post.title,
-      targetContent: post.content.substring(0, 100),
-      isRead: false,
-      createdAt: new Date()
-    });
+    // this.notificationService.showToastNotification({
+    //   id: Math.random().toString(36),
+    //   ...notification,
+    //   actorId: this.currentUser.id?.toString() || '',
+    //   targetType: 'POST',
+    //   targetId: post.id.toString(),
+    //   targetTitle: post.title,
+    //   targetContent: post.content.substring(0, 100),
+    //   isRead: false,
+    //   createdAt: new Date()
+    // });
   }
 
   private createReplyNotification(parentComment: ForumCommentDto, reply: ForumCommentDto) {

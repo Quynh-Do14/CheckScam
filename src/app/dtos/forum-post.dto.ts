@@ -1,21 +1,25 @@
 export interface ForumPostDto {
-  id: string;
+  id: string | number;
   title: string;
   content: string;
   imageUrl?: string;
-  authorId: string;
+  postType?: string;  // NEW: API includes postType field
+  authorId: string | number;
   authorName: string;
   authorEmail: string;
   authorAvatarUrl?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: Date | string | null;
+  updatedAt: Date | string;
   likesCount: number;
   commentsCount: number;
+  viewCount?: number;  // NEW: API includes viewCount
   isLiked?: boolean;
+  isPinned?: boolean;  // NEW: API includes isPinned
+  comments?: any;      // NEW: API includes comments field
 }
 
 export interface CreateForumPostDto {
-  title: string;
+  title?: string;
   content: string;
   imageUrl?: string;
 }
@@ -34,6 +38,8 @@ export interface ForumCommentDto {
   authorName: string;
   authorEmail: string;
   authorAvatarUrl?: string;
+  parentCommentId?: string | null;
+  replies?: ForumCommentDto[];
   createdAt: Date;
   updatedAt: Date;
   likesCount: number;
@@ -43,6 +49,7 @@ export interface ForumCommentDto {
 export interface CreateForumCommentDto {
   postId: string;
   content: string;
+  parentCommentId?: string | null;
 }
 
 export interface ForumLikeDto {

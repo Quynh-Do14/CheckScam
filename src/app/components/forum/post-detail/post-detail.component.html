@@ -1,150 +1,294 @@
-<div class="post-detail-container">
-  <!-- Back Button -->
-  <div class="back-section">
-    <button class="back-btn" (click)="goBack()">
-      <i class="bi bi-arrow-left"></i>
-      Quay lại diễn đàn
-    </button>
-  </div>
-
-  <!-- Loading State -->
-  <div class="loading-container" *ngIf="loading">
-    <div class="loading-spinner"></div>
-    <p>Đang tải bài viết...</p>
-  </div>
-
-  <!-- Error State -->
-  <div class="error-container" *ngIf="error && !loading">
-    <div class="error-message">
-      <i class="bi bi-exclamation-triangle"></i>
-      {{ error }}
+<!-- Facebook-style Post Detail Modal -->
+<div class="post-modal-overlay" *ngIf="post && !loading && !error" (click)="onModalBackdropClick($event)">
+  <div class="post-modal" (click)="$event.stopPropagation()">
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <h3 class="modal-title">Bài viết của {{ post.authorName || getMaskedEmail(post.authorEmail) }}</h3>
+      <button class="close-btn" (click)="goBack()">
+        <i class="bi bi-x"></i>
+      </button>
     </div>
-    <button class="retry-btn" (click)="loadPost()">Thử lại</button>
-  </div>
 
-  <!-- Post Content -->
-  <div class="post-container" *ngIf="post && !loading && !error">
-    <!-- Post Header -->
-    <div class="post-header">
-      <div class="author-info" [routerLink]="['/forum/user', post.authorId]">
-        <img 
-          [src]="post.authorAvatarUrl || 'assets/img/default-avatar.png'" 
-          [alt]="post.authorName"
-          class="author-avatar"
-          (error)="onImageError($event)">
-        <div class="author-details">
-          <h4 class="author-name">{{ getMaskedEmail(post.authorEmail) }}</h4>
-          <span class="post-time">{{ getTimeAgo(post.createdAt) }}</span>
+    <!-- Modal Content -->
+    <div class="modal-content">
+      <!-- Post Header -->
+      <div class="post-header">
+        <div class="author-info">
+          <img 
+            [src]="post.authorAvatarUrl" 
+            [alt]="post.authorName"
+            class="author-avatar"
+            *ngIf="post.authorAvatarUrl"
+            (error)="onImageError($event)">
+          <div class="avatar-placeholder" *ngIf="!post.authorAvatarUrl">
+            <i class="bi bi-person-circle"></i>
+          </div>
+          <div class="author-details">
+            <h4 class="author-name">{{ post.authorName || getMaskedEmail(post.authorEmail) }}</h4>
+            <span class="post-time">
+              {{ getTimeAgo(post.createdAt) }}
+              <i class="bi bi-globe ms-1"></i>
+            </span>
+          </div>
         </div>
+        <button class="post-menu-btn">
+          <i class="bi bi-three-dots"></i>
+        </button>
       </div>
-    </div>
 
-    <!-- Post Content -->
-    <div class="post-content">
-      <h1 class="post-title">{{ post.title }}</h1>
-      
-      <div class="post-body">
+      <!-- Post Content -->
+      <div class="post-content">
+        <h2 class="post-title" *ngIf="post.title">{{ post.title }}</h2>
         <p class="post-text">{{ post.content }}</p>
         
-        <div class="post-image" *ngIf="post.imageUrl">
-          <img [src]="post.imageUrl" [alt]="post.title" class="content-image">
+        <!-- Post Image -->
+        <div class="post-media" *ngIf="post.imageUrl">
+          <img [src]="post.imageUrl" [alt]="post.title" class="post-image">
         </div>
       </div>
-    </div>
 
-    <!-- Post Actions -->
-    <div class="post-actions">
-      <button 
-        class="action-btn like-btn"
-        [class.liked]="post.isLiked"
-        (click)="onLikePost()"
-        [disabled]="!isLoggedIn">
-        <i class="bi" [ngClass]="post.isLiked ? 'bi-heart-fill' : 'bi-heart'"></i>
-        <span>{{ post.likesCount }}</span>
-      </button>
-      
-      <div class="action-btn comment-info">
-        <i class="bi bi-chat"></i>
-        <span>{{ post.commentsCount }} bình luận</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Comments Section -->
-  <div class="comments-section" *ngIf="post && !loading && !error">
-    <h2 class="comments-title">Bình luận ({{ post.commentsCount }})</h2>
-    
-    <!-- Comment Form -->
-    <div class="comment-form" *ngIf="isLoggedIn">
-      <div class="comment-input-container">
-        <textarea 
-          [(ngModel)]="newComment.content"
-          placeholder="Viết bình luận của bạn..."
-          class="comment-input"
-          rows="3"
-          maxlength="1000"></textarea>
-        <div class="comment-actions">
-          <div class="character-count">{{ newComment.content.length }}/1000</div>
-          <button 
-            class="submit-comment-btn"
-            (click)="onSubmitComment()"
-            [disabled]="!newComment.content.trim() || submittingComment">
-            <span *ngIf="submittingComment" class="loading-spinner"></span>
-            <span *ngIf="!submittingComment">Gửi</span>
-            <span *ngIf="submittingComment">Đang gửi...</span>
-          </button>
+      <!-- Post Stats -->
+      <div class="post-stats" *ngIf="post.likesCount > 0 || post.commentsCount > 0">
+        <div class="stats-left">
+          <div class="reaction-summary" *ngIf="post.likesCount > 0">
+            <div class="reaction-icons">
+              <span class="reaction-emoji">❤️</span>
+              <span class="reaction-emoji">👍</span>
+              <span class="reaction-emoji">😊</span>
+            </div>
+            <span class="reaction-count">{{ post.likesCount }} lượt thích</span>
+          </div>
+        </div>
+        <div class="stats-right">
+          <span class="comment-count" *ngIf="post.commentsCount > 0">
+            {{ post.commentsCount }} bình luận
+          </span>
         </div>
       </div>
-    </div>
 
-    <div class="login-prompt" *ngIf="!isLoggedIn">
-      <p>
-        <a routerLink="/login" class="login-link">Đăng nhập</a> để tham gia bình luận
-      </p>
-    </div>
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <button 
+          class="action-btn like-action"
+          [class.active]="post.isLiked"
+          (click)="onLikePost()"
+          [disabled]="!isLoggedIn">
+          <i class="reaction-icon" [ngClass]="post.isLiked ? 'bi bi-heart-fill liked' : 'bi bi-heart'"></i>
+          <span>{{ post.isLiked ? 'Đã thích' : 'Thích' }}</span>
+        </button>
+        
+        <button class="action-btn comment-action" (click)="focusCommentInput()">
+          <i class="bi bi-chat-dots"></i>
+          <span>Bình luận</span>
+        </button>
+        
+        <button class="action-btn send-action">
+          <i class="bi bi-arrow-up-right-circle"></i>
+          <span>Gửi</span>
+        </button>
+        
+        <button class="action-btn share-action">
+          <i class="bi bi-share-fill"></i>
+          <span>Chia sẻ</span>
+        </button>
+      </div>
 
-    <!-- Comments List -->
-    <div class="comments-loading" *ngIf="commentsLoading">
-      <div class="loading-spinner"></div>
-      <p>Đang tải bình luận...</p>
-    </div>
+      <!-- Comments Section -->
+      <div class="comments-section">
+        <!-- Comments List -->
+        <div class="comments-list" *ngIf="!commentsLoading">
+          <!-- Comment Item -->
+          <div class="comment-item" *ngFor="let comment of comments">
+            <div class="comment-avatar">
+              <img 
+                [src]="comment.authorAvatarUrl" 
+                [alt]="comment.authorName"
+                *ngIf="comment.authorAvatarUrl"
+                (error)="onImageError($event)">
+              <div class="avatar-placeholder" *ngIf="!comment.authorAvatarUrl">
+                <i class="bi bi-person-circle"></i>
+              </div>
+            </div>
+            <div class="comment-content">
+              <div class="comment-bubble">
+                <h6 class="comment-author">{{ comment.authorName || getMaskedEmail(comment.authorEmail) }}</h6>
+                <p class="comment-text">{{ comment.content }}</p>
+              </div>
+              <div class="comment-meta">
+                <button 
+                  class="comment-like-btn"
+                  [class.liked]="comment.isLiked"
+                  (click)="onLikeComment(comment)"
+                  [disabled]="!isLoggedIn">
+                  Thích
+                </button>
+                <button class="comment-reply-btn" (click)="onReplyComment(comment)" [disabled]="!isLoggedIn">Phản hồi</button>
+                <span class="comment-time" *ngIf="getTimeAgo(comment.createdAt)">{{ getTimeAgo(comment.createdAt) }}</span>
+                <span class="comment-likes" *ngIf="comment.likesCount > 0">
+                  <i class="bi bi-hand-thumbs-up"></i> {{ comment.likesCount }}
+                </span>
+              </div>
+              
+              <!-- Reply Form -->
+              <div class="reply-form" *ngIf="replyingTo === comment.id && isLoggedIn">
+                <div class="reply-input-container">
+                  <textarea 
+                    [(ngModel)]="replyContent"
+                    placeholder="Viết phản hồi..."
+                    class="reply-input"
+                    rows="1"
+                    maxlength="1000"
+                    (keydown)="onReplyKeydown($event)">
+                  </textarea>
+                  <div class="reply-actions">
+                    <button class="cancel-btn" (click)="cancelReply()">Hủy</button>
+                    <button 
+                      class="submit-btn" 
+                      (click)="submitReply(comment)"
+                      [disabled]="!replyContent.trim() || submittingReply">
+                      <span *ngIf="!submittingReply">Phản hồi</span>
+                      <span *ngIf="submittingReply">
+                        <i class="bi bi-arrow-repeat spin"></i> Đang gửi...
+                      </span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Nested Replies -->
+              <div class="replies-list" *ngIf="comment.replies && comment.replies.length > 0">
+                <div class="reply-item" *ngFor="let reply of comment.replies">
+                  <div class="reply-avatar">
+                    <img 
+                      [src]="reply.authorAvatarUrl" 
+                      [alt]="reply.authorName"
+                      *ngIf="reply.authorAvatarUrl"
+                      (error)="onImageError($event)">
+                    <div class="avatar-placeholder" *ngIf="!reply.authorAvatarUrl">
+                      <i class="bi bi-person-circle"></i>
+                    </div>
+                  </div>
+                  <div class="reply-content">
+                    <div class="reply-bubble">
+                      <h6 class="reply-author">{{ reply.authorName || getMaskedEmail(reply.authorEmail) }}</h6>
+                      <p class="reply-text">{{ reply.content }}</p>
+                    </div>
+                    <div class="reply-meta">
+                      <button 
+                        class="reply-like-btn"
+                        [class.liked]="reply.isLiked"
+                        (click)="onLikeComment(reply)"
+                        [disabled]="!isLoggedIn">
+                        Thích
+                      </button>
+                      <span class="reply-time" *ngIf="getTimeAgo(reply.createdAt)">{{ getTimeAgo(reply.createdAt) }}</span>
+                      <span class="reply-likes" *ngIf="reply.likesCount > 0">
+                        <i class="bi bi-hand-thumbs-up"></i> {{ reply.likesCount }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-    <div class="comments-list" *ngIf="!commentsLoading">
-      <div class="comment-item" *ngFor="let comment of comments">
-        <div class="comment-header">
-          <div class="comment-author" [routerLink]="['/forum/user', comment.authorId]">
-            <img 
-              [src]="comment.authorAvatarUrl || 'assets/img/default-avatar.png'" 
-              [alt]="comment.authorName"
-              class="comment-avatar"
-              (error)="onImageError($event)">
-            <div class="comment-author-info">
-              <h5 class="comment-author-name">{{ getMaskedEmail(comment.authorEmail) }}</h5>
-              <span class="comment-time">{{ getTimeAgo(comment.createdAt) }}</span>
+          <!-- No Comments State -->
+          <div class="no-comments-state" *ngIf="comments.length === 0">
+            <div class="no-comments-icon">
+              <i class="bi bi-file-text"></i>
+            </div>
+            <h4>Chưa có bình luận nào</h4>
+            <p>Hãy là người đầu tiên bình luận.</p>
+          </div>
+        </div>
+
+        <!-- Comments Loading -->
+        <div class="comments-loading" *ngIf="commentsLoading">
+          <div class="loading-spinner"></div>
+          <p>Đang tải bình luận...</p>
+        </div>
+
+        <!-- Comment Form -->
+        <div class="comment-form" *ngIf="isLoggedIn">
+          <div class="comment-input-container">
+            <div class="comment-avatar">
+              <img 
+                [src]="currentUser?.avatar" 
+                [alt]="currentUser?.name"
+                *ngIf="currentUser?.avatar"
+                (error)="onImageError($event)">
+              <div class="avatar-placeholder" *ngIf="!currentUser?.avatar">
+                <i class="bi bi-person-circle"></i>
+              </div>
+            </div>
+            <div class="comment-input-wrapper">
+              <textarea 
+                #commentTextarea
+                [(ngModel)]="newComment.content"
+                placeholder="Bình luận dưới tên {{ currentUser?.name || currentUser?.username || getMaskedEmail(currentUser?.email || '') }}"
+                class="comment-input"
+                rows="1"
+                maxlength="1000"
+                (input)="onCommentInput($event)"
+                (keydown)="onCommentKeydown($event)"></textarea>
+              <div class="comment-input-actions">
+                <button class="emoji-btn" type="button" (click)="onEmojiClick()">
+                  <i class="bi bi-emoji-smile"></i>
+                </button>
+                <button class="photo-btn" type="button" (click)="onPhotoClick()">
+                  <i class="bi bi-camera"></i>
+                </button>
+                <button class="gif-btn" type="button" (click)="onGifClick()">
+                  <i class="bi bi-file-image"></i>
+                </button>
+                <button 
+                  class="send-btn always-visible"
+                  type="button"
+                  (click)="onSubmitComment()"
+                  [disabled]="!newComment.content.trim() || submittingComment"
+                  title="Gửi bình luận">
+                  <i class="bi bi-send-fill" *ngIf="!submittingComment"></i>
+                  <i class="bi bi-arrow-repeat spin" *ngIf="submittingComment"></i>
+                  <span class="sr-only">Gửi</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
-        
-        <div class="comment-content">
-          <p>{{ comment.content }}</p>
-        </div>
-        
-        <div class="comment-actions">
-          <button 
-            class="comment-like-btn"
-            [class.liked]="comment.isLiked"
-            (click)="onLikeComment(comment)"
-            [disabled]="!isLoggedIn">
-            <i class="bi" [ngClass]="comment.isLiked ? 'bi-heart-fill' : 'bi-heart'"></i>
-            <span>{{ comment.likesCount }}</span>
-          </button>
-        </div>
-      </div>
 
-      <div class="no-comments" *ngIf="comments.length === 0">
-        <i class="bi bi-chat-square"></i>
-        <p>Chưa có bình luận nào. Hãy là người đầu tiên!</p>
+        <!-- Login Prompt -->
+        <div class="login-prompt" *ngIf="!isLoggedIn">
+          <div class="login-prompt-content">
+            <i class="bi bi-person-circle"></i>
+            <p>
+              <a routerLink="/login" class="login-link">Đăng nhập</a> để tham gia bình luận
+            </p>
+          </div>
+        </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading State -->
+<div class="loading-overlay" *ngIf="loading">
+  <div class="loading-content">
+    <div class="loading-spinner"></div>
+    <p>Đang tải bài viết...</p>
+  </div>
+</div>
+
+<!-- Error State -->
+<div class="error-overlay" *ngIf="error && !loading">
+  <div class="error-content">
+    <div class="error-icon">
+      <i class="bi bi-exclamation-triangle"></i>
+    </div>
+    <h3>Có lỗi xảy ra</h3>
+    <p>{{ error }}</p>
+    <div class="error-actions">
+      <button class="retry-btn" (click)="loadPost()">Thử lại</button>
+      <button class="back-btn" (click)="goBack()">Quay lại</button>
     </div>
   </div>
 </div>

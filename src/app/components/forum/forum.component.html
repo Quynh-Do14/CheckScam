@@ -8,11 +8,11 @@
   <div class="left-sidebar">
     <div class="sidebar-menu">
       <div class="menu-item" *ngIf="isLoggedIn">
-        <img [src]="currentUser?.avatarUrl || 'assets/img/default-avatar.png'" 
+        <img [src]="currentUser?.avatar || 'assets/img/default-avatar.png'" 
              alt="Profile" 
              class="menu-avatar"
              (error)="onImageError($event)">
-        <span>{{ getMaskedEmail(currentUser?.email || '') }}</span>
+        <span>{{ currentUser?.name || currentUser?.username || getMaskedEmail(currentUser?.email || '') }}</span>
       </div>
       
       <div class="menu-item">
@@ -47,21 +47,33 @@
   <!-- Create Post Box -->
   <div class="create-post-box" *ngIf="isLoggedIn">
   <div class="create-post-header">
-  <img [src]="currentUser?.avatarUrl || 'assets/img/default-avatar.png'" 
-     alt="Profile" 
-   class="user-avatar"
-  (error)="onImageError($event)">
+  <img [src]="currentUser?.avatar" 
+       alt="Profile" 
+       class="user-avatar"
+       *ngIf="currentUser?.avatar"
+       (error)="onImageError($event)">
+  <div class="avatar-placeholder" *ngIf="!currentUser?.avatar">
+    <i class="bi bi-person-circle"></i>
+  </div>
   <div class="post-input" (click)="showCreatePost = true">
-  {{ getMaskedEmail(currentUser?.email || '') }} ơi, bạn muốn chia sẻ tin tức gì?
+  {{ currentUser?.name || currentUser?.username || getMaskedEmail(currentUser?.email || '') }} ơi, bạn muốn chia sẻ tin tức gì?
   </div>
   </div>
   </div>
+
+    <!-- Error Message -->
+    <div class="error-message" *ngIf="error">
+      <div class="alert alert-danger">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        {{ error }}
+      </div>
+    </div>
 
     <!-- Create Post Modal -->
     <div class="modal-overlay" *ngIf="showCreatePost" (click)="showCreatePost = false">
       <div class="create-post-modal" (click)="$event.stopPropagation()">
         <div class="modal-header">
-          <h3>Tạo bài viết - {{ selectedPostType?.name }}</h3>
+          <h3>Tạo bài viết{{ selectedPostType?.name ? ' - ' + selectedPostType?.name : '' }}</h3>
           <button class="close-btn" (click)="showCreatePost = false">
             <i class="bi bi-x"></i>
           </button>
@@ -69,12 +81,16 @@
         
         <div class="modal-body">
           <div class="author-info">
-            <img [src]="currentUser?.avatarUrl || 'assets/img/default-avatar.png'" 
+            <img [src]="currentUser?.avatar" 
                  alt="Profile" 
                  class="author-avatar"
+                 *ngIf="currentUser?.avatar"
                  (error)="onImageError($event)">
+            <div class="avatar-placeholder" *ngIf="!currentUser?.avatar">
+              <i class="bi bi-person-circle"></i>
+            </div>
             <div class="author-details">
-              <span class="author-name">{{ getMaskedEmail(currentUser?.email || '') }}</span>
+              <span class="author-name">{{ currentUser?.name || currentUser?.username || getMaskedEmail(currentUser?.email || '') }}</span>
               <div class="privacy-selector">
                 <i class="bi bi-globe"></i>
                 <span>Công khai</span>
@@ -119,9 +135,13 @@
         <div class="modal-footer">
           <button 
             class="post-btn"
-            [disabled]="!newPostContent.trim()"
+            [disabled]="!newPostContent.trim() || loading"
             (click)="onCreatePost()">
-            Đăng
+            <span *ngIf="loading">
+              <i class="bi bi-arrow-repeat spin"></i>
+              Đang đăng...
+            </span>
+            <span *ngIf="!loading">Đăng</span>
           </button>
         </div>
       </div>
@@ -156,55 +176,79 @@
         </div>
       </div>
 
-      <div class="post-card" *ngFor="let post of posts">
+      <!-- Safe check: only render posts if it's an array -->
+      <div *ngIf="isValidPostsArray() && posts.length > 0" class="posts-container">
+        <div class="post-card" *ngFor="let post of posts; trackBy: trackByPostId">
         <!-- Post Header -->
         <div class="post-header">
           <div class="author-info" [routerLink]="['/forum/user', post.authorId]">
-            <img [src]="post.authorAvatarUrl || 'assets/img/default-avatar.png'" 
+          <div class="author-avatar-wrapper">
+            <img [src]="getAuthorAvatarUrl(post.authorAvatarUrl)" 
                  alt="Author" 
                  class="author-avatar"
+                 *ngIf="getAuthorAvatarUrl(post.authorAvatarUrl)"
                  (error)="onImageError($event)">
+            <div class="avatar-placeholder" *ngIf="!getAuthorAvatarUrl(post.authorAvatarUrl)">
+              <i class="bi bi-person-circle"></i>
+            </div>
+            <div class="online-indicator" *ngIf="post.authorId"></div>
+          </div>
             <div class="author-details">
-              <div class="author-name">{{ getMaskedEmail(post.authorEmail) }}</div>
-              <div class="post-time">
-                {{ getTimeAgo(post.createdAt) }}
-                <i class="bi bi-globe"></i>
+              <div class="author-name">{{ post.authorName || getMaskedEmail(post.authorEmail) }}</div>
+              <div class="post-meta">
+                <span class="post-time">{{ getTimeAgo(post.updatedAt || post.createdAt) }}</span>
+                <i class="bi bi-globe2" title="Công khai"></i>
+                <span class="post-type-badge" *ngIf="post.postType" [class]="'badge-' + post.postType">
+                  {{ getPostTypeLabel(post.postType) }}
+                </span>
               </div>
             </div>
           </div>
           <div class="post-menu">
-            <button class="menu-btn">
+            <button class="menu-btn" title="Tùy chọn">
               <i class="bi bi-three-dots"></i>
             </button>
           </div>
         </div>
 
         <!-- Post Content -->
-        <div class="post-content">
-          <div class="post-text" *ngIf="post.title">
+        <div class="post-content" [routerLink]="['/forum/post', post.id]">
+          <div class="post-title" *ngIf="post.title">
             <h3>{{ post.title }}</h3>
           </div>
           <div class="post-text" *ngIf="post.content">
-            {{ post.content }}
+            <p [innerHTML]="formatPostContent(post.content)"></p>
           </div>
           
           <div class="post-media" *ngIf="post.imageUrl">
-            <img [src]="post.imageUrl" alt="Post image" class="post-image">
+            <div class="image-container">
+              <img [src]="getImageUrl(post.imageUrl)" alt="Post image" class="post-image" loading="lazy">
+              <div class="image-overlay">
+                <i class="bi bi-arrows-fullscreen"></i>
+              </div>
+            </div>
           </div>
         </div>
 
         <!-- Post Stats -->
-        <div class="post-stats" *ngIf="post.likesCount > 0 || post.commentsCount > 0">
+        <div class="post-stats" *ngIf="post.likesCount > 0 || post.commentsCount > 0 || (post.viewCount && post.viewCount > 0)">
           <div class="stats-left">
-            <div class="reaction-count" *ngIf="post.likesCount > 0">
+            <div class="reaction-summary" *ngIf="post.likesCount > 0">
               <div class="reaction-icons">
-                <i class="bi bi-heart-fill like-icon"></i>
+                <span class="reaction-emoji">❤️</span>
+                <span class="reaction-emoji">👍</span>
+                <span class="reaction-emoji">😊</span>
               </div>
-              <span>{{ post.likesCount }}</span>
+              <span class="reaction-count">{{ post.likesCount }} lượt thích</span>
             </div>
           </div>
           <div class="stats-right">
-            <span *ngIf="post.commentsCount > 0">{{ post.commentsCount }} bình luận</span>
+            <span class="comment-count" *ngIf="post.commentsCount > 0" [routerLink]="['/forum/post', post.id]">
+              {{ post.commentsCount }} bình luận
+            </span>
+            <span class="view-count" *ngIf="post.viewCount && post.viewCount > 0">
+              {{ post.viewCount }} lượt xem
+            </span>
           </div>
         </div>
 
@@ -214,19 +258,29 @@
             class="action-btn like-action"
             [class.liked]="post.isLiked"
             (click)="onLikePost(post)">
-            <i class="bi" [ngClass]="post.isLiked ? 'bi-heart-fill' : 'bi-heart'"></i>
-            <span>Thích</span>
+            <i class="reaction-icon" [ngClass]="post.isLiked ? 'bi-heart-fill liked' : 'bi-heart'"></i>
+            <span>{{ post.isLiked ? 'Đã thích' : 'Thích' }}</span>
           </button>
           
           <button class="action-btn comment-action" [routerLink]="['/forum/post', post.id]">
-            <i class="bi bi-chat"></i>
+            <i class="bi bi-chat-dots"></i>
             <span>Bình luận</span>
           </button>
           
           <button class="action-btn share-action">
-            <i class="bi bi-share"></i>
+            <i class="bi bi-share-fill"></i>
             <span>Chia sẻ</span>
           </button>
+        </div>
+      </div>
+      </div>
+      
+      <!-- Empty state message -->
+      <div *ngIf="isValidPostsArray() && posts.length === 0 && !loading" class="empty-posts">
+        <div class="empty-content">
+          <i class="bi bi-chat-text"></i>
+          <h3>Chưa có bài viết nào</h3>
+          <p>Hãy là người đầu tiên chia sẻ kinh nghiệm về an toàn mạng!</p>
         </div>
       </div>
     </div>

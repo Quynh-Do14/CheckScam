@@ -139,6 +139,7 @@ export const routes: Routes = [
     { path: 'forum/post/:id', component: PostDetailComponent },
     { path: 'forum/user/:id', component: UserProfileComponent },
     { path: 'partners', component: PartnersComponent },
+    { path: 'user/profile', component: ProfileComponent, canActivate: [AuthGuard] },
     { path: 'access-denied', component: AccessDeniedComponent },
     { path: '**', redirectTo: '' },
 ];

@@ -193,7 +193,7 @@ export class DetailNewsComponent implements OnInit, AfterViewInit {
 
   /* ---------- Navigation ---------- */
   goBack(): void {
-    this.router.navigate(['/news']);
+    this.router.navigate(['admin/news']);
   }
 
   formatDate(dateString: string): string {

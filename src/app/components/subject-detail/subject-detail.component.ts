@@ -133,6 +133,9 @@ export class SubjectDetailComponent implements OnInit {
   }
 
   formatDate(dateString: string): string {
+    if (!dateString) {
+      return 'Chưa có thông tin';
+    }
     return new Date(dateString).toLocaleDateString('vi-VN', {
       year: 'numeric',
       month: 'long',

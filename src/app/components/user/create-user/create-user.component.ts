@@ -47,7 +47,7 @@ export class CreateUserComponent {
       name: this.name,
       email: this.email,
       password: this.password,
-      roleName: this.selectedRole // Gửi quyền đã chọn
+      roleName: this.selectedRole 
     };
     this.userService.createUser(userDTO).subscribe({
       next: (response) => {

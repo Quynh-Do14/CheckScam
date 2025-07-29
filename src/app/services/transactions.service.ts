@@ -5,7 +5,7 @@ import { environment } from '../environments/environment';
 
 export interface CreateTransactionPayload {
   dealerName: string;
-  dealerEmail: string; // Backend yêu cầu email của giao dịch viên
+  dealerEmail: string; 
   partyAName: string;
   partyAEmail: string;
   partyAPhone: string;

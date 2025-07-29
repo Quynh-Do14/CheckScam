@@ -1,4 +1,3 @@
-// src/app/profile/profile.component.ts
 
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -7,7 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { UserService } from '../../services/user.service';
 import { UserStateService } from '../../services/user-state.service';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { UpdateUserDTO, UpdateProfileDTO, UserProfileDTO, ProfileResponseDTO } from '../../dtos/profile.dto';
 import { catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
@@ -19,7 +18,8 @@ import { environment } from '../../environments/environment';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    FormsModule 
+    FormsModule,
+    RouterLink
   ],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss']
@@ -42,6 +42,9 @@ export class ProfileComponent implements OnInit {
   
   showAddProfileForm: boolean = false;
   newProfile = { nameInfo: '', info: '' };
+  
+  // Tab management
+  activeTab: string = 'reports';
 
   constructor(
     private fb: FormBuilder,
@@ -516,5 +519,14 @@ export class ProfileComponent implements OnInit {
       case 'Website': return 'VD: https://website.com';
       default: return 'Nhập thông tin liên lạc';
     }
+  }
+  
+  // Tab management methods
+  switchTab(tabName: string): void {
+    this.activeTab = tabName;
+  }
+  
+  isActiveTab(tabName: string): boolean {
+    return this.activeTab === tabName;
   }
 }

@@ -16,9 +16,7 @@ import { CreateForumPostDto } from '../../../dtos/forum-post.dto';
 })
 export class CreatePostComponent implements OnInit, OnDestroy {
   post: CreateForumPostDto = {
-    title: '',
-    content: '',
-    imageUrl: ''
+    content: ''
   };
 
   selectedFile: File | null = null;
@@ -45,11 +43,16 @@ export class CreatePostComponent implements OnInit, OnDestroy {
   }
 
   checkAuthStatus() {
+    console.log('CreatePostComponent: Checking auth status...');
     this.userStateService.user$
       .pipe(takeUntil(this.destroy$))
       .subscribe(user => {
+        console.log('CreatePostComponent: User state changed:', user);
         this.isLoggedIn = !!user;
+        console.log('CreatePostComponent: isLoggedIn =', this.isLoggedIn);
+        
         if (!this.isLoggedIn) {
+          console.log('CreatePostComponent: User not logged in, redirecting to login...');
           this.router.navigate(['/login']);
         }
       });
@@ -85,7 +88,7 @@ export class CreatePostComponent implements OnInit, OnDestroy {
   removeImage() {
     this.selectedFile = null;
     this.imagePreview = null;
-    this.post.imageUrl = '';
+    this.post.imageUrl = undefined;
   }
 
   async onSubmit() {
@@ -99,15 +102,28 @@ export class CreatePostComponent implements OnInit, OnDestroy {
     try {
       // Upload image if selected
       if (this.selectedFile) {
+        console.log('Uploading image...');
         const uploadResponse = await this.forumService.uploadImage(this.selectedFile).toPromise();
-        this.post.imageUrl = uploadResponse?.imageUrl || '';
+        console.log('Upload response:', uploadResponse);
+        this.post.imageUrl = uploadResponse?.data?.imageUrl;
+      }
+
+      // Clean up title - only set if not empty
+      if (this.post.title && !this.post.title.trim()) {
+        this.post.title = undefined;
       }
 
       // Create post
+      console.log('Creating post with data:', this.post);
       const response = await this.forumService.createPost(this.post).toPromise();
+      console.log('Create post response:', response);
       
-      // Navigate to the new post
-      this.router.navigate(['/forum/post', response?.id]);
+      // Navigate to the new post or back to forum
+      if (response?.data?.id) {
+        this.router.navigate(['/forum/post', response.data.id]);
+      } else {
+        this.router.navigate(['/forum']);
+      }
     } catch (error) {
       console.error('Error creating post:', error);
       this.error = 'Không thể tạo bài viết. Vui lòng thử lại.';
@@ -117,12 +133,8 @@ export class CreatePostComponent implements OnInit, OnDestroy {
   }
 
   validateForm(): boolean {
-    if (!this.post.title.trim()) {
-      this.error = 'Vui lòng nhập tiêu đề bài viết';
-      return false;
-    }
-
-    if (this.post.title.length > 200) {
+    // Title là optional, chỉ validate nếu có
+    if (this.post.title && this.post.title.trim() && this.post.title.length > 200) {
       this.error = 'Tiêu đề không được vượt quá 200 ký tự';
       return false;
     }

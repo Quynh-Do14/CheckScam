@@ -16,16 +16,17 @@ html, body {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
   z-index: 1000;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   max-width: 400px;
   opacity: 0;
   transform: translateY(-20px);
   animation: fadeInDown 0.5s forwards;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  /* Bỏ các thuộc tính ngăn xuống dòng */
+  /* white-space: nowrap; */
+  /* overflow: hidden; */
+  /* text-overflow: ellipsis; */
 }
 
 .app-notification.success {
@@ -44,7 +45,8 @@ html, body {
   flex-grow: 1;
   margin-right: 10px;
   font-size: 0.9rem;
-  line-height: 1.2;
+  line-height: 1.4; /* Tăng line-height cho dễ đọc */
+  word-break: break-word; /* Đảm bảo từ dài cũng được ngắt dòng */
 }
 
 .close-btn {
@@ -199,7 +201,6 @@ html, body {
   .custom-input {
     border: 2px solid #e2e8f0;
     border-left: none;
-    // Đảm bảo border-radius phía bên phải bị loại bỏ nếu có nút toggle
     border-radius: 0 12px 12px 0;
     padding: 0.6rem 0.9rem;
     font-size: 0.95rem;
@@ -220,8 +221,8 @@ html, body {
   .password-toggle-btn {
     background: linear-gradient(135deg, #f8fafc, #f1f5f9);
     border: 2px solid #e2e8f0;
-    border-left: none; // Không có border trái
-    border-radius: 0 12px 12px 0; // Bo tròn bên phải
+    border-left: none;
+    border-radius: 0 12px 12px 0;
     padding: 0.6rem 0.9rem;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -256,7 +257,6 @@ html, body {
 
     .custom-input {
       border-color: #f59e0b;
-      // Đảm bảo border-right khớp với nút toggle khi hover
       + .password-toggle-btn {
         border-color: #f59e0b;
       }
@@ -480,4 +480,41 @@ html, body {
     max-width: 150px;
     font-size: 0.75rem;
   }
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(5px);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  animation: fadeInOverlay 0.3s forwards;
+}
+
+@keyframes fadeInOverlay {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.loading-spinner {
+  width: 60px;
+  height: 60px;
+  border: 6px solid rgba(255, 255, 255, 0.2);
+  border-top: 6px solid #f59e0b;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.6),
+              0 0 30px rgba(245, 158, 11, 0.3);
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }

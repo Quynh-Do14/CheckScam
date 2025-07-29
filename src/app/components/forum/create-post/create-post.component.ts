@@ -19,8 +19,9 @@ export class CreatePostComponent implements OnInit, OnDestroy {
     content: ''
   };
 
-  selectedFile: File | null = null;
-  imagePreview: string | null = null;
+  selectedFiles: File[] = [];
+  imagePreviews: { file: File; preview: string; id: string }[] = [];
+  private imageIdCounter = 0;
   isSubmitting = false;
   error = '';
   isLoggedIn = false;
@@ -68,36 +69,70 @@ export class CreatePostComponent implements OnInit, OnDestroy {
   }
 
   onFileSelected(event: any) {
-    const file = event.target.files[0];
-    if (file) {
+    const files = Array.from(event.target.files) as File[];
+    
+    for (const file of files) {
       // Validate file type
       if (!file.type.startsWith('image/')) {
-        this.error = 'Chỉ được chọn file hình ảnh';
-        return;
+        this.error = `File ${file.name} không phải là hình ảnh`;
+        continue;
       }
 
       // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        this.error = 'Kích thước file không được vượt quá 5MB';
-        return;
+        this.error = `File ${file.name} vượt quá 5MB`;
+        continue;
       }
 
-      this.selectedFile = file;
+      // Check if maximum images reached (max 5 images)
+      if (this.imagePreviews.length >= 5) {
+        this.error = 'Chỉ được đăng tối đa 5 ảnh';
+        break;
+      }
+
+      // Check if file already exists
+      if (this.selectedFiles.some(f => f.name === file.name && f.size === file.size)) {
+        continue;
+      }
+
+      this.selectedFiles.push(file);
       this.error = '';
 
       // Create preview
       const reader = new FileReader();
+      const imageId = `img_${++this.imageIdCounter}`;
       reader.onload = (e) => {
-        this.imagePreview = e.target?.result as string;
+        this.imagePreviews.push({
+          file: file,
+          preview: e.target?.result as string,
+          id: imageId
+        });
       };
       reader.readAsDataURL(file);
     }
+
+    // Clear the input to allow selecting the same files again
+    event.target.value = '';
   }
 
-  removeImage() {
-    this.selectedFile = null;
-    this.imagePreview = null;
-    this.post.imageUrl = undefined;
+  removeImage(imageId: string) {
+    const index = this.imagePreviews.findIndex(img => img.id === imageId);
+    if (index > -1) {
+      const fileToRemove = this.imagePreviews[index].file;
+      this.imagePreviews.splice(index, 1);
+      
+      // Remove from selectedFiles array
+      const fileIndex = this.selectedFiles.findIndex(f => f === fileToRemove);
+      if (fileIndex > -1) {
+        this.selectedFiles.splice(fileIndex, 1);
+      }
+    }
+  }
+
+  removeAllImages() {
+    this.selectedFiles = [];
+    this.imagePreviews = [];
+    this.post.imageUrls = undefined;
   }
 
   onImageError(event: any) {
@@ -127,12 +162,29 @@ export class CreatePostComponent implements OnInit, OnDestroy {
     this.error = '';
 
     try {
-      // Upload image if selected
-      if (this.selectedFile) {
-        console.log('Uploading image...');
-        const uploadResponse = await this.forumService.uploadImage(this.selectedFile).toPromise();
-        console.log('Upload response:', uploadResponse);
-        this.post.imageUrl = uploadResponse?.data?.imageUrl;
+      // Upload images if selected
+      if (this.selectedFiles.length > 0) {
+        console.log('Uploading images...');
+        const imageUrls: string[] = [];
+        
+        for (const file of this.selectedFiles) {
+          try {
+            const uploadResponse = await this.forumService.uploadImage(file).toPromise();
+            if (uploadResponse?.data?.imageUrl) {
+              imageUrls.push(uploadResponse.data.imageUrl);
+            }
+          } catch (uploadError) {
+            console.error('Error uploading image:', uploadError);
+            this.error = `Không thể upload ảnh ${file.name}. Vui lòng thử lại.`;
+            return;
+          }
+        }
+        
+        // Set both imageUrls (new) and imageUrl (backward compatibility)
+        this.post.imageUrls = imageUrls;
+        if (imageUrls.length > 0) {
+          this.post.imageUrl = imageUrls[0]; // For backward compatibility
+        }
       }
 
       // Create post
@@ -170,5 +222,10 @@ export class CreatePostComponent implements OnInit, OnDestroy {
 
   onCancel() {
     this.router.navigate(['/forum']);
+  }
+
+  // Track by function for ngFor performance
+  trackByImageId(index: number, item: { file: File; preview: string; id: string }): string {
+    return item.id;
   }
 }

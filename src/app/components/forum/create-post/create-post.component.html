@@ -44,12 +44,30 @@
           required></textarea>
       </div>
 
-      <!-- Image Preview -->
-      <div class="image-preview" *ngIf="imagePreview">
-        <img [src]="imagePreview" alt="Preview">
-        <button type="button" class="remove-image" (click)="removeImage()">
-          <i class="bi bi-x"></i>
-        </button>
+      <!-- Multiple Images Preview -->
+      <div class="images-preview-container" *ngIf="imagePreviews.length > 0">
+        <div class="images-preview-header">
+          <span class="images-count">{{ imagePreviews.length }}/5 ảnh</span>
+          <button type="button" class="remove-all-images" (click)="removeAllImages()" title="Xóa tất cả ảnh">
+            <i class="bi bi-trash"></i>
+            Xóa tất cả
+          </button>
+        </div>
+        
+        <div class="images-grid" [class.single-image]="imagePreviews.length === 1" 
+                                 [class.two-images]="imagePreviews.length === 2"
+                                 [class.three-images]="imagePreviews.length === 3"
+                                 [class.four-images]="imagePreviews.length === 4"
+                                 [class.five-images]="imagePreviews.length === 5">
+          <div class="image-preview-item" *ngFor="let imagePreview of imagePreviews; trackBy: trackByImageId">
+            <img [src]="imagePreview.preview" [alt]="imagePreview.file.name">
+            <button type="button" class="remove-image" (click)="removeImage(imagePreview.id)" 
+                    [title]="'Xóa ảnh ' + imagePreview.file.name">
+              <i class="bi bi-x"></i>
+            </button>
+            <div class="image-name">{{ imagePreview.file.name }}</div>
+          </div>
+        </div>
       </div>
 
       <!-- Add to Post -->
@@ -57,11 +75,14 @@
         <span class="add-label">Thêm vào bài viết của bạn</span>
         <div class="add-options">
           <!-- Photo Upload -->
-          <input type="file" id="photoInput" accept="image/*" 
+          <input type="file" id="photoInput" accept="image/*" multiple
                  (change)="onFileSelected($event)" style="display: none;">
           <button type="button" class="add-btn photo-btn" 
-                  (click)="triggerFileInput()" title="Ảnh/Video">
+                  (click)="triggerFileInput()" 
+                  [disabled]="imagePreviews.length >= 5"
+                  [title]="imagePreviews.length >= 5 ? 'Đã đạt tối đa 5 ảnh' : 'Thêm ảnh (tối đa 5 ảnh)'">
             <i class="bi bi-image"></i>
+            <span class="upload-text">{{ imagePreviews.length }}/5</span>
           </button>
           
           <!-- Removed other options - only keep photo upload -->

@@ -3,6 +3,7 @@ export interface ForumPostDto {
   title: string;
   content: string;
   imageUrl?: string;
+  imageUrls?: string[];  // NEW: Support multiple images
   postType?: string;  // NEW: API includes postType field
   authorId: string | number;
   authorName: string;
@@ -22,12 +23,14 @@ export interface CreateForumPostDto {
   title?: string;
   content: string;
   imageUrl?: string;
+  imageUrls?: string[];  // NEW: Support multiple images
 }
 
 export interface UpdateForumPostDto {
   title?: string;
   content?: string;
   imageUrl?: string;
+  imageUrls?: string[];  // NEW: Support multiple images
 }
 
 export interface ForumCommentDto {

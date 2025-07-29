@@ -1,0 +1,106 @@
+<div class="shorts-page-container">
+  <!-- MONA Media Header -->
+  <div class="mona-header">
+    <div class="header-left">
+      <div class="mona-logo">
+        <!-- <div class="logo-icon">M</div> -->
+        <span class="logo-text">AI6</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="close-button" (click)="goBack()">
+        <span>&times;</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="shorts-content" *ngIf="!loading; else loadingTemplate">
+    <div class="shorts-carousel-container">
+      <div class="shorts-carousel">
+        <div 
+          class="shorts-track" 
+          [style.transform]="getSlideTransform()"
+          (mousedown)="onMouseDown($event)"
+          (mousemove)="onMouseMove($event)"
+          (mouseup)="onMouseUp($event)"
+          (mouseleave)="onMouseUp($event)"
+          (touchstart)="onTouchStart($event)"
+          (touchmove)="onTouchMove($event)"
+          (touchend)="onTouchEnd($event)"
+          [class.dragging]="isDragging"
+        >
+          <div 
+            class="short-card" 
+            *ngFor="let short of shorts; let i = index; trackBy: trackById"
+            [class.active]="i === currentIndex"
+            (click)="onVideoClick(i)"
+          >
+            <div class="short-video-container">
+              <video 
+                *ngIf="i === currentIndex"
+                [src]="getShortVideoUrl(short)" 
+                autoplay
+                muted
+                loop
+                (ended)="onVideoEnded(short.id!)"
+                (play)="onVideoPlay(short)"
+                (loadeddata)="onVideoLoaded(short)"
+                (error)="onVideoError(short)"
+                class="short-video"
+              ></video>
+              <img 
+                *ngIf="i !== currentIndex"
+                [src]="getShortThumbnailUrl(short)"
+                (error)="onShortImageError($event)"
+                [alt]="short.title"
+                class="short-thumbnail"
+              />
+            </div>
+            
+            <!-- MONA Media Card Footer -->
+            <div class="mona-card-footer">
+              <div class="card-text">{{ short.title }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Arrows -->
+      <button 
+        class="carousel-arrow left" 
+        (click)="prevShorts()" 
+        [disabled]="!canPrevShorts()"
+        [class.disabled]="!canPrevShorts()"
+      >
+        &lt;
+      </button>
+
+      <button 
+        class="carousel-arrow right" 
+        (click)="nextShorts()" 
+        [disabled]="!canNextShorts()"
+        [class.disabled]="!canNextShorts()"
+      >
+        &gt;
+      </button>
+    </div>
+
+    <!-- Bottom Navigation Dots -->
+    <div class="carousel-dots">
+      <span 
+        *ngFor="let short of shorts; let i = index; trackBy: trackById" 
+        class="dot"
+        [class.active]="i === currentIndex"
+        (click)="onVideoClick(i)"
+        [title]="'Video ' + (i + 1) + ': ' + short.title"
+      ></span>
+    </div>
+  </div>
+
+  <ng-template #loadingTemplate>
+    <div class="loading-container">
+      <div class="loading-spinner"></div>
+      <p>Đang tải shorts...</p>
+    </div>
+  </ng-template>
+</div>

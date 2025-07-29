@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 
 import { NewsService } from '../../../services/news.service';
+import { ShortService, Short } from '../../../services/short.service';
 import { HeaderComponent } from '../../header/header.component';
 import { FooterComponent } from '../../footer/footer.component';
 import { ChatBoxComponent } from '../../chat-box/chat-box.component';
@@ -35,6 +36,24 @@ export class ListNewsComponent implements OnInit {
   mainNewsList: any[] = []; // 4 tin chính (1 lớn + 3 nhỏ)
   regularNews: any[] = []; // Tin nhanh + tin khác
 
+  /* Shorts */
+  shorts: Short[] = [];
+  loadingShorts = false;
+  playingVideos: Set<number> = new Set();
+  isDragging = false;
+  startX = 0;
+  scrollLeft = 0;
+  lastX = 0;
+  velocity = 0;
+  lastTime = 0;
+  momentumInterval: any = null;
+  shortsPage = 0;
+  shortsPageSize = 5;
+  cardWidth = 220;
+  cardGap = 20;
+  isShortsTransitioning = false;
+  slideOffset = 0;
+
   /* Phân trang */
   pageSize = 4; // 4 tin mỗi trang
   currentPage = 1;
@@ -53,19 +72,110 @@ export class ListNewsComponent implements OnInit {
   /* URL ảnh */
   readonly imageBaseUrl = `${environment.apiBaseUrl}/news/image/`;
 
+  isMobile = false;
+  openShortModal(index: number) {
+    // Chuyển sang trang list-short với index được chọn
+    this.router.navigate(['/list-short'], { 
+      queryParams: { index: index } 
+    });
+  }
+
   constructor(
     private newsService: NewsService,
+    private shortService: ShortService,
     private router: Router,
   ) {}
 
   /* ===== Lifecycle ===== */
   ngOnInit(): void {
+    this.isMobile = window.innerWidth <= 768;
+    window.addEventListener('resize', () => {
+      this.isMobile = window.innerWidth <= 768;
+    });
     console.log('ListNewsComponent ngOnInit');
+    this.loadShorts();
     this.loadMainNews();
     this.loadRegularNews();
   }
 
+  get visibleShorts(): Short[] {
+    return this.shorts.slice(this.shortsPage, this.shortsPage + this.shortsPageSize);
+  }
+
+  getCarouselCards(): Short[] {
+    // Always return exactly 5 cards for the carousel
+    return this.visibleShorts;
+  }
+
+  canPrevShorts(): boolean {
+    return this.shortsPage > 0;
+  }
+  canNextShorts(): boolean {
+    return this.shortsPage + this.shortsPageSize < this.shorts.length;
+  }
+
+  prevShorts() {
+    if (!this.canPrevShorts() || this.isShortsTransitioning) return;
+    this.isShortsTransitioning = true;
+    this.slideOffset = this.cardWidth + this.cardGap;
+    setTimeout(() => {
+      this.shortsPage--;
+      this.slideOffset = 0;
+      this.isShortsTransitioning = false;
+    }, 700);
+  }
+  nextShorts() {
+    if (!this.canNextShorts() || this.isShortsTransitioning) return;
+    this.isShortsTransitioning = true;
+    this.slideOffset = -(this.cardWidth + this.cardGap);
+    setTimeout(() => {
+      this.shortsPage++;
+      this.slideOffset = 0;
+      this.isShortsTransitioning = false;
+    }, 700);
+  }
+
+  getSlideTransform(): string {
+    return `translateX(${this.slideOffset}px)`;
+  }
+
   /* ===== API ===== */
+  /**
+   * Load shorts
+   */
+  loadShorts(): void {
+    console.log('Loading shorts...');
+    this.loadingShorts = true;
+    this.shortService.getAllShorts().subscribe({
+      next: (res) => {
+        console.log('Shorts response:', res);
+        console.log('🔥 Detailed shorts data:');
+        res?.forEach((short, index) => {
+          console.log(`🔥 Short ${index + 1}:`, {
+            id: short.id,
+            title: short.title,
+            thumbnail: short.thumbnail,
+            videoUrl: short.videoUrl,
+            views: short.views
+          });
+        });
+        // Debug first short thumbnail URL generation
+        if (res && res.length > 0) {
+          const firstShort = res[0];
+          const thumbnailUrl = this.getShortThumbnailUrl(firstShort);
+          console.log('🔥 First short thumbnail URL:', thumbnailUrl);
+        }
+        this.shorts = res || [];
+        this.loadingShorts = false;
+      },
+      error: (err) => {
+        console.error('Lỗi khi tải shorts:', err);
+        this.shorts = [];
+        this.loadingShorts = false;
+      },
+    });
+  }
+
   /**
    * Load 4 tin chính: 1 tin chính lớn + 3 tin chính nhỏ
    */
@@ -221,6 +331,11 @@ export class ListNewsComponent implements OnInit {
     return this.regularNews.slice(0, 3);
   }
 
+  onShortsTransitionEnd(): void {
+    this.isShortsTransitioning = false;
+    this.slideOffset = 0;
+  }
+
   /* ===== Chat ===== */
   onAiTuVanClicked(): void {
     this.showChatbox = true;
@@ -228,6 +343,179 @@ export class ListNewsComponent implements OnInit {
 
   closeChatbox(): void {
     this.showChatbox = false;
+  }
+
+  /* ===== Shorts ===== */
+  getShortThumbnailUrl(short: Short): string {
+    if (!short.thumbnail) {
+      return 'assets/img/placeholder.png';
+    }
+    
+    // If already a full URL
+    if (short.thumbnail.startsWith('http')) {
+      return short.thumbnail;
+    }
+    
+    // Extract filename from path like "/uploads/images/filename.jpg"
+    const filename = short.thumbnail.split('/').pop();
+    if (!filename) {
+      return 'assets/img/placeholder.png';
+    }
+    
+    // Use ShortService to create standard URL
+    const thumbnailUrl = this.shortService.getThumbnailUrl(filename);
+    
+    return thumbnailUrl;
+  }
+
+  getShortVideoUrl(short: Short): string {
+    if (!short.videoUrl) return '';
+    
+    // If already a full URL
+    if (short.videoUrl.startsWith('http')) {
+      return short.videoUrl;
+    }
+    
+    // Extract filename from path like "/uploads/videos/filename.mp4"
+    const filename = short.videoUrl.split('/').pop();
+    if (!filename) return '';
+    
+    // Use ShortService to create standard URL
+    return this.shortService.getVideoUrl(filename);
+  }
+
+  isVideoPlaying(shortId?: number): boolean {
+    return shortId !== undefined ? this.playingVideos.has(shortId) : false;
+  }
+
+  onShortClick(short: Short): void {
+    console.log('🔥 Clicking on short:', short.title);
+    
+    if (!short.id) return;
+    
+    // Tìm index của short trong danh sách
+    const shortIndex = this.shorts.findIndex(s => s.id === short.id);
+    if (shortIndex !== -1) {
+      // Chuyển sang trang list-short với index được chọn
+      this.router.navigate(['/list-short'], { 
+        queryParams: { index: shortIndex } 
+      });
+    }
+  }
+
+  onVideoEnded(shortId: number): void {
+    // Remove from playing videos when video ends
+    if (shortId !== undefined) {
+      this.playingVideos.delete(shortId);
+    }
+  }
+
+  onVideoPlay(short: Short): void {
+    if (!short.id) return;
+    // Đảm bảo chỉ tăng view 1 lần mỗi lần xem
+    if (!(short as any)._viewed) {
+      this.shortService.incrementViews(short.id).subscribe({
+        next: (updatedShort) => {
+          console.log('🔥 Video play - Views incremented:', updatedShort.views);
+          // Cập nhật lại số view
+          const index = this.shorts.findIndex(s => s.id === short.id);
+          if (index !== -1) {
+            this.shorts[index] = updatedShort;
+          }
+          (short as any)._viewed = true; // Đánh dấu đã xem
+        },
+        error: (err) => {
+          console.error('Error incrementing views:', err);
+        }
+      });
+    }
+  }
+
+  onShortImageError(ev: Event): void {
+    const img = ev.target as HTMLImageElement;
+    if (!img.src.includes('placeholder.png')) {
+      img.src = 'assets/img/placeholder.png';
+    }
+  }
+
+  /* ===== Drag to Scroll ===== */
+  onMouseDown(event: MouseEvent): void {
+    this.isDragging = true;
+    this.startX = event.pageX - (event.target as HTMLElement).offsetLeft;
+    this.scrollLeft = (event.target as HTMLElement).scrollLeft;
+    this.lastX = event.pageX;
+    this.lastTime = Date.now();
+    (event.target as HTMLElement).style.cursor = 'grabbing';
+  }
+
+  onMouseMove(event: MouseEvent): void {
+    if (!this.isDragging) return;
+    event.preventDefault();
+    const x = event.pageX - (event.target as HTMLElement).offsetLeft;
+    const walk = (x - this.startX) * 2;
+    (event.target as HTMLElement).scrollLeft = this.scrollLeft - walk;
+    
+    // Calculate velocity for momentum scrolling
+    const currentTime = Date.now();
+    const timeDiff = currentTime - this.lastTime;
+    if (timeDiff > 0) {
+      this.velocity = (event.pageX - this.lastX) / timeDiff;
+    }
+    this.lastX = event.pageX;
+    this.lastTime = currentTime;
+  }
+
+  onMouseUp(event: MouseEvent): void {
+    this.isDragging = false;
+    const element = event.target as HTMLElement;
+    element.style.cursor = 'grab';
+    
+    // Apply momentum scrolling based on velocity
+    if (Math.abs(this.velocity) > 0.5) {
+      this.applyMomentumScroll(element, this.velocity);
+    }
+    
+    // Reset velocity
+    this.velocity = 0;
+    this.lastX = 0;
+    this.lastTime = 0;
+  }
+
+  onMouseLeave(event: MouseEvent): void {
+    this.isDragging = false;
+    const element = event.target as HTMLElement;
+    element.style.cursor = 'grab';
+    
+    // Apply momentum scrolling if velocity is significant
+    if (Math.abs(this.velocity) > 0.5) {
+      this.applyMomentumScroll(element, this.velocity);
+    }
+    
+    // Reset velocity
+    this.velocity = 0;
+    this.lastX = 0;
+    this.lastTime = 0;
+  }
+  
+  applyMomentumScroll(element: HTMLElement, velocity: number): void {
+    // Clear any existing momentum interval
+    if (this.momentumInterval) {
+      clearInterval(this.momentumInterval);
+    }
+    
+    let currentVelocity = velocity * 15; // Amplify the velocity
+    const friction = 0.95; // Friction factor
+    
+    this.momentumInterval = setInterval(() => {
+      if (Math.abs(currentVelocity) < 0.1) {
+        clearInterval(this.momentumInterval!);
+        this.momentumInterval = null;
+        return;
+      }
+      
+      element.scrollLeft -= currentVelocity;
+      currentVelocity *= friction;
+    }, 16); // ~60fps
   }
 
   /* ===== Navigation ===== */

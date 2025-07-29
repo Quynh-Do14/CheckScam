@@ -9,6 +9,9 @@ import { CreateReportRequestDTO } from '../dtos/create-report-request.dto';
   providedIn: 'root'
 })
 export class ReportService {
+  getTotalReportsCount(): any {
+    throw new Error('Method not implemented.');
+  }
   private apiBaseUrl = environment.apiBaseUrl;
   private apiReportEndpoint = `${this.apiBaseUrl}/report`;
 

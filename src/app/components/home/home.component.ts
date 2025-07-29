@@ -609,7 +609,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     // Đóng popup sau 2 giây
     setTimeout(() => {
       this.closePartnerModal();
-    }, 2000);
+    }, 4000);
 
     // Vẫn gửi API ở background nhưng không hiển thị loading
     this.cooperateService.registerCooperate(cooperateDataForBackend).subscribe({

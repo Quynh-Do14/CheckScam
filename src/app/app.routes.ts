@@ -13,6 +13,7 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { AboutUsComponent } from './components/about-us/about-us.component';
 import { ChatBoxComponent } from './components/chat-box/chat-box.component';
 import { ListNewsComponent } from './components/news/list-news/list-news.component';
+import { ListShortComponent } from './components/news/list-short/list-short.component';
 import { UpdateNewsComponent } from './components/news/update-news/update-news.component';
 import { SubjectDetailComponent } from './components/subject-detail/subject-detail.component';
 
@@ -109,6 +110,7 @@ export const routes: Routes = [
     { path: 'reset-password', component: ResetPasswordComponent, canActivate: [PublicGuard] }, 
 
     { path: 'list-news', component: ListNewsComponent },
+    { path: 'list-short', component: ListShortComponent },
     { path: 'list-news/:slug', component: ViewNewsComponent },
     { path: 'view-news/:id', component: ViewNewsComponent }, 
     { path: 'chatbox', component: ChatBoxComponent },

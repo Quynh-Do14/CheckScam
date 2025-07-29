@@ -241,12 +241,12 @@ export class PostDetailComponent implements OnInit, OnDestroy {
           console.log('Comment added successfully:', comment);
           
           // Create notification for post author (if not commenting on own post)
-          if (this.post && this.post.authorId !== this.currentUser?.id) {
-            this.createCommentNotification(this.post, comment);
-          }
+          // if (this.post && this.post.authorId !== this.currentUser?.id) {
+          //   this.createCommentNotification(this.post, comment);
+          // }
           
           // Check for mentions in comment content
-          this.checkForMentions(comment.content, comment);
+          // this.checkForMentions(comment.content, comment);
         },
         error: (error) => {
           console.error('Error creating comment:', error);
@@ -320,35 +320,53 @@ export class PostDetailComponent implements OnInit, OnDestroy {
   }
 
   onImageError(event: any) {
-    console.error('Image failed to load:', event.target.src);
-    console.error('Image error:', event);
+    const imgElement = event.target;
+    const failedUrl = imgElement.src;
+    
+    console.error('🖼️ Image failed to load:', {
+      url: failedUrl,
+      alt: imgElement.alt,
+      className: imgElement.className,
+      errorType: event.type,
+      timestamp: new Date().toISOString()
+    });
     
     // Check if this is a post image or avatar
-    if (event.target.classList.contains('post-image')) {
+    if (imgElement.classList.contains('post-image')) {
+      console.log('🚫 Hiding post image container due to load failure');
       // For post images, hide the entire media container
-      const mediaContainer = event.target.closest('.post-media');
+      const mediaContainer = imgElement.closest('.post-media');
       if (mediaContainer) {
         mediaContainer.style.display = 'none';
       }
     } else {
+      console.log('👤 Hiding avatar and showing placeholder due to load failure');
       // For avatars, hide the image and show placeholder
-      event.target.style.display = 'none';
-      if (event.target.parentElement) {
-        event.target.parentElement.classList.add('no-avatar');
+      imgElement.style.display = 'none';
+      if (imgElement.parentElement) {
+        imgElement.parentElement.classList.add('no-avatar');
       }
     }
   }
 
-  getImageUrl(url: string | undefined): string {
-    if (!url) return '';
+  getImageUrl(url: string | undefined | null): string {
+    if (!url || url.trim() === '') {
+      console.log('getImageUrl: Empty or null URL provided');
+      return '';
+    }
     
     // If URL is already absolute, return as is
     if (url.startsWith('http://') || url.startsWith('https://')) {
+      console.log('getImageUrl: Using absolute URL:', url);
       return url;
     }
     
     // If URL is relative, prepend the API base URL
-    return environment.apiUrl + url;
+    // Ensure no double slashes
+    const cleanUrl = url.startsWith('/') ? url : '/' + url;
+    const fullUrl = environment.apiUrl + cleanUrl;
+    console.log('getImageUrl: Converting relative to absolute:', url, '->', fullUrl);
+    return fullUrl;
   }
 
   goBack() {
@@ -485,12 +503,12 @@ export class PostDetailComponent implements OnInit, OnDestroy {
           console.log('Reply added successfully:', reply);
           
           // Create notification for parent comment author (if not replying to own comment)
-          if (parentComment.authorId !== this.currentUser?.id) {
-            this.createReplyNotification(parentComment, reply);
-          }
+          // if (parentComment.authorId !== this.currentUser?.id) {
+          //   this.createReplyNotification(parentComment, reply);
+          // }
           
           // Check for mentions in reply content
-          this.checkForMentions(reply.content, reply);
+          // this.checkForMentions(reply.content, reply);
         },
         error: (error) => {
           console.error('Error creating reply:', error);

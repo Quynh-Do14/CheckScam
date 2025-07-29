@@ -24,6 +24,7 @@ export class CreatePostComponent implements OnInit, OnDestroy {
   isSubmitting = false;
   error = '';
   isLoggedIn = false;
+  currentUser: any = null;
 
   private destroy$ = new Subject<void>();
 
@@ -49,6 +50,7 @@ export class CreatePostComponent implements OnInit, OnDestroy {
       .subscribe(user => {
         console.log('CreatePostComponent: User state changed:', user);
         this.isLoggedIn = !!user;
+        this.currentUser = user;
         console.log('CreatePostComponent: isLoggedIn =', this.isLoggedIn);
         
         if (!this.isLoggedIn) {
@@ -56,6 +58,13 @@ export class CreatePostComponent implements OnInit, OnDestroy {
           this.router.navigate(['/login']);
         }
       });
+  }
+
+  triggerFileInput() {
+    const fileInput = document.getElementById('photoInput') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.click();
+    }
   }
 
   onFileSelected(event: any) {
@@ -91,6 +100,24 @@ export class CreatePostComponent implements OnInit, OnDestroy {
     this.post.imageUrl = undefined;
   }
 
+  onImageError(event: any) {
+    // Handle avatar image error
+    event.target.src = '/assets/img/undraw_profile.svg';
+  }
+
+  getImageUrl(url: string | undefined | null): string {
+    if (!url || url.trim() === '') return '/assets/img/undraw_profile.svg';
+    
+    // If URL is already absolute, return as is
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    
+    // If URL is relative, prepend the API base URL
+    const cleanUrl = url.startsWith('/') ? url : '/' + url;
+    return 'http://localhost:8080' + cleanUrl;
+  }
+
   async onSubmit() {
     if (!this.validateForm()) {
       return;
@@ -106,11 +133,6 @@ export class CreatePostComponent implements OnInit, OnDestroy {
         const uploadResponse = await this.forumService.uploadImage(this.selectedFile).toPromise();
         console.log('Upload response:', uploadResponse);
         this.post.imageUrl = uploadResponse?.data?.imageUrl;
-      }
-
-      // Clean up title - only set if not empty
-      if (this.post.title && !this.post.title.trim()) {
-        this.post.title = undefined;
       }
 
       // Create post
@@ -133,12 +155,6 @@ export class CreatePostComponent implements OnInit, OnDestroy {
   }
 
   validateForm(): boolean {
-    // Title là optional, chỉ validate nếu có
-    if (this.post.title && this.post.title.trim() && this.post.title.length > 200) {
-      this.error = 'Tiêu đề không được vượt quá 200 ký tự';
-      return false;
-    }
-
     if (!this.post.content.trim()) {
       this.error = 'Vui lòng nhập nội dung bài viết';
       return false;

@@ -24,6 +24,31 @@
       </li>
     </ul>
   </div>
+
+<!-- Notifications Container -->
+<div class="notifications-container">
+  <div 
+    *ngFor="let notification of notifications" 
+    class="notification-toast animate__animated animate__slideInRight"
+    [ngClass]="getNotificationClass(notification.type)">
+    <div class="d-flex align-items-start">
+      <div class="notification-icon mr-3">
+        <i [ngClass]="getNotificationIcon(notification.type)"></i>
+      </div>
+      <div class="notification-content flex-grow-1">
+        <h6 class="notification-title mb-1">{{ notification.title }}</h6>
+        <p class="notification-message mb-0">{{ notification.message }}</p>
+      </div>
+      <button 
+        type="button" 
+        class="btn-close" 
+        (click)="removeNotification(notification.id)"
+        aria-label="Close">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  </div>
+</div>
   <div class="card-body">
     <!-- Reports Tab Content -->
     <div *ngIf="isActiveTab('reports')">

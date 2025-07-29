@@ -15,7 +15,7 @@
       <div class="post-header">
         <div class="author-info">
           <img 
-            [src]="post.authorAvatarUrl" 
+            [src]="getImageUrl(post.authorAvatarUrl)" 
             [alt]="post.authorName"
             class="author-avatar"
             *ngIf="post.authorAvatarUrl"
@@ -94,7 +94,7 @@
           <div class="comment-item" *ngFor="let comment of comments">
             <div class="comment-avatar">
               <img 
-                [src]="comment.authorAvatarUrl" 
+                [src]="getImageUrl(comment.authorAvatarUrl)" 
                 [alt]="comment.authorName"
                 *ngIf="comment.authorAvatarUrl && !comment.isAnonymous"
                 (error)="onImageError($event)">
@@ -196,7 +196,7 @@
           <div class="comment-input-container">
             <div class="comment-avatar">
               <img 
-                [src]="currentUser?.avatar" 
+                [src]="getImageUrl(currentUser?.avatar)" 
                 [alt]="currentUser?.name"
                 *ngIf="currentUser?.avatar"
                 (error)="onImageError($event)">
@@ -260,7 +260,7 @@
     <div class="reply-item" *ngFor="let reply of replies">
       <div class="reply-avatar">
         <img 
-          [src]="reply.authorAvatarUrl" 
+          [src]="getImageUrl(reply.authorAvatarUrl)" 
           [alt]="reply.authorName"
           *ngIf="reply.authorAvatarUrl && !reply.isAnonymous"
           (error)="onImageError($event)">

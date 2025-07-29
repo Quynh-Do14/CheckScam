@@ -24,6 +24,7 @@ interface MonthlyStat { month: number; count: number; }
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
+  // Existing properties...
   public yearlyChartType: ChartType = 'bar';
   public yearlyChartData!: ChartData<'bar'>;
   public yearlyChartOptions: ChartOptions = {
@@ -62,6 +63,16 @@ export class DashboardComponent implements OnInit {
   public postsLoading: boolean = false;
   public activeTab: string = 'reports';
   public selectedPost: any = null;
+  
+  // Notification properties
+  public notifications: any[] = [];
+  private notificationId = 0;
+  
+  // Confirm dialog properties
+  public showConfirm = false;
+  public confirmTitle = '';
+  public confirmMessage = '';
+  public confirmCallback: (() => void) | null = null;
 
   constructor(
     private reportService: ReportService,
@@ -161,7 +172,7 @@ export class DashboardComponent implements OnInit {
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
     } else {
-      alert('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
+      this.showNotification('error', 'Phiên đăng nhập hết hạn', 'Vui lòng đăng nhập lại.');
       return;
     }
     
@@ -169,25 +180,31 @@ export class DashboardComponent implements OnInit {
       next: (response) => {
         // Remove from pending list
         this.pendingPosts = this.pendingPosts.filter(post => post.id !== postId);
-        alert('Bài viết đã được duyệt thành công!');
+        this.showNotification('success', 'Duyệt thành công!', 'Bài viết đã được duyệt và hiển thị công khai.');
       },
       error: (error) => {
         if (error.status === 401 || error.status === 403) {
-          alert('Bạn không có quyền duyệt bài viết. Vui lòng đăng nhập với tài khoản admin.');
+          this.showNotification('error', 'Không có quyền', 'Bạn không có quyền duyệt bài viết. Vui lòng đăng nhập với tài khoản admin.');
         } else if (error.status === 404) {
-          alert('Không tìm thấy bài viết hoặc endpoint API.');
+          this.showNotification('error', 'Không tìm thấy', 'Không tìm thấy bài viết hoặc endpoint API.');
         } else {
-          alert('Không thể duyệt bài viết. Lỗi: ' + (error.error?.message || error.message));
+          this.showNotification('error', 'Lỗi duyệt bài viết', error.error?.message || error.message || 'Có lỗi xảy ra khi duyệt bài viết.');
         }
       }
     });
   }
 
-  // Reject post
+  // Reject post with confirmation
   rejectPost(postId: number): void {
-    if (!confirm('Bạn có chắc chắn muốn từ chối bài viết này?')) {
-      return;
-    }
+    this.showConfirmDialog(
+      'Xác nhận từ chối',
+      'Bạn có chắc chắn muốn từ chối bài viết này? Hành động này không thể hoàn tác.',
+      () => this.performRejectPost(postId)
+    );
+  }
+
+  // Actually perform reject post
+  private performRejectPost(postId: number): void {
 
     const url = `${environment.apiBaseUrl}/forum/posts/${postId}/reject`;
     
@@ -199,7 +216,7 @@ export class DashboardComponent implements OnInit {
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
     } else {
-      alert('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
+      this.showNotification('error', 'Phiên đăng nhập hết hạn', 'Vui lòng đăng nhập lại.');
       return;
     }
     
@@ -207,15 +224,15 @@ export class DashboardComponent implements OnInit {
       next: (response) => {
         // Remove from pending list
         this.pendingPosts = this.pendingPosts.filter(post => post.id !== postId);
-        alert('Bài viết đã được từ chối và xóa!');
+        this.showNotification('success', 'Từ chối thành công!', 'Bài viết đã bị từ chối và xóa khỏi hệ thống.');
       },
       error: (error) => {
         if (error.status === 401 || error.status === 403) {
-          alert('Bạn không có quyền từ chối bài viết. Vui lòng đăng nhập với tài khoản admin.');
+          this.showNotification('error', 'Không có quyền', 'Bạn không có quyền từ chối bài viết. Vui lòng đăng nhập với tài khoản admin.');
         } else if (error.status === 404) {
-          alert('Không tìm thấy bài viết hoặc endpoint API.');
+          this.showNotification('error', 'Không tìm thấy', 'Không tìm thấy bài viết hoặc endpoint API.');
         } else {
-          alert('Không thể từ chối bài viết. Lỗi: ' + (error.error?.message || error.message));
+          this.showNotification('error', 'Lỗi từ chối bài viết', error.error?.message || error.message || 'Có lỗi xảy ra khi từ chối bài viết.');
         }
       }
     });
@@ -324,5 +341,73 @@ export class DashboardComponent implements OnInit {
     if (event.target.parentNode) {
       event.target.parentNode.insertBefore(errorDiv, event.target.nextSibling);
     }
+  }
+
+  // Notification methods
+  showNotification(type: 'success' | 'error' | 'info' | 'warning', title: string, message: string): void {
+    const notification = {
+      id: ++this.notificationId,
+      type: type,
+      title: title,
+      message: message,
+      timestamp: new Date()
+    };
+    
+    this.notifications.unshift(notification);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+      this.removeNotification(notification.id);
+    }, 5000);
+  }
+  
+  removeNotification(id: number): void {
+    this.notifications = this.notifications.filter(n => n.id !== id);
+  }
+  
+  getNotificationIcon(type: string): string {
+    switch(type) {
+      case 'success': return 'fas fa-check-circle';
+      case 'error': return 'fas fa-exclamation-circle';
+      case 'warning': return 'fas fa-exclamation-triangle';
+      case 'info': return 'fas fa-info-circle';
+      default: return 'fas fa-bell';
+    }
+  }
+  
+  getNotificationClass(type: string): string {
+    switch(type) {
+      case 'success': return 'alert-success';
+      case 'error': return 'alert-danger';
+      case 'warning': return 'alert-warning';
+      case 'info': return 'alert-info';
+      default: return 'alert-secondary';
+    }
+  }
+  
+  // Confirm dialog methods
+  showConfirmDialog(title: string, message: string, callback: () => void): void {
+    this.confirmTitle = title;
+    this.confirmMessage = message;
+    this.confirmCallback = callback;
+    this.showConfirm = true;
+  }
+  
+  onConfirmYes(): void {
+    if (this.confirmCallback) {
+      this.confirmCallback();
+    }
+    this.closeConfirmDialog();
+  }
+  
+  onConfirmNo(): void {
+    this.closeConfirmDialog();
+  }
+  
+  closeConfirmDialog(): void {
+    this.showConfirm = false;
+    this.confirmTitle = '';
+    this.confirmMessage = '';
+    this.confirmCallback = null;
   }
 }

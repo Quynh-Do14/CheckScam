@@ -51,6 +51,157 @@
   overflow-y: auto;
 }
 
+/* Notification Styles */
+.notifications-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1050;
+  width: 400px;
+  max-width: 90vw;
+}
+
+.notification-toast {
+  margin-bottom: 16px;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-left: 4px solid;
+  background: white;
+  transition: all 0.3s ease;
+  animation-duration: 0.5s;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent 0%, currentColor 100%);
+    animation: progress 5s linear;
+  }
+  
+  &.alert-success {
+    border-left-color: #28a745;
+    color: #155724;
+    
+    .notification-icon {
+      color: #28a745;
+    }
+  }
+  
+  &.alert-error,
+  &.alert-danger {
+    border-left-color: #dc3545;
+    color: #721c24;
+    
+    .notification-icon {
+      color: #dc3545;
+    }
+  }
+  
+  &.alert-warning {
+    border-left-color: #ffc107;
+    color: #856404;
+    
+    .notification-icon {
+      color: #ffc107;
+    }
+  }
+  
+  &.alert-info {
+    border-left-color: #17a2b8;
+    color: #0c5460;
+    
+    .notification-icon {
+      color: #17a2b8;
+    }
+  }
+  
+  &:hover {
+    transform: translateX(-4px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.notification-icon {
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+.notification-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.notification-message {
+  font-size: 14px;
+  margin: 0;
+  opacity: 0.9;
+  line-height: 1.4;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  color: currentColor;
+  opacity: 0.6;
+  padding: 4px;
+  margin: -4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.1);
+  }
+  
+  i {
+    font-size: 12px;
+  }
+}
+
+@keyframes progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* Responsive notifications */
+@media (max-width: 768px) {
+  .notifications-container {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    width: auto;
+  }
+  
+  .notification-toast {
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+  
+  .notification-title {
+    font-size: 15px;
+  }
+  
+  .notification-message {
+    font-size: 13px;
+  }
+}
+
 .badge-secondary {
   background-color: #6c757d;
 }

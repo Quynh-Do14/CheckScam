@@ -44,6 +44,7 @@
 
   <!-- Main Content -->
   <div class="main-content">
+
   <!-- Create Post Box -->
   <div class="create-post-box" *ngIf="isLoggedIn">
   <div class="create-post-header">
@@ -56,18 +57,11 @@
     <i class="bi bi-person-circle"></i>
   </div>
   <div class="post-input" (click)="showCreatePost = true">
-  {{ currentUser?.name || currentUser?.username || getMaskedEmail(currentUser?.email || '') }} ơi, bạn muốn chia sẻ tin tức gì?
+  {{ currentUser?.name || currentUser?.username || getMaskedEmail(currentUser?.email || '') }} ơi, bạn muốn bóc phốt đối tượng nào?
   </div>
   </div>
   </div>
 
-    <!-- Error Message -->
-    <div class="error-message" *ngIf="error">
-      <div class="alert alert-danger">
-        <i class="bi bi-exclamation-triangle-fill"></i>
-        {{ error }}
-      </div>
-    </div>
 
     <!-- Create Post Modal -->
     <div class="modal-overlay" *ngIf="showCreatePost" (click)="showCreatePost = false">
@@ -198,9 +192,6 @@
               <div class="post-meta">
                 <span class="post-time">{{ getTimeAgo(post.updatedAt || post.createdAt) }}</span>
                 <i class="bi bi-globe2" title="Công khai"></i>
-                <span class="post-type-badge" *ngIf="post.postType" [class]="'badge-' + post.postType">
-                  {{ getPostTypeLabel(post.postType) }}
-                </span>
               </div>
             </div>
           </div>
@@ -235,9 +226,7 @@
           <div class="stats-left">
             <div class="reaction-summary" *ngIf="post.likesCount > 0">
               <div class="reaction-icons">
-                <span class="reaction-emoji">❤️</span>
                 <span class="reaction-emoji">👍</span>
-                <span class="reaction-emoji">😊</span>
               </div>
               <span class="reaction-count">{{ post.likesCount }} lượt thích</span>
             </div>
@@ -275,14 +264,6 @@
       </div>
       </div>
       
-      <!-- Empty state message -->
-      <div *ngIf="isValidPostsArray() && posts.length === 0 && !loading" class="empty-posts">
-        <div class="empty-content">
-          <i class="bi bi-chat-text"></i>
-          <h3>Chưa có bài viết nào</h3>
-          <p>Hãy là người đầu tiên chia sẻ kinh nghiệm về an toàn mạng!</p>
-        </div>
-      </div>
     </div>
   </div>
 

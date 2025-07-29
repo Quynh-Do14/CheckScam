@@ -1,29 +1,237 @@
-<div class="card shadow mb-4">
-  <div class="card-header d-flex justify-content-between align-items-center py-3">
-    <h6 class="m-0 font-weight-bold text-primary">Báo cáo theo Tháng</h6>
-    <select class="form-select w-auto" [(ngModel)]="selectedYear" (ngModelChange)="onYearChange($event)">
-      <option *ngFor="let y of availableYears" [value]="y">Năm {{ y }}</option>
-    </select>
-  </div>
-  <div class="card-body" style="position: relative; height: 300px;">
-    <canvas
-      baseChart
-      [data]="monthlyChartData"
-      [options]="monthlyChartOptions"
-      [type]="monthlyChartType">
-    </canvas>
-  </div>
-</div>
+<!-- Tab Navigation -->
 <div class="card shadow mb-4">
   <div class="card-header py-3">
-    <h6 class="m-0 font-weight-bold text-primary">Báo cáo theo Năm</h6>
+    <ul class="nav nav-tabs card-header-tabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button 
+          class="nav-link" 
+          [class.active]="isActiveTab('reports')"
+          (click)="switchTab('reports')"
+          type="button">
+          <i class="fas fa-chart-bar mr-2"></i>
+          Thống kê báo cáo
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button 
+          class="nav-link" 
+          [class.active]="isActiveTab('posts')"
+          (click)="switchTab('posts')"
+          type="button">
+          <i class="fas fa-edit mr-2"></i>
+          Quản lý bài đăng
+        </button>
+      </li>
+    </ul>
   </div>
-  <div class="card-body" style="position: relative; height: 300px;">
-    <canvas
-      baseChart
-      [data]="yearlyChartData"
-      [options]="yearlyChartOptions"
-      [type]="yearlyChartType">
-    </canvas>
+  <div class="card-body">
+    <!-- Reports Tab Content -->
+    <div *ngIf="isActiveTab('reports')">
+      <div class="row">
+        <div class="col-12">
+          <div class="card shadow mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center py-3">
+              <h6 class="m-0 font-weight-bold text-primary">Báo cáo theo Tháng</h6>
+              <select class="form-select w-auto" [(ngModel)]="selectedYear" (ngModelChange)="onYearChange($event)">
+                <option *ngFor="let y of availableYears" [value]="y">Năm {{ y }}</option>
+              </select>
+            </div>
+            <div class="card-body" style="position: relative; height: 300px;">
+              <canvas
+                baseChart
+                [data]="monthlyChartData"
+                [options]="monthlyChartOptions"
+                [type]="monthlyChartType">
+              </canvas>
+            </div>
+          </div>
+          
+          <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">Báo cáo theo Năm</h6>
+            </div>
+            <div class="card-body" style="position: relative; height: 300px;">
+              <canvas
+                baseChart
+                [data]="yearlyChartData"
+                [options]="yearlyChartOptions"
+                [type]="yearlyChartType">
+              </canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Posts Management Tab Content -->
+    <div *ngIf="isActiveTab('posts')">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h6 class="mb-0">Bài viết chờ duyệt</h6>
+        <div>
+          <button class="btn btn-sm btn-outline-secondary mr-2" (click)="loadPendingPosts()">
+            <i class="fas fa-sync-alt mr-1"></i>
+            Tải lại
+          </button>
+          <small class="text-muted">Tổng: {{ pendingPosts.length }} bài viết</small>
+        </div>
+      </div>
+      
+      <!-- Loading -->
+      <div *ngIf="postsLoading" class="text-center py-4">
+        <div class="spinner-border text-primary" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+        <p class="text-muted mt-2">Đang tải bài viết...</p>
+      </div>
+      
+      <!-- Posts List -->
+      <div *ngIf="!postsLoading && pendingPosts.length > 0">
+        <div *ngFor="let post of pendingPosts" class="card mb-3 shadow-sm">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-8">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <h6 class="card-title mb-1">
+                    {{ getPostDisplayTitle(post) }}
+                  </h6>
+                  <small class="text-muted">{{ getTimeAgo(post.createdAt) }}</small>
+                </div>
+                
+                <div class="d-flex align-items-center text-muted small">
+                  <i class="fas fa-user mr-1"></i>
+                  <span class="mr-3">{{ post.authorName || post.authorEmail }}</span>
+                  <i class="fas fa-tag mr-1"></i>
+                  <span>{{ post.postType || 'Drama' }}</span>
+                </div>
+              </div>
+              
+              <div class="col-md-4 text-right">
+                <div class="btn-group-vertical" role="group">
+                  <button 
+                    class="btn btn-info btn-sm mb-2" 
+                    (click)="viewPostDetail(post)"
+                    title="Xem chi tiết bài viết">
+                    <i class="fas fa-eye mr-1"></i>
+                    Xem chi tiết
+                  </button>
+                  <button 
+                    class="btn btn-success btn-sm mb-2" 
+                    (click)="approvePost(post.id)"
+                    title="Duyệt bài viết">
+                    <i class="fas fa-check mr-1"></i>
+                    Duyệt
+                  </button>
+                  <button 
+                    class="btn btn-danger btn-sm" 
+                    (click)="rejectPost(post.id)"
+                    title="Từ chối bài viết">
+                    <i class="fas fa-times mr-1"></i>
+                    Từ chối
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Empty State -->
+      <div *ngIf="!postsLoading && pendingPosts.length === 0" class="text-center py-5">
+        <i class="fas fa-clipboard-check fa-3x text-muted mb-3"></i>
+        <h5 class="text-muted">Không có bài viết chờ duyệt</h5>
+        <p class="text-muted">Tất cả bài viết đã được xử lý.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Post Detail Modal -->
+<div class="modal fade" id="postDetailModal" tabindex="-1" role="dialog" *ngIf="selectedPost">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="fas fa-eye mr-2"></i>
+          Chi tiết bài viết
+        </h5>
+        <button type="button" class="close" (click)="closePostDetailModal()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- Post Content -->
+        <div class="card border-0">
+          <div class="card-body p-0">
+            <!-- Post Title -->
+            <h6 class="card-title mb-3">
+              {{ getPostDisplayTitle(selectedPost) }}
+            </h6>
+            
+            <!-- Post Meta Info -->
+            <div class="d-flex align-items-center text-muted small mb-3">
+              <i class="fas fa-user mr-1"></i>
+              <span class="mr-3">{{ selectedPost.authorName || selectedPost.authorEmail }}</span>
+              <i class="fas fa-calendar mr-1"></i>
+              <span class="mr-3">{{ getTimeAgo(selectedPost.createdAt) }}</span>
+              <i class="fas fa-tag mr-1"></i>
+              <span class="badge badge-secondary">{{ selectedPost.postType || 'Drama' }}</span>
+            </div>
+            
+            <!-- Post Content -->
+            <div class="card-text mb-3" *ngIf="selectedPost.content">
+              <div [innerHTML]="selectedPost.content" class="post-content-detail"></div>
+            </div>
+            
+            <!-- Post Image -->
+            <div *ngIf="selectedPost.imageUrl" class="mb-3">
+              <img 
+                [src]="getImageUrl(selectedPost.imageUrl)" 
+                alt="Post image" 
+                class="img-fluid rounded shadow-sm"
+                style="max-width: 100%; height: auto;"
+                (error)="onImageError($event)">
+            </div>
+            
+            <!-- Post Stats -->
+            <div class="d-flex align-items-center text-muted small">
+              <span class="mr-3">
+                <i class="fas fa-eye mr-1"></i>
+                {{ selectedPost.viewCount || 0 }} lượt xem
+              </span>
+              <span class="mr-3">
+                <i class="fas fa-thumbs-up mr-1"></i>
+                {{ selectedPost.likesCount || 0 }} lượt thích
+              </span>
+              <span>
+                <i class="fas fa-comment mr-1"></i>
+                {{ selectedPost.commentsCount || 0 }} bình luận
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button 
+          type="button" 
+          class="btn btn-success" 
+          (click)="approvePostFromModal(selectedPost.id)">
+          <i class="fas fa-check mr-1"></i>
+          Duyệt bài viết
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-danger" 
+          (click)="rejectPostFromModal(selectedPost.id)">
+          <i class="fas fa-times mr-1"></i>
+          Từ chối bài viết
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-secondary" 
+          (click)="closePostDetailModal()">
+          Đóng
+        </button>
+      </div>
+    </div>
   </div>
 </div>

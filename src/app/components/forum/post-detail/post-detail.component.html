@@ -43,7 +43,7 @@
         
         <!-- Post Image -->
         <div class="post-media" *ngIf="post.imageUrl">
-          <img [src]="post.imageUrl" [alt]="post.title" class="post-image">
+          <img [src]="getImageUrl(post.imageUrl)" [alt]="post.title || 'Post image'" class="post-image" (error)="onImageError($event)">
         </div>
       </div>
 
@@ -52,9 +52,7 @@
         <div class="stats-left">
           <div class="reaction-summary" *ngIf="post.likesCount > 0">
             <div class="reaction-icons">
-              <span class="reaction-emoji">❤️</span>
               <span class="reaction-emoji">👍</span>
-              <span class="reaction-emoji">😊</span>
             </div>
             <span class="reaction-count">{{ post.likesCount }} lượt thích</span>
           </div>
@@ -82,12 +80,7 @@
           <span>Bình luận</span>
         </button>
         
-        <button class="action-btn send-action">
-          <i class="bi bi-arrow-up-right-circle"></i>
-          <span>Gửi</span>
-        </button>
-        
-        <button class="action-btn share-action">
+        <button class="action-btn share-action" (click)="onSharePost()">
           <i class="bi bi-share-fill"></i>
           <span>Chia sẻ</span>
         </button>
@@ -103,16 +96,23 @@
               <img 
                 [src]="comment.authorAvatarUrl" 
                 [alt]="comment.authorName"
-                *ngIf="comment.authorAvatarUrl"
+                *ngIf="comment.authorAvatarUrl && !comment.isAnonymous"
                 (error)="onImageError($event)">
-              <div class="avatar-placeholder" *ngIf="!comment.authorAvatarUrl">
-                <i class="bi bi-person-circle"></i>
+              <div class="avatar-placeholder" [class.anonymous-avatar]="comment.isAnonymous" *ngIf="!comment.authorAvatarUrl || comment.isAnonymous">
+                <i class="bi bi-incognito" *ngIf="comment.isAnonymous"></i>
+                <i class="bi bi-person-circle" *ngIf="!comment.isAnonymous"></i>
               </div>
             </div>
             <div class="comment-content">
               <div class="comment-bubble">
-                <h6 class="comment-author">{{ comment.authorName || getMaskedEmail(comment.authorEmail) }}</h6>
-                <p class="comment-text">{{ comment.content }}</p>
+                <h6 class="comment-author">
+                  <span *ngIf="!comment.isAnonymous">{{ comment.authorName || getMaskedEmail(comment.authorEmail) }}</span>
+                  <span *ngIf="comment.isAnonymous" class="anonymous-author">
+                    <i class="bi bi-incognito"></i>
+                    Người dùng ẩn danh
+                  </span>
+                </h6>
+                <p class="comment-text" [innerHTML]="formatContentWithMentions(comment.content)"></p>
               </div>
               <div class="comment-meta">
                 <button 
@@ -140,55 +140,38 @@
                     maxlength="1000"
                     (keydown)="onReplyKeydown($event)">
                   </textarea>
-                  <div class="reply-actions">
-                    <button class="cancel-btn" (click)="cancelReply()">Hủy</button>
-                    <button 
-                      class="submit-btn" 
-                      (click)="submitReply(comment)"
-                      [disabled]="!replyContent.trim() || submittingReply">
-                      <span *ngIf="!submittingReply">Phản hồi</span>
-                      <span *ngIf="submittingReply">
-                        <i class="bi bi-arrow-repeat spin"></i> Đang gửi...
-                      </span>
-                    </button>
+                  <div class="reply-footer">
+                    <div class="reply-options">
+                      <label class="anonymous-option">
+                        <input 
+                          type="checkbox" 
+                          [(ngModel)]="isAnonymousReply"
+                          class="anonymous-checkbox">
+                        <i class="bi bi-incognito"></i>
+                        <span>Ẩn danh</span>
+                      </label>
+                    </div>
+                    <div class="reply-actions">
+                      <button class="cancel-btn" (click)="cancelReply()">Hủy</button>
+                      <button 
+                        class="submit-btn" 
+                        (click)="submitReply(comment)"
+                        [disabled]="!replyContent.trim() || submittingReply">
+                        <span *ngIf="!submittingReply">Phản hồi</span>
+                        <span *ngIf="submittingReply">
+                          <i class="bi bi-arrow-repeat spin"></i> Đang gửi...
+                        </span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
               
-              <!-- Nested Replies -->
-              <div class="replies-list" *ngIf="comment.replies && comment.replies.length > 0">
-                <div class="reply-item" *ngFor="let reply of comment.replies">
-                  <div class="reply-avatar">
-                    <img 
-                      [src]="reply.authorAvatarUrl" 
-                      [alt]="reply.authorName"
-                      *ngIf="reply.authorAvatarUrl"
-                      (error)="onImageError($event)">
-                    <div class="avatar-placeholder" *ngIf="!reply.authorAvatarUrl">
-                      <i class="bi bi-person-circle"></i>
-                    </div>
-                  </div>
-                  <div class="reply-content">
-                    <div class="reply-bubble">
-                      <h6 class="reply-author">{{ reply.authorName || getMaskedEmail(reply.authorEmail) }}</h6>
-                      <p class="reply-text">{{ reply.content }}</p>
-                    </div>
-                    <div class="reply-meta">
-                      <button 
-                        class="reply-like-btn"
-                        [class.liked]="reply.isLiked"
-                        (click)="onLikeComment(reply)"
-                        [disabled]="!isLoggedIn">
-                        Thích
-                      </button>
-                      <span class="reply-time" *ngIf="getTimeAgo(reply.createdAt)">{{ getTimeAgo(reply.createdAt) }}</span>
-                      <span class="reply-likes" *ngIf="reply.likesCount > 0">
-                        <i class="bi bi-hand-thumbs-up"></i> {{ reply.likesCount }}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <!-- Nested Replies with recursive template -->
+              <ng-container *ngIf="comment.replies && comment.replies.length > 0">
+                <ng-container *ngTemplateOutlet="replyTemplate; context: { $implicit: comment.replies, level: 1 }">
+                </ng-container>
+              </ng-container>
             </div>
           </div>
 
@@ -232,26 +215,27 @@
                 (input)="onCommentInput($event)"
                 (keydown)="onCommentKeydown($event)"></textarea>
               <div class="comment-input-actions">
-                <button class="emoji-btn" type="button" (click)="onEmojiClick()">
-                  <i class="bi bi-emoji-smile"></i>
-                </button>
-                <button class="photo-btn" type="button" (click)="onPhotoClick()">
-                  <i class="bi bi-camera"></i>
-                </button>
-                <button class="gif-btn" type="button" (click)="onGifClick()">
-                  <i class="bi bi-file-image"></i>
-                </button>
                 <button 
-                  class="send-btn always-visible"
+                  class="send-btn"
+                  [class.has-content]="newComment.content.trim().length > 0"
                   type="button"
                   (click)="onSubmitComment()"
                   [disabled]="!newComment.content.trim() || submittingComment"
                   title="Gửi bình luận">
                   <i class="bi bi-send-fill" *ngIf="!submittingComment"></i>
                   <i class="bi bi-arrow-repeat spin" *ngIf="submittingComment"></i>
-                  <span class="sr-only">Gửi</span>
                 </button>
               </div>
+            </div>
+            <div class="comment-options" *ngIf="newComment.content.trim().length > 0">
+              <label class="anonymous-option">
+                <input 
+                  type="checkbox" 
+                  [(ngModel)]="isAnonymousComment"
+                  class="anonymous-checkbox">
+                <i class="bi bi-incognito"></i>
+                <span>Ẩn danh</span>
+              </label>
             </div>
           </div>
         </div>
@@ -269,6 +253,95 @@
     </div>
   </div>
 </div>
+
+<!-- Recursive Reply Template -->
+<ng-template #replyTemplate let-replies let-level="level">
+  <div class="replies-list" [attr.data-level]="level">
+    <div class="reply-item" *ngFor="let reply of replies">
+      <div class="reply-avatar">
+        <img 
+          [src]="reply.authorAvatarUrl" 
+          [alt]="reply.authorName"
+          *ngIf="reply.authorAvatarUrl && !reply.isAnonymous"
+          (error)="onImageError($event)">
+        <div class="avatar-placeholder" [class.anonymous-avatar]="reply.isAnonymous" *ngIf="!reply.authorAvatarUrl || reply.isAnonymous">
+          <i class="bi bi-incognito" *ngIf="reply.isAnonymous"></i>
+          <i class="bi bi-person-circle" *ngIf="!reply.isAnonymous"></i>
+        </div>
+      </div>
+      <div class="reply-content">
+        <div class="reply-bubble">
+          <h6 class="reply-author">
+            <span *ngIf="!reply.isAnonymous">{{ reply.authorName || getMaskedEmail(reply.authorEmail) }}</span>
+            <span *ngIf="reply.isAnonymous" class="anonymous-author">
+              <i class="bi bi-incognito"></i>
+              Người dùng ẩn danh
+            </span>
+          </h6>
+          <p class="reply-text" [innerHTML]="formatContentWithMentions(reply.content)"></p>
+        </div>
+        <div class="reply-meta">
+          <button 
+            class="reply-like-btn"
+            [class.liked]="reply.isLiked"
+            (click)="onLikeComment(reply)"
+            [disabled]="!isLoggedIn">
+            Thích
+          </button>
+          <button class="comment-reply-btn" (click)="onReplyComment(reply)" [disabled]="!isLoggedIn">Phản hồi</button>
+          <span class="reply-time" *ngIf="getTimeAgo(reply.createdAt)">{{ getTimeAgo(reply.createdAt) }}</span>
+          <span class="reply-likes" *ngIf="reply.likesCount > 0">
+            <i class="bi bi-hand-thumbs-up"></i> {{ reply.likesCount }}
+          </span>
+        </div>
+        
+        <!-- Reply Form for nested replies -->
+        <div class="reply-form nested" *ngIf="replyingTo === reply.id && isLoggedIn">
+          <div class="reply-input-container">
+            <textarea 
+              [(ngModel)]="replyContent"
+              placeholder="Viết phản hồi..."
+              class="reply-input"
+              rows="1"
+              maxlength="1000"
+              (keydown)="onReplyKeydown($event)">
+            </textarea>
+            <div class="reply-footer">
+              <div class="reply-options">
+                <label class="anonymous-option">
+                  <input 
+                    type="checkbox" 
+                    [(ngModel)]="isAnonymousReply"
+                    class="anonymous-checkbox">
+                  <i class="bi bi-incognito"></i>
+                  <span>Ẩn danh</span>
+                </label>
+              </div>
+              <div class="reply-actions">
+                <button class="cancel-btn" (click)="cancelReply()">Hủy</button>
+                <button 
+                  class="submit-btn" 
+                  (click)="submitReply(reply)"
+                  [disabled]="!replyContent.trim() || submittingReply">
+                  <span *ngIf="!submittingReply">Phản hồi</span>
+                  <span *ngIf="submittingReply">
+                    <i class="bi bi-arrow-repeat spin"></i> Đang gửi...
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Recursive nested replies -->
+        <ng-container *ngIf="reply.replies && reply.replies.length > 0">
+          <ng-container *ngTemplateOutlet="replyTemplate; context: { $implicit: reply.replies, level: level + 1 }">
+          </ng-container>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</ng-template>
 
 <!-- Loading State -->
 <div class="loading-overlay" *ngIf="loading">

@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { UserService } from '../../services/user.service';
 import { Subscription } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { NotificationComponent } from '../notification/notification.component';
 
 @Component({
   selector: 'app-header',
@@ -11,7 +12,8 @@ import { environment } from '../../environments/environment';
   imports: [
     RouterLink,
     CommonModule,
-    RouterModule
+    RouterModule,
+    NotificationComponent
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'

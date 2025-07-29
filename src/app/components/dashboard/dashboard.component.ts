@@ -9,6 +9,9 @@ import {
   ChartDataset
 } from 'chart.js';
 import { ReportService } from '../../services/report.service';
+import { ForumService } from '../../services/forum.service';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 interface YearlyStat { year: number; count: number; }
 interface MonthlyStat { month: number; count: number; }
@@ -54,7 +57,17 @@ export class DashboardComponent implements OnInit {
   public availableYears: number[] = [];
   public selectedYear!: number;
 
-  constructor(private reportService: ReportService) {}
+  // Post management properties
+  public pendingPosts: any[] = [];
+  public postsLoading: boolean = false;
+  public activeTab: string = 'reports';
+  public selectedPost: any = null;
+
+  constructor(
+    private reportService: ReportService,
+    private forumService: ForumService,
+    private http: HttpClient
+  ) {}
 
   ngOnInit(): void {
     this.reportService.getYearlyStats().subscribe((stats: YearlyStat[]) => {
@@ -96,5 +109,220 @@ export class DashboardComponent implements OnInit {
   public onYearChange(year: string): void {
     this.selectedYear = +year;
     this.loadMonthlyChart(this.selectedYear);
+  }
+
+  // Tab management
+  switchTab(tabName: string): void {
+    this.activeTab = tabName;
+    if (tabName === 'posts') {
+      this.loadPendingPosts();
+    }
+  }
+
+  isActiveTab(tabName: string): boolean {
+    return this.activeTab === tabName;
+  }
+
+  // Load pending posts for approval
+  loadPendingPosts(): void {
+    this.postsLoading = true;
+    
+    // Call API to get pending posts (isActive = false)
+    const url = `${environment.apiBaseUrl}/forum/posts?status=pending&page=0&size=20`;
+    
+    this.http.get(url).subscribe({
+      next: (response: any) => {
+        if (response?.data?.data) {
+          this.pendingPosts = response.data.data;
+        } else if (response?.data && Array.isArray(response.data)) {
+          this.pendingPosts = response.data;
+        } else {
+          this.pendingPosts = [];
+        }
+        this.postsLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading pending posts:', error);
+        this.pendingPosts = [];
+        this.postsLoading = false;
+      }
+    });
+  }
+
+  // Approve post
+  approvePost(postId: number): void {
+    const url = `${environment.apiBaseUrl}/forum/posts/${postId}/approve`;
+    
+    const token = localStorage.getItem('jwt_token');
+    const headers: any = {
+      'Content-Type': 'application/json'
+    };
+    
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    } else {
+      alert('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
+      return;
+    }
+    
+    this.http.put(url, {}, { headers }).subscribe({
+      next: (response) => {
+        // Remove from pending list
+        this.pendingPosts = this.pendingPosts.filter(post => post.id !== postId);
+        alert('Bài viết đã được duyệt thành công!');
+      },
+      error: (error) => {
+        if (error.status === 401 || error.status === 403) {
+          alert('Bạn không có quyền duyệt bài viết. Vui lòng đăng nhập với tài khoản admin.');
+        } else if (error.status === 404) {
+          alert('Không tìm thấy bài viết hoặc endpoint API.');
+        } else {
+          alert('Không thể duyệt bài viết. Lỗi: ' + (error.error?.message || error.message));
+        }
+      }
+    });
+  }
+
+  // Reject post
+  rejectPost(postId: number): void {
+    if (!confirm('Bạn có chắc chắn muốn từ chối bài viết này?')) {
+      return;
+    }
+
+    const url = `${environment.apiBaseUrl}/forum/posts/${postId}/reject`;
+    
+    const token = localStorage.getItem('jwt_token');
+    const headers: any = {
+      'Content-Type': 'application/json'
+    };
+    
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    } else {
+      alert('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
+      return;
+    }
+    
+    this.http.put(url, {}, { headers }).subscribe({
+      next: (response) => {
+        // Remove from pending list
+        this.pendingPosts = this.pendingPosts.filter(post => post.id !== postId);
+        alert('Bài viết đã được từ chối và xóa!');
+      },
+      error: (error) => {
+        if (error.status === 401 || error.status === 403) {
+          alert('Bạn không có quyền từ chối bài viết. Vui lòng đăng nhập với tài khoản admin.');
+        } else if (error.status === 404) {
+          alert('Không tìm thấy bài viết hoặc endpoint API.');
+        } else {
+          alert('Không thể từ chối bài viết. Lỗi: ' + (error.error?.message || error.message));
+        }
+      }
+    });
+  }
+
+  // Get time ago helper
+  getTimeAgo(date: Date | string): string {
+    if (!date) return '';
+    
+    const now = new Date();
+    const targetDate = typeof date === 'string' ? new Date(date) : date;
+    const diffInMs = now.getTime() - targetDate.getTime();
+    const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    const diffInDays = Math.floor(diffInHours / 24);
+
+    if (diffInMinutes < 1) return 'Vừa xong';
+    if (diffInMinutes < 60) return `${diffInMinutes} phút trước`;
+    if (diffInHours < 24) return `${diffInHours} giờ trước`;
+    return `${diffInDays} ngày trước`;
+  }
+
+  // Get display title from post (use content if title is empty)
+  getPostDisplayTitle(post: any): string {
+    if (post.title && post.title.trim()) {
+      return post.title;
+    }
+    
+    if (post.content && post.content.trim()) {
+      // Remove HTML tags and get first 50 characters
+      const textContent = post.content.replace(/<[^>]*>/g, '').trim();
+      return textContent.length > 50 ? textContent.substring(0, 50) + '...' : textContent;
+    }
+    
+    return 'Bài viết không có nội dung';
+  }
+
+  // Post detail modal methods
+  viewPostDetail(post: any): void {
+    this.selectedPost = post;
+    // Use Bootstrap modal
+    const modal = document.getElementById('postDetailModal');
+    if (modal) {
+      (modal as any).classList.add('show');
+      (modal as any).style.display = 'block';
+      document.body.classList.add('modal-open');
+      
+      // Create backdrop
+      const backdrop = document.createElement('div');
+      backdrop.className = 'modal-backdrop fade show';
+      backdrop.id = 'modal-backdrop';
+      document.body.appendChild(backdrop);
+    }
+  }
+
+  closePostDetailModal(): void {
+    this.selectedPost = null;
+    const modal = document.getElementById('postDetailModal');
+    if (modal) {
+      (modal as any).classList.remove('show');
+      (modal as any).style.display = 'none';
+      document.body.classList.remove('modal-open');
+      
+      // Remove backdrop
+      const backdrop = document.getElementById('modal-backdrop');
+      if (backdrop) {
+        backdrop.remove();
+      }
+    }
+  }
+
+  approvePostFromModal(postId: number): void {
+    this.approvePost(postId);
+    this.closePostDetailModal();
+  }
+
+  rejectPostFromModal(postId: number): void {
+    this.rejectPost(postId);
+    this.closePostDetailModal();
+  }
+
+  // Get image URL helper
+  getImageUrl(url: string | undefined): string {
+    if (!url) return '';
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    // Use apiUrl (not apiBaseUrl) for images, similar to post-detail component
+    if (url.startsWith('/')) {
+      return environment.apiUrl + url;
+    }
+    return environment.apiUrl + '/' + url;
+  }
+
+  // Handle image load error
+  onImageError(event: any): void {
+    console.log('Image failed to load:', event.target.src);
+    event.target.style.display = 'none';
+    
+    // Show error message
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'alert alert-warning text-center';
+    errorDiv.innerHTML = '<i class="fas fa-exclamation-triangle mr-2"></i>Không thể tải ảnh';
+    
+    // Insert after the failed image
+    if (event.target.parentNode) {
+      event.target.parentNode.insertBefore(errorDiv, event.target.nextSibling);
+    }
   }
 }

@@ -8,7 +8,7 @@
       <li><a (click)="onAiTuVanClick(); onNavLinkClick()">AI Tư vấn</a></li>
       <!-- <li><a routerLink="/list-news" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" (click)="onNavLinkClick()">Tin tức</a></li> -->
        <li><a routerLink="/list-news" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: false}" (click)="onNavLinkClick()">Tin tức</a></li>
-      <li><a routerLink="/forum" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" (click)="onNavLinkClick()">Diễn đàn</a></li>
+      <li><a routerLink="/forum" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" (click)="onNavLinkClick()">Bóc phốt</a></li>
       <li><a routerLink="/ranking" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" (click)="onNavLinkClick()">Bảng xếp hạng</a></li>
       <li><a routerLink="/report" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" (click)="onNavLinkClick()">Báo cáo</a></li>
       <li><a routerLink="/transactions" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}" (click)="onNavLinkClick()">Giao dịch</a></li>
@@ -19,6 +19,12 @@
         <div class="user-profile-mobile">
           <img class="avatar-img-mobile" [src]="userAvatarUrl" (error)="onImageError($event)" alt="User Avatar">
           <span class="user-email-mobile">{{ userEmail }}</span>
+          <!-- Mobile notification - DISABLED -->
+          <!--
+          <div class="mobile-notification-wrapper">
+            <app-notification></app-notification>
+          </div>
+          -->
           <a routerLink="/user/profile" class="profile-link-mobile" (click)="onNavLinkClick()">Trang cá nhân</a>
           <a *ngIf="isAdminOrCollab" routerLink="/admin" class="admin-link-mobile" (click)="onNavLinkClick()">Trang quản trị</a>
           <a (click)="logout(); onNavLinkClick()">Đăng xuất</a>
@@ -45,6 +51,12 @@
           <a (click)="logout()">Đăng xuất</a>
         </div>
       </li>
+      <!-- Notification Bell - DISABLED -->
+      <!--
+      <li *ngIf="isLoggedIn" class="notification-section">
+        <app-notification></app-notification>
+      </li>
+      -->
     </ul>
 
     <button class="menu-toggle" (click)="toggleMenu()" [class.open]="isMenuOpen">

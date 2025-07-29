@@ -248,6 +248,91 @@
         }
       }
     }
+
+    // Notification section styling
+    .notification-section {
+      display: flex;
+      align-items: center;
+      margin-left: 12px;
+      height: 100%;
+
+      // Override notification component styles to fit header
+      ::ng-deep app-notification {
+        .notification-container {
+          height: 100%;
+          display: flex;
+          align-items: center;
+        }
+
+        .notification-bell {
+          color: #fff !important;
+          font-size: 22px !important;
+          padding: 8px !important;
+          border-radius: 50% !important;
+          transition: all 0.3s ease !important;
+          background: transparent !important;
+          border: none !important;
+          cursor: pointer !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          position: relative !important;
+          outline: none !important;
+
+          &:hover {
+            background: rgba(255, 255, 255, 0.15) !important;
+            color: #FFD23F !important;
+            transform: scale(1.1) !important;
+          }
+
+          &:focus {
+            outline: none !important;
+            box-shadow: 0 0 0 2px rgba(255, 210, 63, 0.5) !important;
+          }
+
+          &.has-unread {
+            color: #FFD23F !important;
+            
+            i {
+              animation: bellRing 0.8s ease-in-out infinite !important;
+            }
+          }
+
+          i {
+            font-size: 22px !important;
+            line-height: 1 !important;
+          }
+        }
+
+        .notification-badge {
+          background: #ff3e30;
+          color: white;
+          border: 2px solid #FF6B35;
+          font-size: 10px;
+          font-weight: 700;
+          min-width: 16px;
+          height: 16px;
+          top: 2px;
+          right: 2px;
+        }
+
+        .notification-panel {
+          top: calc(100% + 8px);
+          right: 0;
+        }
+      }
+    }
+  }
+
+  // Bell ring animation
+  @keyframes bellRing {
+    0%, 100% { transform: rotate(0deg); }
+    10% { transform: rotate(10deg); }
+    20% { transform: rotate(-8deg); }
+    30% { transform: rotate(6deg); }
+    40% { transform: rotate(-4deg); }
+    50% { transform: rotate(2deg); }
+    60% { transform: rotate(0deg); }
   }
 
   .desktop-only-auth {
@@ -470,6 +555,60 @@ body.no-scroll {
           align-items: center;
           gap: 12px;
           margin-bottom: 15px;
+        }
+
+        .mobile-notification-wrapper {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 12px 0;
+          margin: 12px 0;
+          border-top: 1px solid rgba(255, 255, 255, 0.2);;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+          width: 100%;
+
+          ::ng-deep app-notification {
+            .notification-bell {
+              color: #fff;
+              font-size: 24px;
+              padding: 12px;
+              border-radius: 50%;
+              transition: all 0.3s ease;
+
+              &:hover {
+                background: rgba(255, 255, 255, 0.1);
+                color: #FFD23F;
+                transform: scale(1.1);
+              }
+
+              &.has-unread {
+                color: #FFD23F;
+                
+                i {
+                  animation: bellRing 0.8s ease-in-out infinite;
+                }
+              }
+            }
+
+            .notification-badge {
+              background: #ff3e30;
+              color: white;
+              border: 2px solid #FF6B35;
+              font-size: 11px;
+              font-weight: 700;
+              min-width: 18px;
+              height: 18px;
+              top: 8px;
+              right: 8px;
+            }
+
+            .notification-panel {
+              top: calc(100% + 8px);
+              right: 50%;
+              transform: translateX(50%);
+              width: 300px;
+            }
+          }
         }
 
         .avatar-img-mobile {

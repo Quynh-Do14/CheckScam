@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '../environments/environment';
 import { 
   ForumPostDto, 
@@ -30,7 +31,10 @@ export class ForumService {
   }
 
   getPostById(id: string): Observable<ForumPostDto> {
-    return this.http.get<ForumPostDto>(`${this.apiUrl}/posts/${id}`);
+    return this.http.get<{message: string, status: string, data: ForumPostDto}>(`${this.apiUrl}/posts/${id}`)
+      .pipe(
+        map(response => response.data)
+      );
   }
 
   createPost(post: CreateForumPostDto): Observable<{message: string, status: string, data: ForumPostDto}> {

@@ -35,6 +35,7 @@
   margin: 0 auto;
 }
 
+
 // Create Post Box
 .create-post-box {
   background: white;
@@ -903,16 +904,16 @@
 
     &.like-action {
       &.liked {
-        color: #e91e63;
+        color: #1877f2;
         
         .reaction-icon.liked {
-          color: #e91e63;
+          color: #1877f2;
           animation: heartBeat 0.6s ease-in-out;
         }
       }
 
       &:hover:not(.liked) {
-        color: #e91e63;
+        color: #1877f2;
       }
     }
 
@@ -921,7 +922,7 @@
     }
 
     &.share-action:hover {
-      color: #42b883;
+      color: #1877f2;
     }
 
     // Ripple effect
@@ -1002,6 +1003,30 @@
     font-size: 13px;
     padding: 6px 4px;
   }
+  
+  .post-card .post-actions {
+    display: flex !important;
+    padding: 0 15px 16px !important;
+    
+    .action-btn {
+      display: flex !important;
+      padding: 10px 8px !important;
+      font-size: 14px !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 8px !important;
+      
+      i {
+        font-size: 18px !important;
+        display: inline-block !important;
+      }
+      
+      span {
+        font-size: 13px !important;
+        display: inline-block !important;
+      }
+    }
+  }
 }
 
 @media (max-width: 480px) {
@@ -1015,13 +1040,66 @@
     padding: 8px 12px;
   }
 
-  .post-actions {
+  .post-card .post-actions {
+    display: flex !important;
+    padding: 0 10px 16px !important;
+    gap: 2px !important;
+    
     .action-btn {
-      font-size: 13px;
-      padding: 8px 4px;
+      display: flex !important;
+      flex: 1 !important;
+      font-size: 12px !important;
+      padding: 8px 4px !important;
+      min-height: 44px !important;
+      background: none !important;
+      border: none !important;
+      cursor: pointer !important;
+      color: #65676b !important;
+      align-items: center !important;
+      justify-content: center !important;
+      flex-direction: column !important;
+      border-radius: 8px !important;
+      
+      &:hover {
+        background: #f0f2f5 !important;
+      }
+      
+      &.like-action.liked {
+        color: #1877f2 !important;
+        
+        .reaction-icon.liked {
+          color: #1877f2 !important;
+          animation: heartBeat 0.6s ease-in-out;
+        }
+        
+        span {
+          color: #1877f2 !important;
+        }
+      }
+      
+      &.like-action:hover:not(.liked) {
+        color: #1877f2 !important;
+      }
+      
+      &.comment-action:hover {
+        color: #1877f2 !important;
+      }
+      
+      &.share-action:hover {
+        color: #1877f2 !important;
+      }
+      
+      i {
+        font-size: 16px !important;
+        display: block !important;
+        margin-bottom: 2px !important;
+      }
       
       span {
-        display: none;
+        display: block !important;
+        font-size: 10px !important;
+        line-height: 1.2 !important;
+        text-align: center !important;
       }
     }
   }

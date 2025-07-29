@@ -6,10 +6,12 @@ import {
   ChartOptions,
   ChartType,
   ChartData,
-  ChartDataset,
-  Chart
+  ChartDataset
 } from 'chart.js';
 import { ReportService } from '../../services/report.service';
+import { ForumService } from '../../services/forum.service';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 interface YearlyStat { year: number; count: number; }
 interface MonthlyStat { month: number; count: number; }
@@ -32,18 +34,8 @@ export class DashboardComponent implements OnInit {
       tooltip: { callbacks: { label: ctx => `Báo cáo: ${ctx.parsed.y}` } }
     },
     scales: {
-      x: {
-        title: { display: true, text: 'Năm', color: '#666' },
-        grid: { display: false },
-        border: { display: false }
-      },
-      y: {
-        title: { display: true, text: 'Số báo cáo', color: '#666' },
-        beginAtZero: true,
-        ticks: { stepSize: 1, color: '#666' },
-        grid: { color: 'rgba(0,0,0,0.08)' },
-        border: { display: false }
-      }
+      x: { title: { display: true, text: 'Năm' }, grid: { display: false }, border: { display: false } },
+      y: { title: { display: true, text: 'Số báo cáo' }, beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: 'rgba(0,0,0,0.05)' }, border: { display: false } }
     }
   };
 
@@ -57,153 +49,280 @@ export class DashboardComponent implements OnInit {
       tooltip: { callbacks: { label: ctx => `Báo cáo: ${ctx.parsed.y}` } }
     },
     scales: {
-      x: {
-        title: { display: true, text: 'Tháng', color: '#666' },
-        grid: { display: false },
-        border: { display: false }
-      },
-      y: {
-        title: { display: true, text: 'Số báo cáo', color: '#666' },
-        beginAtZero: true,
-        ticks: { stepSize: 1, color: '#666' },
-        grid: { display: true, color: 'rgba(0,0,0,0.1)', lineWidth: 1, drawTicks: false },
-        border: { display: false }
-      }
+      x: { title: { display: true, text: 'Tháng' }, grid: { display: false }, border: { display: false } },
+      y: { title: { display: true, text: 'Số báo cáo' }, beginAtZero: true, ticks: { stepSize: 1 }, grid: { display: true, color: 'rgba(0,0,0,0.1)', lineWidth: 1, drawTicks: false }, border: { display: false } }
     }
   };
 
   public availableYears: number[] = [];
   public selectedYear!: number;
 
-  public isLoading: boolean = true; 
-  public totalReports: number = 0;
-  public reportsThisYear: number = 0;
-  public reportsThisMonth: number = 0;
+  // Post management properties
+  public pendingPosts: any[] = [];
+  public postsLoading: boolean = false;
+  public activeTab: string = 'reports';
+  public selectedPost: any = null;
 
-  constructor(private reportService: ReportService) {}
+  constructor(
+    private reportService: ReportService,
+    private forumService: ForumService,
+    private http: HttpClient
+  ) {}
 
   ngOnInit(): void {
-    this.isLoading = true;
-    this.reportService.getYearlyStats().subscribe({
-      next: (stats: YearlyStat[]) => {
-        stats.sort((a, b) => a.year - b.year);
+    this.reportService.getYearlyStats().subscribe((stats: YearlyStat[]) => {
+      stats.sort((a, b) => a.year - b.year);
 
-        this.availableYears = stats.map(s => s.year);
-        this.selectedYear = this.availableYears[this.availableYears.length - 1] || new Date().getFullYear();
+      this.availableYears = stats.map(s => s.year);
+      this.selectedYear = this.availableYears[this.availableYears.length - 1];
 
-        const recentStats = stats.slice(-5);
-        this.loadYearlyChart(recentStats);
+      const recentStats = stats.slice(-5);
+      this.loadYearlyChart(recentStats);
 
-        this.totalReports = stats.reduce((sum, s) => sum + s.count, 0);
-        const currentYearStat = stats.find(s => s.year === this.selectedYear);
-        this.reportsThisYear = currentYearStat ? currentYearStat.count : 0;
-
-        this.loadMonthlyChart(this.selectedYear, true);
-      },
-      error: (err) => {
-        console.error('Error fetching yearly stats:', err);
-        this.isLoading = false;
-      }
+      this.loadMonthlyChart(this.selectedYear);
     });
   }
 
   private loadYearlyChart(stats: YearlyStat[]): void {
     const labels = stats.map(s => s.year.toString());
     const data = stats.map(s => s.count);
-
-    const gradientBar = (ctx: any) => {
-      const chart = ctx.chart;
-      const { ctx: chartCtx, chartArea } = chart;
-      if (!chartArea) return null;
-      const gradient = chartCtx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
-      gradient.addColorStop(0, '#f59e0b');
-      gradient.addColorStop(1, '#38bdf8');
-      return gradient;
-    };
-
-    const ds: ChartDataset<'bar'> = {
-      data,
-      label: 'Số báo cáo',
-      backgroundColor: gradientBar,
-      borderColor: '#f59e0b',
-      borderWidth: 1,
-      borderRadius: 6, 
-      hoverBackgroundColor: '#d97706',
-      hoverBorderColor: '#b45309'
-    };
+    const ds: ChartDataset<'bar'> = { data, label: 'Số báo cáo', backgroundColor: '#38bdf8', borderColor: '#0ea5e9', borderWidth: 1, borderRadius: 4 };
     this.yearlyChartData = { labels, datasets: [ds] };
   }
 
-  public loadMonthlyChart(year: number, isInitialLoad: boolean = false): void {
-    if (!isInitialLoad) {
-      this.isLoading = true; 
-    }
-    this.reportService.getMonthlyStats(year).subscribe({
-      next: (stats: MonthlyStat[]) => {
-        const map = new Map<number, number>();
-        stats.forEach(s => map.set(s.month, s.count));
-        const labels: string[] = [];
-        const data: number[] = [];
-        const currentMonth = new Date().getMonth() + 1; 
-        let currentMonthReports = 0;
-
-        for (let m = 1; m <= 12; m++) {
-          labels.push(`Tháng ${m}`);
-          const count = map.get(m) ?? 0;
-          data.push(count);
-          if (year === new Date().getFullYear() && m === currentMonth) {
-            currentMonthReports = count;
-          }
-        }
-        this.reportsThisMonth = currentMonthReports;
-
-        const gradientLine = (ctx: any) => {
-          const chart = ctx.chart;
-          const { ctx: chartCtx, chartArea } = chart;
-          if (!chartArea) return null;
-          const gradient = chartCtx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
-          gradient.addColorStop(0, 'rgba(56, 189, 248, 0.2)'); 
-          gradient.addColorStop(1, 'rgba(245, 158, 11, 0.8)'); 
-          return gradient;
-        };
-
-        const ds: ChartDataset<'line'> = {
-          data,
-          label: 'Số báo cáo',
-          fill: true, 
-          borderColor: '#f59e0b',
-          backgroundColor: gradientLine, 
-          tension: 0.4, 
-          pointBackgroundColor: '#d97706',
-          pointBorderColor: '#fff',
-          pointHoverBackgroundColor: '#fff',
-          pointHoverBorderColor: '#d97706',
-          pointRadius: 5,
-          pointHoverRadius: 7,
-          borderWidth: 3,
-          pointBorderWidth: 2,
-          cubicInterpolationMode: 'monotone' 
-        };
-        this.monthlyChartData = { labels, datasets: [ds] };
-      },
-      error: (err) => {
-        console.error('Error fetching monthly stats:', err);
+  public loadMonthlyChart(year: number): void {
+    this.reportService.getMonthlyStats(year).subscribe((stats: MonthlyStat[]) => {
+      const map = new Map<number, number>();
+      stats.forEach(s => map.set(s.month, s.count));
+      const labels: string[] = [];
+      const data: number[] = [];
+      for (let m = 1; m <= 12; m++) {
+        labels.push(`Tháng ${m}`);
+        data.push(map.get(m) ?? 0);
       }
-    }).add(() => {
-      this.isLoading = false;
+
+      const ds: ChartDataset<'line'> = { data, label: 'Số báo cáo', fill: false, borderColor: '#38bdf8', tension: 0.3, pointBackgroundColor: '#38bdf8' };
+      this.monthlyChartData = { labels, datasets: [ds] };
     });
   }
 
   public onYearChange(year: string): void {
     this.selectedYear = +year;
     this.loadMonthlyChart(this.selectedYear);
-    this.updateReportsThisYear(this.selectedYear);
   }
 
-  private updateReportsThisYear(year: number): void {
-    this.reportService.getYearlyStats().subscribe(stats => {
-      const currentYearStat = stats.find(s => s.year === year);
-      this.reportsThisYear = currentYearStat ? currentYearStat.count : 0;
+  // Tab management
+  switchTab(tabName: string): void {
+    this.activeTab = tabName;
+    if (tabName === 'posts') {
+      this.loadPendingPosts();
+    }
+  }
+
+  isActiveTab(tabName: string): boolean {
+    return this.activeTab === tabName;
+  }
+
+  // Load pending posts for approval
+  loadPendingPosts(): void {
+    this.postsLoading = true;
+    
+    // Call API to get pending posts (isActive = false)
+    const url = `${environment.apiBaseUrl}/forum/posts?status=pending&page=0&size=20`;
+    
+    this.http.get(url).subscribe({
+      next: (response: any) => {
+        if (response?.data?.data) {
+          this.pendingPosts = response.data.data;
+        } else if (response?.data && Array.isArray(response.data)) {
+          this.pendingPosts = response.data;
+        } else {
+          this.pendingPosts = [];
+        }
+        this.postsLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading pending posts:', error);
+        this.pendingPosts = [];
+        this.postsLoading = false;
+      }
     });
+  }
+
+  // Approve post
+  approvePost(postId: number): void {
+    const url = `${environment.apiBaseUrl}/forum/posts/${postId}/approve`;
+    
+    const token = localStorage.getItem('jwt_token');
+    const headers: any = {
+      'Content-Type': 'application/json'
+    };
+    
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    } else {
+      alert('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
+      return;
+    }
+    
+    this.http.put(url, {}, { headers }).subscribe({
+      next: (response) => {
+        // Remove from pending list
+        this.pendingPosts = this.pendingPosts.filter(post => post.id !== postId);
+        alert('Bài viết đã được duyệt thành công!');
+      },
+      error: (error) => {
+        if (error.status === 401 || error.status === 403) {
+          alert('Bạn không có quyền duyệt bài viết. Vui lòng đăng nhập với tài khoản admin.');
+        } else if (error.status === 404) {
+          alert('Không tìm thấy bài viết hoặc endpoint API.');
+        } else {
+          alert('Không thể duyệt bài viết. Lỗi: ' + (error.error?.message || error.message));
+        }
+      }
+    });
+  }
+
+  // Reject post
+  rejectPost(postId: number): void {
+    if (!confirm('Bạn có chắc chắn muốn từ chối bài viết này?')) {
+      return;
+    }
+
+    const url = `${environment.apiBaseUrl}/forum/posts/${postId}/reject`;
+    
+    const token = localStorage.getItem('jwt_token');
+    const headers: any = {
+      'Content-Type': 'application/json'
+    };
+    
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    } else {
+      alert('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
+      return;
+    }
+    
+    this.http.put(url, {}, { headers }).subscribe({
+      next: (response) => {
+        // Remove from pending list
+        this.pendingPosts = this.pendingPosts.filter(post => post.id !== postId);
+        alert('Bài viết đã được từ chối và xóa!');
+      },
+      error: (error) => {
+        if (error.status === 401 || error.status === 403) {
+          alert('Bạn không có quyền từ chối bài viết. Vui lòng đăng nhập với tài khoản admin.');
+        } else if (error.status === 404) {
+          alert('Không tìm thấy bài viết hoặc endpoint API.');
+        } else {
+          alert('Không thể từ chối bài viết. Lỗi: ' + (error.error?.message || error.message));
+        }
+      }
+    });
+  }
+
+  // Get time ago helper
+  getTimeAgo(date: Date | string): string {
+    if (!date) return '';
+    
+    const now = new Date();
+    const targetDate = typeof date === 'string' ? new Date(date) : date;
+    const diffInMs = now.getTime() - targetDate.getTime();
+    const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    const diffInDays = Math.floor(diffInHours / 24);
+
+    if (diffInMinutes < 1) return 'Vừa xong';
+    if (diffInMinutes < 60) return `${diffInMinutes} phút trước`;
+    if (diffInHours < 24) return `${diffInHours} giờ trước`;
+    return `${diffInDays} ngày trước`;
+  }
+
+  // Get display title from post (use content if title is empty)
+  getPostDisplayTitle(post: any): string {
+    if (post.title && post.title.trim()) {
+      return post.title;
+    }
+    
+    if (post.content && post.content.trim()) {
+      // Remove HTML tags and get first 50 characters
+      const textContent = post.content.replace(/<[^>]*>/g, '').trim();
+      return textContent.length > 50 ? textContent.substring(0, 50) + '...' : textContent;
+    }
+    
+    return 'Bài viết không có nội dung';
+  }
+
+  // Post detail modal methods
+  viewPostDetail(post: any): void {
+    this.selectedPost = post;
+    // Use Bootstrap modal
+    const modal = document.getElementById('postDetailModal');
+    if (modal) {
+      (modal as any).classList.add('show');
+      (modal as any).style.display = 'block';
+      document.body.classList.add('modal-open');
+      
+      // Create backdrop
+      const backdrop = document.createElement('div');
+      backdrop.className = 'modal-backdrop fade show';
+      backdrop.id = 'modal-backdrop';
+      document.body.appendChild(backdrop);
+    }
+  }
+
+  closePostDetailModal(): void {
+    this.selectedPost = null;
+    const modal = document.getElementById('postDetailModal');
+    if (modal) {
+      (modal as any).classList.remove('show');
+      (modal as any).style.display = 'none';
+      document.body.classList.remove('modal-open');
+      
+      // Remove backdrop
+      const backdrop = document.getElementById('modal-backdrop');
+      if (backdrop) {
+        backdrop.remove();
+      }
+    }
+  }
+
+  approvePostFromModal(postId: number): void {
+    this.approvePost(postId);
+    this.closePostDetailModal();
+  }
+
+  rejectPostFromModal(postId: number): void {
+    this.rejectPost(postId);
+    this.closePostDetailModal();
+  }
+
+  // Get image URL helper
+  getImageUrl(url: string | undefined): string {
+    if (!url) return '';
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    // Use apiUrl (not apiBaseUrl) for images, similar to post-detail component
+    if (url.startsWith('/')) {
+      return environment.apiUrl + url;
+    }
+    return environment.apiUrl + '/' + url;
+  }
+
+  // Handle image load error
+  onImageError(event: any): void {
+    console.log('Image failed to load:', event.target.src);
+    event.target.style.display = 'none';
+    
+    // Show error message
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'alert alert-warning text-center';
+    errorDiv.innerHTML = '<i class="fas fa-exclamation-triangle mr-2"></i>Không thể tải ảnh';
+    
+    // Insert after the failed image
+    if (event.target.parentNode) {
+      event.target.parentNode.insertBefore(errorDiv, event.target.nextSibling);
+    }
   }
 }

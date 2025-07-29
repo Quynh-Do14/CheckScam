@@ -1,12 +1,12 @@
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { UserService } from '../../services/user.service';
 import { UserStateService } from '../../services/user-state.service';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, RouterModule } from '@angular/router';
 import { UpdateUserDTO, UpdateProfileDTO, UserProfileDTO, ProfileResponseDTO } from '../../dtos/profile.dto';
 import { catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
@@ -19,12 +19,13 @@ import { environment } from '../../environments/environment';
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
-    RouterLink
+    RouterLink,
+    RouterModule
   ],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss']
 })
-export class ProfileComponent implements OnInit {
+export class ProfileComponent implements OnInit, AfterViewInit {
   profileForm: FormGroup;
   currentUser: UserProfileDTO = {} as UserProfileDTO; 
   userRole: string[] = []; // Biến này sẽ giữ giá trị string[]
@@ -45,6 +46,9 @@ export class ProfileComponent implements OnInit {
   
   // Tab management
   activeTab: string = 'reports';
+  userPosts: any[] = [];
+  postsLoading: boolean = false;
+  postsError: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -62,6 +66,15 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit() {
     this.loadUserProfile();
+  }
+
+  ngAfterViewInit() {
+    // Load posts if posts tab is active
+    if (this.activeTab === 'posts') {
+      setTimeout(() => {
+        this.loadUserPosts();
+      }, 500);
+    }
   }
 
   loadUserProfile() {
@@ -146,6 +159,11 @@ export class ProfileComponent implements OnInit {
           
           this.loading = false;
           this.error = '';
+          
+          // Auto load posts if posts tab is active
+          if (this.activeTab === 'posts') {
+            this.loadUserPosts();
+          }
           
         } else {
           // Xử lý trường hợp response không có data hoặc cấu trúc không hợp lệ
@@ -524,9 +542,62 @@ export class ProfileComponent implements OnInit {
   // Tab management methods
   switchTab(tabName: string): void {
     this.activeTab = tabName;
+    if (tabName === 'posts' && this.userPosts.length === 0) {
+      this.loadUserPosts();
+    }
   }
   
   isActiveTab(tabName: string): boolean {
     return this.activeTab === tabName;
+  }
+
+  // Load user posts
+  loadUserPosts(): void {
+    if (!this.currentUser?.id) {
+      this.postsError = 'Không có thông tin người dùng để tải bài viết';
+      return;
+    }
+
+    this.postsLoading = true;
+    this.postsError = '';
+
+    const url = `${environment.apiBaseUrl}/forum/users/${this.currentUser.id}/posts?page=0&size=10`;
+    
+    this.http.get(url).subscribe({
+      next: (response: any) => {
+        if (response?.data?.data) {
+          this.userPosts = response.data.data;
+        } else if (response?.data && Array.isArray(response.data)) {
+          this.userPosts = response.data;
+        } else {
+          this.userPosts = [];
+        }
+        
+        this.postsLoading = false;
+      },
+      error: (error) => {
+        console.error('Error loading user posts:', error);
+        this.postsError = 'Không thể tải danh sách bài viết';
+        this.postsLoading = false;
+        this.userPosts = [];
+      }
+    });
+  }
+
+  // Get time ago for posts
+  getTimeAgo(date: Date | string): string {
+    if (!date) return '';
+    
+    const now = new Date();
+    const targetDate = typeof date === 'string' ? new Date(date) : date;
+    const diffInMs = now.getTime() - targetDate.getTime();
+    const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    const diffInDays = Math.floor(diffInHours / 24);
+
+    if (diffInMinutes < 1) return 'Vừa xong';
+    if (diffInMinutes < 60) return `${diffInMinutes} phút trước`;
+    if (diffInHours < 24) return `${diffInHours} giờ trước`;
+    return `${diffInDays} ngày trước`;
   }
 }

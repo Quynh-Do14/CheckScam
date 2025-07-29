@@ -44,12 +44,14 @@ export interface ForumCommentDto {
   updatedAt: Date;
   likesCount: number;
   isLiked?: boolean;
+  isAnonymous?: boolean;
 }
 
 export interface CreateForumCommentDto {
   postId: string;
   content: string;
   parentCommentId?: string | null;
+  isAnonymous?: boolean;
 }
 
 export interface ForumLikeDto {

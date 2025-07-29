@@ -14,6 +14,7 @@ import { AboutUsComponent } from './components/about-us/about-us.component';
 import { ChatBoxComponent } from './components/chat-box/chat-box.component';
 import { ListNewsComponent } from './components/news/list-news/list-news.component';
 import { ListShortComponent } from './components/news/list-short/list-short.component';
+import { ShortManagementComponent } from './components/news/short-management/short-management.component';
 import { UpdateNewsComponent } from './components/news/update-news/update-news.component';
 import { SubjectDetailComponent } from './components/subject-detail/subject-detail.component';
 
@@ -72,6 +73,10 @@ export const routes: Routes = [
           {
             path: 'news',
             component: NewsComponent,
+          },
+          {
+            path: 'shorts',
+            component: ShortManagementComponent,
           },
           {
             path: 'users',

@@ -1,0 +1,274 @@
+<div class="main-content-container">
+  <div class="card modern-card">
+    <div class="card-header modern-card-header">
+      <h6 class="card-title">Danh sách Shorts</h6>
+      <div class="action-buttons-in-header">
+        <button class="btn btn-primary-gradient create-short-btn" (click)="togglePopup()">
+          <i class="fas fa-plus icon-margin-right"></i> 
+          Thêm Short mới
+        </button>
+      </div>
+    </div>
+    <div class="card-body modern-card-body">
+      <div class="table-container">
+        <div class="table-responsive">
+          <table class="table modern-table" width="100%" cellspacing="0" role="grid">
+            <thead>
+              <tr role="row">
+                <th style="width: 8%;">ID</th>
+                <th style="width: 35%;">Tiêu đề</th> 
+                <th style="width: 15%;">Lượt xem</th> 
+                <th style="width: 20%;">Ngày tạo</th> 
+                <th class="action-column-header" style="width: 22%;">Hành động</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let short of paginatedShorts">
+                <td>{{ short.id }}</td>
+                <td>
+                  <div class="short-title-truncated" [title]="short.title">
+                    {{ short.title }} 
+                  </div>
+                </td>
+                <td class="text-center">
+                  <span class="views-badge">
+                    <i class="fas fa-eye"></i>
+                    {{ short.views || 0 }}
+                  </span>
+                </td>
+                <td>
+                  <div class="short-date">
+                    {{ formatDate(short.createdAt || '') }}
+                  </div>
+                </td>
+                <td class="action-column">
+                  <button class="btn action-btn view-detail-btn" (click)="viewShortDetail(short)" title="Xem chi tiết">
+                    <i class="fa-solid fa-eye"></i>
+                  </button>
+                  <button class="btn action-btn edit-btn" (click)="editShort(short)" title="Chỉnh sửa">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                  </button>
+                  <button class="btn action-btn delete-btn" (click)="deleteShort(short.id!)" title="Xóa">
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                  <button class="btn action-btn play-btn" (click)="playVideo(short)" title="Phát video">
+                    <i class="fa-solid fa-play"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination-container" *ngIf="totalPages > 1">
+        <div class="pagination">
+          <button 
+            class="page-btn" 
+            [disabled]="currentPage === 1"
+            (click)="goToPage(currentPage - 1)"
+          >
+            ← Trước
+          </button>
+          
+          <div class="page-numbers">
+            <button 
+              *ngFor="let page of getPageNumbers()"
+              class="page-number"
+              [class.active]="page === currentPage"
+              (click)="goToPage(page)"
+            >
+              {{ page }}
+            </button>
+          </div>
+          
+          <button 
+            class="page-btn" 
+            [disabled]="currentPage === totalPages"
+            (click)="goToPage(currentPage + 1)"
+          >
+            Sau →
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create/Edit Short Popup -->
+  <div class="popup-overlay" *ngIf="isPopupVisible" (click)="closePopup($event)">
+    <div class="popup-content">
+      <div class="popup-header">
+        <h5>{{ isEditing ? 'Chỉnh sửa Short' : 'Thêm Short mới' }}</h5>
+        <button class="close-button" (click)="togglePopup()">&times;</button>
+      </div>
+      <div class="popup-body">
+        <form [formGroup]="shortForm" (ngSubmit)="onSubmit()">
+          <div class="form-group">
+            <label for="title">Tiêu đề *</label>
+            <input
+              type="text"
+              id="title"
+              formControlName="title"
+              class="form-control"
+              [class.invalid]="isFieldInvalid('title')"
+              placeholder="Nhập tiêu đề cho short..."
+            />
+            <div class="error-text" *ngIf="isFieldInvalid('title')">
+              {{ getFieldErrorMessage('title') }}
+            </div>
+          </div>
+
+          <!-- File Upload Section -->
+          <div class="file-upload-section">
+            <!-- Video Upload -->
+            <div class="upload-group">
+              <label class="upload-label">Video *</label>
+              <div class="file-upload-area" [class.has-file]="selectedVideo || videoPreview">
+                <input
+                  type="file"
+                  accept="video/*"
+                  (change)="onVideoSelected($event)"
+                  class="file-input"
+                  [disabled]="isEditing"
+                />
+                <div class="upload-content">
+                  <div class="upload-icon">🎥</div>
+                  <div class="upload-text">
+                    <span *ngIf="!selectedVideo && !videoPreview">Chọn video hoặc kéo thả vào đây</span>
+                    <span *ngIf="selectedVideo">{{ selectedVideo.name }}</span>
+                    <span *ngIf="videoPreview && !selectedVideo">Video đã tải</span>
+                  </div>
+                </div>
+              </div>
+              <!-- Video Preview -->
+              <div class="video-preview" *ngIf="videoPreview">
+                <video [src]="videoPreview" controls class="preview-video"></video>
+              </div>
+            </div>
+
+            <!-- Thumbnail Upload -->
+            <div class="upload-group">
+              <label class="upload-label">Thumbnail *</label>
+              <div class="file-upload-area" [class.has-file]="selectedThumbnail || thumbnailPreview">
+                <input
+                  type="file"
+                  accept="image/*"
+                  (change)="onThumbnailSelected($event)"
+                  class="file-input"
+                  [disabled]="isEditing"
+                />
+                <div class="upload-content">
+                  <div class="upload-icon">🖼️</div>
+                  <div class="upload-text">
+                    <span *ngIf="!selectedThumbnail && !thumbnailPreview">Chọn ảnh thumbnail hoặc kéo thả vào đây</span>
+                    <span *ngIf="selectedThumbnail">{{ selectedThumbnail.name }}</span>
+                    <span *ngIf="thumbnailPreview && !selectedThumbnail">Thumbnail đã tải</span>
+                  </div>
+                </div>
+              </div>
+              <!-- Thumbnail Preview -->
+              <div class="thumbnail-preview" *ngIf="thumbnailPreview">
+                <img [src]="thumbnailPreview" alt="Thumbnail preview" class="preview-image" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Error Message -->
+          <div class="error-message" *ngIf="error">
+            <span class="error-icon">⚠️</span>
+            {{ error }}
+          </div>
+
+          <div class="popup-footer">
+            <button type="button" class="btn btn-secondary" (click)="togglePopup()">
+              Hủy
+            </button>
+            <button type="submit" class="btn btn-primary-gradient" [disabled]="loading || shortForm.invalid">
+              <span class="loading-spinner" *ngIf="loading"></span>
+              {{ isEditing ? 'Cập nhật' : 'Tạo Short' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Short Detail Modal -->
+  <div class="detail-modal-overlay" *ngIf="isDetailModalVisible" (click)="closeDetailModal($event)">
+    <div class="detail-modal-content">
+      <div class="detail-modal-header">
+        <h5>Chi tiết Short</h5>
+        <button class="close-button" (click)="closeDetailModal()">&times;</button>
+      </div>
+      <div class="detail-modal-body" *ngIf="selectedShort">
+        <div class="detail-content">
+          <!-- Video Section -->
+          <div class="video-section">
+            <h6>Video</h6>
+            <div class="video-container">
+              <video 
+                [src]="getVideoUrl(selectedShort)" 
+                controls 
+                class="detail-video"
+                (error)="onVideoError(selectedShort)"
+              ></video>
+            </div>
+          </div>
+
+          <!-- Thumbnail Section -->
+          <div class="thumbnail-section">
+            <h6>Thumbnail</h6>
+            <div class="thumbnail-container">
+              <img 
+                [src]="getThumbnailUrl(selectedShort)" 
+                [alt]="selectedShort.title"
+                class="detail-thumbnail"
+                (error)="onImageError($event)"
+              />
+            </div>
+          </div>
+
+          <!-- Info Section -->
+          <div class="info-section">
+            <h6>Thông tin</h6>
+            <div class="info-grid">
+              <div class="info-item">
+                <label>ID:</label>
+                <span>{{ selectedShort.id }}</span>
+              </div>
+              <div class="info-item">
+                <label>Tiêu đề:</label>
+                <span>{{ selectedShort.title }}</span>
+              </div>
+              <div class="info-item">
+                <label>Lượt xem:</label>
+                <span class="views-count">
+                  <i class="fas fa-eye"></i>
+                  {{ selectedShort.views || 0 }}
+                </span>
+              </div>
+              <div class="info-item">
+                <label>Ngày tạo:</label>
+                <span>{{ formatDate(selectedShort.createdAt || '') }}</span>
+              </div>
+              <div class="info-item" *ngIf="selectedShort.updatedAt">
+                <label>Ngày cập nhật:</label>
+                <span>{{ formatDate(selectedShort.updatedAt) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="detail-modal-footer">
+        <button class="btn btn-secondary" (click)="closeDetailModal()">
+          Đóng
+        </button>
+        <button class="btn btn-primary-gradient" (click)="editShort(selectedShort!)" *ngIf="selectedShort">
+          <i class="fas fa-edit"></i>
+          Chỉnh sửa
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

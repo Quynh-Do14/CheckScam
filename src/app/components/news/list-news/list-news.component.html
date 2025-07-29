@@ -2,6 +2,56 @@
 <div class="news-page-container">
   <div class="page-content-area">
     <div class="container">
+      <!-- Shorts Section -->
+      <div class="shorts-section" *ngIf="shorts.length > 0">
+        <div class="shorts-container">
+          <!-- Desktop: Carousel with arrows -->
+          <ng-container *ngIf="!isMobile">
+            <button class="shorts-arrow left" (click)="prevShorts()" [disabled]="!canPrevShorts()">&lt;</button>
+            <div class="shorts-carousel">
+              <div class="shorts-slide-track" [style.transform]="getSlideTransform()" [class.transitioning]="isShortsTransitioning">
+                <div class="short-card" *ngFor="let short of getCarouselCards(); let i = index; trackBy: trackById" (click)="openShortModal(i + shortsPage)">
+                  <div class="short-thumbnail">
+                    <img *ngIf="!isVideoPlaying(short.id!)"
+                         [src]="getShortThumbnailUrl(short)"
+                         (error)="onShortImageError($event)"
+                         [alt]="short.title"
+                         loading="lazy"
+                         class="short-thumbnail-img" />
+                    <div class="short-views-only">
+                      <span class="views-icon">views</span>
+                      <span class="views-count">{{ short.views || 0 }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button class="shorts-arrow right" (click)="nextShorts()" [disabled]="!canNextShorts()">&gt;</button>
+          </ng-container>
+          <!-- Mobile: Native horizontal scroll -->
+          <ng-container *ngIf="isMobile">
+            <div class="shorts-scroll-mobile">
+              <div class="short-card" *ngFor="let short of shorts; let i = index; trackBy: trackById" (click)="openShortModal(i)">
+                <div class="short-thumbnail">
+                  <img *ngIf="!isVideoPlaying(short.id!)"
+                       [src]="getShortThumbnailUrl(short)"
+                       (error)="onShortImageError($event)"
+                       [alt]="short.title"
+                       loading="lazy"
+                       class="short-thumbnail-img" />
+                  <div class="short-views-only">
+                    <span class="views-icon">views</span>
+                    <span class="views-count">{{ short.views || 0 }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+
+
+
       <div class="page-header-section">
         <h1 class="news-main-heading">Tin Tức Chính</h1>
       </div>

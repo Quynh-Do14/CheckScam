@@ -167,7 +167,7 @@
         <div class="post-card" *ngFor="let post of posts; trackBy: trackByPostId">
         <!-- Post Header -->
         <div class="post-header">
-          <div class="author-info" [routerLink]="['/forum/user', post.authorId]">
+          <div class="author-info">
           <div class="author-avatar-wrapper">
             <img [src]="getAuthorAvatarUrl(post.authorAvatarUrl)" 
                  alt="Author" 

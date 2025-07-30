@@ -48,7 +48,6 @@ import { AccessDeniedComponent } from './components/access-denied/access-denied.
 import { ForumComponent } from './components/forum/forum.component';
 import { CreatePostComponent } from './components/forum/create-post/create-post.component';
 import { PostDetailComponent } from './components/forum/post-detail/post-detail.component';
-import { UserProfileComponent } from './components/forum/user-profile/user-profile.component';
 import { ForumTestComponent } from './components/forum/forum-test.component';
 import { ForumSimpleComponent } from './components/forum/forum-simple.component';
 import { EmailVerificationComponent } from './components/emailverification/emailverification.component';
@@ -142,7 +141,6 @@ export const routes: Routes = [
     { path: 'forum-full', component: ForumComponent },
     { path: 'forum/create-post', component: CreatePostComponent },
     { path: 'forum/post/:id', component: PostDetailComponent },
-    { path: 'forum/user/:id', component: UserProfileComponent },
     { path: 'partners', component: PartnersComponent },
     { path: 'user/profile', component: ProfileComponent, canActivate: [AuthGuard] },
     { path: 'access-denied', component: AccessDeniedComponent },

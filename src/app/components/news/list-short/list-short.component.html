@@ -1,94 +1,94 @@
 <div class="shorts-page-container">
-  <!-- MONA Media Header -->
   <div class="mona-header">
     <div class="header-left">
       <div class="mona-logo">
-        <!-- <div class="logo-icon">M</div> -->
-        <span class="logo-text">AI6</span>
+        <span class="logo-text">AI6 SHORTS</span>
       </div>
     </div>
     <div class="header-right">
       <button class="close-button" (click)="goBack()">
-        <span>&times;</span>
+        <i class="bi bi-x-lg"></i>
       </button>
     </div>
   </div>
 
   <div class="shorts-content" *ngIf="!loading; else loadingTemplate">
-    <div class="shorts-carousel-container">
-      <div class="shorts-carousel">
-        <div 
-          class="shorts-track" 
-          [style.transform]="getSlideTransform()"
-          (mousedown)="onMouseDown($event)"
-          (mousemove)="onMouseMove($event)"
-          (mouseup)="onMouseUp($event)"
-          (mouseleave)="onMouseUp($event)"
-          (touchstart)="onTouchStart($event)"
-          (touchmove)="onTouchMove($event)"
-          (touchend)="onTouchEnd($event)"
-          [class.dragging]="isDragging"
-        >
-          <div 
-            class="short-card" 
-            *ngFor="let short of shorts; let i = index; trackBy: trackById"
-            [class.active]="i === currentIndex"
-            (click)="onVideoClick(i)"
+    <div class="shorts-carousel-wrapper">
+      <div class="shorts-carousel-container">
+        <div class="shorts-carousel">
+          <div
+            class="shorts-track"
+            [style.transform]="getSlideTransform()"
+            (mousedown)="onMouseDown($event)"
+            (mousemove)="onMouseMove($event)"
+            (mouseup)="onMouseUp($event)"
+            (mouseleave)="onMouseUp($event)"
+            (touchstart)="onTouchStart($event)"
+            (touchmove)="onTouchMove($event)"
+            (touchend)="onTouchEnd($event)"
+            [class.dragging]="isDragging"
           >
-            <div class="short-video-container">
-              <video 
-                *ngIf="i === currentIndex"
-                [src]="getShortVideoUrl(short)" 
-                autoplay
-                muted
-                loop
-                (ended)="onVideoEnded(short.id!)"
-                (play)="onVideoPlay(short)"
-                (loadeddata)="onVideoLoaded(short)"
-                (error)="onVideoError(short)"
-                class="short-video"
-              ></video>
-              <img 
-                *ngIf="i !== currentIndex"
-                [src]="getShortThumbnailUrl(short)"
-                (error)="onShortImageError($event)"
-                [alt]="short.title"
-                class="short-thumbnail"
-              />
-            </div>
-            
-            <!-- MONA Media Card Footer -->
-            <div class="mona-card-footer">
-              <div class="card-text">{{ short.title }}</div>
+            <div
+              class="short-card"
+              *ngFor="let short of shorts; let i = index; trackBy: trackById"
+              [class.active]="i === currentIndex"
+              [class.inactive]="i !== currentIndex"
+              (click)="onVideoClick(i)"
+            >
+              <div class="short-video-container">
+                <video
+                  *ngIf="i === currentIndex"
+                  [src]="getShortVideoUrl(short)"
+                  autoplay
+                  muted
+                  loop
+                  (ended)="onVideoEnded(short.id!)"
+                  (play)="onVideoPlay(short)"
+                  (loadeddata)="onVideoLoaded(short)"
+                  (error)="onVideoError(short)"
+                  class="short-video"
+                ></video>
+                <img
+                  *ngIf="i !== currentIndex"
+                  [src]="getShortThumbnailUrl(short)"
+                  (error)="onShortImageError($event)"
+                  [alt]="short.title"
+                  class="short-thumbnail"
+                />
+              </div>
+
+              <div class="mona-card-footer">
+                <div class="card-text">{{ short.title }}</div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Navigation Arrows -->
-      <button 
-        class="carousel-arrow left" 
-        (click)="prevShorts()" 
+      <button
+        class="carousel-arrow left"
+        (click)="prevShorts()"
         [disabled]="!canPrevShorts()"
         [class.disabled]="!canPrevShorts()"
+        title="Video trước"
       >
-        &lt;
+        <i class="bi bi-chevron-left"></i>
       </button>
 
-      <button 
-        class="carousel-arrow right" 
-        (click)="nextShorts()" 
+      <button
+        class="carousel-arrow right"
+        (click)="nextShorts()"
         [disabled]="!canNextShorts()"
         [class.disabled]="!canNextShorts()"
+        title="Video tiếp theo"
       >
-        &gt;
+        <i class="bi bi-chevron-right"></i>
       </button>
     </div>
 
-    <!-- Bottom Navigation Dots -->
     <div class="carousel-dots">
-      <span 
-        *ngFor="let short of shorts; let i = index; trackBy: trackById" 
+      <span
+        *ngFor="let short of shorts; let i = index; trackBy: trackById"
         class="dot"
         [class.active]="i === currentIndex"
         (click)="onVideoClick(i)"

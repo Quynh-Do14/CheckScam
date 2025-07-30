@@ -157,10 +157,10 @@
                         class="submit-btn" 
                         (click)="submitReply(comment)"
                         [disabled]="!replyContent.trim() || submittingReply">
-                        <span *ngIf="!submittingReply">Phản hồi</span>
-                        <span *ngIf="submittingReply">
+                        <ng-container *ngIf="!submittingReply">Phản hồi</ng-container>
+                        <ng-container *ngIf="submittingReply">
                           <i class="bi bi-arrow-repeat spin"></i> Đang gửi...
-                        </span>
+                        </ng-container>
                       </button>
                     </div>
                   </div>
@@ -222,21 +222,20 @@
                   (click)="onSubmitComment()"
                   [disabled]="!newComment.content.trim() || submittingComment"
                   title="Gửi bình luận">
-                  <i class="bi bi-send-fill" *ngIf="!submittingComment"></i>
-                  <i class="bi bi-arrow-repeat spin" *ngIf="submittingComment"></i>
+                  <i [class]="submittingComment ? 'bi bi-arrow-repeat spin' : 'bi bi-send-fill'"></i>
                 </button>
               </div>
             </div>
-            <div class="comment-options" *ngIf="newComment.content.trim().length > 0">
-              <label class="anonymous-option">
-                <input 
-                  type="checkbox" 
-                  [(ngModel)]="isAnonymousComment"
-                  class="anonymous-checkbox">
-                <i class="bi bi-incognito"></i>
-                <span>Ẩn danh</span>
-              </label>
-            </div>
+          </div>
+          <div class="comment-options" *ngIf="newComment.content.trim().length > 0">
+            <label class="anonymous-option">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="isAnonymousComment"
+                class="anonymous-checkbox">
+              <i class="bi bi-incognito"></i>
+              <span>Ẩn danh</span>
+            </label>
           </div>
         </div>
 
@@ -323,10 +322,10 @@
                   class="submit-btn" 
                   (click)="submitReply(reply)"
                   [disabled]="!replyContent.trim() || submittingReply">
-                  <span *ngIf="!submittingReply">Phản hồi</span>
-                  <span *ngIf="submittingReply">
+                  <ng-container *ngIf="!submittingReply">Phản hồi</ng-container>
+                  <ng-container *ngIf="submittingReply">
                     <i class="bi bi-arrow-repeat spin"></i> Đang gửi...
-                  </span>
+                  </ng-container>
                 </button>
               </div>
             </div>

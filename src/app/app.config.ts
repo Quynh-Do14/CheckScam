@@ -6,7 +6,10 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { tokenInterceptor } from './interceptors/token.interceptor';
 
 import { provideAnimations } from '@angular/platform-browser/animations';
-// import { provideToastr } from 'ngx-toastr';
+import { provideToastr } from 'ngx-toastr';
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { provideClientHydration } from '@angular/platform-browser';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 // Import Font Awesome
 import { FaIconLibrary } from '@fortawesome/angular-fontawesome';
@@ -26,11 +29,14 @@ export const appConfig: ApplicationConfig = {
       withInterceptors([tokenInterceptor])
     ),
     provideAnimations(),
-    // provideToastr({
-    //   timeOut: 3000,
-    //   positionClass: 'toast-top-right',
-    //   preventDuplicates: true,
-    // }),
+    provideToastr({
+      timeOut: 3000,
+      positionClass: 'toast-top-right',
+      preventDuplicates: true,
+    }),
+    provideNoopAnimations(),
+    provideClientHydration(),
+    provideAnimationsAsync(),
 
     // Cấu hình Font Awesome
     {

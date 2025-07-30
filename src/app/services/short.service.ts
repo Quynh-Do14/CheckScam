@@ -38,8 +38,19 @@ export class ShortService {
     return this.http.post<Short>(this.apiUrl, formData);
   }
 
-  updateShort(id: number, shortData: Short): Observable<Short> {
-    return this.http.put<Short>(`${this.apiUrl}/${id}`, shortData);
+  updateShort(id: number, title: string, file?: File, thumbnail?: File): Observable<Short> {
+    const formData = new FormData();
+    formData.append('title', title);
+    
+    if (file) {
+      formData.append('file', file);
+    }
+    
+    if (thumbnail) {
+      formData.append('thumbnail', thumbnail);
+    }
+    
+    return this.http.put<Short>(`${this.apiUrl}/${id}`, formData);
   }
 
   deleteShort(id: number): Observable<void> {
@@ -74,5 +85,31 @@ export class ShortService {
   getThumbnailUrlFromPath(thumbnailPath: string): string {
     const filename = this.extractFilename(thumbnailPath);
     return this.getThumbnailUrl(filename);
+  }
+
+  // Validate file size
+  validateFileSize(file: File, maxSizeMB: number): boolean {
+    return file.size <= maxSizeMB * 1024 * 1024;
+  }
+
+  // Validate video file format
+  validateVideoFormat(file: File): boolean {
+    const allowedTypes = ['video/mp4', 'video/avi', 'video/mov', 'video/wmv', 'video/flv', 'video/webm'];
+    return allowedTypes.includes(file.type);
+  }
+
+  // Validate image file format
+  validateImageFormat(file: File): boolean {
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    return allowedTypes.includes(file.type);
+  }
+
+  // Format file size for display
+  formatFileSize(bytes: number): string {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
 } 

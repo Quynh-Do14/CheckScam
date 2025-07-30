@@ -45,7 +45,7 @@
                   <button class="btn action-btn view-detail-btn" (click)="viewShortDetail(short)" title="Xem chi tiết">
                     <i class="fa-solid fa-eye"></i>
                   </button>
-                  <button class="btn action-btn edit-btn" (click)="editShort(short)" title="Chỉnh sửa">
+                  <button class="btn action-btn edit-btn" [routerLink]="['/admin/update-short', short.id]" title="Cập nhật">
                     <i class="fa-solid fa-pen-to-square"></i>
                   </button>
                   <button class="btn action-btn delete-btn" (click)="deleteShort(short.id!)" title="Xóa">
@@ -95,11 +95,11 @@
     </div>
   </div>
 
-  <!-- Create/Edit Short Popup -->
+  <!-- Create Short Popup -->
   <div class="popup-overlay" *ngIf="isPopupVisible" (click)="closePopup($event)">
     <div class="popup-content">
       <div class="popup-header">
-        <h5>{{ isEditing ? 'Chỉnh sửa Short' : 'Thêm Short mới' }}</h5>
+        <h5>Thêm Short mới</h5>
         <button class="close-button" (click)="togglePopup()">&times;</button>
       </div>
       <div class="popup-body">
@@ -130,7 +130,6 @@
                   accept="video/*"
                   (change)="onVideoSelected($event)"
                   class="file-input"
-                  [disabled]="isEditing"
                 />
                 <div class="upload-content">
                   <div class="upload-icon">🎥</div>
@@ -156,7 +155,6 @@
                   accept="image/*"
                   (change)="onThumbnailSelected($event)"
                   class="file-input"
-                  [disabled]="isEditing"
                 />
                 <div class="upload-content">
                   <div class="upload-icon">🖼️</div>
@@ -186,7 +184,7 @@
             </button>
             <button type="submit" class="btn btn-primary-gradient" [disabled]="loading || shortForm.invalid">
               <span class="loading-spinner" *ngIf="loading"></span>
-              {{ isEditing ? 'Cập nhật' : 'Tạo Short' }}
+              Tạo Short
             </button>
           </div>
         </form>
@@ -264,7 +262,7 @@
         <button class="btn btn-secondary" (click)="closeDetailModal()">
           Đóng
         </button>
-        <button class="btn btn-primary-gradient" (click)="editShort(selectedShort!)" *ngIf="selectedShort">
+        <button class="btn btn-primary-gradient" [routerLink]="['/admin/update-short', selectedShort?.id]" *ngIf="selectedShort">
           <i class="fas fa-edit"></i>
           Chỉnh sửa
         </button>

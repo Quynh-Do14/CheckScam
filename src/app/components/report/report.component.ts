@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Title } from '@angular/platform-browser'; // Import Title service
+import { Title } from '@angular/platform-browser'; 
 import { HeaderComponent } from "../header/header.component";
 import { FooterComponent } from "../footer/footer.component";
 import { ChatBoxComponent } from "../chat-box/chat-box.component";
@@ -15,10 +15,10 @@ import { CommonModule } from '@angular/common';
 })
 export class ReportComponent implements OnInit {
   showChatbox = false;
-  constructor(private router: Router, private titleService: Title) { } // Inject Title service
+  constructor(private router: Router, private titleService: Title) { }
 
   ngOnInit(): void {
-    this.titleService.setTitle('Báo Cáo AI6 - Săn Người Xấu, Diệt Kẻ Gian | Phân Tích Lừa Đảo'); // Đặt tiêu đề cho tab trình duyệt
+    this.titleService.setTitle('Báo Cáo AI6 - Săn Người Xấu, Diệt Kẻ Gian | Phân Tích Lừa Đảo'); 
   }
 
   goBack(): void {

@@ -16,6 +16,7 @@ import { ListNewsComponent } from './components/news/list-news/list-news.compone
 import { ListShortComponent } from './components/news/list-short/list-short.component';
 import { ShortManagementComponent } from './components/news/short-management/short-management.component';
 import { UpdateNewsComponent } from './components/news/update-news/update-news.component';
+import { UpdateShortComponent } from './components/news/update-short/update-short.component';
 import { SubjectDetailComponent } from './components/subject-detail/subject-detail.component';
 
 import { AnalyzeComponent } from './components/analyze/analyze.component';
@@ -99,6 +100,10 @@ export const routes: Routes = [
           {
             path: 'update-news/:id',
             component: UpdateNewsComponent,
+          },
+          {
+            path: 'update-short/:id',
+            component: UpdateShortComponent,
           },
           { path: 'report-detail/:id', component: ReportDetailComponent },
           { path: 'mistake-detail/:id', component: MistakeDetailComponent },

@@ -1,92 +1,25 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { ToastrService } from 'ngx-toastr';
+import { ShortService, Short } from '../../../services/short.service';
 
-// DTOs
-interface Short {
-  id?: number;
-  title: string;
-  videoUrl?: string;
-  thumbnailUrl?: string;
-  views?: number;
-  createdAt?: string;
-  updatedAt?: string;
-}
+// Sử dụng interface Short từ service
 
-// Service for API calls
-class ShortManagementService {
-  private apiUrl = environment.apiBaseUrl + '/shorts';
-
-  async getAllShorts(): Promise<Short[]> {
-    const response = await fetch(this.apiUrl);
-    if (!response.ok) throw new Error('Failed to fetch shorts');
-    return response.json();
-  }
-
-  async getShortById(id: number): Promise<Short> {
-    const response = await fetch(`${this.apiUrl}/${id}`);
-    if (!response.ok) throw new Error('Short not found');
-    return response.json();
-  }
-
-  async createShort(formData: FormData): Promise<Short> {
-    const response = await fetch(this.apiUrl, {
-      method: 'POST',
-      body: formData
-    });
-    if (!response.ok) throw new Error('Failed to create short');
-    return response.json();
-  }
-
-  async updateShort(id: number, short: Short): Promise<Short> {
-    const response = await fetch(`${this.apiUrl}/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(short)
-    });
-    if (!response.ok) throw new Error('Failed to update short');
-    return response.json();
-  }
-
-  async deleteShort(id: number): Promise<void> {
-    const response = await fetch(`${this.apiUrl}/${id}`, {
-      method: 'DELETE'
-    });
-    if (!response.ok) throw new Error('Failed to delete short');
-  }
-
-  async incrementViews(id: number): Promise<Short> {
-    const response = await fetch(`${this.apiUrl}/${id}/view`, {
-      method: 'POST'
-    });
-    if (!response.ok) throw new Error('Failed to increment views');
-    return response.json();
-  }
-
-  getVideoUrl(filename: string): string {
-    return `${environment.apiUrl}/api/v1/shorts/videos/${filename}`;
-  }
-
-  getThumbnailUrl(filename: string): string {
-    return `${environment.apiUrl}/api/v1/shorts/thumbnails/${filename}`;
-  }
-}
+// Sử dụng ShortService từ service
 
 @Component({
   selector: 'app-short-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule],
   templateUrl: './short-management.component.html',
   styleUrl: './short-management.component.scss'
 })
 export class ShortManagementComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
-  private shortService = new ShortManagementService();
 
   // Data
   shorts: Short[] = [];
@@ -95,8 +28,6 @@ export class ShortManagementComponent implements OnInit, OnDestroy {
 
   // Form
   shortForm: FormGroup;
-  isEditing = false;
-  editingShortId: number | null = null;
 
   // File upload
   selectedVideo: File | null = null;
@@ -114,7 +45,9 @@ export class ShortManagementComponent implements OnInit, OnDestroy {
 
   constructor(
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private toastr: ToastrService,
+    private shortService: ShortService
   ) {
     this.shortForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200)]]
@@ -131,25 +64,44 @@ export class ShortManagementComponent implements OnInit, OnDestroy {
   }
 
   // Load shorts
-  async loadShorts(): Promise<void> {
+  loadShorts(): void {
     this.loading = true;
     this.error = '';
     
-    try {
-      this.shorts = await this.shortService.getAllShorts();
-      this.totalItems = this.shorts.length;
-    } catch (error) {
-      this.error = 'Không thể tải danh sách shorts';
-      console.error('Error loading shorts:', error);
-    } finally {
-      this.loading = false;
-    }
+    this.shortService.getAllShorts()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (shorts) => {
+          this.shorts = shorts;
+          this.totalItems = this.shorts.length;
+          this.loading = false;
+        },
+        error: (error: any) => {
+          const errorMessage = error.message || 'Không thể tải danh sách shorts';
+          this.error = errorMessage;
+          this.showError(errorMessage);
+          console.error('Error loading shorts:', error);
+          this.loading = false;
+        }
+      });
   }
 
   // File selection
   onVideoSelected(event: any): void {
     const file = event.target.files[0];
     if (file) {
+      // Validate file size (100MB limit)
+      if (!this.shortService.validateFileSize(file, 100)) {
+        this.showError('Video file size phải nhỏ hơn 100MB');
+        return;
+      }
+
+      // Validate file format
+      if (!this.shortService.validateVideoFormat(file)) {
+        this.showError('Định dạng video không được hỗ trợ. Hỗ trợ: MP4, AVI, MOV, WMV, FLV, WEBM');
+        return;
+      }
+
       this.selectedVideo = file;
       this.createVideoPreview(file);
     }
@@ -158,6 +110,18 @@ export class ShortManagementComponent implements OnInit, OnDestroy {
   onThumbnailSelected(event: any): void {
     const file = event.target.files[0];
     if (file) {
+      // Validate file size (5MB limit)
+      if (!this.shortService.validateFileSize(file, 5)) {
+        this.showError('Thumbnail size phải nhỏ hơn 5MB');
+        return;
+      }
+
+      // Validate file format
+      if (!this.shortService.validateImageFormat(file)) {
+        this.showError('Định dạng ảnh không được hỗ trợ. Hỗ trợ: JPG, PNG, GIF, WEBP');
+        return;
+      }
+
       this.selectedThumbnail = file;
       this.createThumbnailPreview(file);
     }
@@ -180,18 +144,18 @@ export class ShortManagementComponent implements OnInit, OnDestroy {
   }
 
   // Form submission
-  async onSubmit(): Promise<void> {
+  onSubmit(): void {
     if (this.shortForm.invalid) {
       this.markFormGroupTouched();
       return;
     }
 
-    if (!this.selectedVideo && !this.isEditing) {
+    // Validate required files for creating new short
+    if (!this.selectedVideo) {
       this.error = 'Vui lòng chọn video';
       return;
     }
-
-    if (!this.selectedThumbnail && !this.isEditing) {
+    if (!this.selectedThumbnail) {
       this.error = 'Vui lòng chọn thumbnail';
       return;
     }
@@ -199,58 +163,32 @@ export class ShortManagementComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.error = '';
 
-    try {
-      if (this.isEditing && this.editingShortId) {
-        // Update existing short
-        const shortData = this.shortForm.value;
-        await this.shortService.updateShort(this.editingShortId, shortData);
-        this.showSuccess('Cập nhật short thành công!');
-      } else {
-        // Create new short
-        const formData = new FormData();
-        formData.append('title', this.shortForm.value.title);
-        
-        if (this.selectedVideo) {
-          formData.append('file', this.selectedVideo);
+    // Create new short
+    this.shortService.createShort(this.shortForm.value.title, this.selectedVideo, this.selectedThumbnail)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.showSuccess('Tạo short thành công!');
+          this.resetForm();
+          this.loadShorts();
+        },
+        error: (error: any) => {
+          const errorMessage = error.message || 'Có lỗi xảy ra. Vui lòng thử lại.';
+          this.error = errorMessage;
+          this.showError(errorMessage);
+          console.error('Error creating short:', error);
+          this.loading = false;
         }
-        
-        if (this.selectedThumbnail) {
-          formData.append('thumbnail', this.selectedThumbnail);
-        }
-
-        await this.shortService.createShort(formData);
-        this.showSuccess('Tạo short thành công!');
-      }
-
-      this.resetForm();
-      this.loadShorts();
-    } catch (error) {
-      this.error = 'Có lỗi xảy ra. Vui lòng thử lại.';
-      console.error('Error submitting form:', error);
-    } finally {
-      this.loading = false;
-    }
+      });
   }
 
-  // Edit short
+  // Edit short - redirect to update component
   editShort(short: Short): void {
-    this.isEditing = true;
-    this.editingShortId = short.id || null;
-    this.shortForm.patchValue({
-      title: short.title
-    });
-    
-    // Set previews if URLs exist
-    if (short.videoUrl) {
-      this.videoPreview = short.videoUrl;
-    }
-    if (short.thumbnailUrl) {
-      this.thumbnailPreview = short.thumbnailUrl;
-    }
+    this.router.navigate(['/admin/update-short', short.id]);
   }
 
   // Delete short
-  async deleteShort(id: number): Promise<void> {
+  deleteShort(id: number): void {
     if (!confirm('Bạn có chắc chắn muốn xóa short này?')) {
       return;
     }
@@ -258,23 +196,26 @@ export class ShortManagementComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.error = '';
 
-    try {
-      await this.shortService.deleteShort(id);
-      this.showSuccess('Xóa short thành công!');
-      this.loadShorts();
-    } catch (error) {
-      this.error = 'Không thể xóa short';
-      console.error('Error deleting short:', error);
-    } finally {
-      this.loading = false;
-    }
+    this.shortService.deleteShort(id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.showSuccess('Xóa short thành công!');
+          this.loadShorts();
+        },
+        error: (error: any) => {
+          const errorMessage = error.message || 'Không thể xóa short';
+          this.error = errorMessage;
+          this.showError(errorMessage);
+          console.error('Error deleting short:', error);
+          this.loading = false;
+        }
+      });
   }
 
   // Reset form
   resetForm(): void {
     this.shortForm.reset();
-    this.isEditing = false;
-    this.editingShortId = null;
     this.selectedVideo = null;
     this.selectedThumbnail = null;
     this.videoPreview = null;
@@ -282,10 +223,7 @@ export class ShortManagementComponent implements OnInit, OnDestroy {
     this.error = '';
   }
 
-  // Cancel edit
-  cancelEdit(): void {
-    this.resetForm();
-  }
+  // Cancel edit - no longer needed as edit is handled by separate component
 
   // Utility methods
   private markFormGroupTouched(): void {
@@ -296,8 +234,11 @@ export class ShortManagementComponent implements OnInit, OnDestroy {
   }
 
   private showSuccess(message: string): void {
-    // You can implement a toast service here
-    alert(message);
+    this.toastr.success(message, 'Thành công!');
+  }
+
+  private showError(message: string): void {
+    this.toastr.error(message, 'Lỗi!');
   }
 
   // Get filtered and paginated shorts
@@ -333,16 +274,14 @@ export class ShortManagementComponent implements OnInit, OnDestroy {
   // Get URL methods
   getVideoUrl(short: Short): string {
     if (short.videoUrl) {
-      const filename = short.videoUrl.split('/').pop();
-      return filename ? this.shortService.getVideoUrl(filename) : '';
+      return this.shortService.getVideoUrlFromPath(short.videoUrl);
     }
     return '';
   }
 
   getThumbnailUrl(short: Short): string {
-    if (short.thumbnailUrl) {
-      const filename = short.thumbnailUrl.split('/').pop();
-      return filename ? this.shortService.getThumbnailUrl(filename) : '';
+    if (short.thumbnail) {
+      return this.shortService.getThumbnailUrlFromPath(short.thumbnail);
     }
     return '';
   }
@@ -453,5 +392,24 @@ export class ShortManagementComponent implements OnInit, OnDestroy {
 
   onVideoError(short: Short): void {
     console.error('Video error:', short.title, short.videoUrl);
+  }
+
+  // Get file size display
+  getFileSizeDisplay(file: File): string {
+    return this.shortService.formatFileSize(file.size);
+  }
+
+  // Check if file is selected
+  hasSelectedVideo(): boolean {
+    return this.selectedVideo !== null;
+  }
+
+  hasSelectedThumbnail(): boolean {
+    return this.selectedThumbnail !== null;
+  }
+
+  // Get file name for display
+  getFileName(file: File): string {
+    return file.name.length > 30 ? file.name.substring(0, 30) + '...' : file.name;
   }
 }

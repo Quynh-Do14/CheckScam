@@ -8,6 +8,7 @@ import { UserStateService } from '../../services/user-state.service';
 import { ForumPostDto } from '../../dtos/forum-post.dto';
 import { HeaderComponent } from '../header/header.component';
 import { environment } from '../../environments/environment';
+import { ChatBoxComponent } from '../chat-box/chat-box.component';
 
 interface PostType {
   id: string;
@@ -20,7 +21,7 @@ interface PostType {
 @Component({
   selector: 'app-forum',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, HeaderComponent],
+  imports: [CommonModule, RouterModule, FormsModule, HeaderComponent, ChatBoxComponent],
   templateUrl: './forum.component.html',
   styleUrls: ['./forum.component.scss']
 })
@@ -67,6 +68,7 @@ export class ForumComponent implements OnInit, OnDestroy {
   ];
 
   private destroy$ = new Subject<void>();
+  showChatbox: boolean | undefined;
 
   constructor(
     private forumService: ForumService,
@@ -381,5 +383,14 @@ export class ForumComponent implements OnInit, OnDestroy {
       'discussion': 'Bóc phốt'
     };
     return labels[postType] || 'Drama';
+  }
+
+  onAiTuVanClicked(): void {
+    debugger
+    this.showChatbox = true;
+  }
+
+  closeChatbox(): void {
+    this.showChatbox = false;
   }
 }

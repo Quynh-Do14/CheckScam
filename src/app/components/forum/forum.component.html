@@ -1,6 +1,6 @@
 <div class="page-layout">
   <!-- Header -->
-  <app-header></app-header>
+<app-header (aiTuVanClicked)="onAiTuVanClicked()"></app-header>
 
   <!-- Forum Content -->
   <div class="facebook-layout">
@@ -318,4 +318,6 @@
     </div>
   </div>
 </div>
+<app-chat-box *ngIf="showChatbox" (close)="closeChatbox()"></app-chat-box>
+
 </div>

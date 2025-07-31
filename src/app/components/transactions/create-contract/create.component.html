@@ -103,8 +103,13 @@
               <div class="form-group">
                 <label for="partyAPhone">Số điện thoại Bên A<span class="required-asterisk">*</span></label>
                 <input type="tel" id="partyAPhone" placeholder="Ví dụ: 09xx xxx xxx" [(ngModel)]="contract.partyAPhone" name="partyAPhone" required #partyAPhoneNgModel="ngModel">
-                <div *ngIf="partyAPhoneNgModel?.invalid && (partyAPhoneNgModel?.dirty || formSubmitted)" class="text-danger">
-                  Vui lòng nhập số điện thoại Bên A.
+                <div *ngIf="(partyAPhoneNgModel?.invalid && (partyAPhoneNgModel?.dirty || formSubmitted)) || (contract.partyAPhone && !isValidPhone(contract.partyAPhone) && (partyAPhoneNgModel?.dirty || formSubmitted))" class="text-danger">
+                  <div *ngIf="partyAPhoneNgModel?.errors?.['required']">
+                    Vui lòng nhập số điện thoại Bên A.
+                  </div>
+                  <div *ngIf="contract.partyAPhone && !isValidPhone(contract.partyAPhone)">
+                    Số điện thoại không đúng định dạng.
+                  </div>
                 </div>
               </div>
               <div class="form-group">
@@ -128,8 +133,13 @@
               <div class="form-group">
                 <label for="partyBPhone">Số điện thoại Bên B<span class="required-asterisk">*</span></label>
                 <input type="tel" id="partyBPhone" placeholder="Ví dụ: 08xx xxx xxx" [(ngModel)]="contract.partyBPhone" name="partyBPhone" required #partyBPhoneNgModel="ngModel">
-                <div *ngIf="partyBPhoneNgModel?.invalid && (partyBPhoneNgModel?.dirty || formSubmitted)" class="text-danger">
-                  Vui lòng nhập số điện thoại Bên B.
+                <div *ngIf="(partyBPhoneNgModel?.invalid && (partyBPhoneNgModel?.dirty || formSubmitted)) || (contract.partyBPhone && !isValidPhone(contract.partyBPhone) && (partyBPhoneNgModel?.dirty || formSubmitted))" class="text-danger">
+                  <div *ngIf="partyBPhoneNgModel?.errors?.['required']">
+                    Vui lòng nhập số điện thoại Bên B.
+                  </div>
+                  <div *ngIf="contract.partyBPhone && !isValidPhone(contract.partyBPhone)">
+                    Số điện thoại không đúng định dạng.
+                  </div>
                 </div>
               </div>
               <div class="form-group">

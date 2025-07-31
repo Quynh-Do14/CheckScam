@@ -1,0 +1,134 @@
+/* Global Scrollbar Hide - Desktop Only */
+
+// Force hide all scrollbars on desktop
+@media (min-width: 769px) {
+  * {
+    // Hide scrollbar for all browsers
+    &::-webkit-scrollbar {
+      display: none !important;
+      width: 0 !important;
+      height: 0 !important;
+    }
+    
+    -ms-overflow-style: none !important;  // IE and Edge
+    scrollbar-width: none !important;  // Firefox
+  }
+  
+  html, body {
+    overflow-x: hidden !important;
+  }
+  
+  body {
+    // Hide scrollbar for all browsers
+    &::-webkit-scrollbar {
+      display: none !important;
+      width: 0 !important;
+      height: 0 !important;
+    }
+    
+    -ms-overflow-style: none !important;  // IE and Edge
+    scrollbar-width: none !important;  // Firefox
+  }
+}
+
+// Ensure no horizontal scrolling
+* {
+  box-sizing: border-box;
+}
+
+// Prevent any element from causing horizontal scroll
+@media (min-width: 769px) {
+  .shorts-page-container * {
+    max-width: 100%;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+}
+
+// Specific scrollbar hiding for shorts components
+.shorts-page-container {
+  // Hide scrollbar for all browsers
+  &::-webkit-scrollbar {
+    display: none !important;
+  }
+  
+  -ms-overflow-style: none !important;  // IE and Edge
+  scrollbar-width: none !important;  // Firefox
+  
+  // Ensure no overflow
+  overflow-x: hidden !important;
+  overflow-y: hidden !important;
+}
+
+.shorts-content {
+  // Hide scrollbar for all browsers
+  &::-webkit-scrollbar {
+    display: none !important;
+  }
+  
+  -ms-overflow-style: none !important;  // IE and Edge
+  scrollbar-width: none !important;  // Firefox
+  
+  overflow-x: hidden !important;
+}
+
+.shorts-carousel-wrapper {
+  // Hide scrollbar for all browsers
+  &::-webkit-scrollbar {
+    display: none !important;
+  }
+  
+  -ms-overflow-style: none !important;  // IE and Edge
+  scrollbar-width: none !important;  // Firefox
+  
+  overflow: hidden !important;
+}
+
+.shorts-carousel-container {
+  // Hide scrollbar for all browsers
+  &::-webkit-scrollbar {
+    display: none !important;
+  }
+  
+  -ms-overflow-style: none !important;  // IE and Edge
+  scrollbar-width: none !important;  // Firefox
+  
+  overflow: hidden !important;
+}
+
+// Make sure video containers don't create scrollbars
+.short-card {
+  // Hide scrollbar for all browsers
+  &::-webkit-scrollbar {
+    display: none !important;
+  }
+  
+  -ms-overflow-style: none !important;  // IE and Edge
+  scrollbar-width: none !important;  // Firefox
+  
+  overflow: hidden !important;
+}
+
+.short-video-container {
+  // Hide scrollbar for all browsers
+  &::-webkit-scrollbar {
+    display: none !important;
+  }
+  
+  -ms-overflow-style: none !important;  // IE and Edge
+  scrollbar-width: none !important;  // Firefox
+  
+  overflow: hidden !important;
+}
+
+// Ensure videos don't create scrollbars
+.short-video,
+.short-thumbnail {
+  // Hide scrollbar for all browsers
+  &::-webkit-scrollbar {
+    display: none !important;
+  }
+  
+  -ms-overflow-style: none !important;  // IE and Edge
+  scrollbar-width: none !important;  // Firefox
+}

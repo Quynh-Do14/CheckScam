@@ -1,0 +1,196 @@
+/* Mobile Video Centering Fix */
+
+// Enhanced video container centering for mobile devices
+.shorts-page-container {
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.shorts-content {
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+}
+
+.shorts-carousel-wrapper {
+  @media (max-width: 768px) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+}
+
+.shorts-carousel-container {
+  @media (max-width: 768px) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+}
+
+.shorts-carousel {
+  @media (max-width: 768px) {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+}
+
+.shorts-track {
+  @media (max-width: 768px) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+.short-card {
+  @media (max-width: 768px) {
+    margin: 0 auto;
+    
+    .short-video-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    
+    .short-video,
+    .short-thumbnail {
+      object-fit: cover;
+      object-position: center center;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+  }
+}
+
+// Specific fixes for different mobile screen sizes
+@media (max-width: 480px) {
+  .shorts-carousel-container {
+    padding: 0 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .short-card {
+    flex: 0 0 calc(100vw - 20px);
+    max-width: 320px;
+    height: calc((100vw - 20px) * 1.78);
+    max-height: 570px;
+    margin: 0 auto;
+    
+    .short-video-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+    }
+    
+    .short-video,
+    .short-thumbnail {
+      object-position: center center;
+      object-fit: cover;
+    }
+  }
+}
+
+@media (max-width: 360px) {
+  .short-card {
+    flex: 0 0 calc(100vw - 10px);
+    max-width: 300px;
+    height: calc((100vw - 10px) * 1.78);
+    max-height: 534px;
+    margin: 0 auto;
+  }
+}
+
+// Landscape orientation fixes for mobile
+@media (max-height: 500px) and (orientation: landscape) {
+  .shorts-content {
+    padding: 5px 0;
+  }
+  
+  .short-card {
+    height: 80vh;
+    max-height: 400px;
+    
+    .short-video-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}
+
+// iOS Safari specific fixes
+@supports (-webkit-touch-callout: none) {
+  .short-card {
+    @media (max-width: 768px) {
+      .short-video-container {
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+      }
+      
+      .short-video,
+      .short-thumbnail {
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+      }
+    }
+  }
+}
+
+// Force center alignment with flexbox fallback
+.short-video-container {
+  @media (max-width: 768px) {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+  }
+}
+
+// Video element specific centering
+.short-video {
+  @media (max-width: 768px) {
+    margin: 0 auto;
+    position: relative;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+  }
+}
+
+// Thumbnail specific centering
+.short-thumbnail {
+  @media (max-width: 768px) {
+    margin: 0 auto;
+    position: relative;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+  }
+}

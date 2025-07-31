@@ -131,6 +131,14 @@ export class CreateContractComponent implements OnInit {
     };
   }
 
+  public isValidPhone(phone: string): boolean {
+    if (!phone) return true; // Empty phone is valid (for optional fields)
+    const phoneRegex = /^(1900|1800)[0-9]{4}$|(05|03|04|07|08|09|024|028)[0-9]{8}$|(\+84)[0-9]{9}$|(84)[0-9]{9}$|(\+84)[0-9]{8}$|(\+84)[0-9]{10}$|(021[012345689]|023[23456789]|020[3456789]|022[0123456789]|029[01234679]|025[123456789]|026[01239]|027[01234567]|037[01234567])[0-9]{7}$/;
+    const isValid = phoneRegex.test(phone);
+    console.log(`🔍 Phone validation: "${phone}" -> ${isValid}`);
+    return isValid;
+  }
+
   public isFormValid(): boolean {
     // Ensuring reportForm and its controls are available before accessing them
     if (!this.reportForm || !this.reportForm.controls) {
@@ -140,6 +148,10 @@ export class CreateContractComponent implements OnInit {
     const emailAValid = !this.contract.partyAEmail || this.emailValidator()(this.reportForm.controls['partyAEmail']) === null;
     const emailBValid = !this.contract.partyBEmail || this.emailValidator()(this.reportForm.controls['partyBEmail']) === null;
     const dealerEmailValid = this.emailValidator()(this.reportForm.controls['dealerEmail']) === null;
+    
+    // Phone validation
+    const phoneAValid = this.isValidPhone(this.contract.partyAPhone);
+    const phoneBValid = this.isValidPhone(this.contract.partyBPhone);
 
     const requiredFieldsFilled =
       !!this.contract.roomName &&
@@ -151,7 +163,7 @@ export class CreateContractComponent implements OnInit {
       !!this.contract.dealerName &&
       !!this.contract.dealerEmail;
 
-    return requiredFieldsFilled && emailAValid && emailBValid && dealerEmailValid;
+    return requiredFieldsFilled && emailAValid && emailBValid && dealerEmailValid && phoneAValid && phoneBValid;
   }
 
   public showNotification(message: string, type: 'success' | 'error' | 'warning', duration: number = 5000): void {

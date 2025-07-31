@@ -217,11 +217,10 @@ $gradient-overlay: linear-gradient(to top, rgba(0, 0, 0, 0.95), transparent);
   }
 
   &.active {
-    transform: scale(1.15); // Slightly larger scale for active card
     z-index: 20; // Bring active card to front
     border-color: $primary-blue; // Highlight border
     box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6); // Stronger shadow
-    filter: brightness(1) contrast(1); // Ensure full brightness/contrast
+    filter: brightness(1.2) contrast(1.1); // Brighter and more contrast for active video
     
     .mona-card-footer {
       opacity: 1; // Ensure full opacity for active title
@@ -229,11 +228,10 @@ $gradient-overlay: linear-gradient(to top, rgba(0, 0, 0, 0.95), transparent);
   }
 
   &.inactive {
-    transform: scale(0.85); // Smaller scale for inactive cards
-    filter: brightness(0.6) contrast(0.9); // Dim and slightly desaturate inactive cards
+    filter: brightness(0.7) contrast(0.9); // Dim inactive cards
     
     .mona-card-footer {
-      opacity: 0.6; // Slightly dim title of inactive cards
+      opacity: 0.8; // Slightly dim title of inactive cards
     }
   }
 }
@@ -344,6 +342,203 @@ $gradient-overlay: linear-gradient(to top, rgba(0, 0, 0, 0.95), transparent);
   100% { transform: rotate(360deg); }
 }
 
+// Video Controls Styles
+.video-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  z-index: 10;
+  
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top: 3px solid $primary-blue;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 10px;
+  }
+  
+  p {
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0;
+  }
+}
+
+.video-controls-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 5;
+  
+  &:hover {
+    opacity: 1;
+  }
+  
+  .play-pause-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.2s ease;
+    
+    &.show {
+      opacity: 1;
+    }
+    
+    &:hover {
+      transform: translate(-50%, -50%) scale(1.1);
+      background: rgba(0, 0, 0, 0.9);
+    }
+    
+    i {
+      font-size: 32px;
+      color: #ffffff;
+      margin-left: 4px; // Slight adjustment for play icon centering
+    }
+  }
+  
+  .volume-control {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    
+    .volume-button {
+      background: rgba(0, 0, 0, 0.6);
+      border: none;
+      color: #ffffff;
+      padding: 8px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      
+      &:hover {
+        background: rgba(0, 0, 0, 0.8);
+      }
+      
+      i {
+        font-size: 18px;
+      }
+    }
+  }
+  
+  .progress-container {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 2px;
+      overflow: hidden;
+      
+      .progress-fill {
+        height: 100%;
+        background: $primary-blue;
+        border-radius: 2px;
+        transition: width 0.1s ease;
+      }
+    }
+  }
+  
+  .fullscreen-control {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    
+    .fullscreen-button {
+      background: rgba(0, 0, 0, 0.6);
+      border: none;
+      color: #ffffff;
+      padding: 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      
+      &:hover {
+        background: rgba(0, 0, 0, 0.8);
+      }
+      
+      i {
+        font-size: 16px;
+      }
+    }
+  }
+}
+
+.video-error {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  text-align: center;
+  z-index: 10;
+  
+  i {
+    font-size: 48px;
+    color: #ff4d4d;
+    margin-bottom: 15px;
+  }
+  
+  p {
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0 0 15px 0;
+  }
+  
+  .retry-button {
+    background: $primary-blue;
+    border: none;
+    color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    
+    &:hover {
+      background: $primary-blue-dark;
+      transform: translateY(-2px);
+    }
+    
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
 /* Responsive adjustments */
 // I've reviewed and adjusted these more carefully
 @media (max-width: 1024px) {
@@ -368,9 +563,7 @@ $gradient-overlay: linear-gradient(to top, rgba(0, 0, 0, 0.95), transparent);
       border-bottom-left-radius: 18px; // Match parent's border radius
       border-bottom-right-radius: 18px;
     }
-    &.active {
-      transform: scale(1.1); // Slightly less scaling on medium screens
-    }
+    // Remove scaling for medium screens - all cards same size
   }
   .carousel-arrow {
     width: 50px;
@@ -421,9 +614,7 @@ $gradient-overlay: linear-gradient(to top, rgba(0, 0, 0, 0.95), transparent);
       border-bottom-left-radius: 13px; // Match parent
       border-bottom-right-radius: 13px;
     }
-    &.active {
-      transform: scale(1.05); // Minimal scaling on mobile to save space
-    }
+    // Remove scaling for mobile - all cards same size
   }
   .carousel-arrow {
     width: 40px;
@@ -508,5 +699,150 @@ $gradient-overlay: linear-gradient(to top, rgba(0, 0, 0, 0.95), transparent);
   .mona-card-footer .card-text {
     font-size: 15px;
     -webkit-line-clamp: 2;
+  }
+}
+
+// Video controls responsive styles
+@media (max-width: 1024px) {
+  .video-controls-overlay {
+    .play-pause-button {
+      width: 70px;
+      height: 70px;
+      
+      i {
+        font-size: 28px;
+      }
+    }
+    
+    .volume-control, .fullscreen-control {
+      .volume-button, .fullscreen-button {
+        padding: 6px;
+        
+        i {
+          font-size: 16px;
+        }
+      }
+    }
+  }
+  
+  .video-error {
+    i {
+      font-size: 42px;
+    }
+    
+    p {
+      font-size: 15px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .video-controls-overlay {
+    .play-pause-button {
+      width: 60px;
+      height: 60px;
+      
+      i {
+        font-size: 24px;
+      }
+    }
+    
+    .volume-control, .fullscreen-control {
+      .volume-button, .fullscreen-button {
+        padding: 5px;
+        
+        i {
+          font-size: 14px;
+        }
+      }
+    }
+    
+    .progress-container {
+      bottom: 15px;
+      left: 15px;
+      right: 15px;
+    }
+  }
+  
+  .video-error {
+    i {
+      font-size: 36px;
+    }
+    
+    p {
+      font-size: 14px;
+    }
+    
+    .retry-button {
+      padding: 8px 16px;
+      font-size: 13px;
+    }
+  }
+  
+  .video-loading {
+    .loading-spinner {
+      width: 35px;
+      height: 35px;
+    }
+    
+    p {
+      font-size: 13px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .video-controls-overlay {
+    .play-pause-button {
+      width: 50px;
+      height: 50px;
+      
+      i {
+        font-size: 20px;
+      }
+    }
+    
+    .volume-control {
+      top: 10px;
+      right: 10px;
+    }
+    
+    .fullscreen-control {
+      bottom: 10px;
+      right: 10px;
+    }
+    
+    .progress-container {
+      bottom: 10px;
+      left: 10px;
+      right: 50px; // Make space for fullscreen button
+    }
+  }
+  
+  .video-error {
+    i {
+      font-size: 32px;
+    }
+    
+    p {
+      font-size: 13px;
+    }
+    
+    .retry-button {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+  }
+  
+  .video-loading {
+    .loading-spinner {
+      width: 30px;
+      height: 30px;
+      border-width: 2px;
+    }
+    
+    p {
+      font-size: 12px;
+    }
   }
 }

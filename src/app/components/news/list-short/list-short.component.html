@@ -36,18 +36,94 @@
               (click)="onVideoClick(i)"
             >
               <div class="short-video-container">
+                <!-- Video Loading State -->
+                <div 
+                  class="video-loading" 
+                  *ngIf="i === currentIndex && isVideoLoading(short.id!)"
+                >
+                  <div class="loading-spinner"></div>
+                  <p>Đang tải video...</p>
+                </div>
+
+                <!-- Main Video Element -->
                 <video
-                  *ngIf="i === currentIndex"
+                  *ngIf="i === currentIndex && !isVideoLoading(short.id!)"
                   [src]="getShortVideoUrl(short)"
+                  [id]="'video-' + short.id"
                   autoplay
                   muted
                   loop
-                  (ended)="onVideoEnded(short.id!)"
-                  (play)="onVideoPlay(short)"
+                  playsinline
+                  preload="metadata"
+                  (loadstart)="onVideoLoadStart(short)"
                   (loadeddata)="onVideoLoaded(short)"
+                  (canplay)="onVideoCanPlay(short)"
+                  (play)="onVideoPlay(short)"
+                  (pause)="onVideoPause(short)"
+                  (ended)="onVideoEnded(short.id!)"
                   (error)="onVideoError(short)"
+                  (timeupdate)="onVideoTimeUpdate($event, short)"
                   class="short-video"
+                  #videoElement
                 ></video>
+
+                <!-- Video Controls Overlay -->
+                <div 
+                  class="video-controls-overlay" 
+                  *ngIf="i === currentIndex && !isVideoLoading(short.id!)"
+                  (click)="toggleVideoPlayPause(short.id!)"
+                >
+                  <div class="play-pause-button" [class.show]="!isVideoPlaying(short.id!)">
+                    <i class="bi bi-play-fill"></i>
+                  </div>
+                  
+                  <!-- Volume Control -->
+                  <div class="volume-control">
+                    <button 
+                      class="volume-button" 
+                      (click)="toggleMute(short.id!); $event.stopPropagation()"
+                    >
+                      <i [class]="getVolumeIcon(short.id!)"></i>
+                    </button>
+                  </div>
+
+                  <!-- Progress Bar -->
+                  <div class="progress-container">
+                    <div class="progress-bar">
+                      <div 
+                        class="progress-fill" 
+                        [style.width.%]="getVideoProgress(short.id!)"
+                      ></div>
+                    </div>
+                  </div>
+
+                  <!-- Fullscreen Button -->
+                  <div class="fullscreen-control">
+                    <button 
+                      class="fullscreen-button" 
+                      (click)="toggleFullscreen(short.id!); $event.stopPropagation()"
+                    >
+                      <i class="bi bi-fullscreen"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Video Error State -->
+                <div 
+                  class="video-error" 
+                  *ngIf="i === currentIndex && hasVideoError(short.id!)"
+                >
+                  <i class="bi bi-exclamation-triangle"></i>
+                  <p>Không thể tải video</p>
+                  <button 
+                    class="retry-button" 
+                    (click)="retryVideo(short)"
+                  >
+                    Thử lại
+                  </button>
+                </div>
+
+                <!-- Thumbnail for inactive videos -->
                 <img
                   *ngIf="i !== currentIndex"
                   [src]="getShortThumbnailUrl(short)"
@@ -55,6 +131,16 @@
                   [alt]="short.title"
                   class="short-thumbnail"
                 />
+
+                <!-- Preload next video -->
+                <video
+                  *ngIf="shouldPreloadVideo(i)"
+                  [src]="getShortVideoUrl(short)"
+                  preload="metadata"
+                  muted
+                  style="display: none;"
+                  (loadeddata)="onVideoPreloaded(short)"
+                ></video>
               </div>
 
               <div class="mona-card-footer">

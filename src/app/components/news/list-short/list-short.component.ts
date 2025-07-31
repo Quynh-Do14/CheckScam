@@ -21,6 +21,14 @@ export class ListShortComponent implements OnInit, OnDestroy {
   loading = false;
   private routeSubscription?: Subscription;
 
+  // Video state management
+  private videoLoadingStates = new Map<number, boolean>();
+  private videoErrorStates = new Map<number, boolean>();
+  private videoPlayingStates = new Map<number, boolean>();
+  private videoMutedStates = new Map<number, boolean>();
+  private videoProgressStates = new Map<number, number>();
+  private preloadedVideos = new Set<number>();
+
   cardWidth = 360;
   cardHeight = 640;
   cardGap = 30;
@@ -126,6 +134,7 @@ export class ListShortComponent implements OnInit, OnDestroy {
 
   onVideoPlay(short: Short): void {
     if (short.id) {
+      this.videoPlayingStates.set(short.id, true);
       this.shortService.incrementViews(short.id).subscribe({
         next: (updatedShort) => {
           const index = this.shorts.findIndex(s => s.id === short.id);
@@ -157,11 +166,53 @@ export class ListShortComponent implements OnInit, OnDestroy {
     }
   }
 
+  onVideoLoadStart(short: Short): void {
+    if (short.id) {
+      this.videoLoadingStates.set(short.id, true);
+      this.videoErrorStates.set(short.id, false);
+    }
+  }
+
   onVideoLoaded(short: Short): void {
+    if (short.id) {
+      this.videoLoadingStates.set(short.id, false);
+      this.videoErrorStates.set(short.id, false);
+    }
+  }
+
+  onVideoCanPlay(short: Short): void {
+    if (short.id) {
+      this.videoLoadingStates.set(short.id, false);
+    }
+  }
+
+  onVideoPause(short: Short): void {
+    if (short.id) {
+      this.videoPlayingStates.set(short.id, false);
+    }
+  }
+
+  onVideoTimeUpdate(event: Event, short: Short): void {
+    const video = event.target as HTMLVideoElement;
+    if (short.id && video.duration) {
+      const progress = (video.currentTime / video.duration) * 100;
+      this.videoProgressStates.set(short.id, progress);
+    }
+  }
+
+  onVideoPreloaded(short: Short): void {
+    if (short.id) {
+      this.preloadedVideos.add(short.id);
+      console.log(`Video preloaded for short ${short.id}`);
+    }
   }
 
   onVideoError(short: Short): void {
     console.error('Video error:', short.title, short.videoUrl);
+    if (short.id) {
+      this.videoErrorStates.set(short.id, true);
+      this.videoLoadingStates.set(short.id, false);
+    }
   }
 
   getShortThumbnailUrl(short: Short): string {
@@ -272,20 +323,95 @@ export class ListShortComponent implements OnInit, OnDestroy {
 
   getSlideTransform(): string {
     const containerWidth = window.innerWidth;
-    const activeCardWidth = this.cardWidth * 1.15;
-    const inactiveCardWidth = this.cardWidth * 0.85;
+    const cardWidth = this.cardWidth; // All cards have same width now
 
     let totalPrevCardsWidth = 0;
     for (let i = 0; i < this.currentIndex; i++) {
-        totalPrevCardsWidth += (inactiveCardWidth + this.cardGap);
+        totalPrevCardsWidth += (cardWidth + this.cardGap);
     }
 
-    const centerAdjustment = (containerWidth / 2) - (activeCardWidth / 2);
+    const centerAdjustment = (containerWidth / 2) - (cardWidth / 2);
 
     let dynamicOffset = centerAdjustment - totalPrevCardsWidth;
 
     dynamicOffset += this.dragOffset;
 
     return `translateX(${dynamicOffset}px)`;
+  }
+
+  // Video control methods
+  isVideoLoading(shortId: number): boolean {
+    return this.videoLoadingStates.get(shortId) || false;
+  }
+
+  hasVideoError(shortId: number): boolean {
+    return this.videoErrorStates.get(shortId) || false;
+  }
+
+  isVideoPlaying(shortId: number): boolean {
+    return this.videoPlayingStates.get(shortId) || false;
+  }
+
+  getVideoProgress(shortId: number): number {
+    return this.videoProgressStates.get(shortId) || 0;
+  }
+
+  toggleVideoPlayPause(shortId: number): void {
+    const videoElement = document.getElementById(`video-${shortId}`) as HTMLVideoElement;
+    if (videoElement) {
+      if (videoElement.paused) {
+        videoElement.play().catch(error => {
+          console.error('Error playing video:', error);
+        });
+      } else {
+        videoElement.pause();
+      }
+    }
+  }
+
+  toggleMute(shortId: number): void {
+    const videoElement = document.getElementById(`video-${shortId}`) as HTMLVideoElement;
+    if (videoElement) {
+      videoElement.muted = !videoElement.muted;
+      this.videoMutedStates.set(shortId, videoElement.muted);
+    }
+  }
+
+  getVolumeIcon(shortId: number): string {
+    const isMuted = this.videoMutedStates.get(shortId) || false;
+    return isMuted ? 'bi bi-volume-mute-fill' : 'bi bi-volume-up-fill';
+  }
+
+  toggleFullscreen(shortId: number): void {
+    const videoElement = document.getElementById(`video-${shortId}`) as HTMLVideoElement;
+    if (videoElement) {
+      if (document.fullscreenElement) {
+        document.exitFullscreen().catch(error => {
+          console.error('Error exiting fullscreen:', error);
+        });
+      } else {
+        videoElement.requestFullscreen().catch(error => {
+          console.error('Error entering fullscreen:', error);
+        });
+      }
+    }
+  }
+
+  retryVideo(short: Short): void {
+    if (short.id) {
+      this.videoErrorStates.set(short.id, false);
+      this.videoLoadingStates.set(short.id, true);
+      
+      // Force reload the video
+      const videoElement = document.getElementById(`video-${short.id}`) as HTMLVideoElement;
+      if (videoElement) {
+        videoElement.load();
+      }
+    }
+  }
+
+  shouldPreloadVideo(index: number): boolean {
+    // Preload next video only
+    return index === this.currentIndex + 1 && index < this.shorts.length;
   }
 }

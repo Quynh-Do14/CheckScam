@@ -9,6 +9,7 @@ import { ForumPostDto } from '../../dtos/forum-post.dto';
 import { HeaderComponent } from '../header/header.component';
 import { environment } from '../../environments/environment';
 import { ChatBoxComponent } from '../chat-box/chat-box.component';
+import { Title } from '@angular/platform-browser'; // Import Title Service
 
 interface PostType {
   id: string;
@@ -34,7 +35,13 @@ export class ForumComponent implements OnInit, OnDestroy {
   isLoggedIn = false;
   currentUser: any = null;
   showCreatePost = false;
-  selectedPostType: PostType | null = null;
+  selectedPostType: PostType | null = { // Đặt mặc định là "Bóc phốt"
+    id: 'bocphot',
+    name: 'Bóc phốt',
+    icon: 'bi-megaphone-fill',
+    color: '#ff0000',
+    placeholder: 'Bạn muốn bóc phốt đối tượng nào? Hãy nêu rõ thông tin và bằng chứng.'
+  };
 
   postTypes: PostType[] = [
     {
@@ -64,6 +71,13 @@ export class ForumComponent implements OnInit, OnDestroy {
       icon: 'bi-question-circle-fill',
       color: '#6f42c1',
       placeholder: 'Đặt câu hỏi về vấn đề bảo mật, cần tư vấn...'
+    },
+    {
+      id: 'bocphot', // Thêm loại bài viết "Bóc phốt"
+      name: 'Bóc phốt',
+      icon: 'bi-megaphone-fill', // Chọn icon phù hợp
+      color: '#ff0000', // Màu đỏ nổi bật
+      placeholder: 'Bạn muốn bóc phốt đối tượng nào? Hãy nêu rõ thông tin và bằng chứng.'
     }
   ];
 
@@ -72,13 +86,14 @@ export class ForumComponent implements OnInit, OnDestroy {
 
   constructor(
     private forumService: ForumService,
-    private userStateService: UserStateService
+    private userStateService: UserStateService,
+    private titleService: Title // Inject Title Service
   ) {
-    // Ensure posts is always initialized as an empty array
     this.posts = [];
   }
 
   ngOnInit() {
+    this.titleService.setTitle('Bóc Phốt AI6 | Săn Người xấu, Diệt kẻ gian'); // Set the page title
     this.checkAuthStatus();
     this.loadPosts();
   }
@@ -99,35 +114,27 @@ export class ForumComponent implements OnInit, OnDestroy {
 
   loadPosts() {
     this.loading = true;
-    
-    this.forumService.getPosts(0, 10)  // Use page=0, size=10 to match API
+
+    this.forumService.getPosts(0, 10)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: any) => {
-          
-          // Handle different response formats
           let posts: ForumPostDto[] = [];
-          
+
           if (response?.data?.data && Array.isArray(response.data.data)) {
-            // Actual API format: {data: {data: [...], total: X, page: 0}}
             posts = response.data.data;
           } else if (response && Array.isArray(response.data)) {
-            // Standard format: {data: [...], total: X}
             posts = response.data;
           } else if (response && Array.isArray(response)) {
-            // Direct array format: [...]
             posts = response;
           } else if (response?.data && !Array.isArray(response.data) && (response.data as any).content) {
-            // Spring Boot Pageable format: {data: {content: [...], totalElements: X}}
             posts = (response.data as any).content || [];
           } else {
             posts = [];
           }
-          
-          // Ensure posts is always an array
+
           this.posts = Array.isArray(posts) ? posts : [];
-          
-          // Scroll to top to show new posts (if any)
+
           if (this.posts.length > 0) {
             setTimeout(() => {
               const mainContent = document.querySelector('.main-content');
@@ -138,78 +145,73 @@ export class ForumComponent implements OnInit, OnDestroy {
               }
             }, 100);
           }
-          
+
           this.loading = false;
         },
         error: (error: any) => {
-          this.posts = []; // Ensure posts is always an array
+          this.posts = [];
           this.loading = false;
         }
       });
   }
 
   onShowCreatePost() {
-    this.selectedPostType = null; // Không chọn loại bài viết mặc định
+    // Khi mở modal, đặt placeholder mặc định cho loại "Bóc phốt"
+    this.selectedPostType = this.postTypes.find(type => type.id === 'bocphot') || null;
     this.showCreatePost = true;
   }
 
   async onCreatePost() {
     if (!this.newPostContent.trim()) return;
-    
-    // Check authentication first
+
     const token = localStorage.getItem('jwt_token');
     const user = this.userStateService.getCurrentUser();
-    
-    
+
+
     if (!token) {
       return;
     }
-    
+
     this.loading = true;
-    
+
     try {
-      
+
       let imageUrl = '';
-      
-      // Upload image if selected
+
       if (this.selectedFile) {
         const uploadResponse = await this.forumService.uploadImage(this.selectedFile).toPromise();
         imageUrl = uploadResponse?.data?.imageUrl || '';
       }
-      
-      // Prepare post data
+
       const postData = {
-        title: this.selectedPostType?.name,
+        // Sử dụng title của loại bài viết đã chọn, mặc định là "Bóc phốt"
+        title: this.selectedPostType?.name || 'Bóc phốt',
         content: this.newPostContent,
         imageUrl: imageUrl
       };
-      
-      
-      // Create post via API
+
+
       const response = await this.forumService.createPost(postData).toPromise();
-      
+
       if (response && (response.status === 'CREATED' || response.status === 'OK') && response.data) {
-        
-        // Reset form first
+
         this.newPostContent = '';
         this.imagePreview = null;
         this.selectedFile = null;
         this.showCreatePost = false;
-        this.selectedPostType = null;
-        
-        // Reload posts from server after a short delay
+        this.selectedPostType = this.postTypes.find(type => type.id === 'bocphot') || null; // Reset về mặc định "Bóc phốt"
+
+
         setTimeout(() => {
           this.loadPosts();
         }, 800);
       } else {
-        // Still try to reload posts in case it was actually created
         setTimeout(() => {
           this.loadPosts();
         }, 1200);
       }
-      
+
     } catch (error: any) {
-      // Silent error handling
     } finally {
       this.loading = false;
     }
@@ -219,7 +221,7 @@ export class ForumComponent implements OnInit, OnDestroy {
     const file = event.target.files[0];
     if (file && file.type.startsWith('image/')) {
       this.selectedFile = file;
-      
+
       const reader = new FileReader();
       reader.onload = (e) => {
         this.imagePreview = e.target?.result as string;
@@ -239,14 +241,12 @@ export class ForumComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Call API to like/unlike post
-    const action = post.isLiked ? 
-      this.forumService.unlikePost(post.id.toString()) : 
+    const action = post.isLiked ?
+      this.forumService.unlikePost(post.id.toString()) :
       this.forumService.likePost(post.id.toString());
 
     action.pipe(takeUntil(this.destroy$)).subscribe({
       next: () => {
-        // Update UI after successful API call
         post.isLiked = !post.isLiked;
         post.likesCount += post.isLiked ? 1 : -1;
       },
@@ -258,7 +258,7 @@ export class ForumComponent implements OnInit, OnDestroy {
 
   getTimeAgo(date: Date | string | null): string {
     if (!date) return '';
-    
+
     const now = new Date();
     const targetDate = typeof date === 'string' ? new Date(date) : date;
     const diffInMs = now.getTime() - targetDate.getTime();
@@ -276,111 +276,97 @@ export class ForumComponent implements OnInit, OnDestroy {
     if (!email || email.trim().length === 0) {
       return 'Unknown';
     }
-    
+
     const [local] = email.split('@');
     const trimmedLocal = local.trim();
-    
+
     if (trimmedLocal.length <= 4) {
       return trimmedLocal;
     }
-    
+
     const totalLength = trimmedLocal.length;
     const hideCount = 3;
-    
+
     const startHide = Math.floor((totalLength - hideCount) / 2);
     const endHide = startHide + hideCount;
-    
+
     if (startHide < 1 || endHide >= totalLength) {
       return trimmedLocal;
     }
-    
+
     const beforeHidden = trimmedLocal.substring(0, startHide);
     const afterHidden = trimmedLocal.substring(endHide);
-    
+
     return beforeHidden + '***' + afterHidden;
   }
 
   onImageError(event: any) {
-    // Thay vì load default-avatar.png, hiển thị text hoặc ẩn ảnh
     event.target.style.display = 'none';
-    // Hoặc thêm class CSS cho placeholder
     if (event.target.parentElement) {
       event.target.parentElement.classList.add('no-avatar');
     }
   }
 
+  // Cập nhật placeholder dựa trên selectedPostType, mặc định là bóc phốt
   getCurrentPlaceholder(): string {
-    return this.selectedPostType?.placeholder || 'Chia sẻ bài viết của bạn...';
+    return this.selectedPostType?.placeholder || 'Bạn muốn bóc phốt đối tượng nào? Hãy nêu rõ thông tin và bằng chứng.';
   }
 
-  // TrackBy function for ngFor optimization and error prevention
   trackByPostId(index: number, post: ForumPostDto): string {
     return post?.id?.toString() || index.toString();
   }
 
-  // Helper method to check if posts is a valid array
   isValidPostsArray(): boolean {
     return this.posts && Array.isArray(this.posts);
   }
 
-  // Helper method to get proper avatar URL
   getAuthorAvatarUrl(avatarUrl: string | null | undefined): string {
     if (!avatarUrl) {
-      // Trả về empty string thay vì default-avatar.png
       return '';
     }
-    
-    // If already full URL, return as is
+
     if (avatarUrl.startsWith('http')) {
       return avatarUrl;
     }
-    
-    // Build full URL with environment.apiUrl
+
     const cleanPath = avatarUrl.startsWith('/') ? avatarUrl.substring(1) : avatarUrl;
     return `${environment.apiUrl}/${cleanPath}`;
   }
 
-  // Helper method to get proper image URL
   getImageUrl(imageUrl: string | null | undefined): string {
     if (!imageUrl) return '';
-    
-    // If already full URL, return as is
+
     if (imageUrl.startsWith('http')) {
       return imageUrl;
     }
-    
-    // Build full URL with environment.apiUrl
+
     const cleanPath = imageUrl.startsWith('/') ? imageUrl.substring(1) : imageUrl;
     return `${environment.apiUrl}/${cleanPath}`;
   }
 
-  // Format post content with line breaks and links
   formatPostContent(content: string): string {
     if (!content) return '';
-    
-    // Convert line breaks to <br>
+
     let formatted = content.replace(/\n/g, '<br>');
-    
-    // Convert URLs to links (basic implementation)
+
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     formatted = formatted.replace(urlRegex, '<a href="$1" target="_blank" rel="noopener">$1</a>');
-    
-    // Truncate if too long (for preview)
+
     if (formatted.length > 300) {
       formatted = formatted.substring(0, 300) + '... <span class="read-more">Đọc thêm</span>';
     }
-    
+
     return formatted;
   }
 
-  // Get post type label
   getPostTypeLabel(postType: string): string {
     const labels: {[key: string]: string} = {
       'news': 'Tin tức',
       'warning': 'Cảnh báo',
       'tip': 'Mẹo hay',
       'question': 'Hỏi đáp',
-      'discussion': 'Bóc phốt'
+      'discussion': 'Bóc phốt', // Giữ nguyên "Bóc phốt" cho loại 'discussion'
+      'bocphot': 'Bóc phốt' // Thêm nhãn cho 'bocphot'
     };
     return labels[postType] || 'Drama';
   }

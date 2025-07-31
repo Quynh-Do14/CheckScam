@@ -175,21 +175,27 @@
             <p class="form-note"><i class="fas fa-lock"></i> Mọi thông tin cá nhân của bạn đều được bảo mật tuyệt đối.</p>
         </div>
 
-        <div class="form-group">
-          <label for="common_files">Tài liệu đính kèm (PNG, JPG, GIF):</label>
-          <div class="drop-zone"
-              (click)="commonFileInput.click()"
-              (dragover)="onDragOverCommon($event)"
-              (dragleave)="onDragLeaveCommon($event)"
-              (drop)="onDropCommon($event)">
-            <div class="drop-zone-content">
-              <div class="file-icons">
-                <i class="fas fa-file-image text-danger file-icon-fa"></i>
-                <i class="fas fa-file-image text-primary file-icon-fa"></i>
-                <i class="far fa-file-image text-success file-icon-fa"></i>
+        <div class="form-group file-upload-section">
+          <label for="common_files">Tài liệu đính kèm (PNG, JPG, GIF, tối đa 10 ảnh):</label>
+          <div class="upload-area">
+            <div class="drop-zone"
+                (click)="commonFileInput.click()"
+                (dragover)="onDragOverCommon($event)"
+                (dragleave)="onDragLeaveCommon($event)"
+                (drop)="onDropCommon($event)"
+                [class.error]="fileCountError">
+              <div class="drop-zone-content">
+                <div class="file-icons">
+                  <i class="fas fa-file-image text-danger file-icon-fa"></i>
+                  <i class="fas fa-file-image text-primary file-icon-fa"></i>
+                  <i class="far fa-file-image text-success file-icon-fa"></i>
+                </div>
+                <p>Kéo hoặc click vào đây để upload</p>
+                <input #commonFileInput type="file" id="common_files" accept="image/*" multiple (change)="onFileSelectCommon($event)" style="display: none;">
               </div>
-              <p>Kéo hoặc click vào đây để upload</p>
-              <input #commonFileInput type="file" id="common_files" accept="image/*" multiple (change)="onFileSelectCommon($event)" style="display: none;">
+            </div>
+            <div *ngIf="fileCountError" class="text-danger file-error-message">
+              {{ fileCountError }}
             </div>
           </div>
           <div class="uploaded-bill-note">

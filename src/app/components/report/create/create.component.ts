@@ -44,8 +44,8 @@ export class CreateReportComponent implements OnInit {
   };
 
   selectedFiles: File[] = [];
-  fileCountError: string | null = null; // Biến mới để lưu lỗi số lượng file
-  readonly MAX_FILES = 10; // Giới hạn số lượng ảnh
+  fileCountError: string | null = null;
+  readonly MAX_FILES = 10;
 
   showChatbox: boolean = false;
 
@@ -184,7 +184,7 @@ export class CreateReportComponent implements OnInit {
     this.selectedCategoryName = '-- Chọn danh mục --';
     this.requestPayload.captchaToken = '';
     this.selectedFiles = [];
-    this.fileCountError = null; // Reset lỗi file khi thay đổi loại báo cáo
+    this.fileCountError = null;
 
     this.requestPayload.reportDetails = [];
     this.addReportDetailItem();
@@ -206,8 +206,8 @@ export class CreateReportComponent implements OnInit {
         const defaultOption = this.reportTypeOptions.find(opt => opt.id === item.type);
         item.selectedTypeName = defaultOption ? defaultOption.name : '-- Chọn loại tố cáo --';
       });
-      this.selectedFiles = []; // Đảm bảo reset cả files
-      this.fileCountError = null; // Reset lỗi file khi reset form
+      this.selectedFiles = [];
+      this.fileCountError = null;
     }
   }
 
@@ -224,21 +224,19 @@ export class CreateReportComponent implements OnInit {
   }
 
   onFileSelectCommon(event: Event): void {
-    this.fileCountError = null; // Xóa lỗi cũ
+    this.fileCountError = null;
     const input = event.target as HTMLInputElement;
     if (input.files) {
       const newFiles = Array.from(input.files).filter(file => file.type.startsWith('image/'));
 
-      // Kiểm tra tổng số lượng file sau khi thêm file mới
       if (this.selectedFiles.length + newFiles.length > this.MAX_FILES) {
         this.fileCountError = `Bạn chỉ có thể tải lên tối đa ${this.MAX_FILES} ảnh. Vui lòng chọn ít hơn.`;
-        // Không thêm file mới vào nếu vượt quá giới hạn
-        input.value = ''; // Xóa input để người dùng chọn lại
+        input.value = '';
         return;
       }
       this.selectedFiles = [...this.selectedFiles, ...newFiles];
     }
-    input.value = ''; // Xóa giá trị của input để cho phép chọn lại cùng một file nếu muốn
+    input.value = '';
   }
 
   onDragOverCommon(event: DragEvent): void {
@@ -267,13 +265,12 @@ export class CreateReportComponent implements OnInit {
       target.classList.remove('drag-over');
     }
 
-    this.fileCountError = null; // Xóa lỗi cũ
+    this.fileCountError = null;
 
     if (event.dataTransfer && event.dataTransfer.files) {
       const files = Array.from(event.dataTransfer.files);
       const imageFiles = files.filter(file => file.type.startsWith('image/'));
 
-      // Kiểm tra tổng số lượng file sau khi thêm file mới
       if (this.selectedFiles.length + imageFiles.length > this.MAX_FILES) {
         this.fileCountError = `Bạn chỉ có thể tải lên tối đa ${this.MAX_FILES} ảnh. Vui lòng chọn ít hơn.`;
         return;
@@ -289,7 +286,9 @@ export class CreateReportComponent implements OnInit {
 
   removeFile(file: File): void {
     this.selectedFiles = this.selectedFiles.filter(f => f !== file);
-    this.fileCountError = null; // Xóa lỗi nếu sau khi xóa số lượng file đã hợp lệ
+    if (this.selectedFiles.length <= this.MAX_FILES) {
+      this.fileCountError = null;
+    }
   }
 
   addReportDetailItem(): void {
@@ -352,7 +351,6 @@ export class CreateReportComponent implements OnInit {
       return true;
     }
 
-    // Thêm điều kiện kiểm tra lỗi số lượng file
     if (this.fileCountError) {
       return true;
     }
@@ -365,7 +363,6 @@ export class CreateReportComponent implements OnInit {
       this.reportForm.form.markAllAsTouched();
     }
 
-    // Kiểm tra lại lỗi số lượng file một lần nữa trước khi gửi
     if (this.selectedFiles.length > this.MAX_FILES) {
       this.fileCountError = `Bạn chỉ có thể tải lên tối đa ${this.MAX_FILES} ảnh. Vui lòng xóa bớt ảnh.`;
       this.showAppNotification(this.fileCountError, 'error');

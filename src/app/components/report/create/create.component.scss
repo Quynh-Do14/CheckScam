@@ -328,8 +328,17 @@
   }
 }
 
+.file-upload-section {
+  .upload-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
 .drop-zone {
   border: 2px dashed #ccc;
+  font-size: 14px;
   border-radius: 8px;
   padding: 20px;
   text-align: center;
@@ -340,20 +349,36 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  width: 100%; /* Đảm bảo drop-zone chiếm đủ chiều rộng */
 
   &:hover, &.drag-over {
     border-color: #007bff;
     background-color: #e9f5ff;
+  }
+
+  &.error {
+    border-color: #dc3545;
+    background-color: #f8d7da;
   }
 }
 
 .drop-zone-content {
   color: #888;
   font-size: 1.1em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  text-align: center;
+  width: 100%;
 
   p {
     margin: 0;
     font-weight: bold;
+    white-space: normal;
+    word-break: break-word;
+    padding: 0 10px;
   }
 }
 
@@ -379,6 +404,14 @@
     margin-right: 5px;
     color: #6c757d;
   }
+}
+
+.file-error-message {
+  color: #dc3545;
+  font-size: 0.9em;
+  margin-top: 5px;
+  text-align: center;
+  padding: 0 5px;
 }
 
 .group-report-item {
@@ -639,20 +672,6 @@
     border-color: #007bff;
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
   }
-
-  // &::after {
-  //   content: '\f078'; /* Font Awesome chevron-down icon */
-  //   font-family: 'Font Awesome 5 Free';
-  //   font-weight: 900;
-  //   font-size: 0.8em;
-  //   color: #007bff;
-  //   margin-left: 10px;
-  //   transition: transform 0.3s ease;
-  // }
-
-  // &.open::after {
-  //   transform: rotate(180deg);
-  // }
 }
 
 .custom-options {

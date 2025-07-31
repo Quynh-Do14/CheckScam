@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { HeaderComponent } from "../header/header.component";
 import { ChatBoxComponent } from "../chat-box/chat-box.component";
 import { PartnershipService, PartnershipRequest } from '../../services/partnership.service';
+import { Title } from '@angular/platform-browser';
 
 
 declare var THREE: any;
@@ -29,20 +30,28 @@ export class PartnersComponent implements OnInit, AfterViewInit, OnDestroy {
   submissionData: any = null;
   formErrors: { [key: string]: string } = {};
   showErrorModal: boolean = false;
+  // titleService: any;
 
-  constructor(private partnershipService: PartnershipService) {}
+   constructor(
+    private partnershipService: PartnershipService,
+    private titleService: Title 
+  ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.titleService.setTitle('Trở Thành Đối Tác AI6 - Săn Người Xấu, Diệt Kẻ Gian'); 
+    this.loadAgents();
+  }
+  loadAgents() {
+    throw new Error('Method not implemented.');
+  }
 
   ngAfterViewInit(): void {
-    // Load external scripts first
     this.loadExternalScripts().then(() => {
       this.initializeSystem();
     });
   }
 
   ngOnDestroy(): void {
-    // Cleanup any intervals or event listeners
   }
 
   private loadExternalScripts(): Promise<void[]> {

@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { Title } from '@angular/platform-browser'; // Import TitleService
 
 import { NewsService } from '../../../services/news.service';
 import { ShortService, Short } from '../../../services/short.service';
@@ -30,13 +31,11 @@ interface AttachmentDto {
   styleUrls: ['./list-news.component.scss'],
 })
 export class ListNewsComponent implements OnInit {
-  /* Tin tức */
   posts: any[] = [];
   pagedPosts: any[] = [];
-  mainNewsList: any[] = []; // 4 tin chính (1 lớn + 3 nhỏ)
-  regularNews: any[] = []; // Tin nhanh + tin khác
+  mainNewsList: any[] = [];
+  regularNews: any[] = [];
 
-  /* Shorts */
   shorts: Short[] = [];
   loadingShorts = false;
   playingVideos: Set<number> = new Set();
@@ -54,8 +53,7 @@ export class ListNewsComponent implements OnInit {
   isShortsTransitioning = false;
   slideOffset = 0;
 
-  /* Phân trang */
-  pageSize = 4; // 4 tin mỗi trang
+  pageSize = 4;
   currentPage = 1;
   totalPosts = 0;
   totalPages = 0;
@@ -63,20 +61,16 @@ export class ListNewsComponent implements OnInit {
   startIndex = 0;
   endIndex = 0;
 
-  /* Tìm kiếm */
   searchTerm = '';
 
-  /* Chat */
   showChatbox = false;
 
-  /* URL ảnh */
   readonly imageBaseUrl = `${environment.apiBaseUrl}/news/image/`;
 
   isMobile = false;
   openShortModal(index: number) {
-    // Chuyển sang trang list-short với index được chọn
-    this.router.navigate(['/list-short'], { 
-      queryParams: { index: index } 
+    this.router.navigate(['/list-short'], {
+      queryParams: { index: index }
     });
   }
 
@@ -84,10 +78,13 @@ export class ListNewsComponent implements OnInit {
     private newsService: NewsService,
     private shortService: ShortService,
     private router: Router,
+    private titleService: Title // Inject TitleService here
   ) {}
 
-  /* ===== Lifecycle ===== */
   ngOnInit(): void {
+    // Set the page title here
+    this.titleService.setTitle('Tin Tức AI6 - Săn Người Xấu, Diệt Kẻ Gian | Thông Tin Lừa Đảo Mới Nhất');
+
     this.isMobile = window.innerWidth <= 768;
     window.addEventListener('resize', () => {
       this.isMobile = window.innerWidth <= 768;
@@ -103,7 +100,6 @@ export class ListNewsComponent implements OnInit {
   }
 
   getCarouselCards(): Short[] {
-    // Always return exactly 5 cards for the carousel
     return this.visibleShorts;
   }
 
@@ -139,10 +135,6 @@ export class ListNewsComponent implements OnInit {
     return `translateX(${this.slideOffset}px)`;
   }
 
-  /* ===== API ===== */
-  /**
-   * Load shorts
-   */
   loadShorts(): void {
     console.log('Loading shorts...');
     this.loadingShorts = true;
@@ -206,9 +198,9 @@ export class ListNewsComponent implements OnInit {
       next: (res) => {
         console.log('Regular news response:', res);
         this.regularNews = res || [];
-        
+
         // Tin tức khác bắt đầu từ tin thứ 4 (bỏ 3 tin nhanh)
-        this.posts = this.regularNews.slice(3); 
+        this.posts = this.regularNews.slice(3);
         this.totalPosts = this.posts.length;
         this.calculateTotalPages();
         this.paginatePosts();
@@ -240,18 +232,18 @@ export class ListNewsComponent implements OnInit {
   // Helper cho tin tức không có attachment nhưng có ảnh trong content
   getNewsImageFromContent(news: any): string {
     if (!news?.content) return 'assets/img/placeholder.png';
-    
+
     // Tìm ảnh đầu tiên trong content HTML
     const imgMatch = news.content.match(/<img[^>]+src="([^"]+)"/i);
     if (imgMatch && imgMatch[1]) {
       const src = imgMatch[1];
-      
+
       // Nếu là URL đầy đủ
       if (src.startsWith('http') || src.startsWith('/api/')) {
         return src.startsWith('http') ? src : `${environment.apiBaseUrl}${src}`;
       }
     }
-    
+
     return 'assets/img/placeholder.png';
   }
 
@@ -262,7 +254,7 @@ export class ListNewsComponent implements OnInit {
       const firstAttachment = news.attachments[0];
       return this.getImageUrl(firstAttachment);
     }
-    
+
     // 2. Kiểm tra ảnh trong content
     return this.getNewsImageFromContent(news);
   }
@@ -350,36 +342,36 @@ export class ListNewsComponent implements OnInit {
     if (!short.thumbnail) {
       return 'assets/img/placeholder.png';
     }
-    
+
     // If already a full URL
     if (short.thumbnail.startsWith('http')) {
       return short.thumbnail;
     }
-    
+
     // Extract filename from path like "/uploads/images/filename.jpg"
     const filename = short.thumbnail.split('/').pop();
     if (!filename) {
       return 'assets/img/placeholder.png';
     }
-    
+
     // Use ShortService to create standard URL
     const thumbnailUrl = this.shortService.getThumbnailUrl(filename);
-    
+
     return thumbnailUrl;
   }
 
   getShortVideoUrl(short: Short): string {
     if (!short.videoUrl) return '';
-    
+
     // If already a full URL
     if (short.videoUrl.startsWith('http')) {
       return short.videoUrl;
     }
-    
+
     // Extract filename from path like "/uploads/videos/filename.mp4"
     const filename = short.videoUrl.split('/').pop();
     if (!filename) return '';
-    
+
     // Use ShortService to create standard URL
     return this.shortService.getVideoUrl(filename);
   }
@@ -390,15 +382,15 @@ export class ListNewsComponent implements OnInit {
 
   onShortClick(short: Short): void {
     console.log('🔥 Clicking on short:', short.title);
-    
+
     if (!short.id) return;
-    
+
     // Tìm index của short trong danh sách
     const shortIndex = this.shorts.findIndex(s => s.id === short.id);
     if (shortIndex !== -1) {
       // Chuyển sang trang list-short với index được chọn
-      this.router.navigate(['/list-short'], { 
-        queryParams: { index: shortIndex } 
+      this.router.navigate(['/list-short'], {
+        queryParams: { index: shortIndex }
       });
     }
   }
@@ -454,7 +446,7 @@ export class ListNewsComponent implements OnInit {
     const x = event.pageX - (event.target as HTMLElement).offsetLeft;
     const walk = (x - this.startX) * 2;
     (event.target as HTMLElement).scrollLeft = this.scrollLeft - walk;
-    
+
     // Calculate velocity for momentum scrolling
     const currentTime = Date.now();
     const timeDiff = currentTime - this.lastTime;
@@ -469,12 +461,12 @@ export class ListNewsComponent implements OnInit {
     this.isDragging = false;
     const element = event.target as HTMLElement;
     element.style.cursor = 'grab';
-    
+
     // Apply momentum scrolling based on velocity
     if (Math.abs(this.velocity) > 0.5) {
       this.applyMomentumScroll(element, this.velocity);
     }
-    
+
     // Reset velocity
     this.velocity = 0;
     this.lastX = 0;
@@ -485,34 +477,34 @@ export class ListNewsComponent implements OnInit {
     this.isDragging = false;
     const element = event.target as HTMLElement;
     element.style.cursor = 'grab';
-    
+
     // Apply momentum scrolling if velocity is significant
     if (Math.abs(this.velocity) > 0.5) {
       this.applyMomentumScroll(element, this.velocity);
     }
-    
+
     // Reset velocity
     this.velocity = 0;
     this.lastX = 0;
     this.lastTime = 0;
   }
-  
+
   applyMomentumScroll(element: HTMLElement, velocity: number): void {
     // Clear any existing momentum interval
     if (this.momentumInterval) {
       clearInterval(this.momentumInterval);
     }
-    
+
     let currentVelocity = velocity * 15; // Amplify the velocity
     const friction = 0.95; // Friction factor
-    
+
     this.momentumInterval = setInterval(() => {
       if (Math.abs(currentVelocity) < 0.1) {
         clearInterval(this.momentumInterval!);
         this.momentumInterval = null;
         return;
       }
-      
+
       element.scrollLeft -= currentVelocity;
       currentVelocity *= friction;
     }, 16); // ~60fps
@@ -521,7 +513,7 @@ export class ListNewsComponent implements OnInit {
   /* ===== Navigation ===== */
   createSlug(title: string): string {
     if (!title) return '';
-    
+
     return title
       .toLowerCase()
       .normalize('NFD')

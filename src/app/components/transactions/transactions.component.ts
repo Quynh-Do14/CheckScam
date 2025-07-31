@@ -49,7 +49,7 @@ export class TransactionsComponent implements OnInit {
   constructor(private http: HttpClient, private router: Router, private titleService: Title) { }
 
   ngOnInit(): void {
-    this.titleService.setTitle('Giao dịch viên');
+    this.titleService.setTitle('Giao Dịch Viên AI6 - Săn Người Xấu, Diệt Kẻ Gian'); 
     this.loadAgents();
   }
 

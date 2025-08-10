@@ -158,7 +158,6 @@ User-agent: DotBot
 Disallow: /
 
 # Crawl delay for better server performance
-Crawl-delay: 1
 
 # Sitemap location
 Sitemap: https://ai6.vn/sitemap.xml

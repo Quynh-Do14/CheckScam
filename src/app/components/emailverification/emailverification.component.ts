@@ -42,8 +42,6 @@ export class EmailVerificationComponent implements OnInit, OnDestroy {
       if (token) {
         const backendVerifyUrl = `${environment.apiBaseUrl}/auth/verify-email`;
 
-        // === THAY ĐỔI TẠI ĐÂY ===
-        // Thêm { responseType: 'text' } để HttpClient mong đợi phản hồi dạng text
         this.http.get(`${backendVerifyUrl}?token=${token}`, { responseType: 'text' }).subscribe(
           (response: string) => { // Thay đổi type của response thành string
             this.verificationStatus = response || 'Email của bạn đã được xác minh thành công!';
@@ -52,11 +50,9 @@ export class EmailVerificationComponent implements OnInit, OnDestroy {
             this.startCountdown();
           },
           (error) => {
-            // Khối này chỉ nên chạy khi có lỗi HTTP thực sự (4xx, 5xx)
             this.isVerified = false;
             this.isLoaded = true;
             this.verificationStatus = 'Xác minh thất bại.';
-            // Kiểm tra xem lỗi có phải do parsing không, nếu không thì lấy message từ error.error
             this.errorMessage = error.error?.message || 'Token không hợp lệ hoặc đã hết hạn. Vui lòng thử lại.';
             console.error('Lỗi xác minh email:', error);
           }

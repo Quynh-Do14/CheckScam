@@ -43,7 +43,7 @@ export class EmailVerificationComponent implements OnInit, OnDestroy {
         const backendVerifyUrl = `${environment.apiBaseUrl}/auth/verify-email`;
 
         this.http.get(`${backendVerifyUrl}?token=${token}`, { responseType: 'text' }).subscribe(
-          (response: string) => { // Thay đổi type của response thành string
+          (response: string) => {
             this.verificationStatus = response || 'Email của bạn đã được xác minh thành công!';
             this.isVerified = true;
             this.isLoaded = true;

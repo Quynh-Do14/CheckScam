@@ -66,7 +66,6 @@ export class EmailVerificationComponent implements OnInit, OnDestroy {
     });
   }
 
-  // Các hàm khác giữ nguyên
   startCountdown(): void {
     this.countdownSubscription = interval(1000).pipe(
       take(this.countdown + 1)
